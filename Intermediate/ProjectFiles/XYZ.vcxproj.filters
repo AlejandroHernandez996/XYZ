@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\XYZ.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{F31BBDD1-B3E8-3BCC-9652-680E16935819}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\XYZ.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\XYZEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\.vsconfig" />
+    <Filter Include="Config">
+      <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Platforms">
+      <UniqueIdentifier>{ED49A36C-4FD5-37E5-A2AC-E11BEF4F21CF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platforms\HoloLens">
+      <UniqueIdentifier>{28125F47-4973-377C-9D77-EBC3C72EC856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platforms\HoloLens\Config">
+      <UniqueIdentifier>{D3BF39CB-FA64-39E2-A327-B5021BA69773}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Platforms\HoloLens\Config\HoloLensEngine.ini">
+      <Filter>Platforms\HoloLens\Config</Filter>
+    </None>
+    <Filter Include="Source\XYZ">
+      <UniqueIdentifier>{70D50CCE-9104-3E31-993E-EB2E6C3B8699}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\XYZ\XYZ.Build.cs">
+      <Filter>Source\XYZ</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\XYZ\XYZ.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZ.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZAbility.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZAbility.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZActor.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZActor.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZCameraController.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZCameraController.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZCharacter.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZCharacter.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\XYZ\XYZFactionType.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZGameMode.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZGameMode.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZGameState.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZGameState.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZInputManager.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZInputManager.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\XYZ\XYZInputMessage.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\XYZ\XYZInputType.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZPlayerController.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZPlayerController.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\XYZ\XYZResourceType.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZUnit.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZUnit.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\XYZ\XYZUnitState.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

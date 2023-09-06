@@ -1,0 +1,7 @@
+﻿  Using bundled DotNet SDK version: 6.0.302
+  Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Target="XYZEditor Win64 Development -Project=\"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\XYZ.uproject\"" -Target="ShaderCompileWorker Win64 Development -Quiet" -WaitMutex -FromMsBuild
+  Log file: C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Programs\UnrealBuildTool\Log.txt
+  Using 'git status' to determine working set for adaptive non-unity build (C:\Users\aleja\gamedev\Engine\UnrealEngine).
+  Waiting for 'git status' command to complete
+  Targets are up to date
+  Total execution time: 2.70 seconds
