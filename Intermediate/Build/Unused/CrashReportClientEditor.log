@@ -1,0 +1,2 @@
+﻿  Using bundled DotNet SDK version: 6.0.302
+  Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" CrashReportClientEditor Win64 Development -WaitMutex -FromMsBuild

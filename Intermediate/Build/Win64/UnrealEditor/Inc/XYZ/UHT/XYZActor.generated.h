@@ -9,21 +9,30 @@
 #include "UObject/ScriptMacros.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+class UXYZAction;
 #ifdef XYZ_XYZActor_generated_h
 #error "XYZActor.generated.h already included, missing '#pragma once' in XYZActor.h"
 #endif
 #define XYZ_XYZActor_generated_h
 
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_SPARSE_DATA
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_RPC_WRAPPERS
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_RPC_WRAPPERS_NO_PURE_DECLS
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_RPC_WRAPPERS \
+ \
+	DECLARE_FUNCTION(execQueueAction);
+
+
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_RPC_WRAPPERS_NO_PURE_DECLS \
+ \
+	DECLARE_FUNCTION(execQueueAction);
+
+
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_ACCESSORS
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesAXYZActor(); \
 	friend struct Z_Construct_UClass_AXYZActor_Statics; \
 public: \
-	DECLARE_CLASS(AXYZActor, AActor, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/XYZ"), NO_API) \
+	DECLARE_CLASS(AXYZActor, APawn, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/XYZ"), NO_API) \
 	DECLARE_SERIALIZER(AXYZActor)
 
 
@@ -32,7 +41,7 @@ private: \
 	static void StaticRegisterNativesAXYZActor(); \
 	friend struct Z_Construct_UClass_AXYZActor_Statics; \
 public: \
-	DECLARE_CLASS(AXYZActor, AActor, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/XYZ"), NO_API) \
+	DECLARE_CLASS(AXYZActor, APawn, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/XYZ"), NO_API) \
 	DECLARE_SERIALIZER(AXYZActor)
 
 

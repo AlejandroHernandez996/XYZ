@@ -17,12 +17,23 @@ struct FXYZInputMessage;
 #endif
 #define XYZ_XYZPlayerController_generated_h
 
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_SPARSE_DATA
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_RPC_WRAPPERS \
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_16_DELEGATE \
+XYZ_API void FSelectionBoxEvent_DelegateWrapper(const FMulticastScriptDelegate& SelectionBoxEvent, float x, float y);
+
+
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_17_DELEGATE \
+XYZ_API void FSelectionBoxTriggeredEvent_DelegateWrapper(const FMulticastScriptDelegate& SelectionBoxTriggeredEvent, float x, float y);
+
+
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_18_DELEGATE \
+XYZ_API void FSelectionBoxReleasedEvent_DelegateWrapper(const FMulticastScriptDelegate& SelectionBoxReleasedEvent, float x, float y);
+
+
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_SPARSE_DATA
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_RPC_WRAPPERS \
 	virtual void QueueInput_Implementation(FXYZInputMessage const& InputMessage); \
  \
 	DECLARE_FUNCTION(execQueueInput); \
-	DECLARE_FUNCTION(execAddActorToSelection); \
 	DECLARE_FUNCTION(execSelectActors); \
 	DECLARE_FUNCTION(execOnInputReleased); \
 	DECLARE_FUNCTION(execOnInputTriggered); \
@@ -30,10 +41,9 @@ struct FXYZInputMessage;
 	DECLARE_FUNCTION(execGetMousePositionOnViewport);
 
 
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_RPC_WRAPPERS_NO_PURE_DECLS \
  \
 	DECLARE_FUNCTION(execQueueInput); \
-	DECLARE_FUNCTION(execAddActorToSelection); \
 	DECLARE_FUNCTION(execSelectActors); \
 	DECLARE_FUNCTION(execOnInputReleased); \
 	DECLARE_FUNCTION(execOnInputTriggered); \
@@ -41,9 +51,9 @@ struct FXYZInputMessage;
 	DECLARE_FUNCTION(execGetMousePositionOnViewport);
 
 
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_ACCESSORS
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_CALLBACK_WRAPPERS
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_INCLASS_NO_PURE_DECLS \
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_ACCESSORS
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_CALLBACK_WRAPPERS
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesAXYZPlayerController(); \
 	friend struct Z_Construct_UClass_AXYZPlayerController_Statics; \
@@ -52,7 +62,7 @@ public: \
 	DECLARE_SERIALIZER(AXYZPlayerController)
 
 
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_INCLASS \
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_INCLASS \
 private: \
 	static void StaticRegisterNativesAXYZPlayerController(); \
 	friend struct Z_Construct_UClass_AXYZPlayerController_Statics; \
@@ -61,7 +71,7 @@ public: \
 	DECLARE_SERIALIZER(AXYZPlayerController)
 
 
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_STANDARD_CONSTRUCTORS \
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_STANDARD_CONSTRUCTORS \
 	/** Standard constructor, called after all reflected properties have been initialized */ \
 	NO_API AXYZPlayerController(const FObjectInitializer& ObjectInitializer); \
 	DEFINE_DEFAULT_OBJECT_INITIALIZER_CONSTRUCTOR_CALL(AXYZPlayerController) \
@@ -75,7 +85,7 @@ public: \
 	NO_API virtual ~AXYZPlayerController();
 
 
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_ENHANCED_CONSTRUCTORS \
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_ENHANCED_CONSTRUCTORS \
 private: \
 	/** Private move- and copy-constructors, should never be used */ \
 	NO_API AXYZPlayerController(AXYZPlayerController&&); \
@@ -87,29 +97,29 @@ public: \
 	NO_API virtual ~AXYZPlayerController();
 
 
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_16_PROLOG
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_GENERATED_BODY_LEGACY \
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_20_PROLOG
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_GENERATED_BODY_LEGACY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_SPARSE_DATA \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_RPC_WRAPPERS \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_ACCESSORS \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_CALLBACK_WRAPPERS \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_INCLASS \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_STANDARD_CONSTRUCTORS \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_SPARSE_DATA \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_RPC_WRAPPERS \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_ACCESSORS \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_CALLBACK_WRAPPERS \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_INCLASS \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_STANDARD_CONSTRUCTORS \
 public: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_GENERATED_BODY \
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_SPARSE_DATA \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_ACCESSORS \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_CALLBACK_WRAPPERS \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_INCLASS_NO_PURE_DECLS \
-	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_19_ENHANCED_CONSTRUCTORS \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_SPARSE_DATA \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_ACCESSORS \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_CALLBACK_WRAPPERS \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_INCLASS_NO_PURE_DECLS \
+	FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_23_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

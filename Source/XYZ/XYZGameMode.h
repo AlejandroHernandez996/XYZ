@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "XYZActor.h"
 #include "XYZInputMessage.h"
 #include "XYZGameMode.generated.h"
 
@@ -16,10 +15,18 @@ class AXYZGameMode : public AGameModeBase
 public:
 	AXYZGameMode();
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
+	int32 TickCount = 0;
 	void QueueInput(const FXYZInputMessage& InputMessage);
+
 	TMap<uint32, TArray<uint32>> TeamResourcesMap;
+
 	TMap<uint32, TArray<uint32>> TeamSupplyMap;
+
+	UPROPERTY()
 	class UXYZInputManager* InputManager;
+
+	bool bHandleInputQueue;
 };
 
 

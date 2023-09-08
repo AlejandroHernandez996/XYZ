@@ -1,0 +1,65 @@
+﻿  Using bundled DotNet SDK version: 6.0.302
+  Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" UnrealPackageTool Win64 Development -WaitMutex -FromMsBuild
+  Log file: C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Programs\UnrealBuildTool\Log.txt
+  Using 'git status' to determine working set for adaptive non-unity build (C:\Users\aleja\gamedev\Engine\UnrealEngine).
+  Creating makefile for UnrealPackageTool (no existing makefile)
+  Parsing headers for UnrealPackageTool
+    Running Internal UnrealHeaderTool UnrealPackageTool C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Intermediate\Build\Win64\UnrealPackageTool\Development\UnrealPackageTool.uhtmanifest -WarningsAsErrors
+  Total of 5 written
+  Reflection code generated for UnrealPackageTool in 0.4145583 seconds
+  Waiting for 'git status' command to complete
+  Building UnrealPackageTool...
+  Using Visual Studio 2022 14.34.31946 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  Determining max actions to execute in parallel (10 physical cores, 20 logical cores)
+    Executing up to 10 processes, one per physical core
+  Building 48 actions with 10 processes...
+  [1/48] Resource Default.rc2
+  [2/48] Compile [x64] BuildSettings.cpp
+  [3/48] Compile [x64] MiMalloc.c
+  [4/48] Compile [x64] Module.TraceLog.cpp
+  [5/48] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastErrors.cpp
+  [6/48] Compile [x64] NetCommonModule.cpp
+  [7/48] Compile [x64] PCH.Core.cpp
+  [8/48] Compile [x64] Module.SSL.cpp
+  [9/48] Compile [x64] Module.Sockets.cpp
+  [10/48] Compile [x64] SharedPCH.CoreUObject.ShadowErrors.cpp
+  [11/48] Compile [x64] Module.Zen.cpp
+  [12/48] Compile [x64] PCH.CoreUObject.cpp
+  [13/48] Compile [x64] Module.Projects.cpp
+  [14/48] Compile [x64] Module.Core.11_of_17.cpp
+  [15/48] Compile [x64] Module.Json.cpp
+  [16/48] Compile [x64] Module.Core.3_of_17.cpp
+  [17/48] Compile [x64] Module.Core.2_of_17.cpp
+  [18/48] Compile [x64] Module.DerivedDataCache.2_of_2.cpp
+  [19/48] Compile [x64] Module.Core.17_of_17.cpp
+  [20/48] Compile [x64] Module.DerivedDataCache.1_of_2.cpp
+  [21/48] Compile [x64] Module.Core.1_of_17.cpp
+  [22/48] Compile [x64] Module.Core.6_of_17.cpp
+  [23/48] Compile [x64] Module.Core.12_of_17.cpp
+  [24/48] Compile [x64] Module.Core.4_of_17.cpp
+  [25/48] Compile [x64] Module.Core.15_of_17.cpp
+  [26/48] Compile [x64] Module.Core.7_of_17.cpp
+  [27/48] Compile [x64] Module.Core.16_of_17.cpp
+  [28/48] Compile [x64] Module.Core.5_of_17.cpp
+  [29/48] Compile [x64] Module.Core.8_of_17.cpp
+  [30/48] Compile [x64] UnrealPackageTool.cpp
+  [31/48] Compile [x64] Module.Core.9_of_17.cpp
+  [32/48] Compile [x64] Module.CoreUObject.1_of_12.cpp
+  [33/48] Compile [x64] Module.Core.10_of_17.cpp
+  [34/48] Compile [x64] Module.Core.13_of_17.cpp
+  [35/48] Compile [x64] Module.Core.14_of_17.cpp
+  [36/48] Compile [x64] Module.CoreUObject.2_of_12.cpp
+  [37/48] Compile [x64] Module.CoreUObject.3_of_12.cpp
+  [38/48] Compile [x64] Module.CoreUObject.12_of_12.cpp
+  [39/48] Compile [x64] Module.CoreUObject.5_of_12.cpp
+  [40/48] Compile [x64] Module.CoreUObject.11_of_12.cpp
+  [41/48] Compile [x64] Module.CoreUObject.9_of_12.cpp
+  [42/48] Compile [x64] Module.CoreUObject.4_of_12.cpp
+  [43/48] Compile [x64] Module.CoreUObject.10_of_12.cpp
+  [44/48] Compile [x64] Module.CoreUObject.8_of_12.cpp
+  [45/48] Compile [x64] Module.CoreUObject.6_of_12.cpp
+  [46/48] Compile [x64] Module.CoreUObject.7_of_12.cpp
+  [47/48] Link [x64] UnrealPackageTool.exe
+  [48/48] WriteMetadata UnrealPackageTool.target
+  Total time in Parallel executor: 83.81 seconds
+  Total execution time: 702.13 seconds

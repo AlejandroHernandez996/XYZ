@@ -38,6 +38,7 @@ void EmptyLinkFunctionForGeneratedCodeXYZUnit() {}
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZUnit_Statics::Class_MetaDataParams[] = {
 		{ "Comment", "/**\n * \n */" },
+		{ "HideCategories", "Navigation" },
 		{ "IncludePath", "XYZUnit.h" },
 		{ "ModuleRelativePath", "XYZUnit.h" },
 	};
@@ -47,7 +48,7 @@ void EmptyLinkFunctionForGeneratedCodeXYZUnit() {}
 	};
 	const UECodeGen_Private::FClassParams Z_Construct_UClass_AXYZUnit_Statics::ClassParams = {
 		&AXYZUnit::StaticClass,
-		"Engine",
+		"Game",
 		&StaticCppClassTypeInfo,
 		DependentSingletons,
 		nullptr,
@@ -80,9 +81,9 @@ void EmptyLinkFunctionForGeneratedCodeXYZUnit() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZUnit_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_AXYZUnit, AXYZUnit::StaticClass, TEXT("AXYZUnit"), &Z_Registration_Info_UClass_AXYZUnit, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZUnit), 2673948375U) },
+		{ Z_Construct_UClass_AXYZUnit, AXYZUnit::StaticClass, TEXT("AXYZUnit"), &Z_Registration_Info_UClass_AXYZUnit, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZUnit), 2629949529U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZUnit_h_141861622(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZUnit_h_2676099018(TEXT("/Script/XYZ"),
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZUnit_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZUnit_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

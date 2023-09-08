@@ -1,0 +1,29 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzmoveaction.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\engine\\sharedpch.engine.shadowerrors.inclorderunreal5_1.h.pch",
+        "Includes": [
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\xyz\\definitions.xyz.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzmoveaction.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzaction.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\coreuobject\\public\\uobject\\noexporttypes.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\coreuobject\\public\\uobject\\propertyaccessutil.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\core\\public\\math\\unitconversion.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\core\\public\\math\\unitconversion.inl",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\core\\public\\internationalization\\polyglottextdata.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\coreuobject\\public\\assetregistry\\arfilter.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzactionstate.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzaction.generated.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzmoveaction.generated.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzactor.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzability.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzability.generated.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzfactiontype.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzactor.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

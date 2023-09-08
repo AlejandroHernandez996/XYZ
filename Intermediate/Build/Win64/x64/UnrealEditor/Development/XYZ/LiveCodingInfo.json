@@ -1,5 +1,43 @@
 {
 	"RemapUnityFiles": 
 	{
+		"Module.XYZ.cpp.obj": [
+			"XYZAbility.gen.cpp.obj",
+			"XYZCameraController.gen.cpp.obj",
+			"XYZFactionType.gen.cpp.obj",
+			"XYZInputType.gen.cpp.obj",
+			"XYZResourceType.gen.cpp.obj",
+			"XYZUnitState.gen.cpp.obj",
+			"XYZ.cpp.obj",
+			"XYZAbility.cpp.obj",
+			"XYZUnit.cpp.obj",
+			"XYZ.init.gen.cpp.obj",
+			"XYZAction.gen.cpp.obj",
+			"XYZActionFactory.gen.cpp.obj",
+			"XYZActionState.gen.cpp.obj",
+			"XYZActor.gen.cpp.obj",
+			"XYZGameMode.gen.cpp.obj",
+			"XYZGameState.gen.cpp.obj",
+			"XYZHUD.gen.cpp.obj",
+			"XYZInputManager.gen.cpp.obj",
+			"XYZInputMessage.gen.cpp.obj",
+			"XYZMoveAction.gen.cpp.obj",
+			"XYZPlayerController.gen.cpp.obj",
+			"XYZSelectionStructure.gen.cpp.obj",
+			"XYZStopAction.gen.cpp.obj",
+			"XYZUnit.gen.cpp.obj",
+			"XYZAction.cpp.obj",
+			"XYZActionFactory.cpp.obj",
+			"XYZActor.cpp.obj",
+			"XYZCameraController.cpp.obj",
+			"XYZGameMode.cpp.obj",
+			"XYZGameState.cpp.obj",
+			"XYZHUD.cpp.obj",
+			"XYZInputManager.cpp.obj",
+			"XYZMoveAction.cpp.obj",
+			"XYZPlayerController.cpp.obj",
+			"XYZSelectionStructure.cpp.obj",
+			"XYZStopAction.cpp.obj"
+		]
 	}
 }

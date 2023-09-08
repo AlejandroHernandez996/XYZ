@@ -12,6 +12,7 @@
       <Filter>Source</Filter>
     </None>
     <None Include="..\..\.vsconfig" />
+    <None Include="..\..\README.md" />
     <Filter Include="Config">
       <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
     </Filter>
@@ -60,6 +61,21 @@
     <ClInclude Include="..\..\Source\XYZ\XYZAbility.h">
       <Filter>Source\XYZ</Filter>
     </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZAction.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZAction.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZActionFactory.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZActionFactory.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\XYZ\XYZActionState.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
     <ClCompile Include="..\..\Source\XYZ\XYZActor.cpp">
       <Filter>Source\XYZ</Filter>
     </ClCompile>
@@ -70,12 +86,6 @@
       <Filter>Source\XYZ</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\XYZ\XYZCameraController.h">
-      <Filter>Source\XYZ</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\Source\XYZ\XYZCharacter.cpp">
-      <Filter>Source\XYZ</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\XYZ\XYZCharacter.h">
       <Filter>Source\XYZ</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\XYZ\XYZFactionType.h">
@@ -93,6 +103,12 @@
     <ClInclude Include="..\..\Source\XYZ\XYZGameState.h">
       <Filter>Source\XYZ</Filter>
     </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZHUD.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZHUD.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
     <ClCompile Include="..\..\Source\XYZ\XYZInputManager.cpp">
       <Filter>Source\XYZ</Filter>
     </ClCompile>
@@ -105,6 +121,12 @@
     <ClInclude Include="..\..\Source\XYZ\XYZInputType.h">
       <Filter>Source\XYZ</Filter>
     </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZMoveAction.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZMoveAction.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
     <ClCompile Include="..\..\Source\XYZ\XYZPlayerController.cpp">
       <Filter>Source\XYZ</Filter>
     </ClCompile>
@@ -112,6 +134,18 @@
       <Filter>Source\XYZ</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\XYZ\XYZResourceType.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZSelectionStructure.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZSelectionStructure.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZStopAction.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZStopAction.h">
       <Filter>Source\XYZ</Filter>
     </ClInclude>
     <ClCompile Include="..\..\Source\XYZ\XYZUnit.cpp">

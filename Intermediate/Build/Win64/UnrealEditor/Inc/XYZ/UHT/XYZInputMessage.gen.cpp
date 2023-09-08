@@ -60,6 +60,10 @@ template<> XYZ_API UScriptStruct* StaticStruct<FXYZInputMessage>()
 #endif
 		static void NewProp_bQueueInput_SetBit(void* Obj);
 		static const UECodeGen_Private::FBoolPropertyParams NewProp_bQueueInput;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_Tick_MetaData[];
+#endif
+		static const UECodeGen_Private::FIntPropertyParams NewProp_Tick;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const UECodeGen_Private::FStructParams ReturnStructParams;
 	};
@@ -130,6 +134,12 @@ template<> XYZ_API UScriptStruct* StaticStruct<FXYZInputMessage>()
 		((FXYZInputMessage*)Obj)->bQueueInput = 1;
 	}
 	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_bQueueInput = { "bQueueInput", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, sizeof(bool), sizeof(FXYZInputMessage), &Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_bQueueInput_SetBit, METADATA_PARAMS(Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_bQueueInput_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_bQueueInput_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_Tick_MetaData[] = {
+		{ "ModuleRelativePath", "XYZInputMessage.h" },
+	};
+#endif
+	const UECodeGen_Private::FIntPropertyParams Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_Tick = { "Tick", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(FXYZInputMessage, Tick), METADATA_PARAMS(Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_Tick_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_Tick_MetaData)) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UScriptStruct_FXYZInputMessage_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_PlayerId,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_SelectedActors_Inner,
@@ -139,6 +149,7 @@ template<> XYZ_API UScriptStruct* StaticStruct<FXYZInputMessage>()
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_InputType_Underlying,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_InputType,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_bQueueInput,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_Tick,
 	};
 	const UECodeGen_Private::FStructParams Z_Construct_UScriptStruct_FXYZInputMessage_Statics::ReturnStructParams = {
 		(UObject* (*)())Z_Construct_UPackage__Script_XYZ,
@@ -166,9 +177,9 @@ template<> XYZ_API UScriptStruct* StaticStruct<FXYZInputMessage>()
 		static const FStructRegisterCompiledInInfo ScriptStructInfo[];
 	};
 	const FStructRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputMessage_h_Statics::ScriptStructInfo[] = {
-		{ FXYZInputMessage::StaticStruct, Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewStructOps, TEXT("XYZInputMessage"), &Z_Registration_Info_UScriptStruct_XYZInputMessage, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FXYZInputMessage), 28926835U) },
+		{ FXYZInputMessage::StaticStruct, Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewStructOps, TEXT("XYZInputMessage"), &Z_Registration_Info_UScriptStruct_XYZInputMessage, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FXYZInputMessage), 2914350594U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputMessage_h_103938501(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputMessage_h_3397340971(TEXT("/Script/XYZ"),
 		nullptr, 0,
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputMessage_h_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputMessage_h_Statics::ScriptStructInfo),
 		nullptr, 0);

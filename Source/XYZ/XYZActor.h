@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Pawn.h"
 #include "XYZAbility.h"
 #include "XYZFactionType.h"
 #include "XYZActor.generated.h"
 
 UCLASS()
-class XYZ_API AXYZActor : public AActor
+class XYZ_API AXYZActor : public APawn
 {
 	GENERATED_BODY()
 	
@@ -17,11 +17,9 @@ public:
 	// Sets default values for this actor's properties
 	AXYZActor();
 
-protected:
-	virtual void BeginPlay() override;
-
 public:	
 	virtual void Tick(float DeltaTime) override;
+    virtual void BeginPlay() override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
         int32 ActorId;
@@ -65,4 +63,19 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
         TArray<UXYZAbility*> Abilities;
 
+    UPROPERTY()
+    TArray<UXYZAction*> ActionQueue;
+    UPROPERTY()
+    UXYZAction* CurrentAction;
+    UPROPERTY()
+    UXYZAction* PrevAction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decal")
+        UDecalComponent* SelectionDecal;
+
+    void ShowDecal(bool bShowDecal);
+
+    UFUNCTION()
+        void QueueAction(UXYZAction* Action);
+    bool bCancelActionFlag;
 };

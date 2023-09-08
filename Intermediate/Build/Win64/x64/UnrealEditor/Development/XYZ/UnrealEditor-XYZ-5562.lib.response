@@ -1,0 +1,41 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-XYZ-5562.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.InclOrderUnreal5_1.h.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZ.init.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZAbility.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZAction.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZActionState.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZActor.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZCameraController.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZCharacter.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZFactionType.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZGameMode.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZGameState.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZInputManager.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZInputMessage.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZInputType.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZMoveAction.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZPlayerController.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZResourceType.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZUnit.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZUnitState.gen.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZ.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZAbility.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZCameraController.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZCharacter.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZGameState.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZUnit.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZAction.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZActor.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZGameMode.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZInputManager.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZMoveAction.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZPlayerController.cpp.obj"
+"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Default.rc2.res"
+/OUT:"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\UnrealEditor-XYZ-5562.lib"

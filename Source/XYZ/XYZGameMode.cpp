@@ -4,6 +4,7 @@
 #include "XYZPlayerController.h"
 #include "EngineUtils.h"
 #include "XYZInputManager.h"
+#include "XYZGameState.h"
 #include "UObject/ConstructorHelpers.h"
 
 AXYZGameMode::AXYZGameMode()
@@ -25,13 +26,27 @@ AXYZGameMode::AXYZGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 
-	InputManager = NewObject<UXYZInputManager>(this, UXYZInputManager::StaticClass(), "InputManager");
+	PrimaryActorTick.bCanEverTick = true;
+	TickCount = 0;
 }
 
 void AXYZGameMode::BeginPlay() {
 	Super::BeginPlay();
+	InputManager = NewObject<UXYZInputManager>(this, UXYZInputManager::StaticClass(), "InputManager");
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void AXYZGameMode::QueueInput(const FXYZInputMessage& InputMessage) {
-	InputManager->QueueInput(InputMessage);
+	if (GetLocalRole() != ROLE_Authority) return;
+	InputManager->XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
+	int32 TickCountCopy = TickCount;
+	FXYZInputMessage TickInput = FXYZInputMessage(InputMessage, TickCountCopy);
+	InputManager->QueueInput(TickInput);
+	bHandleInputQueue = true;
+}
+
+void AXYZGameMode::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	TickCount++;
 }

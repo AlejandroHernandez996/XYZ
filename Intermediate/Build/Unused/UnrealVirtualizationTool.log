@@ -1,0 +1,102 @@
+﻿  Using bundled DotNet SDK version: 6.0.302
+  Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" UnrealVirtualizationTool Win64 Development -WaitMutex -FromMsBuild
+  Log file: C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Programs\UnrealBuildTool\Log.txt
+  Using 'git status' to determine working set for adaptive non-unity build (C:\Users\aleja\gamedev\Engine\UnrealEngine).
+  Creating makefile for UnrealVirtualizationTool (no existing makefile)
+  Parsing headers for UnrealVirtualizationTool
+    Running Internal UnrealHeaderTool UnrealVirtualizationTool C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Intermediate\Build\Win64\UnrealVirtualizationTool\Development\UnrealVirtualizationTool.uhtmanifest -WarningsAsErrors
+  Total of 145 written
+  Reflection code generated for UnrealVirtualizationTool in 0.4998986 seconds
+  Waiting for 'git status' command to complete
+  Building UnrealVirtualizationTool...
+  Using Visual Studio 2022 14.34.31946 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  Determining max actions to execute in parallel (10 physical cores, 20 logical cores)
+    Executing up to 10 processes, one per physical core
+  Building 84 actions with 10 processes...
+  [1/84] Resource UnrealVirtualizationTool.rc
+  [2/84] Compile [x64] BuildSettings.cpp
+  [3/84] Compile [x64] Module.TraceLog.cpp
+  [4/84] Compile [x64] MiMalloc.c
+  [5/84] Compile [x64] SharedPCH.Core.ShadowErrors.cpp
+  [6/84] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastErrors.cpp
+  [7/84] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastWarnings.cpp
+  [8/84] Compile [x64] SharedPCH.Core.Exceptions.ShadowErrors.cpp
+  [9/84] Compile [x64] PCH.Core.cpp
+  [10/84] Compile [x64] Module.Networking.cpp
+  [11/84] Compile [x64] Module.ColorManagement.cpp
+  [12/84] Compile [x64] SharedPCH.CoreUObject.ShadowErrors.cpp
+  [13/84] Compile [x64] SharedPCH.CoreUObject.ShadowErrors.TypeCastErrors.cpp
+  [14/84] Compile [x64] PCH.CoreUObject.cpp
+  [15/84] Compile [x64] Module.Sockets.cpp
+  [16/84] Compile [x64] Module.RenderCore.5_of_5.cpp
+  [17/84] Compile [x64] Module.RHI.2_of_2.cpp
+  [18/84] Compile [x64] Module.Zen.cpp
+  [19/84] Compile [x64] NetCommonModule.cpp
+  [20/84] Compile [x64] Module.RHI.1_of_2.cpp
+  [21/84] Compile [x64] SharedPCH.Slate.ShadowErrors.cpp
+  [22/84] Compile [x64] Module.ApplicationCore.cpp
+  [23/84] Compile [x64] Module.Json.cpp
+  [24/84] Compile [x64] Module.RenderCore.4_of_5.cpp
+  [25/84] Compile [x64] Module.SSL.cpp
+  [26/84] Compile [x64] Module.RenderCore.1_of_5.cpp
+  [27/84] Compile [x64] Module.CookOnTheFly.cpp
+  [28/84] Compile [x64] Module.DesktopPlatform.cpp
+  [29/84] Compile [x64] Module.RenderCore.3_of_5.cpp
+  [30/84] Compile [x64] Module.DerivedDataCache.2_of_2.cpp
+  [31/84] Compile [x64] Module.RenderCore.2_of_5.cpp
+  [32/84] Compile [x64] Module.Projects.cpp
+  [33/84] Compile [x64] Module.Core.2_of_17.cpp
+  [34/84] Compile [x64] Module.Core.3_of_17.cpp
+  [35/84] Compile [x64] Module.Core.12_of_17.cpp
+  [36/84] Compile [x64] Module.DerivedDataCache.1_of_2.cpp
+  [37/84] Compile [x64] Module.Core.9_of_17.cpp
+  [38/84] Compile [x64] Module.ImageWrapper.cpp
+  [39/84] Compile [x64] Module.Core.1_of_17.cpp
+  [40/84] Compile [x64] Module.Core.17_of_17.cpp
+  [41/84] Compile [x64] Module.Core.7_of_17.cpp
+  [42/84] Compile [x64] Module.Core.11_of_17.cpp
+  [43/84] Compile [x64] Module.Core.4_of_17.cpp
+  [44/84] Compile [x64] Module.Core.8_of_17.cpp
+  [45/84] Compile [x64] Module.Core.15_of_17.cpp
+  [46/84] Compile [x64] Module.DeveloperSettings.cpp
+  [47/84] Compile [x64] Module.Core.16_of_17.cpp
+  [48/84] Compile [x64] Module.Core.6_of_17.cpp
+  [49/84] Compile [x64] Module.Core.10_of_17.cpp
+  [50/84] Compile [x64] Module.Core.14_of_17.cpp
+  [51/84] Compile [x64] Module.Core.5_of_17.cpp
+  [52/84] Compile [x64] Module.SlateCore.1_of_4.cpp
+  [53/84] Compile [x64] Module.Virtualization.cpp
+  [54/84] Compile [x64] Module.SlateCore.2_of_4.cpp
+  [55/84] Compile [x64] Module.Slate.5_of_6.cpp
+  [56/84] Compile [x64] Module.Core.13_of_17.cpp
+  [57/84] Compile [x64] Module.ImageCore.cpp
+  [58/84] Compile [x64] Module.Slate.3_of_6.cpp
+  [59/84] Compile [x64] Module.UnrealVirtualizationTool.cpp
+  [60/84] Compile [x64] Module.Slate.2_of_6.cpp
+  [61/84] Compile [x64] Module.Slate.6_of_6.cpp
+  [62/84] Compile [x64] Module.InputCore.cpp
+  [63/84] Compile [x64] Module.SlateCore.4_of_4.cpp
+  [64/84] Compile [x64] Module.Slate.4_of_6.cpp
+  [65/84] Compile [x64] Module.Slate.1_of_6.cpp
+  [66/84] Compile [x64] Module.CoreUObject.2_of_12.cpp
+  [67/84] Compile [x64] Module.SlateCore.3_of_4.cpp
+  [68/84] Compile [x64] Module.CoreUObject.10_of_12.cpp
+  [69/84] Compile [x64] Module.CoreUObject.11_of_12.cpp
+  [70/84] Compile [x64] Module.CoreUObject.3_of_12.cpp
+  [71/84] Compile [x64] Module.CoreUObject.1_of_12.cpp
+  [72/84] Compile [x64] Module.CoreUObject.12_of_12.cpp
+  [73/84] Compile [x64] Module.AssetRegistry.cpp
+  [74/84] Compile [x64] Module.CoreUObject.4_of_12.cpp
+  [75/84] Compile [x64] Module.CoreUObject.5_of_12.cpp
+  [76/84] Compile [x64] Module.CoreUObject.8_of_12.cpp
+  [77/84] Compile [x64] Module.CoreUObject.9_of_12.cpp
+  [78/84] Compile [x64] Module.PerforceSourceControl.cpp
+  [79/84] Compile [x64] Module.SourceControl.cpp
+  [80/84] Compile [x64] Module.CoreUObject.6_of_12.cpp
+  [81/84] Compile [x64] Module.MessageLog.cpp
+  [82/84] Compile [x64] Module.CoreUObject.7_of_12.cpp
+  [83/84] Link [x64] UnrealVirtualizationTool.exe
+     Creating library ..\Binaries\Win64\UnrealVirtualizationTool.lib and object ..\Binaries\Win64\UnrealVirtualizationTool.exp
+  [84/84] WriteMetadata UnrealVirtualizationTool.target
+  Total time in Parallel executor: 144.04 seconds
+  Total execution time: 346.38 seconds

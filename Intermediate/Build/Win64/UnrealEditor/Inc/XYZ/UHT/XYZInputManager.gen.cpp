@@ -11,6 +11,7 @@ void EmptyLinkFunctionForGeneratedCodeXYZInputManager() {}
 // Cross Module References
 	COREUOBJECT_API UClass* Z_Construct_UClass_UObject();
 	UPackage* Z_Construct_UPackage__Script_XYZ();
+	XYZ_API UClass* Z_Construct_UClass_AXYZGameState_NoRegister();
 	XYZ_API UClass* Z_Construct_UClass_UXYZInputManager();
 	XYZ_API UClass* Z_Construct_UClass_UXYZInputManager_NoRegister();
 // End Cross Module References
@@ -28,6 +29,11 @@ void EmptyLinkFunctionForGeneratedCodeXYZInputManager() {}
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam Class_MetaDataParams[];
 #endif
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_XYZGameState_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_XYZGameState;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UECodeGen_Private::FClassParams ClassParams;
 	};
@@ -41,6 +47,15 @@ void EmptyLinkFunctionForGeneratedCodeXYZInputManager() {}
 		{ "ModuleRelativePath", "XYZInputManager.h" },
 	};
 #endif
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UXYZInputManager_Statics::NewProp_XYZGameState_MetaData[] = {
+		{ "ModuleRelativePath", "XYZInputManager.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UXYZInputManager_Statics::NewProp_XYZGameState = { "XYZGameState", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(UXYZInputManager, XYZGameState), Z_Construct_UClass_AXYZGameState_NoRegister, METADATA_PARAMS(Z_Construct_UClass_UXYZInputManager_Statics::NewProp_XYZGameState_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UXYZInputManager_Statics::NewProp_XYZGameState_MetaData)) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UXYZInputManager_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UXYZInputManager_Statics::NewProp_XYZGameState,
+	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UXYZInputManager_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UXYZInputManager>::IsAbstract,
 	};
@@ -50,11 +65,11 @@ void EmptyLinkFunctionForGeneratedCodeXYZInputManager() {}
 		&StaticCppClassTypeInfo,
 		DependentSingletons,
 		nullptr,
-		nullptr,
+		Z_Construct_UClass_UXYZInputManager_Statics::PropPointers,
 		nullptr,
 		UE_ARRAY_COUNT(DependentSingletons),
 		0,
-		0,
+		UE_ARRAY_COUNT(Z_Construct_UClass_UXYZInputManager_Statics::PropPointers),
 		0,
 		0x001000A0u,
 		METADATA_PARAMS(Z_Construct_UClass_UXYZInputManager_Statics::Class_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UClass_UXYZInputManager_Statics::Class_MetaDataParams))
@@ -78,9 +93,9 @@ void EmptyLinkFunctionForGeneratedCodeXYZInputManager() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputManager_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UXYZInputManager, UXYZInputManager::StaticClass, TEXT("UXYZInputManager"), &Z_Registration_Info_UClass_UXYZInputManager, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UXYZInputManager), 3160927565U) },
+		{ Z_Construct_UClass_UXYZInputManager, UXYZInputManager::StaticClass, TEXT("UXYZInputManager"), &Z_Registration_Info_UClass_UXYZInputManager, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UXYZInputManager), 3470169975U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputManager_h_278755971(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputManager_h_855336784(TEXT("/Script/XYZ"),
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputManager_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputManager_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

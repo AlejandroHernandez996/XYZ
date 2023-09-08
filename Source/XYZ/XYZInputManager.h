@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "XYZInputMessage.h" // Include this for FInputMessage struct
+#include "XYZInputMessage.h" 
 #include "XYZInputManager.generated.h"
 
 UCLASS()
@@ -14,15 +14,11 @@ public:
 
     void QueueInput(const FXYZInputMessage& InputMessage);
     void DequeueInput();
+    void ExecuteInput(const FXYZInputMessage& InputMessage);
+    void HandleInputs();
+    int32 InputIndex = 0;
 
-    // You can add more helper functions here
-
-protected:
-    // Override this function if you want the manager to do something every frame
-    virtual void Tick(float DeltaTime);
-
-private:
-    TQueue<FXYZInputMessage> InputQueue; // The actual input queue using TQueue
-
-    void ExecuteInput(const FXYZInputMessage& InputMessage); // Executes an input message
+    UPROPERTY()
+    class AXYZGameState* XYZGameState;
+    
 };

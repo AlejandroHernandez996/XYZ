@@ -16,7 +16,12 @@
             "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\coreuobject\\public\\assetregistry\\arfilter.h",
             "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzability.generated.h",
             "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzfactiontype.h",
-            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzactor.generated.h"
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzactor.generated.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\engine\\classes\\components\\decalcomponent.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\decalcomponent.generated.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzaction.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzactionstate.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzaction.generated.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

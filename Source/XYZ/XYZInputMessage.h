@@ -40,11 +40,15 @@ struct FXYZInputMessage
     UPROPERTY(BlueprintReadWrite, Category = "Input")
         bool bQueueInput;
 
+    UPROPERTY()
+        int32 Tick;
+
     FXYZInputMessage()
     {
         // Set default values
         PlayerId = -1;
         XYZTargetActor = -1;
+        Tick = -1;
         TargetLocation = FVector::ZeroVector;
         InputType = EXYZInputType::NONE;
         bQueueInput = false;
@@ -58,6 +62,17 @@ struct FXYZInputMessage
         TargetLocation = _TargetLocation;
         InputType = _InputType;
         bQueueInput = _bQueueInput;
+    }
+
+    FXYZInputMessage(FXYZInputMessage InputMessage, int32 _Tick)
+    {
+        SelectedActors = InputMessage.SelectedActors;
+        PlayerId = InputMessage.PlayerId;
+        XYZTargetActor = InputMessage.XYZTargetActor;
+        TargetLocation = InputMessage.TargetLocation;
+        InputType = InputMessage.InputType;
+        bQueueInput = InputMessage.bQueueInput;
+        Tick = _Tick;
     }
 
     FString ToString() const
@@ -78,6 +93,7 @@ struct FXYZInputMessage
             result += ", ";
         }
         result += "\n";
+        result += "Tick: " + FString::Printf(TEXT("%d"), Tick) + "\n";
 
         return result;
     }

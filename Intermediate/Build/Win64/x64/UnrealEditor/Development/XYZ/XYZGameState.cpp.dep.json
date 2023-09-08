@@ -13,6 +13,8 @@
             "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\serverstatreplicator.generated.h",
             "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\gamemodebase.generated.h",
             "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\gamestatebase.generated.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzgamestate.generated.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\engine\\public\\engineutils.h",
             "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzactor.h",
             "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzability.h",
             "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\coreuobject\\public\\uobject\\noexporttypes.h",
@@ -23,9 +25,7 @@
             "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\coreuobject\\public\\assetregistry\\arfilter.h",
             "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzability.generated.h",
             "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzfactiontype.h",
-            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzactor.generated.h",
-            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzgamestate.generated.h",
-            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\engine\\public\\engineutils.h"
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzactor.generated.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

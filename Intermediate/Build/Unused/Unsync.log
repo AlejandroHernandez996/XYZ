@@ -1,0 +1,50 @@
+﻿  Using bundled DotNet SDK version: 6.0.302
+  Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" Unsync Win64 Development -WaitMutex -FromMsBuild
+  Log file: C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Programs\UnrealBuildTool\Log.txt
+  Using 'git status' to determine working set for adaptive non-unity build (C:\Users\aleja\gamedev\Engine\UnrealEngine).
+  Creating makefile for Unsync (no existing makefile)
+  Waiting for 'git status' command to complete
+  Building Unsync...
+  Using Visual Studio 2022 14.34.31946 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  [Upgrade]
+  [Upgrade] Using backward-compatible include order. The latest version of UE has changed the order of includes, which may require code changes. The current setting is:
+  [Upgrade]     IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_0
+  [Upgrade] Suppress this message by setting 'IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_2;' in Unsync.Target.cs.
+  [Upgrade] Alternatively you can set this to 'EngineIncludeOrderVersion.Latest' to always use the latest include order. This will potentially cause compile errors when integrating new versions of the engine.
+  [Upgrade]
+  Determining max actions to execute in parallel (10 physical cores, 20 logical cores)
+    Executing up to 10 processes, one per physical core
+    Requested 1.5 GB free memory per action, 9.24 GB available: limiting max parallel actions to 6
+  Building 31 actions with 6 processes...
+  [1/31] Compile [x64] UnsyncCmdDiff.cpp
+  [2/31] Compile [x64] UnsyncCmdPatch.cpp
+  [3/31] Compile [x64] UnsyncMiniCb.cpp
+  [4/31] Compile [x64] UnsyncLog.cpp
+  [5/31] Compile [x64] UnsyncRemote.cpp
+  [6/31] Compile [x64] UnsyncJupiter.cpp
+  [7/31] Compile [x64] UnsyncHash.cpp
+  [8/31] Compile [x64] UnsyncSocket.cpp
+  [9/31] Compile [x64] UnsyncHttp.cpp
+  [10/31] Compile [x64] UnsyncFile.cpp
+  [11/31] Compile [x64] UnsyncCore.cpp
+  [12/31] Resource Default.rc2
+  [13/31] Compile [x64] UnsyncCmdHash.cpp
+  [14/31] Compile [x64] json11.cpp
+  [15/31] Compile [x64] DebugHeap.c
+  [16/31] Compile [x64] UnsyncCmdQuery.cpp
+  [17/31] Compile [x64] UnsyncCmdSync.cpp
+  [18/31] Compile [x64] UnsyncTest.cpp
+  [19/31] Compile [x64] UnsyncCompression.cpp
+  [20/31] Compile [x64] md5-sse2.cpp
+  [21/31] Compile [x64] UnsyncMemory.cpp
+  [22/31] Compile [x64] UnsyncBuffer.cpp
+  [23/31] Compile [x64] UnsyncCmdPush.cpp
+  [24/31] Compile [x64] UnsyncUtil.cpp
+  [25/31] Compile [x64] UnsyncProxy.cpp
+  [26/31] Compile [x64] UnsyncProtocol.cpp
+  [27/31] Compile [x64] UnsyncThread.cpp
+  [28/31] Compile [x64] UnsyncSerialization.cpp
+  [29/31] Compile [x64] UnsyncMain.cpp
+  [30/31] Link [x64] unsync.exe cancelled
+  [31/31] WriteMetadata unsync.target cancelled
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.MakeFile.Targets(44,5): error MSB3073: The command "C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Build\BatchFiles\Build.bat Unsync Win64 Development -WaitMutex -FromMsBuild" exited with code 6.

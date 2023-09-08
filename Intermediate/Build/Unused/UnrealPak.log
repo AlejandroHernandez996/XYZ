@@ -1,0 +1,267 @@
+﻿  Using bundled DotNet SDK version: 6.0.302
+  Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" UnrealPak Win64 Development -WaitMutex -FromMsBuild
+  Log file: C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Programs\UnrealBuildTool\Log.txt
+  Using 'git status' to determine working set for adaptive non-unity build (C:\Users\aleja\gamedev\Engine\UnrealEngine).
+  Creating makefile for UnrealPak (no existing makefile)
+  Parsing headers for UnrealPak
+    Running Internal UnrealHeaderTool UnrealPak C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Intermediate\Build\Win64\UnrealPak\Development\UnrealPak.uhtmanifest -WarningsAsErrors
+  Total of 0 written
+  Reflection code generated for UnrealPak in 0.4702157 seconds
+  Waiting for 'git status' command to complete
+  Building UnrealPak...
+  Using Visual Studio 2022 14.34.31946 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  Determining max actions to execute in parallel (10 physical cores, 20 logical cores)
+    Executing up to 10 processes, one per physical core
+    Requested 1.5 GB free memory per action, 8.6 GB available: limiting max parallel actions to 5
+  Building 172 actions with 5 processes...
+  [1/172] Resource Default.rc2
+  [2/172] Compile [x64] MiMalloc.c
+  [3/172] Compile [x64] SharedPCH.Core.ShadowErrors.cpp
+  [4/172] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastErrors.cpp
+  [5/172] Compile [x64] PCH.Core.cpp
+  [6/172] Compile [x64] SharedPCH.CoreUObject.ShadowErrors.cpp
+  [7/172] Compile [x64] Module.TraceLog.cpp
+  [8/172] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastWarnings.cpp
+  [9/172] Compile [x64] PCH.CoreUObject.cpp
+  [10/172] Compile [x64] BuildSettings.cpp
+  [11/172] Compile [x64] SharedPCH.CoreUObject.ShadowErrors.TypeCastErrors.cpp
+  [12/172] Compile [x64] RSA.cpp
+  [13/172] Compile [x64] Module.ColorManagement.cpp
+  [14/172] Compile [x64] SharedPCH.Core.Exceptions.ShadowErrors.cpp
+  [15/172] Compile [x64] SharedPCH.CoreUObject.ShadowErrors.TypeCastWarnings.cpp
+  [16/172] Compile [x64] SharedPCH.Slate.ShadowErrors.cpp
+  [17/172] Compile [x64] PlatformCryptoTypes.cpp
+  [18/172] Compile [x64] UnrealPak.cpp
+  [19/172] Compile [x64] Module.RHI.1_of_2.cpp
+  [20/172] Compile [x64] Module.RenderCore.4_of_5.cpp
+  [21/172] Compile [x64] Module.RenderCore.5_of_5.cpp
+  [22/172] Compile [x64] Module.PlatformCryptoOpenSSL.cpp
+  [23/172] Compile [x64] Module.Networking.cpp
+  [24/172] Compile [x64] Module.RenderCore.2_of_5.cpp
+  [25/172] Compile [x64] IPlatformFileSandboxWrapper.cpp
+  [26/172] Compile [x64] PlatformCrypto.cpp
+  [27/172] Compile [x64] Module.RHI.2_of_2.cpp
+  [28/172] Compile [x64] Module.RenderCore.3_of_5.cpp
+  [29/172] Compile [x64] Module.Sockets.cpp
+  [30/172] Compile [x64] Module.Json.cpp
+  [31/172] Compile [x64] Module.ApplicationCore.cpp
+  [32/172] Compile [x64] Module.SSL.cpp
+  [33/172] Compile [x64] Module.Projects.cpp
+  [34/172] Compile [x64] Module.Zen.cpp
+  [35/172] Compile [x64] NetCommonModule.cpp
+  [36/172] Compile [x64] Module.RenderCore.1_of_5.cpp
+  [37/172] Compile [x64] Module.DesktopPlatform.cpp
+  [38/172] Compile [x64] Module.DerivedDataCache.2_of_2.cpp
+  [39/172] Compile [x64] Module.Core.4_of_17.cpp
+  [40/172] Compile [x64] Module.Core.5_of_17.cpp
+  [41/172] Compile [x64] Module.DerivedDataCache.1_of_2.cpp
+  [42/172] Compile [x64] Module.Core.17_of_17.cpp
+  [43/172] Compile [x64] Module.Core.3_of_17.cpp
+  [44/172] Compile [x64] Module.Core.7_of_17.cpp
+  [45/172] Compile [x64] Module.Core.11_of_17.cpp
+  [46/172] Compile [x64] Module.Core.16_of_17.cpp
+  [47/172] Compile [x64] Module.Core.1_of_17.cpp
+  [48/172] Compile [x64] Module.Core.2_of_17.cpp
+  [49/172] Compile [x64] Module.Core.10_of_17.cpp
+  [50/172] Compile [x64] Module.Core.15_of_17.cpp
+  [51/172] Compile [x64] Module.Core.9_of_17.cpp
+  [52/172] Compile [x64] Module.Core.6_of_17.cpp
+  [53/172] Compile [x64] Module.Core.12_of_17.cpp
+  [54/172] Compile [x64] Module.Core.8_of_17.cpp
+  [55/172] Compile [x64] Module.SlateCore.2_of_4.cpp
+  [56/172] Compile [x64] Module.SlateCore.1_of_4.cpp
+  [57/172] Compile [x64] Module.Core.13_of_17.cpp
+  [58/172] Compile [x64] Module.Core.14_of_17.cpp
+  [59/172] Compile [x64] Module.SlateCore.4_of_4.cpp
+  [60/172] Compile [x64] Module.Slate.5_of_6.cpp
+  [61/172] Compile [x64] Module.Slate.3_of_6.cpp
+  [62/172] Compile [x64] Module.SlateCore.3_of_4.cpp
+  [63/172] Compile [x64] Module.DeveloperSettings.cpp
+  [64/172] Compile [x64] Module.DeveloperToolSettings.cpp
+  [65/172] Compile [x64] Module.Slate.2_of_6.cpp
+  [66/172] Compile [x64] Module.Slate.4_of_6.cpp
+  [67/172] Compile [x64] Module.ImageCore.cpp
+  [68/172] Link [x64] UnrealPak-TraceLog.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\TraceLog\UnrealPak-TraceLog.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\TraceLog\UnrealPak-TraceLog.exp
+  [69/172] Link [x64] UnrealPak-TraceLog.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\TraceLog\UnrealPak-TraceLog.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\TraceLog\UnrealPak-TraceLog.suppressed.exp
+  [70/172] Compile [x64] Module.Slate.1_of_6.cpp
+  [71/172] Compile [x64] Module.CookOnTheFly.cpp
+  [72/172] Compile [x64] Module.Virtualization.cpp
+  [73/172] Compile [x64] Module.Slate.6_of_6.cpp
+  [74/172] Compile [x64] Module.CoreUObject.12_of_12.cpp
+  [75/172] Compile [x64] Module.CoreUObject.1_of_12.cpp
+  [76/172] Compile [x64] Module.PakFileUtilities.cpp
+  [77/172] Compile [x64] Module.CoreUObject.6_of_12.cpp
+  [78/172] Compile [x64] Module.CoreUObject.2_of_12.cpp
+  [79/172] Compile [x64] Module.IoStoreUtilities.cpp
+  [80/172] Compile [x64] Module.CoreUObject.11_of_12.cpp
+  [81/172] Compile [x64] Module.CoreUObject.9_of_12.cpp
+  [82/172] Compile [x64] Module.CoreUObject.10_of_12.cpp
+  [83/172] Compile [x64] Module.CoreUObject.5_of_12.cpp
+  [84/172] Link [x64] UnrealPak-BuildSettings.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\BuildSettings\UnrealPak-BuildSettings.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\BuildSettings\UnrealPak-BuildSettings.exp
+  [85/172] Link [x64] UnrealPak-BuildSettings.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\BuildSettings\UnrealPak-BuildSettings.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\BuildSettings\UnrealPak-BuildSettings.suppressed.exp
+  [86/172] Compile [x64] Module.CoreUObject.4_of_12.cpp
+  [87/172] Compile [x64] Module.CoreUObject.8_of_12.cpp
+  [88/172] Link [x64] UnrealPak-RSA.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RSA\UnrealPak-RSA.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RSA\UnrealPak-RSA.exp
+  [89/172] Link [x64] UnrealPak-ColorManagement.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ColorManagement\UnrealPak-ColorManagement.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ColorManagement\UnrealPak-ColorManagement.exp
+  [90/172] Compile [x64] Module.InputCore.cpp
+  [91/172] Compile [x64] Module.CoreUObject.7_of_12.cpp
+  [92/172] Compile [x64] Module.CoreUObject.3_of_12.cpp
+  [93/172] Compile [x64] Module.PakFile.cpp
+  [94/172] Compile [x64] Module.SourceControl.cpp
+  [95/172] Link [x64] UnrealPak-PlatformCryptoTypes.lib
+     Creating library ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCryptoTypes\UnrealPak-PlatformCryptoTypes.lib and object ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCryptoTypes\UnrealPak-PlatformCryptoTypes.exp
+  [96/172] Link [x64] UnrealPak.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\UnrealPak.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\UnrealPak.exp
+  [97/172] Link [x64] UnrealPak-PlatformCryptoOpenSSL.lib
+     Creating library ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCryptoOpenSSL\UnrealPak-PlatformCryptoOpenSSL.lib and object ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCryptoOpenSSL\UnrealPak-PlatformCryptoOpenSSL.exp
+  [98/172] Link [x64] UnrealPak-Networking.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Networking\UnrealPak-Networking.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Networking\UnrealPak-Networking.exp
+  [99/172] Link [x64] UnrealPak-SandboxFile.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SandboxFile\UnrealPak-SandboxFile.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SandboxFile\UnrealPak-SandboxFile.exp
+  [100/172] Link [x64] UnrealPak-PlatformCrypto.lib
+     Creating library ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCrypto\UnrealPak-PlatformCrypto.lib and object ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCrypto\UnrealPak-PlatformCrypto.exp
+  [101/172] Compile [x64] Module.ImageWrapper.cpp
+  [102/172] Link [x64] UnrealPak-Sockets.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Sockets\UnrealPak-Sockets.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Sockets\UnrealPak-Sockets.exp
+  [103/172] Link [x64] UnrealPak-RHI.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RHI\UnrealPak-RHI.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RHI\UnrealPak-RHI.exp
+  [104/172] Link [x64] UnrealPak-Json.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Json\UnrealPak-Json.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Json\UnrealPak-Json.exp
+  [105/172] Link [x64] UnrealPak-ApplicationCore.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ApplicationCore\UnrealPak-ApplicationCore.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ApplicationCore\UnrealPak-ApplicationCore.exp
+  [106/172] Link [x64] UnrealPak-SSL.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SSL\UnrealPak-SSL.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SSL\UnrealPak-SSL.exp
+  [107/172] Link [x64] UnrealPak-Projects.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Projects\UnrealPak-Projects.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Projects\UnrealPak-Projects.exp
+  [108/172] Link [x64] UnrealPak-Zen.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Zen\UnrealPak-Zen.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Zen\UnrealPak-Zen.exp
+  [109/172] Link [x64] UnrealPak-NetCommon.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\NetCommon\UnrealPak-NetCommon.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\NetCommon\UnrealPak-NetCommon.exp
+  [110/172] Link [x64] UnrealPak-DesktopPlatform.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DesktopPlatform\UnrealPak-DesktopPlatform.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DesktopPlatform\UnrealPak-DesktopPlatform.exp
+  [111/172] Link [x64] UnrealPak-RenderCore.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RenderCore\UnrealPak-RenderCore.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RenderCore\UnrealPak-RenderCore.exp
+  [112/172] Link [x64] UnrealPak-DerivedDataCache.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DerivedDataCache\UnrealPak-DerivedDataCache.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DerivedDataCache\UnrealPak-DerivedDataCache.exp
+  [113/172] Link [x64] UnrealPak-SlateCore.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SlateCore\UnrealPak-SlateCore.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SlateCore\UnrealPak-SlateCore.exp
+  [114/172] Link [x64] UnrealPak-DeveloperSettings.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DeveloperSettings\UnrealPak-DeveloperSettings.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DeveloperSettings\UnrealPak-DeveloperSettings.exp
+  [115/172] Link [x64] UnrealPak-Core.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Core\UnrealPak-Core.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Core\UnrealPak-Core.exp
+  [116/172] Link [x64] UnrealPak-DeveloperToolSettings.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DeveloperToolSettings\UnrealPak-DeveloperToolSettings.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DeveloperToolSettings\UnrealPak-DeveloperToolSettings.exp
+  [117/172] Link [x64] UnrealPak-ImageCore.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ImageCore\UnrealPak-ImageCore.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ImageCore\UnrealPak-ImageCore.exp
+  [118/172] Link [x64] UnrealPak-CookOnTheFly.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\CookOnTheFly\UnrealPak-CookOnTheFly.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\CookOnTheFly\UnrealPak-CookOnTheFly.exp
+  [119/172] Link [x64] UnrealPak-Virtualization.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Virtualization\UnrealPak-Virtualization.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Virtualization\UnrealPak-Virtualization.exp
+  [120/172] Link [x64] UnrealPak-PakFileUtilities.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\PakFileUtilities\UnrealPak-PakFileUtilities.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\PakFileUtilities\UnrealPak-PakFileUtilities.exp
+  [121/172] Link [x64] UnrealPak-IoStoreUtilities.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\IoStoreUtilities\UnrealPak-IoStoreUtilities.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\IoStoreUtilities\UnrealPak-IoStoreUtilities.exp
+  [122/172] Link [x64] UnrealPak-Slate.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Slate\UnrealPak-Slate.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Slate\UnrealPak-Slate.exp
+  [123/172] Link [x64] UnrealPak-InputCore.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\InputCore\UnrealPak-InputCore.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\InputCore\UnrealPak-InputCore.exp
+  [124/172] Link [x64] UnrealPak-CoreUObject.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\CoreUObject\UnrealPak-CoreUObject.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\CoreUObject\UnrealPak-CoreUObject.exp
+  [125/172] Link [x64] UnrealPak-PakFile.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\PakFile\UnrealPak-PakFile.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\PakFile\UnrealPak-PakFile.exp
+  [126/172] Link [x64] UnrealPak-SourceControl.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SourceControl\UnrealPak-SourceControl.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SourceControl\UnrealPak-SourceControl.exp
+  [127/172] Link [x64] UnrealPak-ImageWrapper.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ImageWrapper\UnrealPak-ImageWrapper.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ImageWrapper\UnrealPak-ImageWrapper.exp
+  [128/172] Link [x64] UnrealPak-Core.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Core\UnrealPak-Core.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Core\UnrealPak-Core.suppressed.exp
+  [129/172] Compile [x64] Module.PerforceSourceControl.cpp
+  [130/172] Link [x64] UnrealPak-CoreUObject.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\CoreUObject\UnrealPak-CoreUObject.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\CoreUObject\UnrealPak-CoreUObject.suppressed.exp
+  [131/172] Link [x64] UnrealPak-DerivedDataCache.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DerivedDataCache\UnrealPak-DerivedDataCache.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DerivedDataCache\UnrealPak-DerivedDataCache.suppressed.exp
+  [132/172] Link [x64] UnrealPak-Zen.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Zen\UnrealPak-Zen.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Zen\UnrealPak-Zen.suppressed.exp
+  [133/172] Link [x64] UnrealPak-RHI.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RHI\UnrealPak-RHI.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RHI\UnrealPak-RHI.suppressed.exp
+  [134/172] Link [x64] UnrealPak-PlatformCryptoOpenSSL.dll
+     Creating library ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCryptoOpenSSL\UnrealPak-PlatformCryptoOpenSSL.suppressed.lib and object ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCryptoOpenSSL\UnrealPak-PlatformCryptoOpenSSL.suppressed.exp
+  [135/172] Link [x64] UnrealPak-CookOnTheFly.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\CookOnTheFly\UnrealPak-CookOnTheFly.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\CookOnTheFly\UnrealPak-CookOnTheFly.suppressed.exp
+  [136/172] Link [x64] UnrealPak-PlatformCrypto.dll
+     Creating library ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCrypto\UnrealPak-PlatformCrypto.suppressed.lib and object ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCrypto\UnrealPak-PlatformCrypto.suppressed.exp
+  [137/172] Link [x64] UnrealPak-DesktopPlatform.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DesktopPlatform\UnrealPak-DesktopPlatform.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DesktopPlatform\UnrealPak-DesktopPlatform.suppressed.exp
+  [138/172] Link [x64] UnrealPak-RSA.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RSA\UnrealPak-RSA.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RSA\UnrealPak-RSA.suppressed.exp
+  [139/172] Link [x64] UnrealPak-SSL.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SSL\UnrealPak-SSL.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SSL\UnrealPak-SSL.suppressed.exp
+  [140/172] Link [x64] UnrealPak-Projects.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Projects\UnrealPak-Projects.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Projects\UnrealPak-Projects.suppressed.exp
+  [141/172] Link [x64] UnrealPak-ApplicationCore.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ApplicationCore\UnrealPak-ApplicationCore.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ApplicationCore\UnrealPak-ApplicationCore.suppressed.exp
+  [142/172] Link [x64] UnrealPak-Networking.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Networking\UnrealPak-Networking.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Networking\UnrealPak-Networking.suppressed.exp
+  [143/172] Compile [x64] Module.MessageLog.cpp
+  [144/172] Link [x64] UnrealPak-Sockets.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Sockets\UnrealPak-Sockets.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Sockets\UnrealPak-Sockets.suppressed.exp
+  [145/172] Link [x64] UnrealPak-Json.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Json\UnrealPak-Json.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Json\UnrealPak-Json.suppressed.exp
+  [146/172] Link [x64] UnrealPak-ColorManagement.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ColorManagement\UnrealPak-ColorManagement.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ColorManagement\UnrealPak-ColorManagement.suppressed.exp
+  [147/172] Link [x64] UnrealPak-NetCommon.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\NetCommon\UnrealPak-NetCommon.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\NetCommon\UnrealPak-NetCommon.suppressed.exp
+  [148/172] Link [x64] UnrealPak-SandboxFile.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SandboxFile\UnrealPak-SandboxFile.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SandboxFile\UnrealPak-SandboxFile.suppressed.exp
+  [149/172] Link [x64] UnrealPak-PlatformCryptoTypes.dll
+     Creating library ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCryptoTypes\UnrealPak-PlatformCryptoTypes.suppressed.lib and object ..\Plugins\Experimental\PlatformCrypto\Intermediate\Build\Win64\x64\UnrealPak\Development\PlatformCryptoTypes\UnrealPak-PlatformCryptoTypes.suppressed.exp
+  [150/172] Link [x64] UnrealPak-DeveloperSettings.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DeveloperSettings\UnrealPak-DeveloperSettings.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DeveloperSettings\UnrealPak-DeveloperSettings.suppressed.exp
+  [151/172] Link [x64] UnrealPak-DeveloperToolSettings.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DeveloperToolSettings\UnrealPak-DeveloperToolSettings.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\DeveloperToolSettings\UnrealPak-DeveloperToolSettings.suppressed.exp
+  [152/172] Link [x64] UnrealPak-ImageWrapper.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ImageWrapper\UnrealPak-ImageWrapper.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ImageWrapper\UnrealPak-ImageWrapper.suppressed.exp
+  [153/172] Link [x64] UnrealPak-ImageCore.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ImageCore\UnrealPak-ImageCore.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\ImageCore\UnrealPak-ImageCore.suppressed.exp
+  [154/172] Link [x64] UnrealPak-PakFile.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\PakFile\UnrealPak-PakFile.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\PakFile\UnrealPak-PakFile.suppressed.exp
+  [155/172] Link [x64] UnrealPak-SlateCore.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SlateCore\UnrealPak-SlateCore.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SlateCore\UnrealPak-SlateCore.suppressed.exp
+  [156/172] Link [x64] UnrealPak-InputCore.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\InputCore\UnrealPak-InputCore.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\InputCore\UnrealPak-InputCore.suppressed.exp
+  [157/172] Link [x64] UnrealPak-PakFileUtilities.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\PakFileUtilities\UnrealPak-PakFileUtilities.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\PakFileUtilities\UnrealPak-PakFileUtilities.suppressed.exp
+  [158/172] Link [x64] UnrealPak-PerforceSourceControl.lib
+     Creating library ..\Plugins\Developer\PerforceSourceControl\Intermediate\Build\Win64\x64\UnrealPak\Development\PerforceSourceControl\UnrealPak-PerforceSourceControl.lib and object ..\Plugins\Developer\PerforceSourceControl\Intermediate\Build\Win64\x64\UnrealPak\Development\PerforceSourceControl\UnrealPak-PerforceSourceControl.exp
+  [159/172] Link [x64] UnrealPak-MessageLog.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\MessageLog\UnrealPak-MessageLog.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\MessageLog\UnrealPak-MessageLog.exp
+  [160/172] Link [x64] UnrealPak-RenderCore.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RenderCore\UnrealPak-RenderCore.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\RenderCore\UnrealPak-RenderCore.suppressed.exp
+  [161/172] Link [x64] UnrealPak-PerforceSourceControl.dll
+     Creating library ..\Plugins\Developer\PerforceSourceControl\Intermediate\Build\Win64\x64\UnrealPak\Development\PerforceSourceControl\UnrealPak-PerforceSourceControl.suppressed.lib and object ..\Plugins\Developer\PerforceSourceControl\Intermediate\Build\Win64\x64\UnrealPak\Development\PerforceSourceControl\UnrealPak-PerforceSourceControl.suppressed.exp
+  [162/172] Link [x64] UnrealPak-Slate.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Slate\UnrealPak-Slate.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Slate\UnrealPak-Slate.suppressed.exp
+  [163/172] Link [x64] UnrealPak-Virtualization.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Virtualization\UnrealPak-Virtualization.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\Virtualization\UnrealPak-Virtualization.suppressed.exp
+  [164/172] Link [x64] UnrealPak-MessageLog.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\MessageLog\UnrealPak-MessageLog.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\MessageLog\UnrealPak-MessageLog.suppressed.exp
+  [165/172] Compile [x64] Module.AssetRegistry.cpp
+  [166/172] Link [x64] UnrealPak-AssetRegistry.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\AssetRegistry\UnrealPak-AssetRegistry.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\AssetRegistry\UnrealPak-AssetRegistry.exp
+  [167/172] Link [x64] UnrealPak.exe
+  [168/172] Link [x64] UnrealPak-AssetRegistry.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\AssetRegistry\UnrealPak-AssetRegistry.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\AssetRegistry\UnrealPak-AssetRegistry.suppressed.exp
+  [169/172] Link [x64] UnrealPak-SourceControl.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SourceControl\UnrealPak-SourceControl.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\SourceControl\UnrealPak-SourceControl.suppressed.exp
+  [170/172] Link [x64] UnrealPak-IoStoreUtilities.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealPak\Development\IoStoreUtilities\UnrealPak-IoStoreUtilities.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealPak\Development\IoStoreUtilities\UnrealPak-IoStoreUtilities.suppressed.exp
+  [171/172] WriteMetadata UnrealPak.version
+  [172/172] WriteMetadata UnrealPak.target
+  Total time in Parallel executor: 179.22 seconds
+  Total execution time: 615.86 seconds

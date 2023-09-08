@@ -11,7 +11,9 @@
 #include "XYZGameMode.h"
 #include "XYZGameState.h"
 #include "DrawDebugHelpers.h"
+#include "XYZSelectionStructure.h"
 #include "Kismet/GameplayStatics.h" // Include this header
+#include "XYZHUD.h"
 #include "EnhancedInputSubsystems.h"
 
 AXYZPlayerController::AXYZPlayerController()
@@ -26,6 +28,9 @@ AXYZPlayerController::AXYZPlayerController()
 	{
 		InputTriggeredTime.Add(static_cast<EXYZInputType>(EnumValue), 0.0f);
 	}
+	InputTriggeredCooldown = .16f;
+	SelectionStructure = NewObject<UXYZSelectionStructure>(this, UXYZSelectionStructure::StaticClass(), "SelectionStructure");
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void AXYZPlayerController::BeginPlay()
@@ -37,6 +42,17 @@ void AXYZPlayerController::BeginPlay()
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
+}
+
+void AXYZPlayerController::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+	float x, y;
+	if (!GetWorld()->GetFirstPlayerController()->GetMousePosition(x, y)) {
+		OnSelectionBoxReleased.Broadcast(0, 0);
+	}
+
+	bWorldHitSuccessful = GetHitResultAtScreenPosition(GetMousePositionOnViewport(), ECollisionChannel::ECC_WorldStatic, true, WorldHit);
 }
 
 void AXYZPlayerController::SetupInputComponent()
@@ -83,12 +99,21 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 	switch (InputType) {
 		case EXYZInputType::PRIMARY_INPUT:
 			BoxSelectStart = GetMousePositionOnViewport();
+			GetHUD<AXYZHUD>()->bSelectActors = true;
+			GetHUD<AXYZHUD>()->BoxStart = BoxSelectStart;
+			GetHUD<AXYZHUD>()->BoxEnd = BoxSelectStart;
+			// Fire the SelectionBox event
+			OnSelectionBox.Broadcast(BoxSelectStart.X, BoxSelectStart.Y);
 			break;
 		case EXYZInputType::PRIMARY_MOD:
 			bPrimaryModifier = true;
 			break;
 		case EXYZInputType::SECONDARY_MOD:
 			bSecondaryModifier = true;
+			break;
+		case EXYZInputType::STOP:
+			FXYZInputMessage InputMessage(0, SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, false);
+			QueueInput(InputMessage);
 			break;
 	}
 }
@@ -98,43 +123,38 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 {
 	InputTriggeredTime[InputType] += GetWorld()->GetDeltaSeconds();
 
+	if (InputType == EXYZInputType::PRIMARY_INPUT) {
+		BoxSelectEnd = GetMousePositionOnViewport();
+		GetHUD<AXYZHUD>()->BoxEnd = BoxSelectEnd;
+	}
+	
 	// if still below short press threshold do not do anything with this input
 	if (InputTriggeredTime[InputType] <= ShortInputThreshold) {
 		return;
 	}
 
-	// We look for the location in the world where the player has pressed the input
-	FHitResult Hit;
-	bool bHitSuccessful = false;
-	bHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_Pawn, true, Hit);
+	if (!bCanInputRepeatWhileTriggered && InputType != EXYZInputType::PRIMARY_INPUT) return;
+	bCanInputRepeatWhileTriggered = false;
+	GetWorld()->GetTimerManager().SetTimer(InputTriggeredCooldownTimer, [this]() {
+		bCanInputRepeatWhileTriggered = true;
+		}, InputTriggeredCooldown, false);
 
-	FHitResult BoxHitStart, BoxHitEnd;
-	bool bBoxHitStartSuccess = GetHitResultAtScreenPosition(BoxSelectStart, ECollisionChannel::ECC_WorldStatic, true, BoxHitStart);
-	bool bBoxHitEndSuccess = GetHitResultAtScreenPosition(BoxSelectEnd, ECollisionChannel::ECC_WorldStatic, true, BoxHitEnd);
-	FVector BoxCenter = (BoxHitStart.Location + BoxHitEnd.Location) / 2.0f; // Calculate the center.
+	FXYZInputMessage InputStopMessage(0, SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, true);
 
-	FVector BoxExtent = (BoxHitEnd.Location - BoxHitStart.Location) / 2.0f;
-
-	float BoxHeight = 10.0f;
-
-	FVector BoxMin = BoxCenter - FVector(BoxExtent.X, BoxExtent.Y, BoxHeight / 2.0f);
-	FVector BoxMax = BoxCenter + FVector(BoxExtent.X, BoxExtent.Y, BoxHeight / 2.0f);
-
-	FBox SelectionBox(BoxMin, BoxMax);
 	switch (InputType) {
+	case EXYZInputType::STOP:
+		//QueueInput(InputStopMessage);
+		break;
 	case EXYZInputType::PRIMARY_INPUT:
-		BoxSelectEnd = GetMousePositionOnViewport();
-		
-		DrawDebugBox(GetWorld(), SelectionBox.GetCenter(), SelectionBox.GetExtent(), FColor::Red, false, .1f, 0, 5);
-		//UE_LOG(LogTemp, Warning, TEXT("Box Selection Start: %s"), *BoxSelectStart.ToString());
-		//UE_LOG(LogTemp, Warning, TEXT("Box Selection End: %s"), *BoxSelectEnd.ToString());
+		OnSelectionBoxTriggered.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
 		break;
 	case EXYZInputType::SECONDARY_INPUT:
 		// If we dont hit an actor send a move input
-		if (bHitSuccessful && !Hit.GetActor())
+		if (bWorldHitSuccessful && !SelectionStructure->IsEmpty())
 		{
-			// spawn some particles
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, Hit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+			FXYZInputMessage InputMessage(0, SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, bPrimaryModifier);
+			QueueInput(InputMessage);
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
 		}
 		break;
 	}
@@ -143,62 +163,9 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 
 void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 {
-	// if we are in short input threshold execute short input 
-	FHitResult PawnHit;
-	bool bPawnHitSuccessful = false;
 
-	bPawnHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_Pawn, true, PawnHit);
-
-	FHitResult WorldHit;
-	bool bWorldHitSuccessful = false;
-
-	bWorldHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_WorldStatic, true, WorldHit);
-
-	if (InputTriggeredTime[InputType] <= ShortInputThreshold) {
-		switch (InputType) {
-		case EXYZInputType::PRIMARY_INPUT:
-			// If we dont hit an actor send a move input
-			if (bPawnHitSuccessful && PawnHit.GetActor())
-			{
-				AXYZActor* SelectedActor = Cast<AXYZActor>(PawnHit.GetActor());
-				if (SelectedActor) {
-					SelectActors({ SelectedActor });
-				}
-			}
-			break;
-		case EXYZInputType::SECONDARY_INPUT:
-			// If we dont hit an actor send a move input
-			if (bWorldHitSuccessful && !SelectedActors.IsEmpty())
-			{
-				TArray<int32> SelectedActorIds;
-				TArray<TArray<AXYZActor*>> ActorArrays;
-				SelectedActors.GenerateValueArray(ActorArrays);
-				for (auto arr : ActorArrays) {
-					for (auto a : arr) {
-						SelectedActorIds.Add(a->UActorId);
-					}
-				}
-				FXYZInputMessage InputMessage(0, SelectedActorIds, -1, WorldHit.Location, InputType, bPrimaryModifier);
-				QueueInput(InputMessage);
-				FString messageString = InputMessage.ToString();
-				UE_LOG(LogTemp, Warning, TEXT("Queued Input: %s"), *messageString);
-				// spawn some particles
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
-			}
-			break;
-		case EXYZInputType::PRIMARY_MOD:
-			bPrimaryModifier = false;
-			break;
-		case EXYZInputType::SECONDARY_MOD:
-			bSecondaryModifier = false;
-			break;
-		}
-		//UE_LOG(LogTemp, Warning, TEXT("Input Triggered for Type %d (Short Press) - Time Triggered: %f seconds"),static_cast<int32>(InputType), InputTriggeredTime[InputType]);
-		return;
-	}
+	//LONG INPUT RELEASE
 	FHitResult BoxHitStart, BoxHitEnd;
-	bool bBoxHitStartSuccess = GetHitResultAtScreenPosition(BoxSelectStart, ECollisionChannel::ECC_WorldStatic, true, BoxHitStart);
-	bool bBoxHitEndSuccess = GetHitResultAtScreenPosition(BoxSelectEnd, ECollisionChannel::ECC_WorldStatic, true, BoxHitEnd);
 	switch (InputType) {
 	case EXYZInputType::PRIMARY_MOD:
 		bPrimaryModifier = false;
@@ -207,68 +174,56 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		bSecondaryModifier = false;
 		break;
 	case EXYZInputType::PRIMARY_INPUT:
-		
-		if (!(bBoxHitEndSuccess && bBoxHitStartSuccess)) return;
-
-		FVector BoxCenter = (BoxHitStart.Location + BoxHitEnd.Location) / 2.0f; // Calculate the center.
-		FVector BoxExtent = (BoxHitEnd.Location - BoxHitStart.Location) / 2.0f;
-		float BoxHeight = 10.0f;
-		FVector BoxMin = BoxCenter - FVector(BoxExtent.X, BoxExtent.Y, BoxHeight / 2.0f);
-		FVector BoxMax = BoxCenter + FVector(BoxExtent.X, BoxExtent.Y, BoxHeight / 2.0f);
-
-		FBox SelectionBox(BoxMin, BoxMax); 
-
-		TArray<AXYZActor*> XYZActors;
-		// Populate OverlapResults with actors that are in the box
-		DrawDebugBox(GetWorld(), SelectionBox.GetCenter(), SelectionBox.GetExtent(), FColor::Green, false, 3.0f, 0, 5);
-		AXYZGameState* MyGameState = Cast<AXYZGameState>(GetWorld()->GetGameState());
-		UE_LOG(LogTemp, Warning, TEXT("Box Min: %s, Max: %s"), *SelectionBox.Min.ToString(), *SelectionBox.Max.ToString());
-		for (AXYZActor* XYZActor : MyGameState->AllActors)
+		OnSelectionBoxReleased.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
+		SelectActors(GetHUD<AXYZHUD>()->SelectedActors);
+		GetHUD<AXYZHUD>()->bSelectActors = false;
+		break;
+	case EXYZInputType::SECONDARY_INPUT:
+		if (bWorldHitSuccessful && !SelectionStructure->IsEmpty())
 		{
-			FVector ActorLocation = XYZActor->GetActorLocation();
-			UE_LOG(LogTemp, Warning, TEXT("Actor %s is at %s"), *XYZActor->GetName(), *ActorLocation.ToString());
-			// Since height doesn't matter, we only check the X and Y coordinates
-			if (ActorLocation.X >= FMath::Min(SelectionBox.Max.X, SelectionBox.Min.X) && ActorLocation.X <= FMath::Max(SelectionBox.Max.X, SelectionBox.Min.X) &&
-				ActorLocation.Y >= FMath::Min(SelectionBox.Max.Y, SelectionBox.Min.Y) && ActorLocation.Y <= FMath::Max(SelectionBox.Max.Y, SelectionBox.Min.Y))
-			{
-				// Actor is inside the box, add to array
-				XYZActors.Add(XYZActor);
-			}
+			FXYZInputMessage InputMessage(0, SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, bPrimaryModifier);
+			QueueInput(InputMessage);
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
 		}
-		
-		// Debug draw the selection box.
-
-		if (XYZActors.Num() > 0) {
-			SelectActors(XYZActors);
-		}
-		BoxSelectStart = FVector2D::ZeroVector;
-		BoxSelectEnd = FVector2D::ZeroVector;
 		break;
 	}
-	//UE_LOG(LogTemp, Warning, TEXT("Input Triggered for Type %d (Long Press) - Time Triggered: %f seconds"), static_cast<int32>(InputType), InputTriggeredTime[InputType]);
 }
 
 void AXYZPlayerController::SelectActors(TArray<AXYZActor*> XYZActors){
-	SelectedActors.Empty();
-	for (AXYZActor* XYZActor : XYZActors) {
-		AddActorToSelection(XYZActor);
-	}
-}
 
-void AXYZPlayerController::AddActorToSelection(AXYZActor* XYZActor)
-{
-	if (!XYZActor) return;
-	int32 ActorId = XYZActor->ActorId;
-	if (SelectedActors.Contains(ActorId))
-	{
-		SelectedActors[ActorId].Add(XYZActor);
+	if (XYZActors.IsEmpty()) {
+		SelectionStructure->Empty();
+		FString SelectedActorsString = SelectionStructure->ToString();
+		UE_LOG(LogTemp, Warning, TEXT("Selected Actors: %s"), *SelectedActorsString);
+		return;
 	}
-	else
-	{
-		SelectedActors.Add(ActorId, { XYZActor });
+
+	if (XYZActors.Num() == 1 && SelectionStructure->Contains(XYZActors[0]) && bPrimaryModifier) {
+		SelectionStructure->Remove(XYZActors[0]);
+		FString SelectedActorsString = SelectionStructure->ToString();
+		UE_LOG(LogTemp, Warning, TEXT("Selected Actors: %s"), *SelectedActorsString);
+		return;
 	}
-	// Log the addition of the actor
-	UE_LOG(LogTemp, Warning, TEXT("Added actor with ID %d to selection. UID %d"), ActorId, XYZActor->UActorId);
+
+	if (bPrimaryModifier) {
+		bool bInSelection = true;
+		for (AXYZActor* XYZActor : XYZActors) {
+			bInSelection = bInSelection && SelectionStructure->Contains(XYZActor);
+		}
+		if (bInSelection && XYZActors.Num() != SelectionStructure->ToArray().Num()) {
+			SelectionStructure->Remove(XYZActors);
+			FString SelectedActorsString = SelectionStructure->ToString();
+			UE_LOG(LogTemp, Warning, TEXT("Selected Actors: %s"), *SelectedActorsString);
+		}
+		else {
+			SelectionStructure->Add(XYZActors);
+		}
+		return;
+	} 
+	else {
+		SelectionStructure->Empty();
+		SelectionStructure->Add(XYZActors);
+	}
 }
 
 FVector2D AXYZPlayerController::GetMousePositionOnViewport()

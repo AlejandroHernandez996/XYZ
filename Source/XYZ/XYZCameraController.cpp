@@ -17,14 +17,15 @@ AXYZCameraController::AXYZCameraController()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when character does
-	CameraBoom->TargetArmLength = 1200.0f;
-	CameraBoom->SetRelativeRotation(CameraBoomRotation);
+	CameraBoom->TargetArmLength = 4000.0f;  // You can tweak this distance as per your need
+	CameraBoom->SetRelativeRotation(FRotator(-45.0f, 45.0f, 0.0f));  // Set isometric angles
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
 	// Create a camera...
 	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	TopDownCameraComponent->FieldOfView = 30.0f;  // Flatten the view for an isometric look
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
@@ -36,29 +37,24 @@ AXYZCameraController::AXYZCameraController()
 void AXYZCameraController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (GetLocalRole() != ROLE_Authority)
+	{
+		GetWorld()->GetFirstPlayerController()->SetViewTarget(this);
+	}
 }
 
 void AXYZCameraController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (GetLocalRole() == ROLE_Authority) {
+	float x, y;
+	if (GetLocalRole() == ROLE_Authority || !GetWorld()->GetFirstPlayerController()->GetMousePosition(x, y)) {
 		return;
 	}
 	FVector2D MousePosition = GetMousePositionOnViewport();
-	if (MousePosition.X == 0.0f && MousePosition.Y == 0.0f)
-	{
-		return;
-	}
-
 	FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
-
-	// Calculate normalized mouse position
 	FVector2D NormalizedMousePosition = MousePosition / ViewportSize;
-	
-	// Log the mouse position and normalized position
-	//UE_LOG(LogTemp, Warning, TEXT("Mouse Position: %s, Normalized: %s"), *MousePosition.ToString(), *NormalizedMousePosition.ToString());
-
+	UE_LOG(LogTemp, Warning, TEXT("Mouse Position: %s, Normalized: %s"), *MousePosition.ToString(), *NormalizedMousePosition.ToString());
 	FVector RIGHT = FVector(1.0f, 0.0f, 0.0f);
 	FVector LEFT = FVector(-1.0f, 0.0f, 0.0f);
 	FVector UP = FVector(0.0f, 1.0f, 0.0f);
@@ -102,16 +98,15 @@ void AXYZCameraController::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void AXYZCameraController::MoveCamera(const FVector& Direction)
 {
-	// Calculate the camera's new location based on the direction
-	FVector NewCameraLocation = TopDownCameraComponent->GetComponentLocation() + Direction * EdgePanSpeed * GetWorld()->DeltaTimeSeconds;
+	FVector WorldDirection = CameraBoom->GetComponentRotation().RotateVector(Direction);
 
-	// Limit the camera's movement within reasonable bounds
-	// You can customize this based on your level's bounds
-	FVector MinCameraLocation = FVector(-100000.0f, -100000.0f, 0.0f);
-	FVector MaxCameraLocation = FVector(100000.0f, 100000.0f, 0.0f);
-	NewCameraLocation.X = FMath::Clamp(NewCameraLocation.X, MinCameraLocation.X, MaxCameraLocation.X);
-	NewCameraLocation.Y = FMath::Clamp(NewCameraLocation.Y, MinCameraLocation.Y, MaxCameraLocation.Y);
+	// If you want to project the motion onto a plane (in this case, the XY plane),
+	// you can nullify the Z-component of the movement vector.
+	WorldDirection.Z = 0;
+
+	// Calculate the camera's new location based on the direction
+	FVector NewCameraLocation = GetActorLocation() + WorldDirection * EdgePanSpeed * GetWorld()->DeltaTimeSeconds;
 
 	// Set the new camera location
-	TopDownCameraComponent->SetWorldLocation(NewCameraLocation);
+	SetActorLocation(NewCameraLocation);
 }
