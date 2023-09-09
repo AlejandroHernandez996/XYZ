@@ -513,9 +513,13 @@ void FSelectionBoxReleasedEvent_DelegateWrapper(const FMulticastScriptDelegate& 
 #endif
 		static const UECodeGen_Private::FFloatPropertyParams NewProp_InputTriggeredCooldown;
 #if WITH_METADATA
-		static const UECodeGen_Private::FMetaDataPairParam NewProp_FXCursor_MetaData[];
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_MoveCursor_MetaData[];
 #endif
-		static const UECodeGen_Private::FObjectPropertyParams NewProp_FXCursor;
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_MoveCursor;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_AttackCursor_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_AttackCursor;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_DefaultMappingContext_MetaData[];
 #endif
@@ -621,14 +625,21 @@ void FSelectionBoxReleasedEvent_DelegateWrapper(const FMulticastScriptDelegate& 
 #endif
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredCooldown = { "InputTriggeredCooldown", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZPlayerController, InputTriggeredCooldown), METADATA_PARAMS(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredCooldown_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredCooldown_MetaData)) };
 #if WITH_METADATA
-	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_FXCursor_MetaData[] = {
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_MoveCursor_MetaData[] = {
 		{ "Category", "Input" },
 		{ "Comment", "/** FX Class that we will spawn when clicking */" },
 		{ "ModuleRelativePath", "XYZPlayerController.h" },
 		{ "ToolTip", "FX Class that we will spawn when clicking" },
 	};
 #endif
-	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_FXCursor = { "FXCursor", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZPlayerController, FXCursor), Z_Construct_UClass_UNiagaraSystem_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_FXCursor_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_FXCursor_MetaData)) };
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_MoveCursor = { "MoveCursor", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZPlayerController, MoveCursor), Z_Construct_UClass_UNiagaraSystem_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_MoveCursor_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_MoveCursor_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_AttackCursor_MetaData[] = {
+		{ "Category", "Input" },
+		{ "ModuleRelativePath", "XYZPlayerController.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_AttackCursor = { "AttackCursor", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZPlayerController, AttackCursor), Z_Construct_UClass_UNiagaraSystem_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_AttackCursor_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_AttackCursor_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_DefaultMappingContext_MetaData[] = {
 		{ "AllowPrivateAccess", "true" },
@@ -759,7 +770,8 @@ void FSelectionBoxReleasedEvent_DelegateWrapper(const FMulticastScriptDelegate& 
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AXYZPlayerController_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_ShortInputThreshold,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredCooldown,
-		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_FXCursor,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_MoveCursor,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_AttackCursor,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_DefaultMappingContext,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_PrimaryInputAction,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_SecondaryInputAction,
@@ -817,9 +829,9 @@ void FSelectionBoxReleasedEvent_DelegateWrapper(const FMulticastScriptDelegate& 
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_AXYZPlayerController, AXYZPlayerController::StaticClass, TEXT("AXYZPlayerController"), &Z_Registration_Info_UClass_AXYZPlayerController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZPlayerController), 1530315418U) },
+		{ Z_Construct_UClass_AXYZPlayerController, AXYZPlayerController::StaticClass, TEXT("AXYZPlayerController"), &Z_Registration_Info_UClass_AXYZPlayerController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZPlayerController), 1353340145U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_581734120(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_3994233883(TEXT("/Script/XYZ"),
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

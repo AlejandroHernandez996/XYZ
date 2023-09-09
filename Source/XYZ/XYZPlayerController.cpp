@@ -186,16 +186,23 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		break;
 	case EXYZInputType::SECONDARY_INPUT:
 		CreateAndQueueInput(SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, InputType, bPrimaryModifier);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+		if (!HitActor || (SelectionStructure->Num == 1 && SelectionStructure->ToActorIdArray()[0] == XYZActorHitId)) {
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, MoveCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+		}
 		break;
 	case EXYZInputType::ATTACK_MOVE:
 		CreateAndQueueInput(SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, InputType, bPrimaryModifier);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+		if (!HitActor || (SelectionStructure->Num == 1 && SelectionStructure->ToActorIdArray()[0] == XYZActorHitId)) {
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, AttackCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+		}
 		break;
 	}
 }
 
-void AXYZPlayerController::SelectActors(TArray<AXYZActor*> XYZActors){
+void AXYZPlayerController::SelectActors(TArray<AXYZActor*> _XYZActors){
+	TSet<AXYZActor*> XYZActorsSet = TSet<AXYZActor*>(_XYZActors);
+	TArray<AXYZActor*> XYZActors = XYZActorsSet.Array();
+
 	if (XYZActors.IsEmpty()) {
 		SelectionStructure->Empty();
 		return;

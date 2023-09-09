@@ -37,7 +37,10 @@ public:
 
 	/** FX Class that we will spawn when clicking */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	UNiagaraSystem* FXCursor;
+	UNiagaraSystem* MoveCursor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UNiagaraSystem* AttackCursor;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))

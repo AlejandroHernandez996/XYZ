@@ -52,4 +52,7 @@ public:
 
     FString ToString() const;
 
+public:
+    int32 Num;
+
 };

@@ -14,6 +14,7 @@ void UXYZSelectionStructure::Add(AXYZActor* Actor) {
             // UActorId does not exist for this ActorId, so we can safely add it.
             SelectedActors[Actor->ActorId].Add(Actor->UActorId, Actor);
             UE_LOG(LogTemp, Warning, TEXT("Added Actor with existing ActorId."));
+            Num++;
             Actor->ShowDecal(true, EXYZDecalType::FRIENDLY);
         }
     }
@@ -23,12 +24,17 @@ void UXYZSelectionStructure::Add(AXYZActor* Actor) {
         InnerMap.Add(Actor->UActorId, Actor);
         SelectedActors.Add(Actor->ActorId, InnerMap);
         Actor->ShowDecal(true, EXYZDecalType::FRIENDLY);
+        Num++;
         UE_LOG(LogTemp, Warning, TEXT("Added Actor with new ActorId."));
     }
 }
 
 void UXYZSelectionStructure::Add(TArray<AXYZActor*> Actors) {
-    SelectedEnemy = nullptr;
+    if (SelectedEnemy) {
+        SelectedEnemy->ShowDecal(false, EXYZDecalType::ENEMY);
+        SelectedEnemy = nullptr;
+    }
+    
     for (auto Actor : Actors) {
         Add(Actor);
     }
@@ -45,11 +51,11 @@ void UXYZSelectionStructure::Remove(AXYZActor* Actor) {
     if (Contains(Actor)) {
         SelectedActors[Actor->ActorId].Remove(Actor->UActorId);
         UE_LOG(LogTemp, Warning, TEXT("Removed Actor"));
-
+        Actor->ShowDecal(false, EXYZDecalType::FRIENDLY);
+        Num--;
         // Optionally, remove the ActorId key if it has an empty map as a value.
         if (SelectedActors[Actor->ActorId].Num() == 0) {
             SelectedActors.Remove(Actor->ActorId);
-            Actor->ShowDecal(false, EXYZDecalType::FRIENDLY);
         }
     }
 }
@@ -96,6 +102,12 @@ void UXYZSelectionStructure::SelectControlGroup(int32 ControlGroupIndex) {
 }
 
 void UXYZSelectionStructure::SelectEnemyActor(AXYZActor* Actor) {
+    if (SelectedEnemy) {
+        SelectedEnemy->ShowDecal(false, EXYZDecalType::ENEMY);
+        SelectedEnemy = nullptr;
+    }
+    Empty();
+
     SelectedEnemy = Actor;
     Actor->ShowDecal(true, EXYZDecalType::ENEMY);
 }
@@ -130,6 +142,10 @@ bool UXYZSelectionStructure::Contains(AXYZActor* Actor) {
 }
 
 void UXYZSelectionStructure::Empty() {
+    if (SelectedEnemy) {
+        SelectedEnemy->ShowDecal(false, EXYZDecalType::ENEMY);
+        SelectedEnemy = nullptr;
+    }
     if (SelectedActors.IsEmpty()) return;
 
     TArray<AXYZActor*> Actors = ToArray();
@@ -139,6 +155,7 @@ void UXYZSelectionStructure::Empty() {
         }
     }
     SelectedActors.Empty();
+    Num = 0;
 }
 
 bool UXYZSelectionStructure::IsEmpty() {
