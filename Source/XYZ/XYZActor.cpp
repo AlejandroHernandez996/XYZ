@@ -34,6 +34,9 @@ void AXYZActor::BeginPlay()
 void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+    if (Health == 0.0f) {
+        Destroy();
+    }
     if (GetLocalRole() == ROLE_Authority) {
 
         if (ActionQueue.Num() > 0 && ActionQueue[0]) {
