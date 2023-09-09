@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "XYZAbility.h"
 #include "XYZFactionType.h"
+#include "XYZDecalType.h"
 #include "XYZActor.generated.h"
 
 UCLASS()
@@ -24,7 +25,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
         int32 ActorId;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)
         int32 UActorId;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
@@ -57,6 +58,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", Replicated)
         float AttackRange;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Decal")
+        TMap<EXYZDecalType, UMaterialInterface*> DecalMaterials;
+
     virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
@@ -79,11 +83,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decal")
         UDecalComponent* SelectionDecal;
 
-    void ShowDecal(bool bShowDecal);
+    void ShowDecal(bool bShowDecal, EXYZDecalType DecalType);
 
     UFUNCTION()
         void QueueAction(UXYZAction* Action);
     UFUNCTION()
-        AXYZActor* FindClosestActor();
+        AXYZActor* FindClosestActor(bool bIgnoreFriendlyActors);
     bool bCancelActionFlag;
 };

@@ -7,6 +7,7 @@
 #include "Components/DecalComponent.h"
 #include "XYZAction.h"
 #include "XYZGameState.h"
+#include "XYZDecalType.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -34,19 +35,14 @@ void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
     if (GetLocalRole() == ROLE_Authority) {
-        if (bCancelActionFlag && CurrentAction) {
-            CurrentAction->CancelAction();
-            bCancelActionFlag = false;
-        }
-        if (CurrentAction && !CurrentAction->IsFlaggedForDeuque()) {
-            CurrentAction->TryAction(DeltaTime);
-        }
-        if (!ActionQueue.IsEmpty()) {
-            if (!CurrentAction || CurrentAction->IsFlaggedForDeuque()) {
-                PrevAction = CurrentAction;
-                CurrentAction = ActionQueue[0];
+
+        if (ActionQueue.Num() > 0 && ActionQueue[0]) {
+            if (ActionQueue[0]->IsFlaggedForDeuque()) {
                 ActionQueue.RemoveAt(0);
             }
+        }
+        if (ActionQueue.Num() > 0 && ActionQueue[0]) {
+            ActionQueue[0]->TryAction(DeltaTime);
         }
     }
     FVector Start = GetActorLocation();
@@ -97,22 +93,24 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifet
     DOREPLIFETIME(AXYZActor, AttackDamage);
     DOREPLIFETIME(AXYZActor, AttackRate);
     DOREPLIFETIME(AXYZActor, AttackRange);
+
+    DOREPLIFETIME(AXYZActor, UActorId);
+
 }
 
 void AXYZActor::QueueAction(UXYZAction* Action) {
 	if (!Action) return;
-
-	if (!Action->bQueueInput) {
-        if (CurrentAction) {
-            bCancelActionFlag = true;
-        }
-		ActionQueue.Empty();
-	}
+    if (!Action->bQueueInput && ActionQueue.Num() > 0 && ActionQueue[0]) {
+        ActionQueue[0]->CancelAction();
+        ActionQueue.Empty();
+    }
 	ActionQueue.Add(Action);
 
 }
 
-void AXYZActor::ShowDecal(bool bShowDecal) {
+void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType) {
+
+    SelectionDecal->SetMaterial(0, DecalMaterials[DecalType]);
     if (bShowDecal) {
         SelectionDecal->DecalSize = FVector(400.0f, 80.0f, 80.0f);
     }
@@ -136,7 +134,7 @@ void AXYZActor::Attack(AXYZActor* TargetActor) {
     }
 }
 
-AXYZActor* AXYZActor::FindClosestActor() {
+AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors) {
 
     AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
 
@@ -145,7 +143,7 @@ AXYZActor* AXYZActor::FindClosestActor() {
     for (AXYZActor* OtherActor : GameState->AllActors)
     {
         // Exclude self from the list (if it's in the list)
-        if (OtherActor == this)
+        if (OtherActor == this || bIgnoreFriendlyActors && OtherActor->TeamId == TeamId || OtherActor->Health <= 0.0f)
         {
             continue;
         }

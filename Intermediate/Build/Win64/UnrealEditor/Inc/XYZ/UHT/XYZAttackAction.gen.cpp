@@ -32,6 +32,11 @@ void EmptyLinkFunctionForGeneratedCodeXYZAttackAction() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_TargetLocationThreshold_MetaData[];
 #endif
 		static const UECodeGen_Private::FFloatPropertyParams NewProp_TargetLocationThreshold;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_bIgnoreAllies_MetaData[];
+#endif
+		static void NewProp_bIgnoreAllies_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_bIgnoreAllies;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UECodeGen_Private::FClassParams ClassParams;
@@ -49,13 +54,25 @@ void EmptyLinkFunctionForGeneratedCodeXYZAttackAction() {}
 #endif
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_TargetLocationThreshold_MetaData[] = {
-		{ "Category", "Move" },
+		{ "Category", "Attack" },
 		{ "ModuleRelativePath", "XYZAttackAction.h" },
 	};
 #endif
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_TargetLocationThreshold = { "TargetLocationThreshold", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(UXYZAttackAction, TargetLocationThreshold), METADATA_PARAMS(Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_TargetLocationThreshold_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_TargetLocationThreshold_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_bIgnoreAllies_MetaData[] = {
+		{ "Category", "Attack" },
+		{ "ModuleRelativePath", "XYZAttackAction.h" },
+	};
+#endif
+	void Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_bIgnoreAllies_SetBit(void* Obj)
+	{
+		((UXYZAttackAction*)Obj)->bIgnoreAllies = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_bIgnoreAllies = { "bIgnoreAllies", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, sizeof(bool), sizeof(UXYZAttackAction), &Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_bIgnoreAllies_SetBit, METADATA_PARAMS(Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_bIgnoreAllies_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_bIgnoreAllies_MetaData)) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_UXYZAttackAction_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_TargetLocationThreshold,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UXYZAttackAction_Statics::NewProp_bIgnoreAllies,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UXYZAttackAction_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<UXYZAttackAction>::IsAbstract,
@@ -95,9 +112,9 @@ void EmptyLinkFunctionForGeneratedCodeXYZAttackAction() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZAttackAction_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UXYZAttackAction, UXYZAttackAction::StaticClass, TEXT("UXYZAttackAction"), &Z_Registration_Info_UClass_UXYZAttackAction, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UXYZAttackAction), 3389543186U) },
+		{ Z_Construct_UClass_UXYZAttackAction, UXYZAttackAction::StaticClass, TEXT("UXYZAttackAction"), &Z_Registration_Info_UClass_UXYZAttackAction, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UXYZAttackAction), 1605916965U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZAttackAction_h_2730893842(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZAttackAction_h_1185619836(TEXT("/Script/XYZ"),
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZAttackAction_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZAttackAction_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

@@ -3,10 +3,6 @@
   Log file: C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Programs\UnrealBuildTool\Log.txt
   Using 'git status' to determine working set for adaptive non-unity build (C:\Users\aleja\gamedev\Engine\UnrealEngine).
   Creating makefile for UnrealFrontend (no existing makefile)
-  Parsing headers for UnrealFrontend
-    Running Internal UnrealHeaderTool UnrealFrontend C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Intermediate\Build\Win64\UnrealFrontend\Development\UnrealFrontend.uhtmanifest -WarningsAsErrors
-  Total of 284 written
-  Reflection code generated for UnrealFrontend in 0.6349726 seconds
   Waiting for 'git status' command to complete
   Building UnrealFrontend...
   Using Visual Studio 2022 14.34.31946 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
@@ -18,370 +14,537 @@
   [Upgrade]
   Determining max actions to execute in parallel (10 physical cores, 20 logical cores)
     Executing up to 10 processes, one per physical core
-    Requested 1.5 GB free memory per action, 7.33 GB available: limiting max parallel actions to 4
-  Building 348 actions with 4 processes...
-  [1/348] Resource Default.rc2
-  [2/348] Compile [x64] SharedPCH.CoreUObject.ShadowErrors.cpp
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\INCLUDE\limits(890): fatal error C1088: Cannot flush compiler intermediate file: '..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\CoreUObject\SharedPCH.CoreUObject.ShadowErrors.h.pch': No space left on device
-  [3/348] Compile [x64] Module.SlateCore.2_of_4.cpp cancelled
-  [4/348] Link [x64] UnrealFrontend-UnrealEdMessages.lib cancelled
-  [5/348] Compile [x64] Module.Slate.5_of_6.cpp cancelled
-  [6/348] Compile [x64] Module.Slate.2_of_6.cpp cancelled
-  [7/348] Compile [x64] Module.Slate.3_of_6.cpp cancelled
-  [8/348] Compile [x64] Module.SlateCore.1_of_4.cpp cancelled
-  [9/348] Compile [x64] Module.SlateCore.4_of_4.cpp cancelled
-  [10/348] Compile [x64] Module.AutomationTest.cpp cancelled
-  [11/348] Link [x64] UnrealFrontend-AutomationController.lib cancelled
-  [12/348] Compile [x64] Module.Slate.4_of_6.cpp cancelled
-  [13/348] Compile [x64] Module.Slate.1_of_6.cpp cancelled
-  [14/348] Compile [x64] Module.ImageCore.cpp cancelled
-  [15/348] Compile [x64] Module.AutomationController.cpp cancelled
-  [16/348] Compile [x64] Module.ShaderFormatVectorVM.cpp cancelled
-  [17/348] Link [x64] UnrealFrontend-ProfilerClient.lib cancelled
-  [18/348] Link [x64] UnrealFrontend-EngineSettings.lib cancelled
-  [19/348] Link [x64] UnrealFrontend-SessionMessages.lib cancelled
-  [20/348] Compile [x64] Module.LinuxTargetPlatform.cpp cancelled
-  [21/348] Link [x64] UnrealFrontend-SessionServices.lib cancelled
-  [22/348] Compile [x64] Module.WindowsTargetPlatform.cpp cancelled
-  [23/348] Link [x64] UnrealFrontend-TargetDeviceServices.lib cancelled
-  [24/348] Compile [x64] Module.JsonUtilities.cpp cancelled
-  [25/348] Compile [x64] Module.DeveloperSettings.cpp cancelled
-  [26/348] Compile [x64] Module.AudioPlatformConfiguration.cpp cancelled
-  [27/348] Link [x64] UnrealFrontend-SlateCore.lib cancelled
-  [28/348] Link [x64] UnrealFrontend-Slate.lib cancelled
-  [29/348] Link [x64] UnrealFrontend-ImageCore.lib cancelled
-  [30/348] Compile [x64] Module.LauncherServices.cpp cancelled
-  [31/348] Compile [x64] Module.AutomationMessages.cpp cancelled
-  [32/348] Link [x64] UnrealFrontend-LinuxTargetPlatform.lib cancelled
-  [33/348] Link [x64] UnrealFrontend-WindowsTargetPlatform.lib cancelled
-  [34/348] Link [x64] UnrealFrontend-HoloLensTargetPlatform.lib cancelled
-  [35/348] Link [x64] UnrealFrontend-ShaderFormatVectorVM.lib cancelled
-  [36/348] Compile [x64] Module.SessionServices.cpp cancelled
-  [37/348] Compile [x64] Module.ProfilerClient.cpp cancelled
-  [38/348] Compile [x64] Module.Messaging.cpp cancelled
-  [39/348] Compile [x64] Module.Settings.cpp cancelled
-  [40/348] Compile [x64] Module.DeveloperToolSettings.cpp cancelled
-  [41/348] Compile [x64] Module.StandaloneRenderer.cpp cancelled
-  [42/348] Link [x64] UnrealFrontend-AudioPlatformConfiguration.lib cancelled
-  [43/348] Compile [x64] Module.TcpMessaging.cpp cancelled
-  [44/348] Link [x64] UnrealFrontend-DeveloperSettings.lib cancelled
-  [45/348] Link [x64] UnrealFrontend-LauncherServices.lib cancelled
-  [46/348] Link [x64] UnrealFrontend-AutomationMessages.lib cancelled
-  [47/348] Compile [x64] Module.SlateCore.3_of_4.cpp cancelled
-  [48/348] Compile [x64] Module.VectorVM.cpp cancelled
-  [49/348] Compile [x64] Module.UdpMessaging.cpp cancelled
-  [50/348] Compile [x64] Module.PIEPreviewDeviceSpecification.cpp cancelled
-  [51/348] Link [x64] UnrealFrontend-AutomationTest.lib cancelled
-  [52/348] Compile [x64] Module.EngineMessages.cpp cancelled
-  [53/348] Compile [x64] Module.TargetDeviceServices.cpp cancelled
-  [54/348] Compile [x64] Module.Slate.6_of_6.cpp cancelled
-  [55/348] Compile [x64] Module.ProfilerMessages.cpp cancelled
-  [56/348] Link [x64] UnrealFrontend-Messaging.lib cancelled
-  [57/348] Link [x64] UnrealFrontend-Settings.lib cancelled
-  [58/348] Compile [x64] Module.HoloLensTargetPlatform.cpp cancelled
-  [59/348] Link [x64] UnrealFrontend-StandaloneRenderer.lib cancelled
-  [60/348] Link [x64] UnrealFrontend-EngineMessages.lib cancelled
-  [61/348] Link [x64] UnrealFrontend-DeveloperToolSettings.lib cancelled
-  [62/348] Link [x64] UnrealFrontend-VectorVM.lib cancelled
-  [63/348] Link [x64] UnrealFrontend-UdpMessaging.lib cancelled
-  [64/348] Link [x64] UnrealFrontend-TcpMessaging.lib cancelled
-  [65/348] Link [x64] UnrealFrontend-ProfilerMessages.lib cancelled
-  [66/348] Link [x64] UnrealFrontend-PIEPreviewDeviceSpecification.lib cancelled
-  [67/348] Compile [x64] Module.UnrealEdMessages.cpp cancelled
-  [68/348] Link [x64] UnrealFrontend-JsonUtilities.lib cancelled
-  [69/348] Compile [x64] Module.SessionMessages.cpp cancelled
-  [70/348] Compile [x64] Module.EngineSettings.cpp cancelled
-  [71/348] Compile [x64] PCH.Core.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Math\Interval.h(270): fatal error C1088: Cannot flush compiler intermediate file: '..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Core\PCH.Core.h.pch': No space left on device
-  [72/348] Compile [x64] Module.Core.12_of_17.cpp cancelled
-  [73/348] Compile [x64] Module.Core.6_of_17.cpp cancelled
-  [74/348] Compile [x64] Module.Core.14_of_17.cpp cancelled
-  [75/348] Compile [x64] Module.Core.9_of_17.cpp cancelled
-  [76/348] Compile [x64] Module.Core.4_of_17.cpp cancelled
-  [77/348] Compile [x64] Module.Core.1_of_17.cpp cancelled
-  [78/348] Compile [x64] Module.Core.13_of_17.cpp cancelled
-  [79/348] Compile [x64] Module.Core.15_of_17.cpp cancelled
-  [80/348] Compile [x64] Module.Core.16_of_17.cpp cancelled
-  [81/348] Compile [x64] Module.Core.11_of_17.cpp cancelled
-  [82/348] Compile [x64] Module.Core.7_of_17.cpp cancelled
-  [83/348] Compile [x64] Module.Core.2_of_17.cpp cancelled
-  [84/348] Compile [x64] Module.Core.17_of_17.cpp cancelled
-  [85/348] Compile [x64] Module.Core.8_of_17.cpp cancelled
-  [86/348] Compile [x64] Module.Core.3_of_17.cpp cancelled
-  [87/348] Compile [x64] Module.Core.5_of_17.cpp cancelled
-  [88/348] Compile [x64] Module.Core.10_of_17.cpp cancelled
-  [89/348] Compile [x64] MiMalloc.c
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Private\Thirdparty\MiMalloc.c : fatal error C1085: Cannot write compiler generated file: 'C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Core\MiMalloc.c.obj': No space left on device
-  [90/348] Link [x64] UnrealFrontend-Core.lib cancelled
-  [91/348] Compile [x64] SharedPCH.Slate.ShadowErrors.cpp
-C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt\corecrt_wstdio.h(1621): fatal error C1088: Cannot flush compiler intermediate file: '..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Slate\SharedPCH.Slate.ShadowErrors.h.pch': No space left on device
-  [92/348] Compile [x64] Module.TargetPlatform.cpp cancelled
-  [93/348] Compile [x64] Module.ToolWidgets.cpp cancelled
-  [94/348] Link [x64] UnrealFrontend-TargetPlatform.lib cancelled
-  [95/348] Compile [x64] Module.SourceControl.cpp cancelled
-  [96/348] Compile [x64] Module.MessageLog.cpp cancelled
-  [97/348] Link [x64] UnrealFrontend-ToolWidgets.lib cancelled
-  [98/348] Compile [x64] WorkspaceMenuStructureModule.cpp cancelled
-  [99/348] Compile [x64] Module.ScreenShotComparisonTools.cpp cancelled
-  [100/348] Compile [x64] Module.SourceCodeAccess.cpp cancelled
-  [101/348] Compile [x64] Module.ToolMenus.cpp cancelled
-  [102/348] Link [x64] UnrealFrontend-WorkspaceMenuStructure.lib cancelled
-  [103/348] Link [x64] UnrealFrontend-MessageLog.lib cancelled
-  [104/348] Compile [x64] Module.Profiler.cpp cancelled
-  [105/348] Compile [x64] Module.TurnkeyIO.cpp cancelled
-  [106/348] Compile [x64] Module.AutomationWindow.cpp cancelled
-  [107/348] Compile [x64] Module.DesktopWidgets.cpp cancelled
-  [108/348] Compile [x64] Module.DeviceManager.cpp cancelled
-  [109/348] Compile [x64] Module.AppFramework.cpp cancelled
-  [110/348] Link [x64] UnrealFrontend-ScreenShotComparisonTools.lib cancelled
-  [111/348] Compile [x64] Module.ScreenShotComparison.cpp cancelled
-  [112/348] Link [x64] UnrealFrontend-SourceCodeAccess.lib cancelled
-  [113/348] Compile [x64] Module.SessionFrontend.cpp cancelled
-  [114/348] Compile [x64] Module.ProjectLauncher.cpp cancelled
-  [115/348] Compile [x64] Module.OutputLog.cpp cancelled
-  [116/348] Link [x64] UnrealFrontend-TurnkeyIO.lib cancelled
-  [117/348] Link [x64] UnrealFrontend-ToolMenus.lib cancelled
-  [118/348] Compile [x64] Module.SlateReflector.cpp cancelled
-  [119/348] Compile [x64] Module.TurnkeySupport.cpp cancelled
-  [120/348] Link [x64] UnrealFrontend-Profiler.lib cancelled
-  [121/348] Link [x64] UnrealFrontend-SourceControl.lib cancelled
-  [122/348] Link [x64] UnrealFrontend-AppFramework.lib cancelled
-  [123/348] Link [x64] UnrealFrontend-DeviceManager.lib cancelled
-  [124/348] Link [x64] UnrealFrontend-SessionFrontend.lib cancelled
-  [125/348] Link [x64] UnrealFrontend-DesktopWidgets.lib cancelled
-  [126/348] Link [x64] UnrealFrontend-ScreenShotComparison.lib cancelled
-  [127/348] Link [x64] UnrealFrontend-ProjectLauncher.lib cancelled
-  [128/348] Link [x64] UnrealFrontend-AutomationWindow.lib cancelled
-  [129/348] Link [x64] UnrealFrontend-OutputLog.lib cancelled
-  [130/348] Link [x64] UnrealFrontend-WorkspaceMenuStructure.dll cancelled
-  [131/348] Link [x64] UnrealFrontend-SlateReflector.lib cancelled
-  [132/348] Link [x64] UnrealFrontend-TurnkeySupport.lib cancelled
-  [133/348] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastErrors.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Templates\UnrealTemplate.h(648): fatal error C1088: Cannot flush compiler intermediate file: '..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Core\SharedPCH.Core.ShadowErrors.TypeCastErrors.h.pch': No space left on device
-  [134/348] Link [x64] UnrealFrontend-DesktopPlatform.lib cancelled
-  [135/348] Compile [x64] Module.DesktopPlatform.cpp cancelled
-  [136/348] Link [x64] UnrealFrontend-Json.lib cancelled
-  [137/348] Compile [x64] Module.ApplicationCore.cpp cancelled
-  [138/348] Compile [x64] Module.Json.cpp cancelled
-  [139/348] Compile [x64] Module.Projects.cpp cancelled
-  [140/348] Link [x64] UnrealFrontend-ApplicationCore.lib cancelled
-  [141/348] Link [x64] UnrealFrontend-Projects.lib cancelled
-  [142/348] Link [x64] UnrealFrontend-SSL.lib cancelled
-  [143/348] Compile [x64] Module.DerivedDataCache.1_of_2.cpp cancelled
-  [144/348] Link [x64] UnrealFrontend-Sockets.lib cancelled
-  [145/348] Compile [x64] Module.SSL.cpp cancelled
-  [146/348] Compile [x64] Module.DerivedDataCache.2_of_2.cpp cancelled
-  [147/348] Compile [x64] Module.Cbor.cpp cancelled
-  [148/348] Compile [x64] Module.Analytics.cpp cancelled
-  [149/348] Link [x64] UnrealFrontend-DerivedDataCache.lib cancelled
-  [150/348] Compile [x64] Module.Sockets.cpp cancelled
-  [151/348] Compile [x64] NetCommonModule.cpp cancelled
-  [152/348] Compile [x64] Module.Zen.cpp cancelled
-  [153/348] Compile [x64] Module.DirectoryWatcher.cpp cancelled
-  [154/348] Link [x64] UnrealFrontend-Analytics.lib cancelled
-  [155/348] Link [x64] UnrealFrontend-Cbor.lib cancelled
-  [156/348] Link [x64] UnrealFrontend-NetCommon.lib cancelled
-  [157/348] Link [x64] UnrealFrontend-DirectoryWatcher.lib cancelled
-  [158/348] Link [x64] UnrealFrontend-Zen.lib cancelled
-  [159/348] Link [x64] UnrealFrontend-Zen.dll cancelled
-  [160/348] Link [x64] UnrealFrontend-DerivedDataCache.dll cancelled
-  [161/348] Link [x64] UnrealFrontend-DesktopPlatform.dll cancelled
-  [162/348] Link [x64] UnrealFrontend-SSL.dll cancelled
-  [163/348] Link [x64] UnrealFrontend-Sockets.dll cancelled
-  [164/348] Link [x64] UnrealFrontend-ApplicationCore.dll cancelled
-  [165/348] Link [x64] UnrealFrontend-Projects.dll cancelled
-  [166/348] Link [x64] UnrealFrontend-DirectoryWatcher.dll cancelled
-  [167/348] Link [x64] UnrealFrontend-Cbor.dll cancelled
-  [168/348] Link [x64] UnrealFrontend-Analytics.dll cancelled
-  [169/348] Link [x64] UnrealFrontend-NetCommon.dll cancelled
-  [170/348] Link [x64] UnrealFrontend-Json.dll cancelled
-  [171/348] Compile [x64] SharedPCH.CoreUObject.ShadowErrors.TypeCastErrors.cpp
-C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt\stdio.h(963): fatal error C1088: Cannot flush compiler intermediate file: '..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\CoreUObject\SharedPCH.CoreUObject.ShadowErrors.TypeCastErrors.h.pch': No space left on device
-  [172/348] Link [x64] UnrealFrontend-DeviceManager.dll cancelled
-  [173/348] Compile [x64] Module.AssetRegistry.cpp cancelled
-  [174/348] Link [x64] UnrealFrontend-InputCore.lib cancelled
-  [175/348] Compile [x64] Module.Serialization.cpp cancelled
-  [176/348] Link [x64] UnrealFrontend-SessionFrontend.dll cancelled
-  [177/348] Link [x64] UnrealFrontend-AssetRegistry.lib cancelled
-  [178/348] Compile [x64] Module.InputCore.cpp cancelled
-  [179/348] Compile [x64] Module.AndroidTargetPlatform.cpp cancelled
-  [180/348] Link [x64] UnrealFrontend-DesktopWidgets.dll cancelled
-  [181/348] Link [x64] UnrealFrontend-Serialization.lib cancelled
-  [182/348] Link [x64] UnrealFrontend-AndroidTargetPlatform.lib cancelled
-  [183/348] Compile [x64] PCH.CoreUObject.cpp
-C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\shared\strsafe.h(1611): fatal error C1088: Cannot flush compiler intermediate file: 'C:\Users\aleja\AppData\Local\Temp\_CL_d5900593sy': No space left on device
-  [184/348] Compile [x64] Module.CoreUObject.10_of_12.cpp cancelled
-  [185/348] Compile [x64] Module.CoreUObject.4_of_12.cpp cancelled
-  [186/348] Compile [x64] Module.CoreUObject.11_of_12.cpp cancelled
-  [187/348] Compile [x64] Module.CoreUObject.5_of_12.cpp cancelled
-  [188/348] Compile [x64] Module.CoreUObject.1_of_12.cpp cancelled
-  [189/348] Compile [x64] Module.CoreUObject.8_of_12.cpp cancelled
-  [190/348] Compile [x64] Module.CoreUObject.7_of_12.cpp cancelled
-  [191/348] Compile [x64] Module.CoreUObject.3_of_12.cpp cancelled
-  [192/348] Compile [x64] Module.CoreUObject.9_of_12.cpp cancelled
-  [193/348] Compile [x64] Module.CoreUObject.2_of_12.cpp cancelled
-  [194/348] Compile [x64] Module.CoreUObject.12_of_12.cpp cancelled
-  [195/348] Compile [x64] Module.CoreUObject.6_of_12.cpp cancelled
-  [196/348] Link [x64] UnrealFrontend-CoreUObject.lib cancelled
-  [197/348] Link [x64] UnrealFrontend-AutomationWindow.dll cancelled
-  [198/348] Link [x64] UnrealFrontend-SlateReflector.dll cancelled
-  [199/348] Link [x64] UnrealFrontend-ProjectLauncher.dll cancelled
-  [200/348] Link [x64] UnrealFrontend-LauncherServices.dll cancelled
-  [201/348] Link [x64] UnrealFrontend-ToolWidgets.dll cancelled
-  [202/348] Link [x64] UnrealFrontend-OutputLog.dll cancelled
-  [203/348] Link [x64] UnrealFrontend-TurnkeyIO.dll cancelled
-  [204/348] Link [x64] UnrealFrontend-MessageLog.dll cancelled
-  [205/348] Link [x64] UnrealFrontend-ToolMenus.dll cancelled
-  [206/348] Link [x64] UnrealFrontend-AppFramework.dll cancelled
-  [207/348] Link [x64] UnrealFrontend-DeveloperToolSettings.dll cancelled
-  [208/348] Link [x64] UnrealFrontend-LinuxTargetPlatform.dll cancelled
-  [209/348] Link [x64] UnrealFrontend-WindowsTargetPlatform.dll cancelled
-  [210/348] Link [x64] UnrealFrontend-TargetDeviceServices.dll cancelled
-  [211/348] Link [x64] UnrealFrontend-Serialization.dll cancelled
-  [212/348] Link [x64] UnrealFrontend-AssetRegistry.dll cancelled
-  [213/348] Link [x64] UnrealFrontend-DeveloperSettings.dll cancelled
-  [214/348] Link [x64] UnrealFrontend-SourceCodeAccess.dll cancelled
-  [215/348] Link [x64] UnrealFrontend-JsonUtilities.dll cancelled
-  [216/348] Link [x64] UnrealFrontend-SessionServices.dll cancelled
-  [217/348] Link [x64] UnrealFrontend-ProfilerClient.dll cancelled
-  [218/348] Link [x64] UnrealFrontend-AutomationMessages.dll cancelled
-  [219/348] Link [x64] UnrealFrontend-PIEPreviewDeviceSpecification.dll cancelled
-  [220/348] Link [x64] UnrealFrontend-InputCore.dll cancelled
-  [221/348] Link [x64] UnrealFrontend-AutomationTest.dll cancelled
-  [222/348] Link [x64] UnrealFrontend-ProfilerMessages.dll cancelled
-  [223/348] Link [x64] UnrealFrontend-EngineMessages.dll cancelled
-  [224/348] Link [x64] UnrealFrontend-UnrealEdMessages.dll cancelled
-  [225/348] Link [x64] UnrealFrontend-VectorVM.dll cancelled
-  [226/348] Link [x64] UnrealFrontend-Settings.dll cancelled
-  [227/348] Link [x64] UnrealFrontend-EngineSettings.dll cancelled
-  [228/348] Link [x64] UnrealFrontend-Messaging.dll cancelled
-  [229/348] Link [x64] UnrealFrontend-SessionMessages.dll cancelled
-  [230/348] Compile [x64] SharedPCH.Core.ShadowErrors.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Math\Vector4.h(558): fatal error C1088: Cannot flush compiler intermediate file: 'C:\Users\aleja\AppData\Local\Temp\_CL_7ec9d501db': No space left on device
-  [231/348] Compile [x64] Module.RenderCore.5_of_5.cpp cancelled
-  [232/348] Compile [x64] Module.RHI.2_of_2.cpp cancelled
-  [233/348] Compile [x64] Module.RenderCore.1_of_5.cpp cancelled
-  [234/348] Compile [x64] Module.RenderCore.4_of_5.cpp cancelled
-  [235/348] Compile [x64] Module.RenderCore.3_of_5.cpp cancelled
-  [236/348] Compile [x64] Module.RenderCore.2_of_5.cpp cancelled
-  [237/348] Link [x64] UnrealFrontend-RenderCore.lib cancelled
-  [238/348] Compile [x64] Module.RHI.1_of_2.cpp cancelled
-  [239/348] Compile [x64] TextureBuildFunction.cpp cancelled
-  [240/348] Link [x64] UnrealFrontend-RHI.lib cancelled
-  [241/348] Compile [x64] TextureFormatManagerModule.cpp cancelled
-  [242/348] Link [x64] UnrealFrontend-TurnkeySupport.dll cancelled
-  [243/348] Compile [x64] Module.Networking.cpp cancelled
-  [244/348] Link [x64] UnrealFrontend-SourceControl.dll cancelled
-  [245/348] Link [x64] UnrealFrontend-Profiler.dll cancelled
-  [246/348] Compile [x64] Module.ShaderCompilerCommon.cpp cancelled
-  [247/348] Compile [x64] ShaderPreprocessor.cpp cancelled
-  [248/348] Compile [x64] Module.ColorManagement.cpp cancelled
-  [249/348] Link [x64] UnrealFrontend-TextureBuild.lib cancelled
-  [250/348] Link [x64] UnrealFrontend-Networking.lib cancelled
-  [251/348] Compile [x64] TextureBuildUtilities.cpp cancelled
-  [252/348] Link [x64] UnrealFrontend-TcpMessaging.dll cancelled
-  [253/348] Compile [x64] Module.HTTP.cpp cancelled
-  [254/348] Link [x64] UnrealFrontend-ShaderCompilerCommon.lib cancelled
-  [255/348] Link [x64] UnrealFrontend-TextureFormat.lib cancelled
-  [256/348] Link [x64] UnrealFrontend-ColorManagement.lib cancelled
-  [257/348] Link [x64] UnrealFrontend-TargetPlatform.dll cancelled
-  [258/348] Compile [x64] AndroidDeviceDetectionModule.cpp cancelled
-  [259/348] Link [x64] UnrealFrontend-ImageCore.dll cancelled
-  [260/348] Compile [x64] Module.UELibSampleRate.cpp cancelled
-  [261/348] Compile [x64] TextureFormatIntelISPCTexComp.cpp cancelled
-  [262/348] Compile [x64] TextureCompressorModule.cpp cancelled
-  [263/348] Compile [x64] TextureFormatUncompressed.cpp cancelled
-  [264/348] Compile [x64] Module.ShaderFormatOpenGL.cpp cancelled
-  [265/348] Compile [x64] LinuxArm64TargetPlatformModule.cpp cancelled
-  [266/348] Compile [x64] TextureFormatDXT.cpp cancelled
-  [267/348] Compile [x64] Module.ShaderFormatD3D.cpp cancelled
-  [268/348] Link [x64] UnrealFrontend-HTTP.lib cancelled
-  [269/348] Link [x64] UnrealFrontend-TextureBuildUtilities.lib cancelled
-  [270/348] Link [x64] UnrealFrontend-AutomationController.dll cancelled
-  [271/348] Compile [x64] TextureFormatETC2.cpp cancelled
-  [272/348] Link [x64] UnrealFrontend-HoloLensTargetPlatform.dll cancelled
-  [273/348] Compile [x64] TextureFormatASTC.cpp cancelled
-  [274/348] Compile [x64] Module.VulkanShaderFormat.cpp cancelled
-  [275/348] Link [x64] UnrealFrontend-AndroidDeviceDetection.lib cancelled
-  [276/348] Link [x64] UnrealFrontend-TextureCompressor.lib cancelled
-  [277/348] Link [x64] UnrealFrontend-AndroidTargetPlatform.dll cancelled
-  [278/348] Link [x64] UnrealFrontend-UELibSampleRate.lib cancelled
-  [279/348] Link [x64] UnrealFrontend-TextureFormatIntelISPCTexComp.lib cancelled
-  [280/348] Link [x64] UnrealFrontend-AudioPlatformConfiguration.dll cancelled
-  [281/348] Link [x64] UnrealFrontend-HTTP.dll cancelled
-  [282/348] Link [x64] UnrealFrontend-AndroidDeviceDetection.dll cancelled
-  [283/348] Link [x64] UnrealFrontend-LinuxArm64TargetPlatform.dll cancelled
-  [284/348] Link [x64] UnrealFrontend-ShaderCompilerCommon.dll cancelled
-  [285/348] Link [x64] UnrealFrontend-TextureCompressor.dll cancelled
-  [286/348] Link [x64] UnrealFrontend-TextureFormatUncompressed.dll cancelled
-  [287/348] Link [x64] UnrealFrontend-TextureFormat.dll cancelled
-  [288/348] Link [x64] UnrealFrontend-Networking.dll cancelled
-  [289/348] Link [x64] UnrealFrontend-UELibSampleRate.dll cancelled
-  [290/348] Link [x64] UnrealFrontend-ColorManagement.dll cancelled
-  [291/348] Link [x64] UnrealFrontend-ShaderFormatD3D.lib cancelled
-  [292/348] Link [x64] UnrealFrontend-VulkanShaderFormat.lib cancelled
-  [293/348] Link [x64] UnrealFrontend-TextureFormatUncompressed.lib cancelled
-  [294/348] Link [x64] UnrealFrontend-ShaderFormatOpenGL.lib cancelled
-  [295/348] Link [x64] UnrealFrontend-LinuxArm64TargetPlatform.lib cancelled
-  [296/348] Link [x64] UnrealFrontend-TextureFormatETC2.lib cancelled
-  [297/348] Link [x64] UnrealFrontend-TextureFormatASTC.lib cancelled
-  [298/348] Link [x64] UnrealFrontend-TextureFormatDXT.lib cancelled
-  [299/348] Compile [x64] cond_expr.c
-  [300/348] Compile [x64] stb_ds.c
-  [301/348] Compile [x64] stb_alloc.c
-  [302/348] Compile [x64] Module.TraceLog.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TraceLog\Module.TraceLog.cpp(15): fatal error C1088: Cannot flush compiler intermediate file: 'C:\Users\aleja\AppData\Local\Temp\_CL_4da3e178gl': No space left on device
-  [303/348] Link [x64] UnrealFrontend-TraceLog.dll cancelled
-  [304/348] Link [x64] UnrealFrontend-TraceLog.lib cancelled
-  [305/348] Link [x64] UnrealFrontend-CoreUObject.dll cancelled
-  [306/348] Link [x64] UnrealFrontend-SlateCore.dll cancelled
-  [307/348] Link [x64] UnrealFrontend-UdpMessaging.dll cancelled
-  [308/348] Link [x64] UnrealFrontend-RHI.dll cancelled
-  [309/348] Compile [x64] BuildSettings.cpp
-  [310/348] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastWarnings.cpp
-C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt\stdio.h(963): fatal error C1088: Cannot flush compiler intermediate file: '..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Core\SharedPCH.Core.ShadowErrors.TypeCastWarnings.h.pch': No space left on device
-  [311/348] Compile [x64] Module.CookOnTheFly.cpp cancelled
-  [312/348] Link [x64] UnrealFrontend-CookOnTheFly.lib cancelled
-  [313/348] Link [x64] UnrealFrontend-CookOnTheFly.dll cancelled
-  [314/348] Compile [x64] preprocessor.c
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Developer\ShaderPreprocessor\Private\stb_preprocess\preprocessor.c : fatal error C1085: Cannot write compiler generated file: 'C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderPreprocessor\preprocessor.c.obj': No space left on device
-  [315/348] Link [x64] UnrealFrontend-ShaderPreprocessor.lib cancelled
-  [316/348] Link [x64] UnrealFrontend-ShaderPreprocessor.dll cancelled
-  [317/348] Link [x64] UnrealFrontend-ShaderFormatOpenGL.dll cancelled
-  [318/348] Link [x64] UnrealFrontend-ShaderFormatD3D.dll cancelled
-  [319/348] Link [x64] UnrealFrontend-ShaderFormatVectorVM.dll cancelled
-  [320/348] Link [x64] UnrealFrontend-VulkanShaderFormat.dll cancelled
-  [321/348] GenerateTLH dte80a.cpp
-C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt\corecrt_wstdio.h(909): fatal error C1088: Cannot flush compiler intermediate file: 'C:\Users\aleja\AppData\Local\Temp\_CL_af1d360fex': No space left on device
-  [322/348] Touch dte80a.tlh cancelled
-  [323/348] Compile [x64] Module.VSSCA.cpp cancelled
-  [324/348] Link [x64] UnrealFrontend-VisualStudioSourceCodeAccess.lib cancelled
-  [325/348] Link [x64] UnrealFrontend-VisualStudioSourceCodeAccess.dll cancelled
-  [326/348] Compile [x64] Module.UnrealFrontend.cpp
-C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt\corecrt_wstdio.h(1412): fatal error C1088: Cannot flush compiler intermediate file: 'C:\Users\aleja\AppData\Local\Temp\_CL_a41eb5f2ex': No space left on device
-  [327/348] Link [x64] UnrealFrontend.exe cancelled
-  [328/348] Link [x64] UnrealFrontend.lib cancelled
-  [329/348] Link [x64] UnrealFrontend-BuildSettings.lib
-     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\BuildSettings\UnrealFrontend-BuildSettings.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\BuildSettings\UnrealFrontend-BuildSettings.exp
-  [330/348] Link [x64] UnrealFrontend-Core.dll cancelled
-  [331/348] Compile [x64] SharedPCH.Core.Exceptions.ShadowErrors.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Math\Vector4.h(554): fatal error C1088: Cannot flush compiler intermediate file: 'C:\Users\aleja\AppData\Local\Temp\_CL_53ea44eddb': No space left on device
-  [332/348] Link [x64] UnrealFrontend-ImageWrapper.lib cancelled
-  [333/348] Compile [x64] Module.ImageWrapper.cpp cancelled
-  [334/348] Link [x64] UnrealFrontend-ImageWrapper.dll cancelled
-  [335/348] Link [x64] UnrealFrontend-ScreenShotComparison.dll cancelled
-  [336/348] Link [x64] UnrealFrontend-RenderCore.dll cancelled
-  [337/348] Link [x64] UnrealFrontend-ScreenShotComparisonTools.dll cancelled
-  [338/348] Link [x64] UnrealFrontend-Slate.dll cancelled
-  [339/348] Link [x64] UnrealFrontend-StandaloneRenderer.dll cancelled
-  [340/348] Link [x64] UnrealFrontend-TextureBuild.dll cancelled
-  [341/348] Link [x64] UnrealFrontend-TextureFormatETC2.dll cancelled
-  [342/348] Link [x64] UnrealFrontend-TextureFormatIntelISPCTexComp.dll cancelled
-  [343/348] Link [x64] UnrealFrontend-TextureBuildUtilities.dll cancelled
-  [344/348] Link [x64] UnrealFrontend-TextureFormatASTC.dll cancelled
-  [345/348] Link [x64] UnrealFrontend-TextureFormatDXT.dll cancelled
-  [346/348] Link [x64] UnrealFrontend-BuildSettings.dll
-     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\BuildSettings\UnrealFrontend-BuildSettings.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\BuildSettings\UnrealFrontend-BuildSettings.suppressed.exp
-  [347/348] WriteMetadata UnrealFrontend.version cancelled
-  [348/348] WriteMetadata UnrealFrontend.target cancelled
-C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.MakeFile.Targets(44,5): error MSB3073: The command "C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Build\BatchFiles\Build.bat UnrealFrontend Win64 Development -WaitMutex -FromMsBuild" exited with code 6.
+    Requested 1.5 GB free memory per action, 10.2 GB available: limiting max parallel actions to 6
+  Building 341 actions with 6 processes...
+  [1/341] Compile [x64] MiMalloc.c
+  [2/341] Compile [x64] SharedPCH.Core.ShadowErrors.cpp
+  [3/341] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastErrors.cpp
+  [4/341] Compile [x64] PCH.Core.cpp
+  [5/341] Compile [x64] SharedPCH.CoreUObject.ShadowErrors.cpp
+  [6/341] Compile [x64] preprocessor.c
+  [7/341] Compile [x64] Module.TraceLog.cpp
+  [8/341] Compile [x64] SharedPCH.Core.Exceptions.ShadowErrors.cpp
+  [9/341] GenerateTLH dte80a.cpp
+  [10/341] Compile [x64] PCH.CoreUObject.cpp
+  [11/341] Compile [x64] SharedPCH.CoreUObject.ShadowErrors.TypeCastErrors.cpp
+  [12/341] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastWarnings.cpp
+  [13/341] Compile [x64] SharedPCH.Slate.ShadowErrors.cpp
+  [14/341] Compile [x64] Module.RenderCore.5_of_5.cpp
+  [15/341] Compile [x64] Module.RenderCore.1_of_5.cpp
+  [16/341] Compile [x64] Module.UnrealFrontend.cpp
+  [17/341] Compile [x64] Module.RenderCore.2_of_5.cpp
+  [18/341] Compile [x64] TextureBuildFunction.cpp
+  [19/341] Compile [x64] Module.Networking.cpp
+  [20/341] Compile [x64] Module.RenderCore.4_of_5.cpp
+  [21/341] Compile [x64] TextureFormatManagerModule.cpp
+  [22/341] Compile [x64] Module.RenderCore.3_of_5.cpp
+  [23/341] Compile [x64] Module.RHI.2_of_2.cpp
+  [24/341] Compile [x64] Module.ColorManagement.cpp
+  [25/341] Compile [x64] TextureBuildUtilities.cpp
+  [26/341] Compile [x64] ShaderPreprocessor.cpp
+  [27/341] Compile [x64] Module.UELibSampleRate.cpp
+  [28/341] Compile [x64] TextureCompressorModule.cpp
+  [29/341] Compile [x64] TextureFormatIntelISPCTexComp.cpp
+  [30/341] Compile [x64] TextureFormatETC2.cpp
+  [31/341] Compile [x64] Module.RHI.1_of_2.cpp
+  [32/341] Compile [x64] Module.HTTP.cpp
+  [33/341] Compile [x64] LinuxArm64TargetPlatformModule.cpp
+  [34/341] Compile [x64] AndroidDeviceDetectionModule.cpp
+  [35/341] Compile [x64] TextureFormatASTC.cpp
+  [36/341] Compile [x64] TextureFormatDXT.cpp
+  [37/341] Compile [x64] TextureFormatUncompressed.cpp
+  [38/341] Compile [x64] Module.ShaderCompilerCommon.cpp
+  [39/341] Compile [x64] Module.ShaderFormatD3D.cpp
+  [40/341] Compile [x64] Module.DesktopPlatform.cpp
+  [41/341] Compile [x64] Module.Json.cpp
+  [42/341] Compile [x64] Module.VulkanShaderFormat.cpp
+  [43/341] Compile [x64] Module.Sockets.cpp
+  [44/341] Compile [x64] Module.SSL.cpp
+  [45/341] Compile [x64] Module.Projects.cpp
+  [46/341] Compile [x64] Module.ShaderFormatOpenGL.cpp
+  [47/341] Compile [x64] Module.Cbor.cpp
+  [48/341] Compile [x64] Module.ApplicationCore.cpp
+  [49/341] Compile [x64] NetCommonModule.cpp
+  [50/341] Compile [x64] Module.Analytics.cpp
+  [51/341] Compile [x64] Module.Zen.cpp
+  [52/341] Compile [x64] Module.DirectoryWatcher.cpp
+  [53/341] Compile [x64] Module.DerivedDataCache.2_of_2.cpp
+  [54/341] Compile [x64] Module.Core.2_of_17.cpp
+  [55/341] Compile [x64] Module.Core.16_of_17.cpp
+  [56/341] Compile [x64] Module.DerivedDataCache.1_of_2.cpp
+  [57/341] Compile [x64] Module.Core.10_of_17.cpp
+  [58/341] Compile [x64] Module.Core.9_of_17.cpp
+  [59/341] Compile [x64] Module.Core.17_of_17.cpp
+  [60/341] Compile [x64] Module.Core.11_of_17.cpp
+  [61/341] Compile [x64] Module.Core.1_of_17.cpp
+  [62/341] Compile [x64] Module.Core.15_of_17.cpp
+  [63/341] Compile [x64] Module.Core.7_of_17.cpp
+  [64/341] Compile [x64] Module.Core.4_of_17.cpp
+  [65/341] Compile [x64] Module.Core.12_of_17.cpp
+  [66/341] Compile [x64] Module.Core.5_of_17.cpp
+  [67/341] Compile [x64] Module.Core.3_of_17.cpp
+  [68/341] Compile [x64] Module.Core.6_of_17.cpp
+  [69/341] Compile [x64] Module.Core.8_of_17.cpp
+  [70/341] Compile [x64] Module.SlateCore.2_of_4.cpp
+  [71/341] Compile [x64] Module.Core.14_of_17.cpp
+  [72/341] Compile [x64] Module.SlateCore.1_of_4.cpp
+  [73/341] Compile [x64] Module.SlateCore.4_of_4.cpp
+  [74/341] Compile [x64] Module.Core.13_of_17.cpp
+  [75/341] Compile [x64] Module.Slate.3_of_6.cpp
+  [76/341] Compile [x64] Module.Slate.5_of_6.cpp
+  [77/341] Compile [x64] Module.SlateCore.3_of_4.cpp
+  [78/341] Compile [x64] Module.ImageCore.cpp
+  [79/341] Compile [x64] Module.DeveloperSettings.cpp
+  [80/341] Compile [x64] Module.Slate.2_of_6.cpp
+  [81/341] Compile [x64] Module.JsonUtilities.cpp
+  [82/341] Compile [x64] Module.AudioPlatformConfiguration.cpp
+  [83/341] Compile [x64] Module.Slate.4_of_6.cpp
+  [84/341] Compile [x64] Module.AutomationTest.cpp
+  [85/341] Compile [x64] Module.UnrealEdMessages.cpp
+  [86/341] Compile [x64] Module.AutomationMessages.cpp
+  [87/341] Compile [x64] Module.Slate.6_of_6.cpp
+  [88/341] Compile [x64] Module.Settings.cpp
+  [89/341] Compile [x64] Module.AutomationController.cpp
+  [90/341] Compile [x64] Module.Slate.1_of_6.cpp
+  [91/341] Compile [x64] Module.EngineSettings.cpp
+  [92/341] Compile [x64] Module.SessionMessages.cpp
+  [93/341] Compile [x64] Module.Messaging.cpp
+  [94/341] Compile [x64] Module.DeveloperToolSettings.cpp
+  [95/341] Compile [x64] Module.SessionServices.cpp
+  [96/341] Compile [x64] Module.LauncherServices.cpp
+  [97/341] Compile [x64] Module.EngineMessages.cpp
+  [98/341] Compile [x64] Module.PIEPreviewDeviceSpecification.cpp
+  [99/341] Compile [x64] Module.TcpMessaging.cpp
+  [100/341] Compile [x64] Module.ProfilerClient.cpp
+  [101/341] Compile [x64] Module.ProfilerMessages.cpp
+  [102/341] Compile [x64] Module.TargetDeviceServices.cpp
+  [103/341] Compile [x64] Module.LinuxTargetPlatform.cpp
+  [104/341] Compile [x64] Module.WindowsTargetPlatform.cpp
+  [105/341] Link [x64] UnrealFrontend-TraceLog.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TraceLog\UnrealFrontend-TraceLog.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TraceLog\UnrealFrontend-TraceLog.exp
+  [106/341] Link [x64] UnrealFrontend-TraceLog.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TraceLog\UnrealFrontend-TraceLog.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TraceLog\UnrealFrontend-TraceLog.suppressed.exp
+  [107/341] Compile [x64] Module.UdpMessaging.cpp
+  [108/341] Touch dte80a.tlh
+  [109/341] Compile [x64] Module.StandaloneRenderer.cpp
+  [110/341] Compile [x64] Module.ShaderFormatVectorVM.cpp
+  [111/341] Compile [x64] Module.HoloLensTargetPlatform.cpp
+  [112/341] Compile [x64] Module.VectorVM.cpp
+  [113/341] Compile [x64] Module.CoreUObject.4_of_12.cpp
+  [114/341] Compile [x64] Module.ImageWrapper.cpp
+  [115/341] Compile [x64] Module.CoreUObject.8_of_12.cpp
+  [116/341] Compile [x64] Module.CoreUObject.11_of_12.cpp
+  [117/341] Compile [x64] Module.CoreUObject.2_of_12.cpp
+  [118/341] Compile [x64] Module.CoreUObject.10_of_12.cpp
+  [119/341] Compile [x64] Module.CoreUObject.1_of_12.cpp
+  [120/341] Compile [x64] Module.CoreUObject.3_of_12.cpp
+  [121/341] Compile [x64] Module.CoreUObject.9_of_12.cpp
+  [122/341] Compile [x64] Module.CoreUObject.12_of_12.cpp
+  [123/341] Compile [x64] Module.CoreUObject.6_of_12.cpp
+  [124/341] Compile [x64] Module.AndroidTargetPlatform.cpp
+  [125/341] Compile [x64] Module.InputCore.cpp
+  [126/341] Compile [x64] Module.CookOnTheFly.cpp
+  [127/341] Compile [x64] Module.Serialization.cpp
+  [128/341] Compile [x64] Module.TargetPlatform.cpp
+  [129/341] Compile [x64] WorkspaceMenuStructureModule.cpp
+  [130/341] Compile [x64] Module.SourceCodeAccess.cpp
+  [131/341] Compile [x64] Module.CoreUObject.5_of_12.cpp
+  [132/341] Compile [x64] Module.ScreenShotComparisonTools.cpp
+  [133/341] Compile [x64] Module.ToolWidgets.cpp
+  [134/341] Compile [x64] Module.ToolMenus.cpp
+  [135/341] Compile [x64] Module.MessageLog.cpp
+  [136/341] Compile [x64] Module.TurnkeyIO.cpp
+  [137/341] Compile [x64] Module.AssetRegistry.cpp
+  [138/341] Compile [x64] Module.SourceControl.cpp
+  [139/341] Compile [x64] Module.DesktopWidgets.cpp
+  [140/341] Compile [x64] Module.CoreUObject.7_of_12.cpp
+  [141/341] Compile [x64] Module.OutputLog.cpp
+  [142/341] Compile [x64] Module.AutomationWindow.cpp
+  [143/341] Compile [x64] Module.SessionFrontend.cpp
+  [144/341] Compile [x64] Module.ScreenShotComparison.cpp
+  [145/341] Compile [x64] Module.Profiler.cpp
+  [146/341] Link [x64] UnrealFrontend.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UnrealFrontend.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UnrealFrontend.exp
+  [147/341] Link [x64] UnrealFrontend-TextureBuild.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureBuild\UnrealFrontend-TextureBuild.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureBuild\UnrealFrontend-TextureBuild.exp
+  [148/341] Link [x64] UnrealFrontend-Networking.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Networking\UnrealFrontend-Networking.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Networking\UnrealFrontend-Networking.exp
+  [149/341] Link [x64] UnrealFrontend-TextureFormat.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormat\UnrealFrontend-TextureFormat.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormat\UnrealFrontend-TextureFormat.exp
+  [150/341] Compile [x64] Module.TurnkeySupport.cpp
+  [151/341] Link [x64] UnrealFrontend-ColorManagement.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ColorManagement\UnrealFrontend-ColorManagement.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ColorManagement\UnrealFrontend-ColorManagement.exp
+  [152/341] Link [x64] UnrealFrontend-TextureBuildUtilities.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureBuildUtilities\UnrealFrontend-TextureBuildUtilities.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureBuildUtilities\UnrealFrontend-TextureBuildUtilities.exp
+  [153/341] Link [x64] UnrealFrontend-RenderCore.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\RenderCore\UnrealFrontend-RenderCore.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\RenderCore\UnrealFrontend-RenderCore.exp
+  [154/341] Link [x64] UnrealFrontend-ShaderPreprocessor.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderPreprocessor\UnrealFrontend-ShaderPreprocessor.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderPreprocessor\UnrealFrontend-ShaderPreprocessor.exp
+  [155/341] Link [x64] UnrealFrontend-UELibSampleRate.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UELibSampleRate\UnrealFrontend-UELibSampleRate.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UELibSampleRate\UnrealFrontend-UELibSampleRate.exp
+  [156/341] Link [x64] UnrealFrontend-TextureCompressor.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureCompressor\UnrealFrontend-TextureCompressor.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureCompressor\UnrealFrontend-TextureCompressor.exp
+  [157/341] Link [x64] UnrealFrontend-TextureFormatIntelISPCTexComp.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatIntelISPCTexComp\UnrealFrontend-TextureFormatIntelISPCTexComp.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatIntelISPCTexComp\UnrealFrontend-TextureFormatIntelISPCTexComp.exp
+  [158/341] Link [x64] UnrealFrontend-TextureFormatETC2.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatETC2\UnrealFrontend-TextureFormatETC2.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatETC2\UnrealFrontend-TextureFormatETC2.exp
+  [159/341] Link [x64] UnrealFrontend-HTTP.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\HTTP\UnrealFrontend-HTTP.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\HTTP\UnrealFrontend-HTTP.exp
+  [160/341] Link [x64] UnrealFrontend-RHI.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\RHI\UnrealFrontend-RHI.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\RHI\UnrealFrontend-RHI.exp
+  [161/341] Link [x64] UnrealFrontend-LinuxArm64TargetPlatform.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\LinuxArm64\LinuxArm64TargetPlatform\UnrealFrontend-LinuxArm64TargetPlatform.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\LinuxArm64\LinuxArm64TargetPlatform\UnrealFrontend-LinuxArm64TargetPlatform.exp
+  [162/341] Link [x64] UnrealFrontend-AndroidDeviceDetection.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Android\AndroidDeviceDetection\UnrealFrontend-AndroidDeviceDetection.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Android\AndroidDeviceDetection\UnrealFrontend-AndroidDeviceDetection.exp
+  [163/341] Compile [x64] Module.DeviceManager.cpp
+  [164/341] Link [x64] UnrealFrontend-TextureFormatASTC.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatASTC\UnrealFrontend-TextureFormatASTC.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatASTC\UnrealFrontend-TextureFormatASTC.exp
+  [165/341] Link [x64] UnrealFrontend-TextureFormatDXT.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatDXT\UnrealFrontend-TextureFormatDXT.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatDXT\UnrealFrontend-TextureFormatDXT.exp
+  [166/341] Link [x64] UnrealFrontend-TextureFormatUncompressed.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatUncompressed\UnrealFrontend-TextureFormatUncompressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatUncompressed\UnrealFrontend-TextureFormatUncompressed.exp
+  [167/341] Link [x64] UnrealFrontend-ShaderCompilerCommon.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderCompilerCommon\UnrealFrontend-ShaderCompilerCommon.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderCompilerCommon\UnrealFrontend-ShaderCompilerCommon.exp
+  [168/341] Link [x64] UnrealFrontend-ShaderFormatD3D.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatD3D\UnrealFrontend-ShaderFormatD3D.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatD3D\UnrealFrontend-ShaderFormatD3D.exp
+  [169/341] Link [x64] UnrealFrontend-DesktopPlatform.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DesktopPlatform\UnrealFrontend-DesktopPlatform.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DesktopPlatform\UnrealFrontend-DesktopPlatform.exp
+  [170/341] Link [x64] UnrealFrontend-Json.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Json\UnrealFrontend-Json.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Json\UnrealFrontend-Json.exp
+  [171/341] Link [x64] UnrealFrontend-VulkanShaderFormat.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VulkanShaderFormat\UnrealFrontend-VulkanShaderFormat.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VulkanShaderFormat\UnrealFrontend-VulkanShaderFormat.exp
+  [172/341] Link [x64] UnrealFrontend-Sockets.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Sockets\UnrealFrontend-Sockets.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Sockets\UnrealFrontend-Sockets.exp
+  [173/341] Link [x64] UnrealFrontend-SSL.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SSL\UnrealFrontend-SSL.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SSL\UnrealFrontend-SSL.exp
+  [174/341] Link [x64] UnrealFrontend-Projects.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Projects\UnrealFrontend-Projects.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Projects\UnrealFrontend-Projects.exp
+  [175/341] Link [x64] UnrealFrontend-ShaderFormatOpenGL.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatOpenGL\UnrealFrontend-ShaderFormatOpenGL.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatOpenGL\UnrealFrontend-ShaderFormatOpenGL.exp
+  [176/341] Link [x64] UnrealFrontend-Cbor.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Cbor\UnrealFrontend-Cbor.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Cbor\UnrealFrontend-Cbor.exp
+  [177/341] Link [x64] UnrealFrontend-ApplicationCore.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ApplicationCore\UnrealFrontend-ApplicationCore.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ApplicationCore\UnrealFrontend-ApplicationCore.exp
+  [178/341] Link [x64] UnrealFrontend-NetCommon.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\NetCommon\UnrealFrontend-NetCommon.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\NetCommon\UnrealFrontend-NetCommon.exp
+  [179/341] Link [x64] UnrealFrontend-Analytics.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Analytics\UnrealFrontend-Analytics.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Analytics\UnrealFrontend-Analytics.exp
+  [180/341] Link [x64] UnrealFrontend-Zen.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Zen\UnrealFrontend-Zen.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Zen\UnrealFrontend-Zen.exp
+  [181/341] Link [x64] UnrealFrontend-DirectoryWatcher.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DirectoryWatcher\UnrealFrontend-DirectoryWatcher.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DirectoryWatcher\UnrealFrontend-DirectoryWatcher.exp
+  [182/341] Link [x64] UnrealFrontend-DerivedDataCache.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DerivedDataCache\UnrealFrontend-DerivedDataCache.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DerivedDataCache\UnrealFrontend-DerivedDataCache.exp
+  [183/341] Link [x64] UnrealFrontend-ImageCore.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ImageCore\UnrealFrontend-ImageCore.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ImageCore\UnrealFrontend-ImageCore.exp
+  [184/341] Link [x64] UnrealFrontend-DeveloperSettings.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeveloperSettings\UnrealFrontend-DeveloperSettings.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeveloperSettings\UnrealFrontend-DeveloperSettings.exp
+  [185/341] Link [x64] UnrealFrontend-SlateCore.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SlateCore\UnrealFrontend-SlateCore.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SlateCore\UnrealFrontend-SlateCore.exp
+  [186/341] Link [x64] UnrealFrontend-JsonUtilities.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\JsonUtilities\UnrealFrontend-JsonUtilities.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\JsonUtilities\UnrealFrontend-JsonUtilities.exp
+  [187/341] Link [x64] UnrealFrontend-AudioPlatformConfiguration.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AudioPlatformConfiguration\UnrealFrontend-AudioPlatformConfiguration.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AudioPlatformConfiguration\UnrealFrontend-AudioPlatformConfiguration.exp
+  [188/341] Link [x64] UnrealFrontend-AutomationTest.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationTest\UnrealFrontend-AutomationTest.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationTest\UnrealFrontend-AutomationTest.exp
+  [189/341] Link [x64] UnrealFrontend-UnrealEdMessages.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UnrealEdMessages\UnrealFrontend-UnrealEdMessages.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UnrealEdMessages\UnrealFrontend-UnrealEdMessages.exp
+  [190/341] Link [x64] UnrealFrontend-AutomationMessages.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationMessages\UnrealFrontend-AutomationMessages.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationMessages\UnrealFrontend-AutomationMessages.exp
+  [191/341] Link [x64] UnrealFrontend-Settings.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Settings\UnrealFrontend-Settings.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Settings\UnrealFrontend-Settings.exp
+  [192/341] Link [x64] UnrealFrontend-Core.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Core\UnrealFrontend-Core.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Core\UnrealFrontend-Core.exp
+  [193/341] Link [x64] UnrealFrontend-AutomationController.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationController\UnrealFrontend-AutomationController.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationController\UnrealFrontend-AutomationController.exp
+  [194/341] Link [x64] UnrealFrontend-EngineSettings.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\EngineSettings\UnrealFrontend-EngineSettings.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\EngineSettings\UnrealFrontend-EngineSettings.exp
+  [195/341] Link [x64] UnrealFrontend-SessionMessages.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionMessages\UnrealFrontend-SessionMessages.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionMessages\UnrealFrontend-SessionMessages.exp
+  [196/341] Link [x64] UnrealFrontend-Messaging.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Messaging\UnrealFrontend-Messaging.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Messaging\UnrealFrontend-Messaging.exp
+  [197/341] Link [x64] UnrealFrontend-DeveloperToolSettings.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeveloperToolSettings\UnrealFrontend-DeveloperToolSettings.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeveloperToolSettings\UnrealFrontend-DeveloperToolSettings.exp
+  [198/341] Link [x64] UnrealFrontend-SessionServices.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionServices\UnrealFrontend-SessionServices.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionServices\UnrealFrontend-SessionServices.exp
+  [199/341] Link [x64] UnrealFrontend-LauncherServices.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\LauncherServices\UnrealFrontend-LauncherServices.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\LauncherServices\UnrealFrontend-LauncherServices.exp
+  [200/341] Link [x64] UnrealFrontend-Slate.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Slate\UnrealFrontend-Slate.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Slate\UnrealFrontend-Slate.exp
+  [201/341] Link [x64] UnrealFrontend-EngineMessages.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\EngineMessages\UnrealFrontend-EngineMessages.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\EngineMessages\UnrealFrontend-EngineMessages.exp
+  [202/341] Link [x64] UnrealFrontend-PIEPreviewDeviceSpecification.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\PIEPreviewDeviceSpecification\UnrealFrontend-PIEPreviewDeviceSpecification.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\PIEPreviewDeviceSpecification\UnrealFrontend-PIEPreviewDeviceSpecification.exp
+  [203/341] Link [x64] UnrealFrontend-TcpMessaging.lib
+     Creating library ..\Plugins\Messaging\TcpMessaging\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TcpMessaging\UnrealFrontend-TcpMessaging.lib and object ..\Plugins\Messaging\TcpMessaging\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TcpMessaging\UnrealFrontend-TcpMessaging.exp
+  [204/341] Link [x64] UnrealFrontend-ProfilerClient.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProfilerClient\UnrealFrontend-ProfilerClient.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProfilerClient\UnrealFrontend-ProfilerClient.exp
+  [205/341] Link [x64] UnrealFrontend-ProfilerMessages.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProfilerMessages\UnrealFrontend-ProfilerMessages.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProfilerMessages\UnrealFrontend-ProfilerMessages.exp
+  [206/341] Link [x64] UnrealFrontend-TargetDeviceServices.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TargetDeviceServices\UnrealFrontend-TargetDeviceServices.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TargetDeviceServices\UnrealFrontend-TargetDeviceServices.exp
+  [207/341] Link [x64] UnrealFrontend-LinuxTargetPlatform.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Linux\LinuxTargetPlatform\UnrealFrontend-LinuxTargetPlatform.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Linux\LinuxTargetPlatform\UnrealFrontend-LinuxTargetPlatform.exp
+  [208/341] Link [x64] UnrealFrontend-WindowsTargetPlatform.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\WindowsTargetPlatform\UnrealFrontend-WindowsTargetPlatform.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\WindowsTargetPlatform\UnrealFrontend-WindowsTargetPlatform.exp
+  [209/341] Link [x64] UnrealFrontend-UdpMessaging.lib
+     Creating library ..\Plugins\Messaging\UdpMessaging\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UdpMessaging\UnrealFrontend-UdpMessaging.lib and object ..\Plugins\Messaging\UdpMessaging\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UdpMessaging\UnrealFrontend-UdpMessaging.exp
+  [210/341] Link [x64] UnrealFrontend-StandaloneRenderer.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\StandaloneRenderer\UnrealFrontend-StandaloneRenderer.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\StandaloneRenderer\UnrealFrontend-StandaloneRenderer.exp
+  [211/341] Link [x64] UnrealFrontend-ShaderFormatVectorVM.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatVectorVM\UnrealFrontend-ShaderFormatVectorVM.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatVectorVM\UnrealFrontend-ShaderFormatVectorVM.exp
+  [212/341] Link [x64] UnrealFrontend-HoloLensTargetPlatform.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\HoloLensTargetPlatform\UnrealFrontend-HoloLensTargetPlatform.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\HoloLensTargetPlatform\UnrealFrontend-HoloLensTargetPlatform.exp
+  [213/341] Link [x64] UnrealFrontend-VectorVM.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VectorVM\UnrealFrontend-VectorVM.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VectorVM\UnrealFrontend-VectorVM.exp
+  [214/341] Link [x64] UnrealFrontend-ImageWrapper.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ImageWrapper\UnrealFrontend-ImageWrapper.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ImageWrapper\UnrealFrontend-ImageWrapper.exp
+  [215/341] Link [x64] UnrealFrontend-AndroidTargetPlatform.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Android\AndroidTargetPlatform\UnrealFrontend-AndroidTargetPlatform.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Android\AndroidTargetPlatform\UnrealFrontend-AndroidTargetPlatform.exp
+  [216/341] Link [x64] UnrealFrontend-InputCore.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\InputCore\UnrealFrontend-InputCore.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\InputCore\UnrealFrontend-InputCore.exp
+  [217/341] Link [x64] UnrealFrontend-CookOnTheFly.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\CookOnTheFly\UnrealFrontend-CookOnTheFly.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\CookOnTheFly\UnrealFrontend-CookOnTheFly.exp
+  [218/341] Link [x64] UnrealFrontend-Serialization.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Serialization\UnrealFrontend-Serialization.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Serialization\UnrealFrontend-Serialization.exp
+  [219/341] Link [x64] UnrealFrontend-TargetPlatform.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TargetPlatform\UnrealFrontend-TargetPlatform.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TargetPlatform\UnrealFrontend-TargetPlatform.exp
+  [220/341] Link [x64] UnrealFrontend-WorkspaceMenuStructure.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\WorkspaceMenuStructure\UnrealFrontend-WorkspaceMenuStructure.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\WorkspaceMenuStructure\UnrealFrontend-WorkspaceMenuStructure.exp
+  [221/341] Link [x64] UnrealFrontend-SourceCodeAccess.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SourceCodeAccess\UnrealFrontend-SourceCodeAccess.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SourceCodeAccess\UnrealFrontend-SourceCodeAccess.exp
+  [222/341] Link [x64] UnrealFrontend-ScreenShotComparisonTools.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ScreenShotComparisonTools\UnrealFrontend-ScreenShotComparisonTools.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ScreenShotComparisonTools\UnrealFrontend-ScreenShotComparisonTools.exp
+  [223/341] Link [x64] UnrealFrontend-ToolWidgets.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ToolWidgets\UnrealFrontend-ToolWidgets.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ToolWidgets\UnrealFrontend-ToolWidgets.exp
+  [224/341] Link [x64] UnrealFrontend-ToolMenus.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ToolMenus\UnrealFrontend-ToolMenus.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ToolMenus\UnrealFrontend-ToolMenus.exp
+  [225/341] Link [x64] UnrealFrontend-MessageLog.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\MessageLog\UnrealFrontend-MessageLog.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\MessageLog\UnrealFrontend-MessageLog.exp
+  [226/341] Link [x64] UnrealFrontend-Core.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Core\UnrealFrontend-Core.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Core\UnrealFrontend-Core.suppressed.exp
+  [227/341] Link [x64] UnrealFrontend-TurnkeyIO.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TurnkeyIO\UnrealFrontend-TurnkeyIO.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TurnkeyIO\UnrealFrontend-TurnkeyIO.exp
+  [228/341] Link [x64] UnrealFrontend-AssetRegistry.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AssetRegistry\UnrealFrontend-AssetRegistry.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AssetRegistry\UnrealFrontend-AssetRegistry.exp
+  [229/341] Link [x64] UnrealFrontend-SourceControl.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SourceControl\UnrealFrontend-SourceControl.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SourceControl\UnrealFrontend-SourceControl.exp
+  [230/341] Link [x64] UnrealFrontend-DesktopWidgets.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DesktopWidgets\UnrealFrontend-DesktopWidgets.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DesktopWidgets\UnrealFrontend-DesktopWidgets.exp
+  [231/341] Link [x64] UnrealFrontend-OutputLog.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\OutputLog\UnrealFrontend-OutputLog.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\OutputLog\UnrealFrontend-OutputLog.exp
+  [232/341] Compile [x64] Module.VSSCA.cpp
+  [233/341] Link [x64] UnrealFrontend-AutomationWindow.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationWindow\UnrealFrontend-AutomationWindow.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationWindow\UnrealFrontend-AutomationWindow.exp
+  [234/341] Link [x64] UnrealFrontend-ScreenShotComparison.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ScreenShotComparison\UnrealFrontend-ScreenShotComparison.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ScreenShotComparison\UnrealFrontend-ScreenShotComparison.exp
+  [235/341] Link [x64] UnrealFrontend-SessionFrontend.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionFrontend\UnrealFrontend-SessionFrontend.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionFrontend\UnrealFrontend-SessionFrontend.exp
+  [236/341] Link [x64] UnrealFrontend-CoreUObject.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\CoreUObject\UnrealFrontend-CoreUObject.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\CoreUObject\UnrealFrontend-CoreUObject.exp
+  [237/341] Link [x64] UnrealFrontend-TurnkeySupport.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TurnkeySupport\UnrealFrontend-TurnkeySupport.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TurnkeySupport\UnrealFrontend-TurnkeySupport.exp
+  [238/341] Link [x64] UnrealFrontend-Profiler.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Profiler\UnrealFrontend-Profiler.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Profiler\UnrealFrontend-Profiler.exp
+  [239/341] Link [x64] UnrealFrontend-DeviceManager.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeviceManager\UnrealFrontend-DeviceManager.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeviceManager\UnrealFrontend-DeviceManager.exp
+  [240/341] Link [x64] UnrealFrontend-ShaderFormatD3D.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatD3D\UnrealFrontend-ShaderFormatD3D.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatD3D\UnrealFrontend-ShaderFormatD3D.suppressed.exp
+  [241/341] Link [x64] UnrealFrontend-ImageWrapper.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ImageWrapper\UnrealFrontend-ImageWrapper.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ImageWrapper\UnrealFrontend-ImageWrapper.suppressed.exp
+  [242/341] Link [x64] UnrealFrontend-DerivedDataCache.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DerivedDataCache\UnrealFrontend-DerivedDataCache.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DerivedDataCache\UnrealFrontend-DerivedDataCache.suppressed.exp
+  [243/341] Link [x64] UnrealFrontend-Zen.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Zen\UnrealFrontend-Zen.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Zen\UnrealFrontend-Zen.suppressed.exp
+  [244/341] Link [x64] UnrealFrontend-CoreUObject.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\CoreUObject\UnrealFrontend-CoreUObject.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\CoreUObject\UnrealFrontend-CoreUObject.suppressed.exp
+  [245/341] Link [x64] UnrealFrontend-ShaderFormatOpenGL.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatOpenGL\UnrealFrontend-ShaderFormatOpenGL.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatOpenGL\UnrealFrontend-ShaderFormatOpenGL.suppressed.exp
+  [246/341] Link [x64] UnrealFrontend-ShaderPreprocessor.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderPreprocessor\UnrealFrontend-ShaderPreprocessor.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderPreprocessor\UnrealFrontend-ShaderPreprocessor.suppressed.exp
+  [247/341] Link [x64] UnrealFrontend-HTTP.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\HTTP\UnrealFrontend-HTTP.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\HTTP\UnrealFrontend-HTTP.suppressed.exp
+  [248/341] Link [x64] UnrealFrontend-VulkanShaderFormat.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VulkanShaderFormat\UnrealFrontend-VulkanShaderFormat.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VulkanShaderFormat\UnrealFrontend-VulkanShaderFormat.suppressed.exp
+  [249/341] Link [x64] UnrealFrontend-TextureCompressor.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureCompressor\UnrealFrontend-TextureCompressor.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureCompressor\UnrealFrontend-TextureCompressor.suppressed.exp
+  [250/341] Link [x64] UnrealFrontend-ShaderCompilerCommon.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderCompilerCommon\UnrealFrontend-ShaderCompilerCommon.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderCompilerCommon\UnrealFrontend-ShaderCompilerCommon.suppressed.exp
+  [251/341] Link [x64] UnrealFrontend-TextureFormatUncompressed.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatUncompressed\UnrealFrontend-TextureFormatUncompressed.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatUncompressed\UnrealFrontend-TextureFormatUncompressed.suppressed.exp
+  [252/341] Link [x64] UnrealFrontend-RHI.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\RHI\UnrealFrontend-RHI.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\RHI\UnrealFrontend-RHI.suppressed.exp
+  [253/341] Link [x64] UnrealFrontend-SSL.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SSL\UnrealFrontend-SSL.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SSL\UnrealFrontend-SSL.suppressed.exp
+  [254/341] Link [x64] UnrealFrontend-CookOnTheFly.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\CookOnTheFly\UnrealFrontend-CookOnTheFly.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\CookOnTheFly\UnrealFrontend-CookOnTheFly.suppressed.exp
+  [255/341] Link [x64] UnrealFrontend-DesktopPlatform.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DesktopPlatform\UnrealFrontend-DesktopPlatform.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DesktopPlatform\UnrealFrontend-DesktopPlatform.suppressed.exp
+  [256/341] Link [x64] UnrealFrontend-Sockets.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Sockets\UnrealFrontend-Sockets.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Sockets\UnrealFrontend-Sockets.suppressed.exp
+  [257/341] Link [x64] UnrealFrontend-TextureFormat.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormat\UnrealFrontend-TextureFormat.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormat\UnrealFrontend-TextureFormat.suppressed.exp
+  [258/341] Link [x64] UnrealFrontend-Projects.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Projects\UnrealFrontend-Projects.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Projects\UnrealFrontend-Projects.suppressed.exp
+  [259/341] Link [x64] UnrealFrontend-Networking.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Networking\UnrealFrontend-Networking.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Networking\UnrealFrontend-Networking.suppressed.exp
+  [260/341] Link [x64] UnrealFrontend-ApplicationCore.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ApplicationCore\UnrealFrontend-ApplicationCore.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ApplicationCore\UnrealFrontend-ApplicationCore.suppressed.exp
+  [261/341] Link [x64] UnrealFrontend-UELibSampleRate.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UELibSampleRate\UnrealFrontend-UELibSampleRate.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UELibSampleRate\UnrealFrontend-UELibSampleRate.suppressed.exp
+  [262/341] Link [x64] UnrealFrontend-Json.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Json\UnrealFrontend-Json.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Json\UnrealFrontend-Json.suppressed.exp
+  [263/341] Link [x64] UnrealFrontend-ColorManagement.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ColorManagement\UnrealFrontend-ColorManagement.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ColorManagement\UnrealFrontend-ColorManagement.suppressed.exp
+  [264/341] Link [x64] UnrealFrontend-DirectoryWatcher.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DirectoryWatcher\UnrealFrontend-DirectoryWatcher.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DirectoryWatcher\UnrealFrontend-DirectoryWatcher.suppressed.exp
+  [265/341] Link [x64] UnrealFrontend-NetCommon.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\NetCommon\UnrealFrontend-NetCommon.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\NetCommon\UnrealFrontend-NetCommon.suppressed.exp
+  [266/341] Link [x64] UnrealFrontend-Cbor.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Cbor\UnrealFrontend-Cbor.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Cbor\UnrealFrontend-Cbor.suppressed.exp
+  [267/341] Link [x64] UnrealFrontend-Analytics.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Analytics\UnrealFrontend-Analytics.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Analytics\UnrealFrontend-Analytics.suppressed.exp
+  [268/341] Link [x64] UnrealFrontend-TargetPlatform.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TargetPlatform\UnrealFrontend-TargetPlatform.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TargetPlatform\UnrealFrontend-TargetPlatform.suppressed.exp
+  [269/341] Link [x64] UnrealFrontend-AndroidDeviceDetection.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Android\AndroidDeviceDetection\UnrealFrontend-AndroidDeviceDetection.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Android\AndroidDeviceDetection\UnrealFrontend-AndroidDeviceDetection.suppressed.exp
+  [270/341] Link [x64] UnrealFrontend-WorkspaceMenuStructure.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\WorkspaceMenuStructure\UnrealFrontend-WorkspaceMenuStructure.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\WorkspaceMenuStructure\UnrealFrontend-WorkspaceMenuStructure.suppressed.exp
+  [271/341] Link [x64] UnrealFrontend-TextureBuild.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureBuild\UnrealFrontend-TextureBuild.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureBuild\UnrealFrontend-TextureBuild.suppressed.exp
+  [272/341] Link [x64] UnrealFrontend-TextureFormatIntelISPCTexComp.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatIntelISPCTexComp\UnrealFrontend-TextureFormatIntelISPCTexComp.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatIntelISPCTexComp\UnrealFrontend-TextureFormatIntelISPCTexComp.suppressed.exp
+  [273/341] Link [x64] UnrealFrontend-TextureFormatASTC.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatASTC\UnrealFrontend-TextureFormatASTC.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatASTC\UnrealFrontend-TextureFormatASTC.suppressed.exp
+  [274/341] Link [x64] UnrealFrontend-TextureBuildUtilities.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureBuildUtilities\UnrealFrontend-TextureBuildUtilities.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureBuildUtilities\UnrealFrontend-TextureBuildUtilities.suppressed.exp
+  [275/341] Link [x64] UnrealFrontend-TextureFormatDXT.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatDXT\UnrealFrontend-TextureFormatDXT.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatDXT\UnrealFrontend-TextureFormatDXT.suppressed.exp
+  [276/341] Link [x64] UnrealFrontend-TextureFormatETC2.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatETC2\UnrealFrontend-TextureFormatETC2.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TextureFormatETC2\UnrealFrontend-TextureFormatETC2.suppressed.exp
+  [277/341] Link [x64] UnrealFrontend-DesktopWidgets.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DesktopWidgets\UnrealFrontend-DesktopWidgets.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DesktopWidgets\UnrealFrontend-DesktopWidgets.suppressed.exp
+  [278/341] Link [x64] UnrealFrontend-LinuxArm64TargetPlatform.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\LinuxArm64\LinuxArm64TargetPlatform\UnrealFrontend-LinuxArm64TargetPlatform.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\LinuxArm64\LinuxArm64TargetPlatform\UnrealFrontend-LinuxArm64TargetPlatform.suppressed.exp
+  [279/341] Link [x64] UnrealFrontend-RenderCore.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\RenderCore\UnrealFrontend-RenderCore.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\RenderCore\UnrealFrontend-RenderCore.suppressed.exp
+  [280/341] Link [x64] UnrealFrontend-VisualStudioSourceCodeAccess.lib
+     Creating library ..\Plugins\Developer\VisualStudioSourceCodeAccess\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VSSCA\UnrealFrontend-VisualStudioSourceCodeAccess.lib and object ..\Plugins\Developer\VisualStudioSourceCodeAccess\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VSSCA\UnrealFrontend-VisualStudioSourceCodeAccess.exp
+  [281/341] Link [x64] UnrealFrontend-DeviceManager.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeviceManager\UnrealFrontend-DeviceManager.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeviceManager\UnrealFrontend-DeviceManager.suppressed.exp
+  [282/341] Link [x64] UnrealFrontend-VisualStudioSourceCodeAccess.dll
+     Creating library ..\Plugins\Developer\VisualStudioSourceCodeAccess\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VSSCA\UnrealFrontend-VisualStudioSourceCodeAccess.suppressed.lib and object ..\Plugins\Developer\VisualStudioSourceCodeAccess\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VSSCA\UnrealFrontend-VisualStudioSourceCodeAccess.suppressed.exp
+  [283/341] Link [x64] UnrealFrontend-Profiler.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Profiler\UnrealFrontend-Profiler.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Profiler\UnrealFrontend-Profiler.suppressed.exp
+  [284/341] Link [x64] UnrealFrontend-TurnkeySupport.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TurnkeySupport\UnrealFrontend-TurnkeySupport.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TurnkeySupport\UnrealFrontend-TurnkeySupport.suppressed.exp
+  [285/341] Link [x64] UnrealFrontend-ScreenShotComparison.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ScreenShotComparison\UnrealFrontend-ScreenShotComparison.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ScreenShotComparison\UnrealFrontend-ScreenShotComparison.suppressed.exp
+  [286/341] Link [x64] UnrealFrontend-SlateCore.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SlateCore\UnrealFrontend-SlateCore.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SlateCore\UnrealFrontend-SlateCore.suppressed.exp
+  [287/341] Link [x64] UnrealFrontend-StandaloneRenderer.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\StandaloneRenderer\UnrealFrontend-StandaloneRenderer.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\StandaloneRenderer\UnrealFrontend-StandaloneRenderer.suppressed.exp
+  [288/341] Compile [x64] Module.ProjectLauncher.cpp
+  [289/341] Link [x64] UnrealFrontend-AutomationWindow.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationWindow\UnrealFrontend-AutomationWindow.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationWindow\UnrealFrontend-AutomationWindow.suppressed.exp
+  [290/341] Link [x64] UnrealFrontend-Slate.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Slate\UnrealFrontend-Slate.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Slate\UnrealFrontend-Slate.suppressed.exp
+  [291/341] Link [x64] UnrealFrontend-AutomationController.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationController\UnrealFrontend-AutomationController.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationController\UnrealFrontend-AutomationController.suppressed.exp
+  [292/341] Link [x64] UnrealFrontend-SourceControl.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SourceControl\UnrealFrontend-SourceControl.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SourceControl\UnrealFrontend-SourceControl.suppressed.exp
+  [293/341] Link [x64] UnrealFrontend-UdpMessaging.dll
+     Creating library ..\Plugins\Messaging\UdpMessaging\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UdpMessaging\UnrealFrontend-UdpMessaging.suppressed.lib and object ..\Plugins\Messaging\UdpMessaging\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UdpMessaging\UnrealFrontend-UdpMessaging.suppressed.exp
+  [294/341] Link [x64] UnrealFrontend-LauncherServices.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\LauncherServices\UnrealFrontend-LauncherServices.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\LauncherServices\UnrealFrontend-LauncherServices.suppressed.exp
+  [295/341] Link [x64] UnrealFrontend-ScreenShotComparisonTools.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ScreenShotComparisonTools\UnrealFrontend-ScreenShotComparisonTools.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ScreenShotComparisonTools\UnrealFrontend-ScreenShotComparisonTools.suppressed.exp
+  [296/341] Link [x64] UnrealFrontend-ShaderFormatVectorVM.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatVectorVM\UnrealFrontend-ShaderFormatVectorVM.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ShaderFormatVectorVM\UnrealFrontend-ShaderFormatVectorVM.suppressed.exp
+  [297/341] Link [x64] UnrealFrontend-HoloLensTargetPlatform.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\HoloLensTargetPlatform\UnrealFrontend-HoloLensTargetPlatform.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\HoloLensTargetPlatform\UnrealFrontend-HoloLensTargetPlatform.suppressed.exp
+  [298/341] Link [x64] UnrealFrontend-OutputLog.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\OutputLog\UnrealFrontend-OutputLog.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\OutputLog\UnrealFrontend-OutputLog.suppressed.exp
+  [299/341] Link [x64] UnrealFrontend-TurnkeyIO.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TurnkeyIO\UnrealFrontend-TurnkeyIO.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TurnkeyIO\UnrealFrontend-TurnkeyIO.suppressed.exp
+  [300/341] Link [x64] UnrealFrontend-AndroidTargetPlatform.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Android\AndroidTargetPlatform\UnrealFrontend-AndroidTargetPlatform.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Android\AndroidTargetPlatform\UnrealFrontend-AndroidTargetPlatform.suppressed.exp
+  [301/341] Link [x64] UnrealFrontend-TcpMessaging.dll
+     Creating library ..\Plugins\Messaging\TcpMessaging\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TcpMessaging\UnrealFrontend-TcpMessaging.suppressed.lib and object ..\Plugins\Messaging\TcpMessaging\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TcpMessaging\UnrealFrontend-TcpMessaging.suppressed.exp
+  [302/341] Link [x64] UnrealFrontend-ToolMenus.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ToolMenus\UnrealFrontend-ToolMenus.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ToolMenus\UnrealFrontend-ToolMenus.suppressed.exp
+  [303/341] Link [x64] UnrealFrontend-WindowsTargetPlatform.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\WindowsTargetPlatform\UnrealFrontend-WindowsTargetPlatform.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\WindowsTargetPlatform\UnrealFrontend-WindowsTargetPlatform.suppressed.exp
+  [304/341] Link [x64] UnrealFrontend-LinuxTargetPlatform.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Linux\LinuxTargetPlatform\UnrealFrontend-LinuxTargetPlatform.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Linux\LinuxTargetPlatform\UnrealFrontend-LinuxTargetPlatform.suppressed.exp
+  [305/341] Link [x64] UnrealFrontend-MessageLog.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\MessageLog\UnrealFrontend-MessageLog.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\MessageLog\UnrealFrontend-MessageLog.suppressed.exp
+  [306/341] Link [x64] UnrealFrontend-DeveloperToolSettings.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeveloperToolSettings\UnrealFrontend-DeveloperToolSettings.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeveloperToolSettings\UnrealFrontend-DeveloperToolSettings.suppressed.exp
+  [307/341] Link [x64] UnrealFrontend-SessionServices.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionServices\UnrealFrontend-SessionServices.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionServices\UnrealFrontend-SessionServices.suppressed.exp
+  [308/341] Link [x64] UnrealFrontend-TargetDeviceServices.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TargetDeviceServices\UnrealFrontend-TargetDeviceServices.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\TargetDeviceServices\UnrealFrontend-TargetDeviceServices.suppressed.exp
+  [309/341] Link [x64] UnrealFrontend-Serialization.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Serialization\UnrealFrontend-Serialization.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Serialization\UnrealFrontend-Serialization.suppressed.exp
+  [310/341] Link [x64] UnrealFrontend-AssetRegistry.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AssetRegistry\UnrealFrontend-AssetRegistry.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AssetRegistry\UnrealFrontend-AssetRegistry.suppressed.exp
+  [311/341] Link [x64] UnrealFrontend-DeveloperSettings.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeveloperSettings\UnrealFrontend-DeveloperSettings.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\DeveloperSettings\UnrealFrontend-DeveloperSettings.suppressed.exp
+  [312/341] Link [x64] UnrealFrontend-AutomationMessages.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationMessages\UnrealFrontend-AutomationMessages.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationMessages\UnrealFrontend-AutomationMessages.suppressed.exp
+  [313/341] Link [x64] UnrealFrontend-ProfilerClient.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProfilerClient\UnrealFrontend-ProfilerClient.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProfilerClient\UnrealFrontend-ProfilerClient.suppressed.exp
+  [314/341] Link [x64] UnrealFrontend-SourceCodeAccess.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SourceCodeAccess\UnrealFrontend-SourceCodeAccess.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SourceCodeAccess\UnrealFrontend-SourceCodeAccess.suppressed.exp
+  [315/341] Link [x64] UnrealFrontend-AudioPlatformConfiguration.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AudioPlatformConfiguration\UnrealFrontend-AudioPlatformConfiguration.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AudioPlatformConfiguration\UnrealFrontend-AudioPlatformConfiguration.suppressed.exp
+  [316/341] Compile [x64] Module.AppFramework.cpp
+  [317/341] Link [x64] UnrealFrontend-JsonUtilities.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\JsonUtilities\UnrealFrontend-JsonUtilities.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\JsonUtilities\UnrealFrontend-JsonUtilities.suppressed.exp
+  [318/341] Link [x64] UnrealFrontend-ImageCore.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ImageCore\UnrealFrontend-ImageCore.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ImageCore\UnrealFrontend-ImageCore.suppressed.exp
+  [319/341] Link [x64] UnrealFrontend-EngineMessages.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\EngineMessages\UnrealFrontend-EngineMessages.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\EngineMessages\UnrealFrontend-EngineMessages.suppressed.exp
+  [320/341] Link [x64] UnrealFrontend-Messaging.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Messaging\UnrealFrontend-Messaging.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Messaging\UnrealFrontend-Messaging.suppressed.exp
+  [321/341] Link [x64] UnrealFrontend-AutomationTest.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationTest\UnrealFrontend-AutomationTest.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AutomationTest\UnrealFrontend-AutomationTest.suppressed.exp
+  [322/341] Link [x64] UnrealFrontend-PIEPreviewDeviceSpecification.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\PIEPreviewDeviceSpecification\UnrealFrontend-PIEPreviewDeviceSpecification.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\PIEPreviewDeviceSpecification\UnrealFrontend-PIEPreviewDeviceSpecification.suppressed.exp
+  [323/341] Link [x64] UnrealFrontend-EngineSettings.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\EngineSettings\UnrealFrontend-EngineSettings.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\EngineSettings\UnrealFrontend-EngineSettings.suppressed.exp
+  [324/341] Link [x64] UnrealFrontend-UnrealEdMessages.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UnrealEdMessages\UnrealFrontend-UnrealEdMessages.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\UnrealEdMessages\UnrealFrontend-UnrealEdMessages.suppressed.exp
+  [325/341] Link [x64] UnrealFrontend-Settings.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Settings\UnrealFrontend-Settings.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\Settings\UnrealFrontend-Settings.suppressed.exp
+  [326/341] Link [x64] UnrealFrontend-InputCore.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\InputCore\UnrealFrontend-InputCore.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\InputCore\UnrealFrontend-InputCore.suppressed.exp
+  [327/341] Link [x64] UnrealFrontend-ProfilerMessages.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProfilerMessages\UnrealFrontend-ProfilerMessages.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProfilerMessages\UnrealFrontend-ProfilerMessages.suppressed.exp
+  [328/341] Link [x64] UnrealFrontend-ProjectLauncher.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProjectLauncher\UnrealFrontend-ProjectLauncher.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProjectLauncher\UnrealFrontend-ProjectLauncher.exp
+  [329/341] Link [x64] UnrealFrontend-SessionMessages.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionMessages\UnrealFrontend-SessionMessages.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionMessages\UnrealFrontend-SessionMessages.suppressed.exp
+  [330/341] Link [x64] UnrealFrontend-VectorVM.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VectorVM\UnrealFrontend-VectorVM.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\VectorVM\UnrealFrontend-VectorVM.suppressed.exp
+  [331/341] Link [x64] UnrealFrontend-AppFramework.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AppFramework\UnrealFrontend-AppFramework.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AppFramework\UnrealFrontend-AppFramework.exp
+  [332/341] Link [x64] UnrealFrontend-SessionFrontend.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionFrontend\UnrealFrontend-SessionFrontend.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SessionFrontend\UnrealFrontend-SessionFrontend.suppressed.exp
+  [333/341] Link [x64] UnrealFrontend.exe
+  [334/341] Link [x64] UnrealFrontend-ProjectLauncher.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProjectLauncher\UnrealFrontend-ProjectLauncher.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ProjectLauncher\UnrealFrontend-ProjectLauncher.suppressed.exp
+  [335/341] Link [x64] UnrealFrontend-ToolWidgets.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ToolWidgets\UnrealFrontend-ToolWidgets.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\ToolWidgets\UnrealFrontend-ToolWidgets.suppressed.exp
+  [336/341] Link [x64] UnrealFrontend-AppFramework.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AppFramework\UnrealFrontend-AppFramework.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\AppFramework\UnrealFrontend-AppFramework.suppressed.exp
+  [337/341] Compile [x64] Module.SlateReflector.cpp
+  [338/341] Link [x64] UnrealFrontend-SlateReflector.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SlateReflector\UnrealFrontend-SlateReflector.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SlateReflector\UnrealFrontend-SlateReflector.exp
+  [339/341] Link [x64] UnrealFrontend-SlateReflector.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SlateReflector\UnrealFrontend-SlateReflector.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealFrontend\Development\SlateReflector\UnrealFrontend-SlateReflector.suppressed.exp
+  [340/341] WriteMetadata UnrealFrontend.version
+  [341/341] WriteMetadata UnrealFrontend.target
+  Total time in Parallel executor: 207.04 seconds
+  Total execution time: 400.82 seconds

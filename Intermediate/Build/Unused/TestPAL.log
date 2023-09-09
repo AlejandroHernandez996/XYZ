@@ -8,42 +8,35 @@
   Using Visual Studio 2022 14.34.31946 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
   Determining max actions to execute in parallel (10 physical cores, 20 logical cores)
     Executing up to 10 processes, one per physical core
-    Requested 1.5 GB free memory per action, 4.14 GB available: limiting max parallel actions to 2
-  Building 31 actions with 2 processes...
-  [1/31] Compile [x64] PCH.Core.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Math\UnrealMathUtility.h(2616): fatal error C1088: Cannot flush compiler intermediate file: 'C:\Users\aleja\AppData\Local\Temp\_CL_36703f55db': No space left on device
-  [2/31] Compile [x64] Module.Core.6_of_17.cpp cancelled
-  [3/31] Compile [x64] Module.Core.13_of_17.cpp cancelled
-  [4/31] Compile [x64] Module.Core.4_of_17.cpp cancelled
-  [5/31] Compile [x64] Module.Core.17_of_17.cpp cancelled
-  [6/31] Compile [x64] Module.Core.14_of_17.cpp cancelled
-  [7/31] Compile [x64] Module.Core.15_of_17.cpp cancelled
-  [8/31] Compile [x64] Module.Core.3_of_17.cpp cancelled
-  [9/31] Compile [x64] Module.Core.11_of_17.cpp cancelled
-  [10/31] Compile [x64] Module.Core.8_of_17.cpp cancelled
-  [11/31] Compile [x64] Module.Core.7_of_17.cpp cancelled
-  [12/31] Compile [x64] Module.Core.1_of_17.cpp cancelled
-  [13/31] Compile [x64] Module.Core.5_of_17.cpp cancelled
-  [14/31] Compile [x64] Module.Core.2_of_17.cpp cancelled
-  [15/31] Compile [x64] Module.Core.12_of_17.cpp cancelled
-  [16/31] Compile [x64] Module.Core.16_of_17.cpp cancelled
-  [17/31] Compile [x64] Module.Core.9_of_17.cpp cancelled
-  [18/31] Compile [x64] Module.Core.10_of_17.cpp cancelled
-  [19/31] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastErrors.cpp
-C:\Program Files (x86)\Windows Kits\10\include\10.0.22621.0\ucrt\stdio.h(963): fatal error C1088: Cannot flush compiler intermediate file: '..\Intermediate\Build\Win64\x64\TestPAL\Development\Core\SharedPCH.Core.ShadowErrors.TypeCastErrors.h.pch': No space left on device
-  [20/31] Compile [x64] Module.Projects.cpp cancelled
-  [21/31] Compile [x64] Module.ApplicationCore.cpp cancelled
-  [22/31] Compile [x64] Module.DirectoryWatcher.cpp cancelled
-  [23/31] Compile [x64] Module.Json.cpp cancelled
-  [24/31] Compile [x64] SharedPCH.Core.ShadowErrors.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Async\Fundamental\Task.h(271): fatal error C1088: Cannot flush compiler intermediate file: 'C:\Users\aleja\AppData\Local\Temp\_CL_c437fa2adb': No space left on device
-  [25/31] Compile [x64] Module.TestPAL.cpp cancelled
-  [26/31] Compile [x64] BuildSettings.cpp
-  [27/31] Resource Default.rc2
-  [28/31] Compile [x64] MiMalloc.c
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Private\Thirdparty\MiMalloc.c : fatal error C1085: Cannot write compiler generated file: 'C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Intermediate\Build\Win64\x64\TestPAL\Development\Core\MiMalloc.c.obj': No space left on device
-  [29/31] Compile [x64] Module.TraceLog.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Intermediate\Build\Win64\x64\TestPAL\Development\TraceLog\Module.TraceLog.cpp : fatal error C1085: Cannot write compiler generated file: 'C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Intermediate\Build\Win64\x64\TestPAL\Development\TraceLog\Module.TraceLog.cpp.obj': No space left on device
-  [30/31] Link [x64] TestPAL.exe cancelled
-  [31/31] WriteMetadata TestPAL.target cancelled
-C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.MakeFile.Targets(44,5): error MSB3073: The command "C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Build\BatchFiles\Build.bat TestPAL Win64 Development -WaitMutex -FromMsBuild" exited with code 6.
+  Building 29 actions with 10 processes...
+  [1/29] Compile [x64] MiMalloc.c
+  [2/29] Compile [x64] Module.TraceLog.cpp
+  [3/29] Compile [x64] SharedPCH.Core.ShadowErrors.cpp
+  [4/29] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastErrors.cpp
+  [5/29] Compile [x64] PCH.Core.cpp
+  [6/29] Compile [x64] Module.Core.17_of_17.cpp
+  [7/29] Compile [x64] Module.Projects.cpp
+  [8/29] Compile [x64] Module.DirectoryWatcher.cpp
+  [9/29] Compile [x64] Module.TestPAL.cpp
+  [10/29] Compile [x64] Module.Core.4_of_17.cpp
+  [11/29] Compile [x64] Module.ApplicationCore.cpp
+  [12/29] Compile [x64] Module.Json.cpp
+  [13/29] Compile [x64] Module.Core.2_of_17.cpp
+  [14/29] Compile [x64] Module.Core.7_of_17.cpp
+  [15/29] Compile [x64] Module.Core.3_of_17.cpp
+  [16/29] Compile [x64] Module.Core.10_of_17.cpp
+  [17/29] Compile [x64] Module.Core.11_of_17.cpp
+  [18/29] Compile [x64] Module.Core.8_of_17.cpp
+  [19/29] Compile [x64] Module.Core.9_of_17.cpp
+  [20/29] Compile [x64] Module.Core.16_of_17.cpp
+  [21/29] Compile [x64] Module.Core.15_of_17.cpp
+  [22/29] Compile [x64] Module.Core.12_of_17.cpp
+  [23/29] Compile [x64] Module.Core.6_of_17.cpp
+  [24/29] Compile [x64] Module.Core.1_of_17.cpp
+  [25/29] Compile [x64] Module.Core.5_of_17.cpp
+  [26/29] Compile [x64] Module.Core.14_of_17.cpp
+  [27/29] Compile [x64] Module.Core.13_of_17.cpp
+  [28/29] Link [x64] TestPAL.exe
+  [29/29] WriteMetadata TestPAL.target
+  Total time in Parallel executor: 43.65 seconds
+  Total execution time: 446.51 seconds

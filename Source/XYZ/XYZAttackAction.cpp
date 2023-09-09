@@ -4,21 +4,11 @@
 void UXYZAttackAction::ProcessAction(float DeltaTime)
 {
     Super::ProcessAction(DeltaTime);
-
-    if (ActionState != EXYZActionState::IN_PROGRESS)
-    {
-        return;
-    }
-    if (!Actor)
-    {
-        CancelAction();
-        return;
-    }
     FVector ActorLocation = Actor->GetActorLocation();
     FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
 
     if (!TargetActor) {
-        TargetActor = Actor->FindClosestActor();
+        TargetActor = Actor->FindClosestActor(bIgnoreAllies);
 
         if (!TargetActor) {
             FVector Direction = TargetLocation - ActorLocation;
@@ -42,10 +32,15 @@ void UXYZAttackAction::ProcessAction(float DeltaTime)
     } 
 
     if (TargetActor->Health <= 0.0f) {
-        CompleteAction();
+        if (bIsAttackMove) {
+            TargetActor = nullptr;
+        }
+        else {
+            CompleteAction();
+        }
         return;
     }
-
+    
     FVector TargetActorLocation = TargetActor->GetActorLocation();
 
     FVector Direction = TargetActorLocation - ActorLocation;

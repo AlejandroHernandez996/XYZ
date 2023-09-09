@@ -12,19 +12,22 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 // Cross Module References
 	ENGINE_API UClass* Z_Construct_UClass_APawn();
 	ENGINE_API UClass* Z_Construct_UClass_UDecalComponent_NoRegister();
+	ENGINE_API UClass* Z_Construct_UClass_UMaterialInterface_NoRegister();
 	ENGINE_API UScriptStruct* Z_Construct_UScriptStruct_FTimerHandle();
 	UPackage* Z_Construct_UPackage__Script_XYZ();
 	XYZ_API UClass* Z_Construct_UClass_AXYZActor();
 	XYZ_API UClass* Z_Construct_UClass_AXYZActor_NoRegister();
 	XYZ_API UClass* Z_Construct_UClass_UXYZAbility_NoRegister();
 	XYZ_API UClass* Z_Construct_UClass_UXYZAction_NoRegister();
+	XYZ_API UEnum* Z_Construct_UEnum_XYZ_EXYZDecalType();
 	XYZ_API UEnum* Z_Construct_UEnum_XYZ_EXYZFactionType();
 // End Cross Module References
 	DEFINE_FUNCTION(AXYZActor::execFindClosestActor)
 	{
+		P_GET_UBOOL(Z_Param_bIgnoreFriendlyActors);
 		P_FINISH;
 		P_NATIVE_BEGIN;
-		*(AXYZActor**)Z_Param__Result=P_THIS->FindClosestActor();
+		*(AXYZActor**)Z_Param__Result=P_THIS->FindClosestActor(Z_Param_bIgnoreFriendlyActors);
 		P_NATIVE_END;
 	}
 	DEFINE_FUNCTION(AXYZActor::execQueueAction)
@@ -89,8 +92,11 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 	{
 		struct XYZActor_eventFindClosestActor_Parms
 		{
+			bool bIgnoreFriendlyActors;
 			AXYZActor* ReturnValue;
 		};
+		static void NewProp_bIgnoreFriendlyActors_SetBit(void* Obj);
+		static const UECodeGen_Private::FBoolPropertyParams NewProp_bIgnoreFriendlyActors;
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_ReturnValue;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 #if WITH_METADATA
@@ -98,8 +104,14 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 #endif
 		static const UECodeGen_Private::FFunctionParams FuncParams;
 	};
+	void Z_Construct_UFunction_AXYZActor_FindClosestActor_Statics::NewProp_bIgnoreFriendlyActors_SetBit(void* Obj)
+	{
+		((XYZActor_eventFindClosestActor_Parms*)Obj)->bIgnoreFriendlyActors = 1;
+	}
+	const UECodeGen_Private::FBoolPropertyParams Z_Construct_UFunction_AXYZActor_FindClosestActor_Statics::NewProp_bIgnoreFriendlyActors = { "bIgnoreFriendlyActors", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Bool | UECodeGen_Private::EPropertyGenFlags::NativeBool, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, sizeof(bool), sizeof(XYZActor_eventFindClosestActor_Parms), &Z_Construct_UFunction_AXYZActor_FindClosestActor_Statics::NewProp_bIgnoreFriendlyActors_SetBit, METADATA_PARAMS(nullptr, 0) };
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UFunction_AXYZActor_FindClosestActor_Statics::NewProp_ReturnValue = { "ReturnValue", nullptr, (EPropertyFlags)0x0010000000000580, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(XYZActor_eventFindClosestActor_Parms, ReturnValue), Z_Construct_UClass_AXYZActor_NoRegister, METADATA_PARAMS(nullptr, 0) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AXYZActor_FindClosestActor_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AXYZActor_FindClosestActor_Statics::NewProp_bIgnoreFriendlyActors,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AXYZActor_FindClosestActor_Statics::NewProp_ReturnValue,
 	};
 #if WITH_METADATA
@@ -210,6 +222,13 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_AttackRange_MetaData[];
 #endif
 		static const UECodeGen_Private::FFloatPropertyParams NewProp_AttackRange;
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_DecalMaterials_ValueProp;
+		static const UECodeGen_Private::FBytePropertyParams NewProp_DecalMaterials_Key_KeyProp_Underlying;
+		static const UECodeGen_Private::FEnumPropertyParams NewProp_DecalMaterials_Key_KeyProp;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_DecalMaterials_MetaData[];
+#endif
+		static const UECodeGen_Private::FMapPropertyParams NewProp_DecalMaterials;
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_Abilities_Inner;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_Abilities_MetaData[];
@@ -251,7 +270,7 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 	};
 	const FClassFunctionLinkInfo Z_Construct_UClass_AXYZActor_Statics::FuncInfo[] = {
 		{ &Z_Construct_UFunction_AXYZActor_Attack, "Attack" }, // 2209263105
-		{ &Z_Construct_UFunction_AXYZActor_FindClosestActor, "FindClosestActor" }, // 1764064277
+		{ &Z_Construct_UFunction_AXYZActor_FindClosestActor, "FindClosestActor" }, // 665096243
 		{ &Z_Construct_UFunction_AXYZActor_QueueAction, "QueueAction" }, // 2030929884
 	};
 #if WITH_METADATA
@@ -274,7 +293,7 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		{ "ModuleRelativePath", "XYZActor.h" },
 	};
 #endif
-	const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_UActorId = { "UActorId", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZActor, UActorId), METADATA_PARAMS(Z_Construct_UClass_AXYZActor_Statics::NewProp_UActorId_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZActor_Statics::NewProp_UActorId_MetaData)) };
+	const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_UActorId = { "UActorId", nullptr, (EPropertyFlags)0x0010000000000025, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZActor, UActorId), METADATA_PARAMS(Z_Construct_UClass_AXYZActor_Statics::NewProp_UActorId_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZActor_Statics::NewProp_UActorId_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZActor_Statics::NewProp_TeamId_MetaData[] = {
 		{ "Category", "Info" },
@@ -346,6 +365,16 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 	};
 #endif
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackRange = { "AttackRange", nullptr, (EPropertyFlags)0x0010000000000035, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZActor, AttackRange), METADATA_PARAMS(Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackRange_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackRange_MetaData)) };
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_ValueProp = { "DecalMaterials", nullptr, (EPropertyFlags)0x0000000000000001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 1, Z_Construct_UClass_UMaterialInterface_NoRegister, METADATA_PARAMS(nullptr, 0) };
+	const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_Key_KeyProp_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, nullptr, METADATA_PARAMS(nullptr, 0) };
+	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_Key_KeyProp = { "DecalMaterials_Key", nullptr, (EPropertyFlags)0x0000000000000001, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, Z_Construct_UEnum_XYZ_EXYZDecalType, METADATA_PARAMS(nullptr, 0) }; // 4026556723
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_MetaData[] = {
+		{ "Category", "Decal" },
+		{ "ModuleRelativePath", "XYZActor.h" },
+	};
+#endif
+	const UECodeGen_Private::FMapPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials = { "DecalMaterials", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZActor, DecalMaterials), EMapPropertyFlags::None, METADATA_PARAMS(Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_MetaData)) }; // 4026556723
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_Abilities_Inner = { "Abilities", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, Z_Construct_UClass_UXYZAbility_NoRegister, METADATA_PARAMS(nullptr, 0) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZActor_Statics::NewProp_Abilities_MetaData[] = {
@@ -411,6 +440,10 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackDamage,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackRate,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackRange,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_ValueProp,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_Key_KeyProp_Underlying,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_Key_KeyProp,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_Abilities_Inner,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_Abilities,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_ActionQueue_Inner,
@@ -454,6 +487,7 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 
 	void AXYZActor::ValidateGeneratedRepEnums(const TArray<struct FRepRecord>& ClassReps) const
 	{
+		static const FName Name_UActorId(TEXT("UActorId"));
 		static const FName Name_Health(TEXT("Health"));
 		static const FName Name_MaxHealth(TEXT("MaxHealth"));
 		static const FName Name_MoveSpeed(TEXT("MoveSpeed"));
@@ -463,6 +497,7 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		static const FName Name_AttackRange(TEXT("AttackRange"));
 
 		const bool bIsValid = true
+			&& Name_UActorId == ClassReps[(int32)ENetFields_Private::UActorId].Property->GetFName()
 			&& Name_Health == ClassReps[(int32)ENetFields_Private::Health].Property->GetFName()
 			&& Name_MaxHealth == ClassReps[(int32)ENetFields_Private::MaxHealth].Property->GetFName()
 			&& Name_MoveSpeed == ClassReps[(int32)ENetFields_Private::MoveSpeed].Property->GetFName()
@@ -480,9 +515,9 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_AXYZActor, AXYZActor::StaticClass, TEXT("AXYZActor"), &Z_Registration_Info_UClass_AXYZActor, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZActor), 2335099338U) },
+		{ Z_Construct_UClass_AXYZActor, AXYZActor::StaticClass, TEXT("AXYZActor"), &Z_Registration_Info_UClass_AXYZActor, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZActor), 1798364623U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_2456801247(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_2971000964(TEXT("/Script/XYZ"),
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

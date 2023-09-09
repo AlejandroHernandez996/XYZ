@@ -21,7 +21,7 @@ void UXYZInputManager::ExecuteInput(const FXYZInputMessage& InputMessage)
     for (auto UActorId : InputMessage.SelectedActors) {
 
         AXYZActor* SelectedActor = XYZGameState->ActorsByUID.Contains(UActorId) ? XYZGameState->ActorsByUID[UActorId] : nullptr;
-        if (!SelectedActor) return;
+        if (!SelectedActor) continue;
         AXYZActor* TargetActor = XYZGameState->ActorsByUID.Contains(InputMessage.XYZTargetActor) ? XYZGameState->ActorsByUID[InputMessage.XYZTargetActor] : nullptr;
         UXYZAction* XYZAction = UXYZActionFactory::CreateAction(SelectedActor, TargetActor, InputMessage.TargetLocation, InputMessage.bQueueInput, InputMessage.InputType, InputIndex);
         InputIndex++;

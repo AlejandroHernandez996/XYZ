@@ -5,16 +5,5 @@
 
 void UXYZStopAction::ProcessAction(float DeltaTime)
 {
-    if (ActionState != EXYZActionState::IN_PROGRESS)
-    {
-        return;
-    }
-
-    if (!Actor)
-    {
-        CancelAction();
-        return;
-    }
-
     CompleteAction();
 }

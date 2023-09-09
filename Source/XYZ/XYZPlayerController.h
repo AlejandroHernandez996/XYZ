@@ -109,6 +109,7 @@ protected:
 	UFUNCTION()
 	void SelectActors(TArray<AXYZActor*> Actors);
 
+	void CreateAndQueueInput(TArray<int32> _SelectedActors, int32 _XYZTargetActor, FVector _TargetLocation, EXYZInputType _InputType, bool _bQueueInput);
 	UFUNCTION(Server, Reliable)
 	void QueueInput(const FXYZInputMessage& InputMessage);
 	void QueueInput_Implementation(const FXYZInputMessage& InputMessage);
@@ -119,6 +120,8 @@ protected:
 	// We look for the location in the world where the player has pressed the input
 	FHitResult XYZActorHit;
 	bool bXYZActorHitSuccessful = false;
+
+	int32 TeamId = 0;
 
 private:
 	UPROPERTY()

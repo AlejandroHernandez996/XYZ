@@ -9,108 +9,88 @@
   Using Visual Studio 2022 14.34.31946 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
   Determining max actions to execute in parallel (10 physical cores, 20 logical cores)
     Executing up to 10 processes, one per physical core
-    Requested 1.5 GB free memory per action, 7.33 GB available: limiting max parallel actions to 4
-  Building 71 actions with 4 processes...
-  [1/71] Resource Default.rc2
-  [2/71] Compile [x64] MiMalloc.c
-  [3/71] Compile [x64] Module.TraceLog.cpp
-  [4/71] Compile [x64] BuildSettings.cpp
-  [5/71] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastErrors.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Core\SharedPCH.Core.ShadowErrors.TypeCastErrors.cpp(2): fatal error C1085: Cannot write precompiled header file: '..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Core\SharedPCH.Core.ShadowErrors.TypeCastErrors.h.pch': There is not enough space on the disk.
-  [6/71] Compile [x64] PCH.Core.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Async\Fundamental\Task.h(502): fatal error C1088: Cannot flush compiler intermediate file: '..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Core\PCH.Core.h.pch': No space left on device
-  C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Tasks\TaskPrivate.h(153): note: see reference to function template instantiation 'void LowLevelTasks::FTask::Init<UE::Tasks::Private::FTaskBase::Init::<lambda_d8f0171c9a2cc19652813053cf4ef946>>(const TCHAR *,LowLevelTasks::ETaskPriority,TRunnable &&,LowLevelTasks::ETaskFlags)' being compiled
-          with
-          [
-              TRunnable=UE::Tasks::Private::FTaskBase::Init::<lambda_d8f0171c9a2cc19652813053cf4ef946>
-          ]
-  [7/71] Compile [x64] Module.SSL.cpp cancelled
-  [8/71] Compile [x64] Module.Core.6_of_17.cpp cancelled
-  [9/71] Link [x64] UnrealHeaderTool-Sockets.dll cancelled
-  [10/71] Link [x64] UnrealHeaderTool-Json.dll cancelled
-  [11/71] Link [x64] UnrealHeaderTool-NetCommon.dll cancelled
-  [12/71] Compile [x64] Module.Zen.cpp cancelled
-  [13/71] Compile [x64] Module.Core.7_of_17.cpp cancelled
-  [14/71] Compile [x64] Module.Core.2_of_17.cpp cancelled
-  [15/71] Compile [x64] NetCommonModule.cpp cancelled
-  [16/71] Compile [x64] Module.DerivedDataCache.1_of_2.cpp cancelled
-  [17/71] Compile [x64] Module.DerivedDataCache.2_of_2.cpp cancelled
-  [18/71] Compile [x64] Module.Core.14_of_17.cpp cancelled
-  [19/71] Compile [x64] Module.Core.15_of_17.cpp cancelled
-  [20/71] Compile [x64] Module.Core.17_of_17.cpp cancelled
-  [21/71] Compile [x64] Module.Core.3_of_17.cpp cancelled
-  [22/71] Compile [x64] Module.Sockets.cpp cancelled
-  [23/71] Compile [x64] Module.Core.13_of_17.cpp cancelled
-  [24/71] Compile [x64] Module.Core.8_of_17.cpp cancelled
-  [25/71] Compile [x64] Module.Core.1_of_17.cpp cancelled
-  [26/71] Compile [x64] Module.Core.9_of_17.cpp cancelled
-  [27/71] Compile [x64] Module.Core.16_of_17.cpp cancelled
-  [28/71] Compile [x64] Module.Core.11_of_17.cpp cancelled
-  [29/71] Compile [x64] Module.Core.12_of_17.cpp cancelled
-  [30/71] Compile [x64] Module.Core.10_of_17.cpp cancelled
-  [31/71] Compile [x64] Module.Core.4_of_17.cpp cancelled
-  [32/71] Link [x64] UnrealHeaderTool-NetCommon.lib cancelled
-  [33/71] Link [x64] UnrealHeaderTool-Json.lib cancelled
-  [34/71] Link [x64] UnrealHeaderTool-SSL.lib cancelled
-  [35/71] Link [x64] UnrealHeaderTool-Projects.lib cancelled
-  [36/71] Link [x64] UnrealHeaderTool-Zen.lib cancelled
-  [37/71] Link [x64] UnrealHeaderTool-DerivedDataCache.lib cancelled
-  [38/71] Link [x64] UnrealHeaderTool-Sockets.lib cancelled
-  [39/71] Link [x64] UnrealHeaderTool-Core.lib cancelled
-  [40/71] Link [x64] UnrealHeaderTool-DerivedDataCache.dll cancelled
-  [41/71] Link [x64] UnrealHeaderTool-Zen.dll cancelled
-  [42/71] Link [x64] UnrealHeaderTool-SSL.dll cancelled
-  [43/71] Link [x64] UnrealHeaderTool-Projects.dll cancelled
-  [44/71] Compile [x64] Module.Core.5_of_17.cpp cancelled
-  [45/71] Compile [x64] Module.Json.cpp cancelled
-  [46/71] Compile [x64] Module.Projects.cpp cancelled
-  [47/71] Link [x64] UnrealHeaderTool-TraceLog.lib
-     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\TraceLog\UnrealHeaderTool-TraceLog.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\TraceLog\UnrealHeaderTool-TraceLog.exp
-  [48/71] Link [x64] UnrealHeaderTool-TraceLog.dll
-     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\TraceLog\UnrealHeaderTool-TraceLog.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\TraceLog\UnrealHeaderTool-TraceLog.suppressed.exp
-  [49/71] Link [x64] UnrealHeaderTool-BuildSettings.lib
-     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\BuildSettings\UnrealHeaderTool-BuildSettings.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\BuildSettings\UnrealHeaderTool-BuildSettings.exp
-  [50/71] Link [x64] UnrealHeaderTool-Core.dll cancelled
-  [51/71] Link [x64] UnrealHeaderTool-BuildSettings.dll
-     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\BuildSettings\UnrealHeaderTool-BuildSettings.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\BuildSettings\UnrealHeaderTool-BuildSettings.suppressed.exp
-  [52/71] Compile [x64] Module.UnrealHeaderTool.1_of_2.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Math\Quat.h(1380): fatal error C1088: Cannot flush compiler intermediate file: 'C:\Users\aleja\AppData\Local\Temp\_CL_3935bbe9ex': No space left on device
-  [53/71] Compile [x64] PCH.CoreUObject.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Containers\Array.h(1579): fatal error C1088: Cannot flush compiler intermediate file: 'C:\Users\aleja\AppData\Local\Temp\_CL_7134754adb': No space left on device
-  C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Containers\Array.h(1578): note: while compiling class template member function 'void TArray<TRange<int32>,FDefaultAllocator>::CheckAddress(const TRange<int32> *) const'
-  C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Containers\Array.h(2174): note: see reference to function template instantiation 'void TArray<TRange<int32>,FDefaultAllocator>::CheckAddress(const TRange<int32> *) const' being compiled
-  C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Math\Range.h(878): note: see reference to class template instantiation 'TArray<TRange<int32>,FDefaultAllocator>' being compiled
-  [54/71] Compile [x64] Module.CoreUObject.3_of_11.cpp cancelled
-  [55/71] Compile [x64] Module.CoreUObject.6_of_11.cpp cancelled
-  [56/71] Compile [x64] Module.CoreUObject.4_of_11.cpp cancelled
-  [57/71] Compile [x64] Module.CoreUObject.9_of_11.cpp cancelled
-  [58/71] Compile [x64] Module.CoreUObject.5_of_11.cpp cancelled
-  [59/71] Compile [x64] Module.CoreUObject.11_of_11.cpp cancelled
-  [60/71] Compile [x64] Module.CoreUObject.2_of_11.cpp cancelled
-  [61/71] Compile [x64] Module.CoreUObject.1_of_11.cpp cancelled
-  [62/71] Compile [x64] Module.CoreUObject.8_of_11.cpp cancelled
-  [63/71] Compile [x64] Module.CoreUObject.7_of_11.cpp cancelled
-  [64/71] Compile [x64] Module.CoreUObject.10_of_11.cpp cancelled
-  [65/71] Link [x64] UnrealHeaderTool-CoreUObject.lib cancelled
-  [66/71] Link [x64] UnrealHeaderTool-CoreUObject.dll cancelled
-  [67/71] Compile [x64] Module.UnrealHeaderTool.2_of_2.cpp
-C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Containers\Array.h(565): fatal error C1088: Cannot flush compiler intermediate file: 'C:\Users\aleja\AppData\Local\Temp\_CL_55d01ac3ex': No space left on device
-  C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Containers\Array.h(627): note: see reference to function template instantiation 'void TArray<FInt8Range,FDefaultAllocator>::MoveOrCopy<TArray<TRange<int8>,FDefaultAllocator>,TArray<FInt8Range,FDefaultAllocator>>(ToArrayType &,FromArrayType &,int)' being compiled
-          with
-          [
-              ToArrayType=TArray<FInt8Range,FDefaultAllocator>,
-              FromArrayType=TArray<TRange<int8>,FDefaultAllocator>
-          ]
-  C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Containers\Array.h(627): note: see reference to function template instantiation 'void TArray<FInt8Range,FDefaultAllocator>::MoveOrCopy<TArray<TRange<int8>,FDefaultAllocator>,TArray<FInt8Range,FDefaultAllocator>>(ToArrayType &,FromArrayType &,int)' being compiled
-          with
-          [
-              ToArrayType=TArray<FInt8Range,FDefaultAllocator>,
-              FromArrayType=TArray<TRange<int8>,FDefaultAllocator>
-          ]
-  C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Math\Range.h(876): note: see reference to function template instantiation 'TArray<FInt8Range,FDefaultAllocator>::TArray<TRange<int8>,FDefaultAllocator,0x0>(TArray<TRange<int8>,FDefaultAllocator> &&)' being compiled
-  C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Source\Runtime\Core\Public\Math\Range.h(876): note: see reference to function template instantiation 'TArray<FInt8Range,FDefaultAllocator>::TArray<TRange<int8>,FDefaultAllocator,0x0>(TArray<TRange<int8>,FDefaultAllocator> &&)' being compiled
-  [68/71] Link [x64] UnrealHeaderTool.exe cancelled
-  [69/71] Link [x64] UnrealHeaderTool.lib cancelled
-  [70/71] WriteMetadata UnrealHeaderTool.version cancelled
-  [71/71] WriteMetadata UnrealHeaderTool.target cancelled
-C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.MakeFile.Targets(44,5): error MSB3073: The command "C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Build\BatchFiles\Build.bat UnrealHeaderTool Win64 Development -WaitMutex -FromMsBuild" exited with code 6.
+  Building 63 actions with 10 processes...
+  [1/63] Compile [x64] SharedPCH.Core.ShadowErrors.TypeCastErrors.cpp
+  [2/63] Compile [x64] NetCommonModule.cpp
+  [3/63] Compile [x64] Module.SSL.cpp
+  [4/63] Compile [x64] Module.Sockets.cpp
+  [5/63] Compile [x64] PCH.Core.cpp
+  [6/63] Link [x64] UnrealHeaderTool-NetCommon.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\NetCommon\UnrealHeaderTool-NetCommon.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\NetCommon\UnrealHeaderTool-NetCommon.exp
+  [7/63] Link [x64] UnrealHeaderTool-SSL.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\SSL\UnrealHeaderTool-SSL.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\SSL\UnrealHeaderTool-SSL.exp
+  [8/63] Link [x64] UnrealHeaderTool-Sockets.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Sockets\UnrealHeaderTool-Sockets.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Sockets\UnrealHeaderTool-Sockets.exp
+  [9/63] Compile [x64] Module.Zen.cpp
+  [10/63] Compile [x64] Module.Projects.cpp
+  [11/63] Compile [x64] Module.Json.cpp
+  [12/63] Compile [x64] PCH.CoreUObject.cpp
+  [13/63] Compile [x64] Module.UnrealHeaderTool.2_of_2.cpp
+  [14/63] Compile [x64] Module.Core.7_of_17.cpp
+  [15/63] Compile [x64] Module.UnrealHeaderTool.1_of_2.cpp
+  [16/63] Compile [x64] Module.DerivedDataCache.2_of_2.cpp
+  [17/63] Compile [x64] Module.Core.16_of_17.cpp
+  [18/63] Compile [x64] Module.Core.8_of_17.cpp
+  [19/63] Compile [x64] Module.Core.17_of_17.cpp
+  [20/63] Compile [x64] Module.DerivedDataCache.1_of_2.cpp
+  [21/63] Compile [x64] Module.Core.6_of_17.cpp
+  [22/63] Compile [x64] Module.Core.4_of_17.cpp
+  [23/63] Compile [x64] Module.Core.10_of_17.cpp
+  [24/63] Compile [x64] Module.Core.9_of_17.cpp
+  [25/63] Link [x64] UnrealHeaderTool-Zen.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Zen\UnrealHeaderTool-Zen.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Zen\UnrealHeaderTool-Zen.exp
+  [26/63] Link [x64] UnrealHeaderTool-Projects.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Projects\UnrealHeaderTool-Projects.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Projects\UnrealHeaderTool-Projects.exp
+  [27/63] Link [x64] UnrealHeaderTool-Json.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Json\UnrealHeaderTool-Json.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Json\UnrealHeaderTool-Json.exp
+  [28/63] Compile [x64] Module.Core.3_of_17.cpp
+  [29/63] Compile [x64] Module.Core.12_of_17.cpp
+  [30/63] Compile [x64] Module.Core.5_of_17.cpp
+  [31/63] Compile [x64] Module.Core.11_of_17.cpp
+  [32/63] Compile [x64] Module.Core.2_of_17.cpp
+  [33/63] Compile [x64] Module.Core.15_of_17.cpp
+  [34/63] Compile [x64] Module.CoreUObject.5_of_11.cpp
+  [35/63] Compile [x64] Module.CoreUObject.11_of_11.cpp
+  [36/63] Compile [x64] Module.CoreUObject.3_of_11.cpp
+  [37/63] Compile [x64] Module.Core.1_of_17.cpp
+  [38/63] Compile [x64] Module.CoreUObject.7_of_11.cpp
+  [39/63] Link [x64] UnrealHeaderTool.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\UnrealHeaderTool.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\UnrealHeaderTool.exp
+  [40/63] Link [x64] UnrealHeaderTool-DerivedDataCache.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\DerivedDataCache\UnrealHeaderTool-DerivedDataCache.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\DerivedDataCache\UnrealHeaderTool-DerivedDataCache.exp
+  [41/63] Compile [x64] Module.CoreUObject.8_of_11.cpp
+  [42/63] Compile [x64] Module.CoreUObject.9_of_11.cpp
+  [43/63] Compile [x64] Module.Core.13_of_17.cpp
+  [44/63] Compile [x64] Module.CoreUObject.4_of_11.cpp
+  [45/63] Compile [x64] Module.CoreUObject.1_of_11.cpp
+  [46/63] Compile [x64] Module.CoreUObject.6_of_11.cpp
+  [47/63] Compile [x64] Module.Core.14_of_17.cpp
+  [48/63] Link [x64] UnrealHeaderTool-Core.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Core\UnrealHeaderTool-Core.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Core\UnrealHeaderTool-Core.exp
+  [49/63] Link [x64] UnrealHeaderTool-Json.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Json\UnrealHeaderTool-Json.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Json\UnrealHeaderTool-Json.suppressed.exp
+  [50/63] Link [x64] UnrealHeaderTool-NetCommon.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\NetCommon\UnrealHeaderTool-NetCommon.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\NetCommon\UnrealHeaderTool-NetCommon.suppressed.exp
+  [51/63] Link [x64] UnrealHeaderTool-Sockets.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Sockets\UnrealHeaderTool-Sockets.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Sockets\UnrealHeaderTool-Sockets.suppressed.exp
+  [52/63] Link [x64] UnrealHeaderTool-SSL.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\SSL\UnrealHeaderTool-SSL.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\SSL\UnrealHeaderTool-SSL.suppressed.exp
+  [53/63] Link [x64] UnrealHeaderTool-Projects.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Projects\UnrealHeaderTool-Projects.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Projects\UnrealHeaderTool-Projects.suppressed.exp
+  [54/63] Link [x64] UnrealHeaderTool-Zen.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Zen\UnrealHeaderTool-Zen.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Zen\UnrealHeaderTool-Zen.suppressed.exp
+  [55/63] Link [x64] UnrealHeaderTool-DerivedDataCache.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\DerivedDataCache\UnrealHeaderTool-DerivedDataCache.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\DerivedDataCache\UnrealHeaderTool-DerivedDataCache.suppressed.exp
+  [56/63] Link [x64] UnrealHeaderTool-Core.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Core\UnrealHeaderTool-Core.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\Core\UnrealHeaderTool-Core.suppressed.exp
+  [57/63] Compile [x64] Module.CoreUObject.2_of_11.cpp
+  [58/63] Compile [x64] Module.CoreUObject.10_of_11.cpp
+  [59/63] Link [x64] UnrealHeaderTool-CoreUObject.lib
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\CoreUObject\UnrealHeaderTool-CoreUObject.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\CoreUObject\UnrealHeaderTool-CoreUObject.exp
+  [60/63] Link [x64] UnrealHeaderTool.exe
+  [61/63] Link [x64] UnrealHeaderTool-CoreUObject.dll
+     Creating library ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\CoreUObject\UnrealHeaderTool-CoreUObject.suppressed.lib and object ..\Intermediate\Build\Win64\x64\UnrealHeaderTool\Development\CoreUObject\UnrealHeaderTool-CoreUObject.suppressed.exp
+  [62/63] WriteMetadata UnrealHeaderTool.version
+  [63/63] WriteMetadata UnrealHeaderTool.target
+  Total time in Parallel executor: 63.49 seconds
+  Total execution time: 183.63 seconds

@@ -24,7 +24,7 @@ public:
         TargetLocation = _TargetLocation;
     }
 
-protected:
+public:
     // Target actor
     UPROPERTY(BlueprintReadWrite, Category = "Input")
         class AXYZActor* TargetActor;
@@ -40,7 +40,17 @@ protected:
         class AXYZActor* Actor;
 
     UFUNCTION()
-        virtual void ProcessAction(float DeltaTime) {};
+        virtual void ProcessAction(float DeltaTime) {
+        if (ActionState != EXYZActionState::IN_PROGRESS)
+        {
+            return;
+        }
+        if (!Actor)
+        {
+            CancelAction();
+            return;
+        }
+    };
 
 public:
     UPROPERTY(BlueprintReadWrite, Category = "Input")

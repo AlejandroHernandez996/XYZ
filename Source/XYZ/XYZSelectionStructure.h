@@ -21,6 +21,7 @@ private:
 	//<ActorId, <UniqueActorId,XYZActor>>
 	TMap<int32, TMap<int32, AXYZActor*>> SelectedActors;
     TArray<TMap<int32, TMap<int32, AXYZActor*>>> ControlGroups;
+    AXYZActor* SelectedEnemy;
 
 public:
 
@@ -33,6 +34,8 @@ public:
     void SetControlGroup(int32 ControlGroupIndex);
     void AddToControlGroup(int32 ControlGroupIndex);
     void SelectControlGroup(int32 ControlGroupIndex);
+
+    void SelectEnemyActor(AXYZActor* Actor);
 
     UFUNCTION()
     TArray<AXYZActor*> ToArray();

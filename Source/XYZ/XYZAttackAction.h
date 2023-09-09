@@ -15,6 +15,9 @@ class XYZ_API UXYZAttackAction : public UXYZAction
 	GENERATED_BODY()
 		virtual void ProcessAction(float DeltaTime) override;
 public:
-	UPROPERTY(BlueprintReadWrite, Category = "Move")
+	UPROPERTY(BlueprintReadWrite, Category = "Attack")
 		float TargetLocationThreshold = 1.0f;
+	UPROPERTY(BlueprintReadWrite, Category = "Attack")
+		bool bIgnoreAllies = true;
+	bool bIsAttackMove;
 };

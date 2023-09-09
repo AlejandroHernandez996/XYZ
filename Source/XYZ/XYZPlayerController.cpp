@@ -14,6 +14,7 @@
 #include "XYZSelectionStructure.h"
 #include "Kismet/GameplayStatics.h" // Include this header
 #include "XYZHUD.h"
+#include "GameFramework/PlayerState.h"
 #include "EnhancedInputSubsystems.h"
 
 AXYZPlayerController::AXYZPlayerController()
@@ -130,14 +131,7 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			bSecondaryModifier = true;
 			break;
 		case EXYZInputType::STOP:
-			InputMessage = FXYZInputMessage(0, SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, false);
-			QueueInput(InputMessage);
-			break;
-		case EXYZInputType::ATTACK_MOVE:
-			AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
-			int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
-			InputMessage = FXYZInputMessage(0, SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, InputType, bPrimaryModifier);
-			QueueInput(InputMessage);
+			CreateAndQueueInput(SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, false);
 			break;
 	}
 }
@@ -163,20 +157,9 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 		bCanInputRepeatWhileTriggered = true;
 		}, InputTriggeredCooldown, false);
 
-	FXYZInputMessage InputStopMessage(0, SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, true);
-
 	switch (InputType) {
 	case EXYZInputType::PRIMARY_INPUT:
 		OnSelectionBoxTriggered.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
-		break;
-	case EXYZInputType::SECONDARY_INPUT:
-		// If we dont hit an actor send a move input
-		if (bWorldHitSuccessful && !SelectionStructure->IsEmpty())
-		{
-			FXYZInputMessage InputMessage(0, SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, bPrimaryModifier);
-			QueueInput(InputMessage);
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
-		}
 		break;
 	}
 	return;
@@ -186,6 +169,9 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 {
 	//LONG INPUT RELEASE
 	FHitResult BoxHitStart, BoxHitEnd;
+	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
+	int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
+
 	switch (InputType) {
 	case EXYZInputType::PRIMARY_MOD:
 		bPrimaryModifier = false;
@@ -199,50 +185,55 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		GetHUD<AXYZHUD>()->bSelectActors = false;
 		break;
 	case EXYZInputType::SECONDARY_INPUT:
-		if (bWorldHitSuccessful && !SelectionStructure->IsEmpty())
-		{
-			FXYZInputMessage InputMessage(0, SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, bPrimaryModifier);
-			QueueInput(InputMessage);
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
-		}
+		CreateAndQueueInput(SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, InputType, bPrimaryModifier);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+		break;
+	case EXYZInputType::ATTACK_MOVE:
+		CreateAndQueueInput(SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, InputType, bPrimaryModifier);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
 		break;
 	}
 }
 
 void AXYZPlayerController::SelectActors(TArray<AXYZActor*> XYZActors){
-
 	if (XYZActors.IsEmpty()) {
 		SelectionStructure->Empty();
-		FString SelectedActorsString = SelectionStructure->ToString();
-		UE_LOG(LogTemp, Warning, TEXT("Selected Actors: %s"), *SelectedActorsString);
 		return;
 	}
 
-	if (XYZActors.Num() == 1 && SelectionStructure->Contains(XYZActors[0]) && bPrimaryModifier) {
-		SelectionStructure->Remove(XYZActors[0]);
-		FString SelectedActorsString = SelectionStructure->ToString();
-		UE_LOG(LogTemp, Warning, TEXT("Selected Actors: %s"), *SelectedActorsString);
+	if (XYZActors.Num() == 1 && XYZActors[0]->TeamId != TeamId) {
+		SelectionStructure->SelectEnemyActor(XYZActors[0]);
+		return;
+	}
+
+	TArray<AXYZActor*> OwnedXYZActors;
+	for (auto XYZActor : XYZActors) {
+		if (XYZActor->TeamId == TeamId) {
+			OwnedXYZActors.Add(XYZActor);
+		}
+	}
+
+	if (OwnedXYZActors.Num() == 1 && SelectionStructure->Contains(OwnedXYZActors[0]) && bPrimaryModifier) {
+		SelectionStructure->Remove(OwnedXYZActors[0]);
 		return;
 	}
 
 	if (bPrimaryModifier) {
 		bool bInSelection = true;
-		for (AXYZActor* XYZActor : XYZActors) {
+		for (AXYZActor* XYZActor : OwnedXYZActors) {
 			bInSelection = bInSelection && SelectionStructure->Contains(XYZActor);
 		}
-		if (bInSelection && XYZActors.Num() != SelectionStructure->ToArray().Num()) {
-			SelectionStructure->Remove(XYZActors);
-			FString SelectedActorsString = SelectionStructure->ToString();
-			UE_LOG(LogTemp, Warning, TEXT("Selected Actors: %s"), *SelectedActorsString);
+		if (bInSelection && OwnedXYZActors.Num() != SelectionStructure->ToArray().Num()) {
+			SelectionStructure->Remove(OwnedXYZActors);
 		}
 		else {
-			SelectionStructure->Add(XYZActors);
+			SelectionStructure->Add(OwnedXYZActors);
 		}
 		return;
 	} 
 	else {
 		SelectionStructure->Empty();
-		SelectionStructure->Add(XYZActors);
+		SelectionStructure->Add(OwnedXYZActors);
 	}
 }
 
@@ -254,10 +245,34 @@ FVector2D AXYZPlayerController::GetMousePositionOnViewport()
 	return MousePosition;
 }
 
+void AXYZPlayerController::CreateAndQueueInput(TArray<int32> _SelectedActors, int32 _XYZTargetActor, FVector _TargetLocation, EXYZInputType _InputType, bool _bQueueInput) {
+	QueueInput(FXYZInputMessage(PlayerState->GetUniqueId().ToString(), _SelectedActors, _XYZTargetActor, _TargetLocation, _InputType, _bQueueInput));
+}
 void AXYZPlayerController::QueueInput_Implementation(const FXYZInputMessage& InputMessage) {
 	if (GetLocalRole() != ROLE_Authority) return;
-	AXYZGameMode* GameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
-	if (GameMode) {
-		GameMode->QueueInput(InputMessage);
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		AXYZPlayerController* XYZController = Cast<AXYZPlayerController>(Iterator->Get());
+		if (!XYZController) return;
+
+		FString Id = Iterator->Get()->GetPlayerState<APlayerState>()->GetUniqueId().ToString();
+		if (Id == InputMessage.PlayerId)
+		{
+			AXYZGameMode* GameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
+			if (GameMode) {
+				TMap<int32, AXYZActor*> ActorsByUId = GameMode->GetGameState<AXYZGameState>()->ActorsByUID;
+				for (int32 UActorId : InputMessage.SelectedActors) {
+					if (!ActorsByUId.Contains(UActorId)) {
+						return;
+					}
+					UE_LOG(LogTemp, Warning, TEXT("ActorsByUId[UActorId]->TeamId: %d, XYZController->TeamId: %d"), ActorsByUId[UActorId]->TeamId, XYZController->TeamId);
+					if (ActorsByUId[UActorId]->TeamId != XYZController->TeamId) {
+						return;
+					}
+				}
+				GameMode->QueueInput(InputMessage);
+			}
+			break;
+		}
 	}
 }

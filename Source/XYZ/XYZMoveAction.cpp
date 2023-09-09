@@ -5,17 +5,6 @@ void UXYZMoveAction::ProcessAction(float DeltaTime)
 {
     Super::ProcessAction(DeltaTime);
 
-    if (ActionState != EXYZActionState::IN_PROGRESS)
-    {
-        return;
-    }
-
-    if (!Actor)
-    {
-        CancelAction();
-        return;
-    }
-
     FVector ActorLocation = Actor->GetActorLocation();
 
     // Calculate direction vector

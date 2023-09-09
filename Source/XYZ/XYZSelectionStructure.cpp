@@ -3,6 +3,7 @@
 
 #include "XYZSelectionStructure.h"
 #include "Components/DecalComponent.h"
+#include "XYZDecalType.h"
 #include "XYZActor.h"
 
 void UXYZSelectionStructure::Add(AXYZActor* Actor) {
@@ -13,7 +14,7 @@ void UXYZSelectionStructure::Add(AXYZActor* Actor) {
             // UActorId does not exist for this ActorId, so we can safely add it.
             SelectedActors[Actor->ActorId].Add(Actor->UActorId, Actor);
             UE_LOG(LogTemp, Warning, TEXT("Added Actor with existing ActorId."));
-            Actor->ShowDecal(true);
+            Actor->ShowDecal(true, EXYZDecalType::FRIENDLY);
         }
     }
     else {
@@ -21,12 +22,13 @@ void UXYZSelectionStructure::Add(AXYZActor* Actor) {
         TMap<int32, AXYZActor*> InnerMap;
         InnerMap.Add(Actor->UActorId, Actor);
         SelectedActors.Add(Actor->ActorId, InnerMap);
-        Actor->ShowDecal(true);
+        Actor->ShowDecal(true, EXYZDecalType::FRIENDLY);
         UE_LOG(LogTemp, Warning, TEXT("Added Actor with new ActorId."));
     }
 }
 
 void UXYZSelectionStructure::Add(TArray<AXYZActor*> Actors) {
+    SelectedEnemy = nullptr;
     for (auto Actor : Actors) {
         Add(Actor);
     }
@@ -47,7 +49,7 @@ void UXYZSelectionStructure::Remove(AXYZActor* Actor) {
         // Optionally, remove the ActorId key if it has an empty map as a value.
         if (SelectedActors[Actor->ActorId].Num() == 0) {
             SelectedActors.Remove(Actor->ActorId);
-            Actor->ShowDecal(false);
+            Actor->ShowDecal(false, EXYZDecalType::FRIENDLY);
         }
     }
 }
@@ -93,6 +95,11 @@ void UXYZSelectionStructure::SelectControlGroup(int32 ControlGroupIndex) {
     Add(ResultArray);
 }
 
+void UXYZSelectionStructure::SelectEnemyActor(AXYZActor* Actor) {
+    SelectedEnemy = Actor;
+    Actor->ShowDecal(true, EXYZDecalType::ENEMY);
+}
+
 TArray<AXYZActor*> UXYZSelectionStructure::ToArray() {
     TArray<AXYZActor*> ResultArray;
     if (SelectedActors.IsEmpty()) return ResultArray;
@@ -111,7 +118,7 @@ TArray<int32> UXYZSelectionStructure::ToActorIdArray() {
 
     for (auto& KeyValPair : SelectedActors) {
         for (auto& InnerKeyValPair : KeyValPair.Value) {
-            ResultArray.Add(InnerKeyValPair.Value->ActorId);
+            ResultArray.Add(InnerKeyValPair.Value->UActorId);
         }
     }
 
@@ -128,7 +135,7 @@ void UXYZSelectionStructure::Empty() {
     TArray<AXYZActor*> Actors = ToArray();
     for (auto Actor : Actors) {
         if (Actor) {
-            Actor->ShowDecal(false);
+            Actor->ShowDecal(false, EXYZDecalType::FRIENDLY);
         }
     }
     SelectedActors.Empty();

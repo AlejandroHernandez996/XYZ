@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzdecaltype.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\engine\\sharedpch.engine.shadowerrors.inclorderunreal5_1.h.pch",
+        "Includes": [
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\xyz\\definitions.xyz.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzdecaltype.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

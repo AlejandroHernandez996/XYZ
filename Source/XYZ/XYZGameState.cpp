@@ -8,12 +8,18 @@
 
 void AXYZGameState::BeginPlay() {
 	Super::BeginPlay();
-
 	for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		AXYZActor* Actor = *ActorItr;
-		// Do something with Actor, for example add it to an array
-		AllActors.Add(Actor);
-		ActorsByUID.Add(Actor->UActorId, Actor);
+		if (GetLocalRole() == ROLE_Authority) {
+			AXYZActor* Actor = *ActorItr;
+			AllActors.Add(Actor);
+			ActorsByUID.Add(Actor->UActorId, Actor);
+		}
+		else {
+			AXYZActor* Actor = *ActorItr;
+			AllActors.Add(Actor);
+			ActorsByUID.Add(Actor->UActorId, Actor);
+		}
+		
 	}
 }

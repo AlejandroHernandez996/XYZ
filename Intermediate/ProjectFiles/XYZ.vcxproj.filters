@@ -94,6 +94,9 @@
     <ClInclude Include="..\..\Source\XYZ\XYZCameraController.h">
       <Filter>Source\XYZ</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\XYZ\XYZDecalType.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\XYZ\XYZFactionType.h">
       <Filter>Source\XYZ</Filter>
     </ClInclude>
