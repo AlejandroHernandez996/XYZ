@@ -18,6 +18,6 @@ public:
 	virtual void ProcessAction(float DeltaTime) override;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Move")
-		float TargetLocationThreshold = .5f;
+		float TargetLocationThreshold = 1.0f;
 
 };

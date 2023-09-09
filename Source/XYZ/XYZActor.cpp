@@ -6,6 +6,8 @@
 #include "DrawDebugHelpers.h"
 #include "Components/DecalComponent.h"
 #include "XYZAction.h"
+#include "XYZGameState.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AXYZActor::AXYZActor()
@@ -13,6 +15,7 @@ AXYZActor::AXYZActor()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+    bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -21,16 +24,9 @@ void AXYZActor::BeginPlay()
 	Super::BeginPlay();
     TArray<UActorComponent*> DecalComponents = GetComponentsByClass(UDecalComponent::StaticClass());
 
-    if (DecalComponents.Num() > 0) // Make sure there is at least one DecalComponent.
-    {
-        // Assuming you want the first DecalComponent found.
-        SelectionDecal = Cast<UDecalComponent>(DecalComponents[0]);
-    }
-    else
-    {
-        // Handle case where no DecalComponent was found if needed.
-        UE_LOG(LogTemp, Warning, TEXT("No DecalComponent found!"));
-    }
+    // Assuming you want the first DecalComponent found.
+    SelectionDecal = Cast<UDecalComponent>(DecalComponents[0]);
+   
 }
 
 // Called every frame
@@ -51,9 +47,6 @@ void AXYZActor::Tick(float DeltaTime)
                 CurrentAction = ActionQueue[0];
                 ActionQueue.RemoveAt(0);
             }
-        }
-        if (ActionQueue.Num() > 0) {
-            UE_LOG(LogTemp, Warning, TEXT("QueueSize: %d, ActorName: %s"), ActionQueue.Num(), *GetName());
         }
     }
     FVector Start = GetActorLocation();
@@ -93,6 +86,19 @@ void AXYZActor::Tick(float DeltaTime)
 
 }
 
+void AXYZActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(AXYZActor, Health);
+    DOREPLIFETIME(AXYZActor, MaxHealth);
+    DOREPLIFETIME(AXYZActor, MoveSpeed);
+    DOREPLIFETIME(AXYZActor, BaseArmor);
+    DOREPLIFETIME(AXYZActor, AttackDamage);
+    DOREPLIFETIME(AXYZActor, AttackRate);
+    DOREPLIFETIME(AXYZActor, AttackRange);
+}
+
 void AXYZActor::QueueAction(UXYZAction* Action) {
 	if (!Action) return;
 
@@ -114,4 +120,44 @@ void AXYZActor::ShowDecal(bool bShowDecal) {
         SelectionDecal->DecalSize = FVector::ZeroVector;
     }
     SelectionDecal->MarkRenderStateDirty();
+}
+
+void AXYZActor::Attack(AXYZActor* TargetActor) {
+    if (GetLocalRole() != ROLE_Authority) {
+        return;
+    }
+    if (TargetActor && !bIsAttackOnCooldown) {
+        bIsAttackOnCooldown = true;
+        GetWorld()->GetTimerManager().SetTimer(AttackTimer, [this]() {
+            bIsAttackOnCooldown = false;
+            }, AttackRate, false);
+        TargetActor->Health -= AttackDamage;
+        UE_LOG(LogTemp, Warning, TEXT("Attacking for %d enemy health %d"), AttackDamage, TargetActor->Health);
+    }
+}
+
+AXYZActor* AXYZActor::FindClosestActor() {
+
+    AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
+
+    AXYZActor* ClosestActor = nullptr;
+    float ClosestDistanceSqr = FLT_MAX;
+    for (AXYZActor* OtherActor : GameState->AllActors)
+    {
+        // Exclude self from the list (if it's in the list)
+        if (OtherActor == this)
+        {
+            continue;
+        }
+
+        float DistanceSqr = FVector::DistSquaredXY(this->GetActorLocation(), OtherActor->GetActorLocation());
+
+        if (DistanceSqr < ClosestDistanceSqr && DistanceSqr <= FMath::Square(AttackRange))
+        {
+            ClosestDistanceSqr = DistanceSqr;
+            ClosestActor = OtherActor;
+        }
+    }
+
+    return ClosestActor;
 }

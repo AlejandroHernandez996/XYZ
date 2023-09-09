@@ -20,6 +20,7 @@ class XYZ_API UXYZSelectionStructure : public UObject
 private:
 	//<ActorId, <UniqueActorId,XYZActor>>
 	TMap<int32, TMap<int32, AXYZActor*>> SelectedActors;
+    TArray<TMap<int32, TMap<int32, AXYZActor*>>> ControlGroups;
 
 public:
 
@@ -27,7 +28,12 @@ public:
     void Add(TArray<AXYZActor*> Actors);
     void Remove(AXYZActor* Actor);
     void Remove(TArray<AXYZActor*> Actors);
-    
+
+    void InitControlGroups(int32 ControlGroupCount);
+    void SetControlGroup(int32 ControlGroupIndex);
+    void AddToControlGroup(int32 ControlGroupIndex);
+    void SelectControlGroup(int32 ControlGroupIndex);
+
     UFUNCTION()
     TArray<AXYZActor*> ToArray();
 
@@ -42,4 +48,5 @@ public:
     bool IsEmpty();
 
     FString ToString() const;
+
 };

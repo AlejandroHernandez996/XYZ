@@ -53,13 +53,13 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 	}
 
 	bWorldHitSuccessful = GetHitResultAtScreenPosition(GetMousePositionOnViewport(), ECollisionChannel::ECC_WorldStatic, true, WorldHit);
+	bXYZActorHitSuccessful = GetHitResultAtScreenPosition(GetMousePositionOnViewport(), ECollisionChannel::ECC_WorldStatic, true, XYZActorHit);
 }
 
 void AXYZPlayerController::SetupInputComponent()
 {
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
-
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
@@ -89,6 +89,23 @@ void AXYZPlayerController::SetupInputComponent()
 
 		EnhancedInputComponent->BindAction(SecondaryModifierInputAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnInputStarted, EXYZInputType::SECONDARY_MOD);
 		EnhancedInputComponent->BindAction(SecondaryModifierInputAction, ETriggerEvent::Completed, this, &AXYZPlayerController::OnInputReleased, EXYZInputType::SECONDARY_MOD);
+
+		for (int32 i = 0; i < ControlGroupInputActions.Num(); i++) {
+			EnhancedInputComponent->BindAction(ControlGroupInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnControlGroupInputStarted, i);
+		}
+		SelectionStructure->InitControlGroups(ControlGroupInputActions.Num());
+	}
+}
+
+void AXYZPlayerController::OnControlGroupInputStarted(int32 ControlGroupIndex) {
+	if (bPrimaryModifier) {
+		SelectionStructure->AddToControlGroup(ControlGroupIndex);
+	}
+	else if (bSecondaryModifier) {
+		SelectionStructure->SetControlGroup(ControlGroupIndex);
+	}
+	else {
+		SelectionStructure->SelectControlGroup(ControlGroupIndex);
 	}
 }
 
@@ -96,6 +113,7 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 {
 	InputTriggeredTime[InputType] = 0.0f;
 	UE_LOG(LogTemp, Warning, TEXT("Input Started for Type %d"), static_cast<int32>(InputType));
+	FXYZInputMessage InputMessage;
 	switch (InputType) {
 		case EXYZInputType::PRIMARY_INPUT:
 			BoxSelectStart = GetMousePositionOnViewport();
@@ -112,7 +130,13 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			bSecondaryModifier = true;
 			break;
 		case EXYZInputType::STOP:
-			FXYZInputMessage InputMessage(0, SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, false);
+			InputMessage = FXYZInputMessage(0, SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, false);
+			QueueInput(InputMessage);
+			break;
+		case EXYZInputType::ATTACK_MOVE:
+			AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
+			int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
+			InputMessage = FXYZInputMessage(0, SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, InputType, bPrimaryModifier);
 			QueueInput(InputMessage);
 			break;
 	}
@@ -142,9 +166,6 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 	FXYZInputMessage InputStopMessage(0, SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, true);
 
 	switch (InputType) {
-	case EXYZInputType::STOP:
-		//QueueInput(InputStopMessage);
-		break;
 	case EXYZInputType::PRIMARY_INPUT:
 		OnSelectionBoxTriggered.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
 		break;
@@ -163,7 +184,6 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 
 void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 {
-
 	//LONG INPUT RELEASE
 	FHitResult BoxHitStart, BoxHitEnd;
 	switch (InputType) {

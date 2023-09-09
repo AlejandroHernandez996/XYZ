@@ -35,6 +35,7 @@ XYZ_API void FSelectionBoxReleasedEvent_DelegateWrapper(const FMulticastScriptDe
  \
 	DECLARE_FUNCTION(execQueueInput); \
 	DECLARE_FUNCTION(execSelectActors); \
+	DECLARE_FUNCTION(execOnControlGroupInputStarted); \
 	DECLARE_FUNCTION(execOnInputReleased); \
 	DECLARE_FUNCTION(execOnInputTriggered); \
 	DECLARE_FUNCTION(execOnInputStarted); \
@@ -45,6 +46,7 @@ XYZ_API void FSelectionBoxReleasedEvent_DelegateWrapper(const FMulticastScriptDe
  \
 	DECLARE_FUNCTION(execQueueInput); \
 	DECLARE_FUNCTION(execSelectActors); \
+	DECLARE_FUNCTION(execOnControlGroupInputStarted); \
 	DECLARE_FUNCTION(execOnInputReleased); \
 	DECLARE_FUNCTION(execOnInputTriggered); \
 	DECLARE_FUNCTION(execOnInputStarted); \

@@ -54,7 +54,7 @@ void AXYZCameraController::Tick(float DeltaTime)
 	FVector2D MousePosition = GetMousePositionOnViewport();
 	FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
 	FVector2D NormalizedMousePosition = MousePosition / ViewportSize;
-	UE_LOG(LogTemp, Warning, TEXT("Mouse Position: %s, Normalized: %s"), *MousePosition.ToString(), *NormalizedMousePosition.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Mouse Position: %s, Normalized: %s"), *MousePosition.ToString(), *NormalizedMousePosition.ToString());
 	FVector RIGHT = FVector(1.0f, 0.0f, 0.0f);
 	FVector LEFT = FVector(-1.0f, 0.0f, 0.0f);
 	FVector UP = FVector(0.0f, 1.0f, 0.0f);

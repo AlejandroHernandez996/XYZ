@@ -5,7 +5,6 @@ void UXYZMoveAction::ProcessAction(float DeltaTime)
 {
     Super::ProcessAction(DeltaTime);
 
-    UE_LOG(LogTemp, Warning, TEXT("ActionName:%s"), *GetName());
     if (ActionState != EXYZActionState::IN_PROGRESS)
     {
         return;

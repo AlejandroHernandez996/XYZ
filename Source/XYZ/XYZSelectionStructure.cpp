@@ -52,15 +52,53 @@ void UXYZSelectionStructure::Remove(AXYZActor* Actor) {
     }
 }
 
+void UXYZSelectionStructure::InitControlGroups(int32 ControlGroupCount) {
+    for (int i = 0; i < ControlGroupCount; i++) {
+        TMap <int32, TMap<int32, AXYZActor*>> ControlGroup;
+        ControlGroups.Add(ControlGroup);
+    }
+}
+
+void UXYZSelectionStructure::SetControlGroup(int32 ControlGroupIndex) {
+    if (IsEmpty()) return;
+    ControlGroups[ControlGroupIndex] = SelectedActors;
+}
+
+void UXYZSelectionStructure::AddToControlGroup(int32 ControlGroupIndex) {
+    if (IsEmpty()) return;
+    for (AXYZActor* Actor : ToArray()) {
+        if (ControlGroups[ControlGroupIndex].Contains(Actor->ActorId)) {
+            if (!ControlGroups[ControlGroupIndex][Actor->ActorId].Contains(Actor->UActorId)) {
+                ControlGroups[ControlGroupIndex][Actor->ActorId].Add(Actor->UActorId, Actor);
+            }
+        }
+        else {
+            TMap<int32, AXYZActor*> InnerMap;
+            InnerMap.Add(Actor->UActorId, Actor);
+            ControlGroups[ControlGroupIndex].Add(Actor->ActorId, InnerMap);
+        }
+    }
+}
+
+void UXYZSelectionStructure::SelectControlGroup(int32 ControlGroupIndex) {
+    if (ControlGroups[ControlGroupIndex].IsEmpty()) return;
+
+    Empty();
+    TArray<AXYZActor*> ResultArray;
+    for (auto& KeyValPair : ControlGroups[ControlGroupIndex]) {
+        for (auto& InnerKeyValPair : KeyValPair.Value) {
+            ResultArray.Add(InnerKeyValPair.Value);
+        }
+    }
+    Add(ResultArray);
+}
+
 TArray<AXYZActor*> UXYZSelectionStructure::ToArray() {
     TArray<AXYZActor*> ResultArray;
     if (SelectedActors.IsEmpty()) return ResultArray;
 
-    // Iterate through all key-value pairs in the map.
     for (auto& KeyValPair : SelectedActors) {
-        // Iterate through the inner map of each key-value pair.
         for (auto& InnerKeyValPair : KeyValPair.Value) {
-            // Add the actor to the result array.
             ResultArray.Add(InnerKeyValPair.Value);
         }
     }
@@ -71,11 +109,8 @@ TArray<AXYZActor*> UXYZSelectionStructure::ToArray() {
 TArray<int32> UXYZSelectionStructure::ToActorIdArray() {
     TArray<int32> ResultArray;
 
-    // Iterate through all key-value pairs in the map.
     for (auto& KeyValPair : SelectedActors) {
-        // Iterate through the inner map of each key-value pair.
         for (auto& InnerKeyValPair : KeyValPair.Value) {
-            // Add the actor to the result array.
             ResultArray.Add(InnerKeyValPair.Value->ActorId);
         }
     }
@@ -118,3 +153,4 @@ FString UXYZSelectionStructure::ToString() const {
 
     return ResultString;
 }
+

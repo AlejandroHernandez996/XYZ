@@ -36,29 +36,28 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
         EXYZFactionType Faction;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", Replicated)
         float Health;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", Replicated)
         float MaxHealth;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats", Replicated)
         float MoveSpeed;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats", Replicated)
         int32 BaseArmor;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", Replicated)
         int32 AttackDamage;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
-        float AttackSpeed;
-
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", Replicated)
         float AttackRate;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", Replicated)
         float AttackRange;
+
+    virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
         TArray<UXYZAbility*> Abilities;
@@ -70,6 +69,13 @@ public:
     UPROPERTY()
     UXYZAction* PrevAction;
 
+    UFUNCTION()
+        void Attack(AXYZActor* TargetActor);
+    UPROPERTY()
+        FTimerHandle AttackTimer;
+    UPROPERTY()
+        bool bIsAttackOnCooldown;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decal")
         UDecalComponent* SelectionDecal;
 
@@ -77,5 +83,7 @@ public:
 
     UFUNCTION()
         void QueueAction(UXYZAction* Action);
+    UFUNCTION()
+        AXYZActor* FindClosestActor();
     bool bCancelActionFlag;
 };

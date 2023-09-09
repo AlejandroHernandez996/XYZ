@@ -21,7 +21,17 @@
             "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\decalcomponent.generated.h",
             "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzaction.h",
             "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzactionstate.h",
-            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzaction.generated.h"
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzaction.generated.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\source\\xyz\\xyzgamestate.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\engine\\classes\\gameframework\\gamestatebase.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\engine\\classes\\gameframework\\gamemodebase.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\engine\\classes\\engine\\serverstatreplicator.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\serverstatreplicator.generated.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\gamemodebase.generated.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\gamestatebase.generated.h",
+            "c:\\users\\aleja\\onedrive\\documents\\unreal projects\\xyz\\intermediate\\build\\win64\\unrealeditor\\inc\\xyz\\uht\\xyzgamestate.generated.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\engine\\public\\net\\unrealnetwork.h",
+            "c:\\users\\aleja\\gamedev\\engine\\unrealengine\\engine\\source\\runtime\\net\\core\\public\\net\\core\\propertyconditions\\propertyconditions.h"
         ],
         "ImportedModules": [],
         "ImportedHeaderUnits": []

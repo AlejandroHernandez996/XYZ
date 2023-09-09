@@ -9,6 +9,7 @@
 #include "UObject/ScriptMacros.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
+class AXYZActor;
 class UXYZAction;
 #ifdef XYZ_XYZActor_generated_h
 #error "XYZActor.generated.h already included, missing '#pragma once' in XYZActor.h"
@@ -18,12 +19,16 @@ class UXYZAction;
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_SPARSE_DATA
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_RPC_WRAPPERS \
  \
-	DECLARE_FUNCTION(execQueueAction);
+	DECLARE_FUNCTION(execFindClosestActor); \
+	DECLARE_FUNCTION(execQueueAction); \
+	DECLARE_FUNCTION(execAttack);
 
 
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_RPC_WRAPPERS_NO_PURE_DECLS \
  \
-	DECLARE_FUNCTION(execQueueAction);
+	DECLARE_FUNCTION(execFindClosestActor); \
+	DECLARE_FUNCTION(execQueueAction); \
+	DECLARE_FUNCTION(execAttack);
 
 
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_ACCESSORS
@@ -33,7 +38,19 @@ private: \
 	friend struct Z_Construct_UClass_AXYZActor_Statics; \
 public: \
 	DECLARE_CLASS(AXYZActor, APawn, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/XYZ"), NO_API) \
-	DECLARE_SERIALIZER(AXYZActor)
+	DECLARE_SERIALIZER(AXYZActor) \
+	enum class ENetFields_Private : uint16 \
+	{ \
+		NETFIELD_REP_START=(uint16)((int32)Super::ENetFields_Private::NETFIELD_REP_END + (int32)1), \
+		Health=NETFIELD_REP_START, \
+		MaxHealth, \
+		MoveSpeed, \
+		BaseArmor, \
+		AttackDamage, \
+		AttackRate, \
+		AttackRange, \
+		NETFIELD_REP_END=AttackRange	}; \
+	NO_API virtual void ValidateGeneratedRepEnums(const TArray<struct FRepRecord>& ClassReps) const override;
 
 
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_INCLASS \
@@ -42,7 +59,19 @@ private: \
 	friend struct Z_Construct_UClass_AXYZActor_Statics; \
 public: \
 	DECLARE_CLASS(AXYZActor, APawn, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/XYZ"), NO_API) \
-	DECLARE_SERIALIZER(AXYZActor)
+	DECLARE_SERIALIZER(AXYZActor) \
+	enum class ENetFields_Private : uint16 \
+	{ \
+		NETFIELD_REP_START=(uint16)((int32)Super::ENetFields_Private::NETFIELD_REP_END + (int32)1), \
+		Health=NETFIELD_REP_START, \
+		MaxHealth, \
+		MoveSpeed, \
+		BaseArmor, \
+		AttackDamage, \
+		AttackRate, \
+		AttackRange, \
+		NETFIELD_REP_END=AttackRange	}; \
+	NO_API virtual void ValidateGeneratedRepEnums(const TArray<struct FRepRecord>& ClassReps) const override;
 
 
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_14_STANDARD_CONSTRUCTORS \

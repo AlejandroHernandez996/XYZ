@@ -65,6 +65,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* SecondaryModifierInputAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		TArray<UInputAction*> ControlGroupInputActions;
+
 	bool bPrimaryModifier;
 	bool bSecondaryModifier;
 
@@ -99,6 +102,10 @@ protected:
 	void OnInputTriggered(EXYZInputType InputType);
 	UFUNCTION()
 	void OnInputReleased(EXYZInputType InputType);
+
+	UFUNCTION()
+	void OnControlGroupInputStarted(int32 ControlGroupIndex);
+
 	UFUNCTION()
 	void SelectActors(TArray<AXYZActor*> Actors);
 

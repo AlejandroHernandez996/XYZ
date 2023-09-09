@@ -1,0 +1,14 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-XYZ-6269.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.InclOrderUnreal5_1.h.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\Module.XYZ.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZAttackAction.cpp.obj"
+"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\XYZMoveAction.cpp.obj"
+"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Default.rc2.res"
+/OUT:"C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\UnrealEditor-XYZ-6269.lib"

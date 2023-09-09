@@ -6,6 +6,7 @@
 #include "XYZAction.h"
 #include "XYZMoveAction.h"
 #include "XYZStopAction.h"
+#include "XYZAttackAction.h"
 #include "XYZInputType.h"
 #include "XYZActionFactory.generated.h"
 
@@ -32,6 +33,17 @@ public:
             FString f = "Stop_Action_" + FString::FromInt(ActionCount);
             FName ActionName = FName(*f);
             UXYZAction* NewAction = NewObject<UXYZAction>(GetTransientPackage(), UXYZStopAction::StaticClass(), ActionName);
+            if (NewAction)
+            {
+                NewAction->Initialize(_Actor, _TargetActor, _TargetLocation, _bQueueInput);
+            }
+            return NewAction;
+        }
+        if (InputType == EXYZInputType::ATTACK_MOVE) {
+            if (!_Actor) return nullptr;
+            FString f = "Attack_Move_Action_" + FString::FromInt(ActionCount);
+            FName ActionName = FName(*f);
+            UXYZAction* NewAction = NewObject<UXYZAction>(GetTransientPackage(), UXYZAttackAction::StaticClass(), ActionName);
             if (NewAction)
             {
                 NewAction->Initialize(_Actor, _TargetActor, _TargetLocation, _bQueueInput);
