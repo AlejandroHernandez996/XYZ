@@ -146,7 +146,7 @@ AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors) {
     for (AXYZActor* OtherActor : GameState->AllActors)
     {
         // Exclude self from the list (if it's in the list)
-        if (OtherActor == this || bIgnoreFriendlyActors && OtherActor->TeamId == TeamId || OtherActor->Health <= 0.0f)
+        if (!OtherActor || (OtherActor == this || bIgnoreFriendlyActors && OtherActor->TeamId == TeamId || OtherActor->Health <= 0.0f))
         {
             continue;
         }

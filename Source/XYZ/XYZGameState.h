@@ -20,7 +20,7 @@ public:
 	UPROPERTY()
 	TArray<class AXYZActor*> AllActors;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TMap<int32, class AXYZActor*> ActorsByUID;
 
 };

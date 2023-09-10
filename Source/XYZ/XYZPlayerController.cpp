@@ -229,6 +229,7 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		bBoxSelectFlag = false;
 		OnSelectionBoxReleased.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
 		SelectActors(GetHUD<AXYZHUD>()->SelectedActors);
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		GetHUD<AXYZHUD>()->bSelectActors = false;
 		break;
 	case EXYZInputType::ATTACK_MOVE:
@@ -242,13 +243,11 @@ void AXYZPlayerController::SelectActors(TArray<AXYZActor*> _XYZActors){
 
 	if (XYZActors.IsEmpty()) {
 		SelectionStructure->Empty();
-		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		return;
 	}
 
 	if (XYZActors.Num() == 1 && XYZActors[0]->TeamId != TeamId) {
 		SelectionStructure->SelectEnemyActor(XYZActors[0]);
-		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		return;
 	}
 
@@ -261,7 +260,6 @@ void AXYZPlayerController::SelectActors(TArray<AXYZActor*> _XYZActors){
 
 	if (OwnedXYZActors.Num() == 1 && SelectionStructure->Contains(OwnedXYZActors[0]) && bPrimaryModifier) {
 		SelectionStructure->Remove(OwnedXYZActors[0]);
-		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		return;
 	}
 
@@ -276,13 +274,11 @@ void AXYZPlayerController::SelectActors(TArray<AXYZActor*> _XYZActors){
 		else {
 			SelectionStructure->Add(OwnedXYZActors);
 		}
-		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		return;
 	} 
 	else {
 		SelectionStructure->Empty();
 		SelectionStructure->Add(OwnedXYZActors);
-		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 	}
 }
 
@@ -329,6 +325,7 @@ void AXYZPlayerController::QueueInput_Implementation(const FXYZInputMessage& Inp
 void AXYZPlayerController::SelectActorFromPanel(int32 UActorId) {
 	if (GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Contains(UActorId)) {
 		SelectActors({ GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[UActorId]});
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 	}
 }
 
