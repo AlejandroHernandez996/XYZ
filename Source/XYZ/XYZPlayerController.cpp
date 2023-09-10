@@ -101,6 +101,8 @@ void AXYZPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SecondaryModifierInputAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnInputStarted, EXYZInputType::SECONDARY_MOD);
 		EnhancedInputComponent->BindAction(SecondaryModifierInputAction, ETriggerEvent::Completed, this, &AXYZPlayerController::OnInputReleased, EXYZInputType::SECONDARY_MOD);
 
+		EnhancedInputComponent->BindAction(ClearSelectionInputAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnInputStarted, EXYZInputType::CLEAR);
+
 		for (int32 i = 0; i < ControlGroupInputActions.Num(); i++) {
 			EnhancedInputComponent->BindAction(ControlGroupInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnControlGroupInputStarted, i);
 		}
@@ -171,6 +173,10 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 		case EXYZInputType::STOP:
 			bAttackModifier = false;
 			CreateAndQueueInput(SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, false);
+			break;
+		case EXYZInputType::CLEAR:
+			SelectActors({});
+			OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 			break;
 	}
 }

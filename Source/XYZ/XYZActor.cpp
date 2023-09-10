@@ -1,36 +1,53 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "XYZActor.h"
-#include "UObject/ConstructorHelpers.h"
-#include "Engine/World.h"
-#include "DrawDebugHelpers.h"
-#include "Components/DecalComponent.h"
 #include "XYZAction.h"
 #include "XYZGameState.h"
 #include "XYZDecalType.h"
+#include "DrawDebugHelpers.h"
 #include "Net/UnrealNetwork.h"
+#include "Components/DecalComponent.h"
+#include "Engine/World.h"
+#include "XYZAIController.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AXYZActor::AXYZActor()
 {
-	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
     bReplicates = true;
+
+    // Set size for collision capsule
+    GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+
+    // Configure character movement
+    GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
+    GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
+
+    // Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
+    // instead of recompiling to adjust them
+    GetCharacterMovement()->JumpZVelocity = 700.f;
+    GetCharacterMovement()->AirControl = 0.35f;
+    GetCharacterMovement()->MaxWalkSpeed = 500.f;
+    GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
+    GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+
+    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+    AIControllerClass = AXYZAIController::StaticClass();
 }
 
-// Called when the game starts or when spawned
 void AXYZActor::BeginPlay()
 {
 	Super::BeginPlay();
+    
     TArray<UActorComponent*> DecalComponents = GetComponentsByClass(UDecalComponent::StaticClass());
-
-    // Assuming you want the first DecalComponent found.
     SelectionDecal = Cast<UDecalComponent>(DecalComponents[0]);
    
 }
 
-// Called every frame
 void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -48,6 +65,7 @@ void AXYZActor::Tick(float DeltaTime)
             ActionQueue[0]->TryAction(DeltaTime);
         }
     }
+    /*
     FVector Start = GetActorLocation();
     FVector ForwardVector = FVector(0, 0, -1); // Facing downwards in the Z-axis
     FVector End = ((ForwardVector * 2000.f) + Start); // 2000 is the distance of the ray; you can adjust as needed
@@ -82,6 +100,7 @@ void AXYZActor::Tick(float DeltaTime)
         NewLocation.Y = Start.Y; // Keep Y coordinate unchanged
         SetActorLocation(NewLocation);
     }
+    */
 
 }
 
@@ -161,4 +180,8 @@ AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors) {
     }
 
     return ClosestActor;
+}
+
+void StopMovement() {
+
 }

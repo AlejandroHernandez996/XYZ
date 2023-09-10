@@ -2,8 +2,15 @@
 
 
 #include "XYZStopAction.h"
+#include "XYZActor.h"
+#include "XYZAIController.h"
 
 void UXYZStopAction::ProcessAction(float DeltaTime)
 {
+    if (!Actor) {
+        CancelAction();
+        return;
+    }
+    Actor->GetController<AXYZAIController>()->StopMovement();
     CompleteAction();
 }

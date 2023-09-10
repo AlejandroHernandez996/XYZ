@@ -70,7 +70,10 @@ public:
 		class UInputAction* SecondaryModifierInputAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* ClearSelectionInputAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		TArray<UInputAction*> ControlGroupInputActions;
+
 
 	bool bPrimaryModifier;
 	bool bSecondaryModifier;

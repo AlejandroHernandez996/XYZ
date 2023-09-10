@@ -10,13 +10,14 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 // Cross Module References
-	ENGINE_API UClass* Z_Construct_UClass_APawn();
+	ENGINE_API UClass* Z_Construct_UClass_ACharacter();
 	ENGINE_API UClass* Z_Construct_UClass_UDecalComponent_NoRegister();
 	ENGINE_API UClass* Z_Construct_UClass_UMaterialInterface_NoRegister();
 	ENGINE_API UScriptStruct* Z_Construct_UScriptStruct_FTimerHandle();
 	UPackage* Z_Construct_UPackage__Script_XYZ();
 	XYZ_API UClass* Z_Construct_UClass_AXYZActor();
 	XYZ_API UClass* Z_Construct_UClass_AXYZActor_NoRegister();
+	XYZ_API UClass* Z_Construct_UClass_AXYZAIController_NoRegister();
 	XYZ_API UClass* Z_Construct_UClass_UXYZAbility_NoRegister();
 	XYZ_API UClass* Z_Construct_UClass_UXYZAction_NoRegister();
 	XYZ_API UEnum* Z_Construct_UEnum_XYZ_EXYZDecalType();
@@ -260,12 +261,16 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_SelectionDecal_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_SelectionDecal;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_XYZAIController_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_XYZAIController;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UECodeGen_Private::FClassParams ClassParams;
 	};
 	UObject* (*const Z_Construct_UClass_AXYZActor_Statics::DependentSingletons[])() = {
-		(UObject* (*)())Z_Construct_UClass_APawn,
+		(UObject* (*)())Z_Construct_UClass_ACharacter,
 		(UObject* (*)())Z_Construct_UPackage__Script_XYZ,
 	};
 	const FClassFunctionLinkInfo Z_Construct_UClass_AXYZActor_Statics::FuncInfo[] = {
@@ -426,6 +431,13 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 	};
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_SelectionDecal = { "SelectionDecal", nullptr, (EPropertyFlags)0x001000000008000d, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZActor, SelectionDecal), Z_Construct_UClass_UDecalComponent_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AXYZActor_Statics::NewProp_SelectionDecal_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZActor_Statics::NewProp_SelectionDecal_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZActor_Statics::NewProp_XYZAIController_MetaData[] = {
+		{ "Category", "AI" },
+		{ "ModuleRelativePath", "XYZActor.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_XYZAIController = { "XYZAIController", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZActor, XYZAIController), Z_Construct_UClass_AXYZAIController_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AXYZActor_Statics::NewProp_XYZAIController_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZActor_Statics::NewProp_XYZAIController_MetaData)) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AXYZActor_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_ActorId,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_UActorId,
@@ -453,6 +465,7 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackTimer,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_bIsAttackOnCooldown,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_SelectionDecal,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_XYZAIController,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_AXYZActor_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<AXYZActor>::IsAbstract,
@@ -515,9 +528,9 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_AXYZActor, AXYZActor::StaticClass, TEXT("AXYZActor"), &Z_Registration_Info_UClass_AXYZActor, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZActor), 1798364623U) },
+		{ Z_Construct_UClass_AXYZActor, AXYZActor::StaticClass, TEXT("AXYZActor"), &Z_Registration_Info_UClass_AXYZActor, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZActor), 1166606492U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_2971000964(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_655162008(TEXT("/Script/XYZ"),
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

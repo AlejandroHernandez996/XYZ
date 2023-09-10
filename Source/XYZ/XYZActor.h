@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Character.h"
 #include "XYZAbility.h"
 #include "XYZFactionType.h"
 #include "XYZDecalType.h"
 #include "XYZActor.generated.h"
 
 UCLASS()
-class XYZ_API AXYZActor : public APawn
+class XYZ_API AXYZActor : public ACharacter
 {
 	GENERATED_BODY()
 	
@@ -90,4 +90,9 @@ public:
     UFUNCTION()
         AXYZActor* FindClosestActor(bool bIgnoreFriendlyActors);
     bool bCancelActionFlag;
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+        class AXYZAIController* XYZAIController;
+    void StopMovement();
 };

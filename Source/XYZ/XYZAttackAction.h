@@ -19,5 +19,7 @@ public:
 		float TargetLocationThreshold = 1.0f;
 	UPROPERTY(BlueprintReadWrite, Category = "Attack")
 		bool bIgnoreAllies = true;
+	void CancelAction() override;
+	void CompleteAction() override;
 	bool bIsAttackMove;
 };

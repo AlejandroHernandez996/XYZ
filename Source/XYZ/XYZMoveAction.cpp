@@ -1,33 +1,42 @@
 #include "XYZMoveAction.h"
 #include "XYZActor.h"
+#include "XYZAIController.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UXYZMoveAction::ProcessAction(float DeltaTime)
 {
     Super::ProcessAction(DeltaTime);
 
-    FVector ActorLocation = Actor->GetActorLocation();
-
-    // Calculate direction vector
-    FVector Direction = TargetLocation - ActorLocation;
-    Direction.Z = 0; // Assuming you only want to move in the XY plane
-    Direction.Normalize();
-
-    // Check if the actor is already close enough to the target location
-    FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
-    FVector2D TargetLocation2D = FVector2D(TargetLocation.X, TargetLocation.Y);
-    float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
-
-    if (DistanceToTarget > TargetLocationThreshold)  // Replace with your actual distance tolerance if necessary
+    AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
+    if (!Actor->GetController<AXYZAIController>()->bIsMoving)  // Replace with your actual distance tolerance if necessary
     {
-        // Calculate new location
-        FVector NewLocation = ActorLocation + (Direction * Actor->MoveSpeed * DeltaTime);
-
-        // Set the new location
-        Actor->SetActorLocation(NewLocation);
+        FVector Velocity = Actor->GetVelocity();
+        AIController->MoveToLocation(TargetLocation);
+        if (Velocity.Size() > Actor->GetVelocity().Size()) {
+            FVector NewVelocity = Actor->GetVelocity();
+            NewVelocity.Normalize();
+            Actor->GetCharacterMovement()->Velocity = NewVelocity * Velocity.Size();
+        }
+        AIController->bIsMoving = true;
     }
-    else
+    else if(AIController->bHasCompletedMove)
     {
         CompleteAction();
-        UE_LOG(LogTemp, Warning, TEXT("Action completed"));
+        AIController->bIsMoving = false;
+        AIController->bHasCompletedMove = false;
     }
+}
+
+void UXYZMoveAction::CancelAction() {
+    Super::CancelAction();
+    AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
+    AIController->bIsMoving = false;
+    AIController->bHasCompletedMove = false;
+}
+void UXYZMoveAction::CompleteAction() {
+    Super::CompleteAction();
+    AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
+    AIController->bIsMoving = false;
+    AIController->bHasCompletedMove = false;
 }

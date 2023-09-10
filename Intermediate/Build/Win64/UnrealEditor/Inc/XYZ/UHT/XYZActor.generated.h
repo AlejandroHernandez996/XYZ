@@ -37,7 +37,7 @@ private: \
 	static void StaticRegisterNativesAXYZActor(); \
 	friend struct Z_Construct_UClass_AXYZActor_Statics; \
 public: \
-	DECLARE_CLASS(AXYZActor, APawn, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/XYZ"), NO_API) \
+	DECLARE_CLASS(AXYZActor, ACharacter, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/XYZ"), NO_API) \
 	DECLARE_SERIALIZER(AXYZActor) \
 	enum class ENetFields_Private : uint16 \
 	{ \
@@ -59,7 +59,7 @@ private: \
 	static void StaticRegisterNativesAXYZActor(); \
 	friend struct Z_Construct_UClass_AXYZActor_Statics; \
 public: \
-	DECLARE_CLASS(AXYZActor, APawn, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/XYZ"), NO_API) \
+	DECLARE_CLASS(AXYZActor, ACharacter, COMPILED_IN_FLAGS(0 | CLASS_Config), CASTCLASS_None, TEXT("/Script/XYZ"), NO_API) \
 	DECLARE_SERIALIZER(AXYZActor) \
 	enum class ENetFields_Private : uint16 \
 	{ \

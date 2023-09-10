@@ -17,6 +17,8 @@ class XYZ_API UXYZMoveAction : public UXYZAction
 public:
 	virtual void ProcessAction(float DeltaTime) override;
 
+	void CancelAction() override;
+	void CompleteAction() override;
 	UPROPERTY(BlueprintReadWrite, Category = "Move")
 		float TargetLocationThreshold = 1.0f;
 

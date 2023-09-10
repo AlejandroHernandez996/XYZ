@@ -40,12 +40,14 @@ void EmptyLinkFunctionForGeneratedCodeXYZInputType() {}
 		{ "EXYZInputType::PRIMARY_MOD", (int64)EXYZInputType::PRIMARY_MOD },
 		{ "EXYZInputType::SECONDARY_MOD", (int64)EXYZInputType::SECONDARY_MOD },
 		{ "EXYZInputType::NONE", (int64)EXYZInputType::NONE },
+		{ "EXYZInputType::CLEAR", (int64)EXYZInputType::CLEAR },
 		{ "EXYZInputType::STOP", (int64)EXYZInputType::STOP },
 	};
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UEnum_XYZ_EXYZInputType_Statics::Enum_MetaDataParams[] = {
 		{ "ATTACK_MOVE.Name", "EXYZInputType::ATTACK_MOVE" },
 		{ "BlueprintType", "true" },
+		{ "CLEAR.Name", "EXYZInputType::CLEAR" },
 		{ "ModuleRelativePath", "XYZInputType.h" },
 		{ "NONE.Name", "EXYZInputType::NONE" },
 		{ "PRIMARY_INPUT.Name", "EXYZInputType::PRIMARY_INPUT" },
@@ -80,9 +82,9 @@ void EmptyLinkFunctionForGeneratedCodeXYZInputType() {}
 		static const FEnumRegisterCompiledInInfo EnumInfo[];
 	};
 	const FEnumRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputType_h_Statics::EnumInfo[] = {
-		{ EXYZInputType_StaticEnum, TEXT("EXYZInputType"), &Z_Registration_Info_UEnum_EXYZInputType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1699687832U) },
+		{ EXYZInputType_StaticEnum, TEXT("EXYZInputType"), &Z_Registration_Info_UEnum_EXYZInputType, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1490979030U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputType_h_3061768216(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputType_h_1070138806(TEXT("/Script/XYZ"),
 		nullptr, 0,
 		nullptr, 0,
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputType_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputType_h_Statics::EnumInfo));
