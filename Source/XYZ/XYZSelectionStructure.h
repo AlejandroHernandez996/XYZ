@@ -52,6 +52,8 @@ public:
 
     FString ToString() const;
 
+    int32 ActiveIndex;
+
 public:
     int32 Num;
 

@@ -21,6 +21,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 #define FOREACH_ENUM_EXYZUNITSTATE(op) \
 	op(EXYZUnitState::IDLE) \
 	op(EXYZUnitState::ATTACK) \
+	op(EXYZUnitState::HOLD) \
 	op(EXYZUnitState::MOVE) 
 
 enum class EXYZUnitState : uint8;

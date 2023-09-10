@@ -19,7 +19,7 @@
 #include "C:/Users/aleja/OneDrive/Documents/Unreal Projects/XYZ/Intermediate/Build/Win64/UnrealEditor/Inc/XYZ/UHT/XYZSelectionStructure.gen.cpp"
 #include "C:/Users/aleja/OneDrive/Documents/Unreal Projects/XYZ/Intermediate/Build/Win64/UnrealEditor/Inc/XYZ/UHT/XYZStopAction.gen.cpp"
 #include "C:/Users/aleja/OneDrive/Documents/Unreal Projects/XYZ/Intermediate/Build/Win64/UnrealEditor/Inc/XYZ/UHT/XYZUnit.gen.cpp"
-#include "C:/Users/aleja/OneDrive/Documents/Unreal Projects/XYZ/Intermediate/Build/Win64/UnrealEditor/Inc/XYZ/UHT/XYZUnitState.gen.cpp"
+#include "C:/Users/aleja/OneDrive/Documents/Unreal Projects/XYZ/Intermediate/Build/Win64/UnrealEditor/Inc/XYZ/UHT/XYZUserWidget.gen.cpp"
 #include "C:/Users/aleja/OneDrive/Documents/Unreal Projects/XYZ/Source/XYZ/XYZ.cpp"
 #include "C:/Users/aleja/OneDrive/Documents/Unreal Projects/XYZ/Source/XYZ/XYZAbility.cpp"
 #include "C:/Users/aleja/OneDrive/Documents/Unreal Projects/XYZ/Source/XYZ/XYZAction.cpp"

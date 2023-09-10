@@ -4,26 +4,5 @@
   Using 'git status' to determine working set for adaptive non-unity build (C:\Users\aleja\gamedev\Engine\UnrealEngine).
   Using 'git status' to determine working set for adaptive non-unity build (C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ).
   Waiting for 'git status' command to complete
-  Invalidating makefile for XYZEditor (working set of source files changed)
-  Building XYZEditor and ShaderCompileWorker...
-  Using Visual Studio 2022 14.34.31946 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
-  [Upgrade]
-  [Upgrade] Using backward-compatible include order. The latest version of UE has changed the order of includes, which may require code changes. The current setting is:
-  [Upgrade]     IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1
-  [Upgrade] Suppress this message by setting 'IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_2;' in XYZEditor.Target.cs.
-  [Upgrade] Alternatively you can set this to 'EngineIncludeOrderVersion.Latest' to always use the latest include order. This will potentially cause compile errors when integrating new versions of the engine.
-  [Upgrade]
-  [Adaptive Build] Excluded from XYZ unity file: XYZActor.cpp
-  Determining max actions to execute in parallel (10 physical cores, 20 logical cores)
-    Executing up to 10 processes, one per physical core
-  Building 5 actions with 5 processes...
-  [1/5] Compile [x64] XYZActor.cpp
-C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Source\XYZ\XYZActor.cpp(26): warning C4996: 'AActor::GetComponentsByClass': Use one of the GetComponents implementations as appropriate Please update your code to the new API before upgrading to the next release, otherwise your project will no longer compile.
-  [2/5] Compile [x64] Module.XYZ.cpp
-  [3/5] Link [x64] UnrealEditor-XYZ.lib
-     Creating library C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\UnrealEditor-XYZ.lib and object C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\UnrealEditor-XYZ.exp
-  [4/5] Link [x64] UnrealEditor-XYZ.dll
-     Creating library C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\UnrealEditor-XYZ.suppressed.lib and object C:\Users\aleja\OneDrive\Documents\Unreal Projects\XYZ\Intermediate\Build\Win64\x64\UnrealEditor\Development\XYZ\UnrealEditor-XYZ.suppressed.exp
-  [5/5] WriteMetadata XYZEditor.target
-  Total time in Parallel executor: 8.00 seconds
-  Total execution time: 14.44 seconds
+  Targets are up to date
+  Total execution time: 2.89 seconds

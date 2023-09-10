@@ -166,5 +166,11 @@
     <ClInclude Include="..\..\Source\XYZ\XYZUnitState.h">
       <Filter>Source\XYZ</Filter>
     </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZUserWidget.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZUserWidget.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

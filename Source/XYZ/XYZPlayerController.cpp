@@ -16,6 +16,8 @@
 #include "XYZHUD.h"
 #include "GameFramework/PlayerState.h"
 #include "EnhancedInputSubsystems.h"
+#include "UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 AXYZPlayerController::AXYZPlayerController()
 {
@@ -47,6 +49,14 @@ void AXYZPlayerController::BeginPlay()
 
 void AXYZPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+
+	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
+	if (bAttackModifier || !SelectionStructure->IsEmpty() && HitActor && HitActor->TeamId != TeamId) {
+		CurrentMouseCursor = EMouseCursor::Crosshairs;
+	}
+	else{
+		CurrentMouseCursor = EMouseCursor::Default;
+	}
 
 	float x, y;
 	if (!GetWorld()->GetFirstPlayerController()->GetMousePosition(x, y)) {
@@ -107,22 +117,45 @@ void AXYZPlayerController::OnControlGroupInputStarted(int32 ControlGroupIndex) {
 	}
 	else {
 		SelectionStructure->SelectControlGroup(ControlGroupIndex);
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 	}
 }
 
 void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 {
 	InputTriggeredTime[InputType] = 0.0f;
-	UE_LOG(LogTemp, Warning, TEXT("Input Started for Type %d"), static_cast<int32>(InputType));
 	FXYZInputMessage InputMessage;
+	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
+	int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
 	switch (InputType) {
 		case EXYZInputType::PRIMARY_INPUT:
+			if (!bAllowMouseInput) return;
+			if (bAttackModifier) {
+				if (SelectionStructure->IsEmpty()) return;
+				bAttackModifier = false;
+				bBlockPrimaryInputFlagForAttack = true;
+				CreateAndQueueInput(SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, EXYZInputType::ATTACK_MOVE, bPrimaryModifier);
+				if (!HitActor || (SelectionStructure->Num == 1 && SelectionStructure->ToActorIdArray()[0] == XYZActorHitId)) {
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, AttackCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+				}
+				break;
+			}
 			BoxSelectStart = GetMousePositionOnViewport();
 			GetHUD<AXYZHUD>()->bSelectActors = true;
 			GetHUD<AXYZHUD>()->BoxStart = BoxSelectStart;
 			GetHUD<AXYZHUD>()->BoxEnd = BoxSelectStart;
 			// Fire the SelectionBox event
 			OnSelectionBox.Broadcast(BoxSelectStart.X, BoxSelectStart.Y);
+			bBoxSelectFlag = true;
+			break;
+		case EXYZInputType::SECONDARY_INPUT:
+			if (!bAllowMouseInput) return;
+			bAttackModifier = false;
+			if (SelectionStructure->IsEmpty()) return;
+			CreateAndQueueInput(SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, InputType, bPrimaryModifier);
+			if (!HitActor || (SelectionStructure->Num == 1 && SelectionStructure->ToActorIdArray()[0] == XYZActorHitId)) {
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, MoveCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
+			}
 			break;
 		case EXYZInputType::PRIMARY_MOD:
 			bPrimaryModifier = true;
@@ -130,7 +163,13 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 		case EXYZInputType::SECONDARY_MOD:
 			bSecondaryModifier = true;
 			break;
+		case EXYZInputType::ATTACK_MOVE:
+			if (!SelectionStructure->IsEmpty()) {
+				bAttackModifier = true;
+			}
+			break;
 		case EXYZInputType::STOP:
+			bAttackModifier = false;
 			CreateAndQueueInput(SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, false);
 			break;
 	}
@@ -159,7 +198,12 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 
 	switch (InputType) {
 	case EXYZInputType::PRIMARY_INPUT:
+		if (!bAllowMouseInput) return;
+		if (!bBoxSelectFlag || !bAllowMouseInput) return;
 		OnSelectionBoxTriggered.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
+		break;
+	case EXYZInputType::ATTACK_MOVE:
+		bAttackModifier = !SelectionStructure->IsEmpty();
 		break;
 	}
 	return;
@@ -180,21 +224,14 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		bSecondaryModifier = false;
 		break;
 	case EXYZInputType::PRIMARY_INPUT:
+		if (!bAllowMouseInput) return;
+		if (!bBoxSelectFlag) break;
+		bBoxSelectFlag = false;
 		OnSelectionBoxReleased.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
 		SelectActors(GetHUD<AXYZHUD>()->SelectedActors);
 		GetHUD<AXYZHUD>()->bSelectActors = false;
 		break;
-	case EXYZInputType::SECONDARY_INPUT:
-		CreateAndQueueInput(SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, InputType, bPrimaryModifier);
-		if (!HitActor || (SelectionStructure->Num == 1 && SelectionStructure->ToActorIdArray()[0] == XYZActorHitId)) {
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, MoveCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
-		}
-		break;
 	case EXYZInputType::ATTACK_MOVE:
-		CreateAndQueueInput(SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, InputType, bPrimaryModifier);
-		if (!HitActor || (SelectionStructure->Num == 1 && SelectionStructure->ToActorIdArray()[0] == XYZActorHitId)) {
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, AttackCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
-		}
 		break;
 	}
 }
@@ -205,11 +242,13 @@ void AXYZPlayerController::SelectActors(TArray<AXYZActor*> _XYZActors){
 
 	if (XYZActors.IsEmpty()) {
 		SelectionStructure->Empty();
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		return;
 	}
 
 	if (XYZActors.Num() == 1 && XYZActors[0]->TeamId != TeamId) {
 		SelectionStructure->SelectEnemyActor(XYZActors[0]);
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		return;
 	}
 
@@ -222,6 +261,7 @@ void AXYZPlayerController::SelectActors(TArray<AXYZActor*> _XYZActors){
 
 	if (OwnedXYZActors.Num() == 1 && SelectionStructure->Contains(OwnedXYZActors[0]) && bPrimaryModifier) {
 		SelectionStructure->Remove(OwnedXYZActors[0]);
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		return;
 	}
 
@@ -236,11 +276,13 @@ void AXYZPlayerController::SelectActors(TArray<AXYZActor*> _XYZActors){
 		else {
 			SelectionStructure->Add(OwnedXYZActors);
 		}
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		return;
 	} 
 	else {
 		SelectionStructure->Empty();
 		SelectionStructure->Add(OwnedXYZActors);
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 	}
 }
 
@@ -282,4 +324,29 @@ void AXYZPlayerController::QueueInput_Implementation(const FXYZInputMessage& Inp
 			break;
 		}
 	}
+}
+
+void AXYZPlayerController::SelectActorFromPanel(int32 UActorId) {
+	if (GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Contains(UActorId)) {
+		SelectActors({ GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[UActorId]});
+	}
+}
+
+bool AXYZPlayerController::IsMouseOverWidget()
+{
+	TArray<UUserWidget*> FoundWidgets;
+	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass(), false);
+	bool bWidgetIsHovered = false;
+	for (UUserWidget* Widget : FoundWidgets)
+	{
+		if (Widget->GetName().Contains("Healthbar"))
+			continue;
+
+		if (Widget->IsHovered()) {
+			bWidgetIsHovered = true;
+			return true;
+		}
+			
+	}
+	return bWidgetIsHovered;
 }

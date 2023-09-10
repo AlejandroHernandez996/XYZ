@@ -16,6 +16,7 @@ class UNiagaraSystem;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxEvent, float, x, float, y);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxTriggeredEvent, float, x, float, y);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxReleasedEvent, float, x, float, y);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSelectionIdsEvent, const TArray<int32>&, SelectionActorIds);
 
 UCLASS()
 class AXYZPlayerController : public APlayerController
@@ -73,6 +74,8 @@ public:
 
 	bool bPrimaryModifier;
 	bool bSecondaryModifier;
+	bool bAttackModifier;
+	bool bBlockPrimaryInputFlagForAttack;
 
 	UFUNCTION()
 	FVector2D GetMousePositionOnViewport();
@@ -89,6 +92,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 		FSelectionBoxReleasedEvent OnSelectionBoxReleased;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+		FSelectionIdsEvent OnSelectionIdsEvent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	bool bAllowMouseInput = true;
 
 protected:
 	// To add mapping context
@@ -112,6 +121,9 @@ protected:
 	UFUNCTION()
 	void SelectActors(TArray<AXYZActor*> Actors);
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		void SelectActorFromPanel(int32 UActorId);
+
 	void CreateAndQueueInput(TArray<int32> _SelectedActors, int32 _XYZTargetActor, FVector _TargetLocation, EXYZInputType _InputType, bool _bQueueInput);
 	UFUNCTION(Server, Reliable)
 	void QueueInput(const FXYZInputMessage& InputMessage);
@@ -126,12 +138,16 @@ protected:
 
 	int32 TeamId = 0;
 
+	bool IsMouseOverWidget();
+
 private:
 	UPROPERTY()
 	class UXYZSelectionStructure* SelectionStructure;
 
 	UPROPERTY()
 	TMap<EXYZInputType, float> InputTriggeredTime;
+
+	bool bBoxSelectFlag;
 };
 
 
