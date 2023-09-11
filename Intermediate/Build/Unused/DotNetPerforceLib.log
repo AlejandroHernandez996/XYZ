@@ -1,2 +1,0 @@
-﻿  Using bundled DotNet SDK version: 6.0.302
-  Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" DotNetPerforceLib Win64 Development -WaitMutex -FromMsBuild

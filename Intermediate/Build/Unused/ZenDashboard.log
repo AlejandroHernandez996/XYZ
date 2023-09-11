@@ -1,7 +1,0 @@
-﻿  Using bundled DotNet SDK version: 6.0.302
-  Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" ZenDashboard Win64 Development -WaitMutex -FromMsBuild
-  Log file: C:\Users\aleja\gamedev\Engine\UnrealEngine\Engine\Programs\UnrealBuildTool\Log.txt
-  Using 'git status' to determine working set for adaptive non-unity build (C:\Users\aleja\gamedev\Engine\UnrealEngine).
-  Waiting for 'git status' command to complete
-  Target is up to date
-  Total execution time: 80.52 seconds
