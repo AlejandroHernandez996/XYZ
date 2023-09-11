@@ -11,6 +11,7 @@
     <None Include="..\..\Source\XYZEditor.Target.cs">
       <Filter>Source</Filter>
     </None>
+    <None Include="..\..\.gitattributes" />
     <None Include="..\..\.vsconfig" />
     <None Include="..\..\README.md" />
     <Filter Include="Config">
@@ -94,6 +95,24 @@
     <ClInclude Include="..\..\Source\XYZ\XYZAttackAction.h">
       <Filter>Source\XYZ</Filter>
     </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZBlob.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZBlob.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZBlobFactory.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZBlobFactory.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZBlobManager.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZBlobManager.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
     <ClCompile Include="..\..\Source\XYZ\XYZCameraController.cpp">
       <Filter>Source\XYZ</Filter>
     </ClCompile>
@@ -101,6 +120,12 @@
       <Filter>Source\XYZ</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\XYZ\XYZDecalType.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZEvadeAction.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZEvadeAction.h">
       <Filter>Source\XYZ</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\XYZ\XYZFactionType.h">
@@ -155,6 +180,12 @@
       <Filter>Source\XYZ</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\XYZ\XYZSelectionStructure.h">
+      <Filter>Source\XYZ</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\XYZ\XYZSimpleMovingBlob.cpp">
+      <Filter>Source\XYZ</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\XYZ\XYZSimpleMovingBlob.h">
       <Filter>Source\XYZ</Filter>
     </ClInclude>
     <ClCompile Include="..\..\Source\XYZ\XYZStopAction.cpp">

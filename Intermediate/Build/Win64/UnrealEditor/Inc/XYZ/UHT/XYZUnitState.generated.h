@@ -20,9 +20,8 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 
 #define FOREACH_ENUM_EXYZUNITSTATE(op) \
 	op(EXYZUnitState::IDLE) \
-	op(EXYZUnitState::ATTACK) \
-	op(EXYZUnitState::HOLD) \
-	op(EXYZUnitState::MOVE) 
+	op(EXYZUnitState::ACTION) \
+	op(EXYZUnitState::HOLD) 
 
 enum class EXYZUnitState : uint8;
 template<> struct TIsUEnumClass<EXYZUnitState> { enum { Value = true }; };

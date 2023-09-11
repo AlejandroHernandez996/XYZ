@@ -26,6 +26,7 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 	op(EXYZInputType::SECONDARY_MOD) \
 	op(EXYZInputType::NONE) \
 	op(EXYZInputType::CLEAR) \
+	op(EXYZInputType::EVADE) \
 	op(EXYZInputType::STOP) 
 
 enum class EXYZInputType : uint8;

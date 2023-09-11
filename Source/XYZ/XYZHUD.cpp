@@ -9,7 +9,7 @@ void AXYZHUD::DrawHUD()
     Super::DrawHUD();
 
     if (bSelectActors) {
-        GetActorsInSelectionRectangle(BoxStart, BoxEnd, SelectedActors);
+        GetActorsInSelectionRectangle(BoxStart, BoxEnd, SelectedActors, false);
     }
     else {
         ClearActors();

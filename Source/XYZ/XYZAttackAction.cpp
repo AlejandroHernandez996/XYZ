@@ -2,6 +2,7 @@
 #include "XYZActor.h"
 #include "XYZActor.h"
 #include "XYZAIController.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UXYZAttackAction::ProcessAction(float DeltaTime)
 {
@@ -9,8 +10,11 @@ void UXYZAttackAction::ProcessAction(float DeltaTime)
     FVector ActorLocation = Actor->GetActorLocation();
     FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
     AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
-
     if (TargetActor) {
+        if (Actor == TargetActor) {
+            CancelAction();
+            return;
+        }
         if (TargetActor->Health <= 0.0f) {
             if (bIsAttackMove) {
                 TargetActor = nullptr;
@@ -37,7 +41,7 @@ void UXYZAttackAction::ProcessAction(float DeltaTime)
                 Actor->Attack(TargetActor);
             }
             else {
-                Actor->GetController<AXYZAIController>()->MoveToActor(TargetActor);
+                Actor->GetController<AXYZAIController>()->MoveToActor(TargetActor, 50.0f, true, true, false, false);
             }
         }
     }
@@ -47,8 +51,7 @@ void UXYZAttackAction::ProcessAction(float DeltaTime)
         if (!TargetActor) {
             if (!Actor->GetController<AXYZAIController>()->bIsMoving)  // Replace with your actual distance tolerance if necessary
             {
-                AIController->MoveToLocation(TargetLocation);
-                AIController->bIsMoving = true;
+                AIController->MoveToLocation(TargetLocation, 50.0f, true, true, false, false);
             }
             else if (AIController->bHasCompletedMove)
             {
@@ -63,12 +66,14 @@ void UXYZAttackAction::ProcessAction(float DeltaTime)
 void UXYZAttackAction::CancelAction() {
     Super::CancelAction();
     AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
+    if (!AIController) return;
     AIController->bIsMoving = false;
     AIController->bHasCompletedMove = false;
 }
 void UXYZAttackAction::CompleteAction() {
     Super::CompleteAction();
     AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
+    if (!AIController) return;
     AIController->bIsMoving = false;
     AIController->bHasCompletedMove = false;
 }

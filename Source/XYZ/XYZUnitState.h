@@ -7,7 +7,6 @@ UENUM(BlueprintType)
 enum class EXYZUnitState : uint8
 {
 	IDLE,
-	ATTACK,
+	ACTION,
 	HOLD,
-	MOVE,
 };

@@ -13,5 +13,6 @@ enum class EXYZInputType : uint8
 	SECONDARY_MOD,
 	NONE,
 	CLEAR,
+	EVADE,
 	STOP,
 };

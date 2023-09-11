@@ -9,15 +9,12 @@ void UXYZMoveAction::ProcessAction(float DeltaTime)
     Super::ProcessAction(DeltaTime);
 
     AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
+    if (!AIController) {
+        return;
+    }
     if (!Actor->GetController<AXYZAIController>()->bIsMoving)  // Replace with your actual distance tolerance if necessary
     {
-        FVector Velocity = Actor->GetVelocity();
-        AIController->MoveToLocation(TargetLocation);
-        if (Velocity.Size() > Actor->GetVelocity().Size()) {
-            FVector NewVelocity = Actor->GetVelocity();
-            NewVelocity.Normalize();
-            Actor->GetCharacterMovement()->Velocity = NewVelocity * Velocity.Size();
-        }
+        AIController->XYZMoveToLocation(TargetLocation);
         AIController->bIsMoving = true;
     }
     else if(AIController->bHasCompletedMove)
@@ -31,12 +28,18 @@ void UXYZMoveAction::ProcessAction(float DeltaTime)
 void UXYZMoveAction::CancelAction() {
     Super::CancelAction();
     AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
+    if (!AIController) {
+        return;
+    }
     AIController->bIsMoving = false;
     AIController->bHasCompletedMove = false;
 }
 void UXYZMoveAction::CompleteAction() {
     Super::CompleteAction();
     AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
+    if (!AIController) {
+        return;
+    }
     AIController->bIsMoving = false;
     AIController->bHasCompletedMove = false;
 }

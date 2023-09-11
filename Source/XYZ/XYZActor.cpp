@@ -11,6 +11,8 @@
 #include "XYZAIController.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Components/CapsuleComponent.h"
+#include "XYZGameMode.h"
+#include "XYZPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -20,15 +22,11 @@ AXYZActor::AXYZActor()
 	PrimaryActorTick.bStartWithTickEnabled = true;
     bReplicates = true;
 
-    // Set size for collision capsule
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-    // Configure character movement
-    GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-    GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
+    GetCharacterMovement()->bOrientRotationToMovement = true;
+    GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
 
-    // Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
-    // instead of recompiling to adjust them
     GetCharacterMovement()->JumpZVelocity = 700.f;
     GetCharacterMovement()->AirControl = 0.35f;
     GetCharacterMovement()->MaxWalkSpeed = 500.f;
@@ -52,6 +50,14 @@ void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
     if (Health == 0.0f) {
+        for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+        {
+            AXYZPlayerController* PlayerController = Cast<AXYZPlayerController>(It->Get());
+            if (PlayerController)
+            {
+                PlayerController->XYZActorDestroyed(UActorId);
+            }
+        }
         Destroy();
     }
     if (GetLocalRole() == ROLE_Authority) {
@@ -65,43 +71,6 @@ void AXYZActor::Tick(float DeltaTime)
             ActionQueue[0]->TryAction(DeltaTime);
         }
     }
-    /*
-    FVector Start = GetActorLocation();
-    FVector ForwardVector = FVector(0, 0, -1); // Facing downwards in the Z-axis
-    FVector End = ((ForwardVector * 2000.f) + Start); // 2000 is the distance of the ray; you can adjust as needed
-
-    FHitResult HitResult;
-
-    // Collision parameters
-    FCollisionQueryParams CollisionParams;
-
-    // Perform the line trace 
-    // The true parameter means it will trace against visible objects
-    // ECC_Visibility is what it is looking for during the trace
-    bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
-
-#if WITH_EDITOR
-    // Debug Line in editor
-    if (bHit)
-    {
-        DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1, 0, 1);
-    }
-    else
-    {
-        DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 1, 0, 1);
-    }
-#endif
-
-    // If we hit something, place the actor at the hit location
-    if (bHit)
-    {
-        FVector NewLocation = HitResult.Location + 10.0f;
-        NewLocation.X = Start.X; // Keep X coordinate unchanged
-        NewLocation.Y = Start.Y; // Keep Y coordinate unchanged
-        SetActorLocation(NewLocation);
-    }
-    */
-
 }
 
 void AXYZActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -132,14 +101,13 @@ void AXYZActor::QueueAction(UXYZAction* Action) {
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType) {
 
-    SelectionDecal->SetMaterial(0, DecalMaterials[DecalType]);
-    if (bShowDecal) {
-        SelectionDecal->DecalSize = FVector(400.0f, 80.0f, 80.0f);
+    if (!bShowDecal) {
+        SelectionDecal->SetMaterial(0, DecalMaterials[EXYZDecalType::NEUTRAL]);
     }
     else {
-        SelectionDecal->DecalSize = FVector::ZeroVector;
+        SelectionDecal->SetMaterial(0, DecalMaterials[DecalType]);
     }
-    SelectionDecal->MarkRenderStateDirty();
+    //SelectionDecal->MarkRenderStateDirty();
 }
 
 void AXYZActor::Attack(AXYZActor* TargetActor) {
@@ -162,17 +130,16 @@ AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors) {
 
     AXYZActor* ClosestActor = nullptr;
     float ClosestDistanceSqr = FLT_MAX;
-    for (AXYZActor* OtherActor : GameState->AllActors)
+    for (AXYZActor* OtherActor : GameState->GetAllActors())
     {
-        // Exclude self from the list (if it's in the list)
-        if (!OtherActor || (OtherActor == this || bIgnoreFriendlyActors && OtherActor->TeamId == TeamId || OtherActor->Health <= 0.0f))
-        {
+        bool bTargetIsFriendlyAndShouldIgnore = OtherActor->TeamId == TeamId && bIgnoreFriendlyActors;
+        if (!OtherActor || OtherActor == this || bTargetIsFriendlyAndShouldIgnore || OtherActor->Health <= 0.0f) {
             continue;
         }
 
         float DistanceSqr = FVector::DistSquaredXY(this->GetActorLocation(), OtherActor->GetActorLocation());
 
-        if (DistanceSqr < ClosestDistanceSqr && DistanceSqr <= FMath::Square(AttackRange))
+        if (DistanceSqr < ClosestDistanceSqr && DistanceSqr <= FMath::Square(VisionRange))
         {
             ClosestDistanceSqr = DistanceSqr;
             ClosestActor = OtherActor;
@@ -180,8 +147,4 @@ AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors) {
     }
 
     return ClosestActor;
-}
-
-void StopMovement() {
-
 }

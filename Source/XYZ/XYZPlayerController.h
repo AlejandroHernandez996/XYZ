@@ -151,6 +151,12 @@ private:
 	TMap<EXYZInputType, float> InputTriggeredTime;
 
 	bool bBoxSelectFlag;
+
+public:
+	UFUNCTION(NetMulticast, Reliable)
+		void XYZActorDestroyed(int32 ActorUId);
+	void XYZActorDestroyed_Implementation(int32 ActorUId);
+
 };
 
 

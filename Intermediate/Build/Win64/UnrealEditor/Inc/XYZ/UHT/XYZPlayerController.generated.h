@@ -35,8 +35,10 @@ XYZ_API void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& 
 
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_24_SPARSE_DATA
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_24_RPC_WRAPPERS \
+	virtual void XYZActorDestroyed_Implementation(int32 ActorUId); \
 	virtual void QueueInput_Implementation(FXYZInputMessage const& InputMessage); \
  \
+	DECLARE_FUNCTION(execXYZActorDestroyed); \
 	DECLARE_FUNCTION(execQueueInput); \
 	DECLARE_FUNCTION(execSelectActorFromPanel); \
 	DECLARE_FUNCTION(execSelectActors); \
@@ -49,6 +51,7 @@ XYZ_API void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& 
 
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_24_RPC_WRAPPERS_NO_PURE_DECLS \
  \
+	DECLARE_FUNCTION(execXYZActorDestroyed); \
 	DECLARE_FUNCTION(execQueueInput); \
 	DECLARE_FUNCTION(execSelectActorFromPanel); \
 	DECLARE_FUNCTION(execSelectActors); \

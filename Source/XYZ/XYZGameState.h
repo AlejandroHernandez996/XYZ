@@ -17,10 +17,8 @@ class XYZ_API AXYZGameState : public AGameStateBase
 public:
 	virtual void BeginPlay() override;
 
-	UPROPERTY()
-	TArray<class AXYZActor*> AllActors;
-
 	UPROPERTY(BlueprintReadOnly)
 	TMap<int32, class AXYZActor*> ActorsByUID;
 
+	TArray<class AXYZActor*> GetAllActors();
 };

@@ -122,7 +122,7 @@ template<> XYZ_API UScriptStruct* StaticStruct<FXYZInputMessage>()
 		{ "ToolTip", "Type of input" },
 	};
 #endif
-	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_InputType = { "InputType", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(FXYZInputMessage, InputType), Z_Construct_UEnum_XYZ_EXYZInputType, METADATA_PARAMS(Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_InputType_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_InputType_MetaData)) }; // 1490979030
+	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_InputType = { "InputType", nullptr, (EPropertyFlags)0x0010000000000004, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(FXYZInputMessage, InputType), Z_Construct_UEnum_XYZ_EXYZInputType, METADATA_PARAMS(Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_InputType_MetaData, UE_ARRAY_COUNT(Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_InputType_MetaData)) }; // 3594544840
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewProp_bQueueInput_MetaData[] = {
 		{ "Category", "Input" },
@@ -177,9 +177,9 @@ template<> XYZ_API UScriptStruct* StaticStruct<FXYZInputMessage>()
 		static const FStructRegisterCompiledInInfo ScriptStructInfo[];
 	};
 	const FStructRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputMessage_h_Statics::ScriptStructInfo[] = {
-		{ FXYZInputMessage::StaticStruct, Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewStructOps, TEXT("XYZInputMessage"), &Z_Registration_Info_UScriptStruct_XYZInputMessage, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FXYZInputMessage), 1428212427U) },
+		{ FXYZInputMessage::StaticStruct, Z_Construct_UScriptStruct_FXYZInputMessage_Statics::NewStructOps, TEXT("XYZInputMessage"), &Z_Registration_Info_UScriptStruct_XYZInputMessage, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FXYZInputMessage), 3577295131U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputMessage_h_2395937347(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputMessage_h_1003607064(TEXT("/Script/XYZ"),
 		nullptr, 0,
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputMessage_h_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZInputMessage_h_Statics::ScriptStructInfo),
 		nullptr, 0);

@@ -28,23 +28,22 @@ public:
     void Add(AXYZActor* Actor);
     void Add(TArray<AXYZActor*> Actors);
     void Remove(AXYZActor* Actor);
+    void Remove(int32 ActorUId);
     void Remove(TArray<AXYZActor*> Actors);
 
     void InitControlGroups(int32 ControlGroupCount);
     void SetControlGroup(int32 ControlGroupIndex);
     void AddToControlGroup(int32 ControlGroupIndex);
     void SelectControlGroup(int32 ControlGroupIndex);
+    void RemoveFromControlGroups(int32 ActorUId);
 
     void SelectEnemyActor(AXYZActor* Actor);
 
-    UFUNCTION()
     TArray<AXYZActor*> ToArray();
-
-    UFUNCTION()
     TArray<int32> ToActorIdArray();
 
-    UFUNCTION()
     bool Contains(AXYZActor* Actor);
+    bool Contains(int32 ActorUId);
 
     void Empty();
 

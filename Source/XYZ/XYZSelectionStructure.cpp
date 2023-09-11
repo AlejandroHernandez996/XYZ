@@ -46,6 +46,26 @@ void UXYZSelectionStructure::Remove(TArray<AXYZActor*> Actors) {
     }
 }
 
+void UXYZSelectionStructure::Remove(int32 ActorUId)
+{
+    int32 KeyOfInnerMap = -1;
+    for (auto& OuterElement : SelectedActors)
+    {
+        TMap<int32, AXYZActor*>& InnerMap = OuterElement.Value;
+        if (InnerMap.Contains(ActorUId)) {
+            InnerMap.Remove(ActorUId);
+            if(InnerMap.Num() == 0) {
+                OuterElement.Key = KeyOfInnerMap;
+            }
+            break;
+        }
+        
+    }
+    if (KeyOfInnerMap != -1) {
+        SelectedActors.Remove(KeyOfInnerMap);
+    }
+}
+
 void UXYZSelectionStructure::Remove(AXYZActor* Actor) {
     // First check if ActorId already exists as a key in the map.
     if (Contains(Actor)) {
@@ -101,6 +121,30 @@ void UXYZSelectionStructure::SelectControlGroup(int32 ControlGroupIndex) {
     Add(ResultArray);
 }
 
+void UXYZSelectionStructure::RemoveFromControlGroups(int32 ActorUId) {
+
+    int32 KeyOfInnerMap = -1;
+    for (int i = 0; i < ControlGroups.Num(); i++) {
+        TMap<int32, TMap<int32, AXYZActor*>> ControlGroup = ControlGroups[i];
+
+        for (auto& OuterElement : ControlGroup)
+        {
+            TMap<int32, AXYZActor*>& InnerMap = OuterElement.Value;
+            if (InnerMap.Contains(ActorUId)) {
+                InnerMap.Remove(ActorUId);
+                if (InnerMap.Num() == 0) {
+                    OuterElement.Key = KeyOfInnerMap;
+                }
+                break;
+            }
+
+        }
+        if (KeyOfInnerMap != -1) {
+            ControlGroup.Remove(KeyOfInnerMap);
+        }
+    }
+}
+
 void UXYZSelectionStructure::SelectEnemyActor(AXYZActor* Actor) {
     if (SelectedEnemy) {
         SelectedEnemy->ShowDecal(false, EXYZDecalType::ENEMY);
@@ -139,6 +183,19 @@ TArray<int32> UXYZSelectionStructure::ToActorIdArray() {
 
 bool UXYZSelectionStructure::Contains(AXYZActor* Actor) {
     return Actor && SelectedActors.Contains(Actor->ActorId) && SelectedActors[Actor->ActorId].Contains(Actor->UActorId);
+}
+
+bool UXYZSelectionStructure::Contains(int32 ActorUId) {
+    for (const auto& OuterElement : SelectedActors)
+    {
+        const TMap<int32, AXYZActor*>& InnerMap = OuterElement.Value;
+
+        if (InnerMap.Contains(ActorUId))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 void UXYZSelectionStructure::Empty() {

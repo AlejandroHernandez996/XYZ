@@ -7,6 +7,7 @@
 #include "XYZAbility.h"
 #include "XYZFactionType.h"
 #include "XYZDecalType.h"
+#include "XYZUnitState.h"
 #include "XYZActor.generated.h"
 
 UCLASS()
@@ -30,6 +31,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
         int32 TeamId;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
+        EXYZUnitState State = EXYZUnitState::IDLE;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
         FString DisplayName;
@@ -57,6 +61,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", Replicated)
         float AttackRange;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
+        float VisionRange;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Decal")
         TMap<EXYZDecalType, UMaterialInterface*> DecalMaterials;
@@ -94,5 +101,5 @@ public:
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
         class AXYZAIController* XYZAIController;
-    void StopMovement();
+    FIntPoint GridPosition;
 };

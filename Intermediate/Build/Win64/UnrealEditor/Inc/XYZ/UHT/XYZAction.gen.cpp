@@ -331,6 +331,11 @@ void EmptyLinkFunctionForGeneratedCodeXYZAction() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_Actor_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_Actor;
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_ActorSet_ElementProp;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_ActorSet_MetaData[];
+#endif
+		static const UECodeGen_Private::FSetPropertyParams NewProp_ActorSet;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_bQueueInput_MetaData[];
 #endif
@@ -392,6 +397,13 @@ void EmptyLinkFunctionForGeneratedCodeXYZAction() {}
 	};
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UXYZAction_Statics::NewProp_Actor = { "Actor", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(UXYZAction, Actor), Z_Construct_UClass_AXYZActor_NoRegister, METADATA_PARAMS(Z_Construct_UClass_UXYZAction_Statics::NewProp_Actor_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UXYZAction_Statics::NewProp_Actor_MetaData)) };
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_UXYZAction_Statics::NewProp_ActorSet_ElementProp = { "ActorSet", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, Z_Construct_UClass_AXYZActor_NoRegister, METADATA_PARAMS(nullptr, 0) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UXYZAction_Statics::NewProp_ActorSet_MetaData[] = {
+		{ "ModuleRelativePath", "XYZAction.h" },
+	};
+#endif
+	const UECodeGen_Private::FSetPropertyParams Z_Construct_UClass_UXYZAction_Statics::NewProp_ActorSet = { "ActorSet", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Set, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(UXYZAction, ActorSet), METADATA_PARAMS(Z_Construct_UClass_UXYZAction_Statics::NewProp_ActorSet_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_UXYZAction_Statics::NewProp_ActorSet_MetaData)) };
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_UXYZAction_Statics::NewProp_bQueueInput_MetaData[] = {
 		{ "Category", "Input" },
@@ -409,6 +421,8 @@ void EmptyLinkFunctionForGeneratedCodeXYZAction() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UXYZAction_Statics::NewProp_ActionState_Underlying,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UXYZAction_Statics::NewProp_ActionState,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UXYZAction_Statics::NewProp_Actor,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UXYZAction_Statics::NewProp_ActorSet_ElementProp,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UXYZAction_Statics::NewProp_ActorSet,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_UXYZAction_Statics::NewProp_bQueueInput,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_UXYZAction_Statics::StaticCppClassTypeInfo = {
@@ -449,9 +463,9 @@ void EmptyLinkFunctionForGeneratedCodeXYZAction() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZAction_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_UXYZAction, UXYZAction::StaticClass, TEXT("UXYZAction"), &Z_Registration_Info_UClass_UXYZAction, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UXYZAction), 3208484845U) },
+		{ Z_Construct_UClass_UXYZAction, UXYZAction::StaticClass, TEXT("UXYZAction"), &Z_Registration_Info_UClass_UXYZAction, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(UXYZAction), 1952929645U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZAction_h_1920303340(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZAction_h_3572875585(TEXT("/Script/XYZ"),
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZAction_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZAction_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

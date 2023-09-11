@@ -22,6 +22,7 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 	XYZ_API UClass* Z_Construct_UClass_UXYZAction_NoRegister();
 	XYZ_API UEnum* Z_Construct_UEnum_XYZ_EXYZDecalType();
 	XYZ_API UEnum* Z_Construct_UEnum_XYZ_EXYZFactionType();
+	XYZ_API UEnum* Z_Construct_UEnum_XYZ_EXYZUnitState();
 // End Cross Module References
 	DEFINE_FUNCTION(AXYZActor::execFindClosestActor)
 	{
@@ -186,6 +187,11 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_TeamId_MetaData[];
 #endif
 		static const UECodeGen_Private::FIntPropertyParams NewProp_TeamId;
+		static const UECodeGen_Private::FBytePropertyParams NewProp_State_Underlying;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_State_MetaData[];
+#endif
+		static const UECodeGen_Private::FEnumPropertyParams NewProp_State;
 #if WITH_METADATA
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_DisplayName_MetaData[];
 #endif
@@ -223,6 +229,10 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_AttackRange_MetaData[];
 #endif
 		static const UECodeGen_Private::FFloatPropertyParams NewProp_AttackRange;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_VisionRange_MetaData[];
+#endif
+		static const UECodeGen_Private::FFloatPropertyParams NewProp_VisionRange;
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_DecalMaterials_ValueProp;
 		static const UECodeGen_Private::FBytePropertyParams NewProp_DecalMaterials_Key_KeyProp_Underlying;
 		static const UECodeGen_Private::FEnumPropertyParams NewProp_DecalMaterials_Key_KeyProp;
@@ -306,6 +316,14 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 	};
 #endif
 	const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_TeamId = { "TeamId", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZActor, TeamId), METADATA_PARAMS(Z_Construct_UClass_AXYZActor_Statics::NewProp_TeamId_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZActor_Statics::NewProp_TeamId_MetaData)) };
+	const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_State_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, nullptr, METADATA_PARAMS(nullptr, 0) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZActor_Statics::NewProp_State_MetaData[] = {
+		{ "Category", "Info" },
+		{ "ModuleRelativePath", "XYZActor.h" },
+	};
+#endif
+	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_State = { "State", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZActor, State), Z_Construct_UEnum_XYZ_EXYZUnitState, METADATA_PARAMS(Z_Construct_UClass_AXYZActor_Statics::NewProp_State_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZActor_Statics::NewProp_State_MetaData)) }; // 3786229615
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZActor_Statics::NewProp_DisplayName_MetaData[] = {
 		{ "Category", "Info" },
@@ -370,6 +388,13 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 	};
 #endif
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackRange = { "AttackRange", nullptr, (EPropertyFlags)0x0010000000000035, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZActor, AttackRange), METADATA_PARAMS(Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackRange_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackRange_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZActor_Statics::NewProp_VisionRange_MetaData[] = {
+		{ "Category", "Attack" },
+		{ "ModuleRelativePath", "XYZActor.h" },
+	};
+#endif
+	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_VisionRange = { "VisionRange", nullptr, (EPropertyFlags)0x0010000000000015, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZActor, VisionRange), METADATA_PARAMS(Z_Construct_UClass_AXYZActor_Statics::NewProp_VisionRange_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZActor_Statics::NewProp_VisionRange_MetaData)) };
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_ValueProp = { "DecalMaterials", nullptr, (EPropertyFlags)0x0000000000000001, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 1, Z_Construct_UClass_UMaterialInterface_NoRegister, METADATA_PARAMS(nullptr, 0) };
 	const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_Key_KeyProp_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, nullptr, METADATA_PARAMS(nullptr, 0) };
 	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_Key_KeyProp = { "DecalMaterials_Key", nullptr, (EPropertyFlags)0x0000000000000001, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, Z_Construct_UEnum_XYZ_EXYZDecalType, METADATA_PARAMS(nullptr, 0) }; // 4026556723
@@ -442,6 +467,8 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_ActorId,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_UActorId,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_TeamId,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_State_Underlying,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_State,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_DisplayName,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_Faction_Underlying,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_Faction,
@@ -452,6 +479,7 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackDamage,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackRate,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_AttackRange,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_VisionRange,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_ValueProp,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_Key_KeyProp_Underlying,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZActor_Statics::NewProp_DecalMaterials_Key_KeyProp,
@@ -528,9 +556,9 @@ void EmptyLinkFunctionForGeneratedCodeXYZActor() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_AXYZActor, AXYZActor::StaticClass, TEXT("AXYZActor"), &Z_Registration_Info_UClass_AXYZActor, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZActor), 1166606492U) },
+		{ Z_Construct_UClass_AXYZActor, AXYZActor::StaticClass, TEXT("AXYZActor"), &Z_Registration_Info_UClass_AXYZActor, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZActor), 3772739828U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_655162008(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_4045970684(TEXT("/Script/XYZ"),
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZActor_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

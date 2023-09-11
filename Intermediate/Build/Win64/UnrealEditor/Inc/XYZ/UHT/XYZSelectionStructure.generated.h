@@ -9,27 +9,14 @@
 #include "UObject/ScriptMacros.h"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
-class AXYZActor;
 #ifdef XYZ_XYZSelectionStructure_generated_h
 #error "XYZSelectionStructure.generated.h already included, missing '#pragma once' in XYZSelectionStructure.h"
 #endif
 #define XYZ_XYZSelectionStructure_generated_h
 
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZSelectionStructure_h_17_SPARSE_DATA
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZSelectionStructure_h_17_RPC_WRAPPERS \
- \
-	DECLARE_FUNCTION(execContains); \
-	DECLARE_FUNCTION(execToActorIdArray); \
-	DECLARE_FUNCTION(execToArray);
-
-
-#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZSelectionStructure_h_17_RPC_WRAPPERS_NO_PURE_DECLS \
- \
-	DECLARE_FUNCTION(execContains); \
-	DECLARE_FUNCTION(execToActorIdArray); \
-	DECLARE_FUNCTION(execToArray);
-
-
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZSelectionStructure_h_17_RPC_WRAPPERS
+#define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZSelectionStructure_h_17_RPC_WRAPPERS_NO_PURE_DECLS
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZSelectionStructure_h_17_ACCESSORS
 #define FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZSelectionStructure_h_17_INCLASS_NO_PURE_DECLS \
 private: \

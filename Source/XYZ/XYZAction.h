@@ -39,6 +39,9 @@ public:
     UPROPERTY()
         class AXYZActor* Actor;
 
+    UPROPERTY()
+        TSet<AXYZActor*> ActorSet;
+
     UFUNCTION()
         virtual void ProcessAction(float DeltaTime) {
         if (ActionState != EXYZActionState::IN_PROGRESS)
@@ -58,21 +61,12 @@ public:
 
     UFUNCTION()
         void TryAction(float DeltaTime);
-
     UFUNCTION()
-        virtual void StartAction() { 
-            ActionState = EXYZActionState::IN_PROGRESS;
-        }
-
+        virtual void StartAction();
     UFUNCTION()
-        virtual void CompleteAction() {
-            ActionState = EXYZActionState::COMPLETE;
-        }
-
+        virtual void CompleteAction();
     UFUNCTION()
-        virtual void CancelAction() {
-            ActionState = EXYZActionState::CANCELLED;
-        }
+        virtual void CancelAction();
 
     UFUNCTION()
         bool IsFlaggedForDeuque() {

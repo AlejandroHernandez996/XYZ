@@ -13,6 +13,7 @@ void EmptyLinkFunctionForGeneratedCodeXYZGameMode() {}
 	UPackage* Z_Construct_UPackage__Script_XYZ();
 	XYZ_API UClass* Z_Construct_UClass_AXYZGameMode();
 	XYZ_API UClass* Z_Construct_UClass_AXYZGameMode_NoRegister();
+	XYZ_API UClass* Z_Construct_UClass_UXYZBlobManager_NoRegister();
 	XYZ_API UClass* Z_Construct_UClass_UXYZInputManager_NoRegister();
 // End Cross Module References
 	void AXYZGameMode::StaticRegisterNativesAXYZGameMode()
@@ -33,6 +34,10 @@ void EmptyLinkFunctionForGeneratedCodeXYZGameMode() {}
 		static const UECodeGen_Private::FMetaDataPairParam NewProp_InputManager_MetaData[];
 #endif
 		static const UECodeGen_Private::FObjectPropertyParams NewProp_InputManager;
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam NewProp_BlobManager_MetaData[];
+#endif
+		static const UECodeGen_Private::FObjectPropertyParams NewProp_BlobManager;
 		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 		static const FCppClassTypeInfoStatic StaticCppClassTypeInfo;
 		static const UECodeGen_Private::FClassParams ClassParams;
@@ -55,8 +60,15 @@ void EmptyLinkFunctionForGeneratedCodeXYZGameMode() {}
 	};
 #endif
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AXYZGameMode_Statics::NewProp_InputManager = { "InputManager", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZGameMode, InputManager), Z_Construct_UClass_UXYZInputManager_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AXYZGameMode_Statics::NewProp_InputManager_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZGameMode_Statics::NewProp_InputManager_MetaData)) };
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZGameMode_Statics::NewProp_BlobManager_MetaData[] = {
+		{ "ModuleRelativePath", "XYZGameMode.h" },
+	};
+#endif
+	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AXYZGameMode_Statics::NewProp_BlobManager = { "BlobManager", nullptr, (EPropertyFlags)0x0010000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZGameMode, BlobManager), Z_Construct_UClass_UXYZBlobManager_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AXYZGameMode_Statics::NewProp_BlobManager_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZGameMode_Statics::NewProp_BlobManager_MetaData)) };
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AXYZGameMode_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZGameMode_Statics::NewProp_InputManager,
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZGameMode_Statics::NewProp_BlobManager,
 	};
 	const FCppClassTypeInfoStatic Z_Construct_UClass_AXYZGameMode_Statics::StaticCppClassTypeInfo = {
 		TCppClassTypeTraits<AXYZGameMode>::IsAbstract,
@@ -95,9 +107,9 @@ void EmptyLinkFunctionForGeneratedCodeXYZGameMode() {}
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZGameMode_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_AXYZGameMode, AXYZGameMode::StaticClass, TEXT("AXYZGameMode"), &Z_Registration_Info_UClass_AXYZGameMode, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZGameMode), 3010859161U) },
+		{ Z_Construct_UClass_AXYZGameMode, AXYZGameMode::StaticClass, TEXT("AXYZGameMode"), &Z_Registration_Info_UClass_AXYZGameMode, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZGameMode), 1042637413U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZGameMode_h_2508571854(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZGameMode_h_106317998(TEXT("/Script/XYZ"),
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZGameMode_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZGameMode_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

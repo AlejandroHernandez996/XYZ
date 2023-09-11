@@ -353,3 +353,15 @@ bool AXYZPlayerController::IsMouseOverWidget()
 	}
 	return bWidgetIsHovered;
 }
+
+void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
+	GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(ActorUId);
+
+	if (GetLocalRole() != ROLE_Authority) {
+		if (SelectionStructure->Contains(ActorUId)) {
+			SelectionStructure->Remove(ActorUId);
+		}
+		SelectionStructure->RemoveFromControlGroups(ActorUId);
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
+	}
+}

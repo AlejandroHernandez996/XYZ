@@ -25,6 +25,8 @@ public:
 
 	UPROPERTY()
 	class UXYZInputManager* InputManager;
+	UPROPERTY()
+	class UXYZBlobManager* BlobManager;
 
 	bool bHandleInputQueue;
 };

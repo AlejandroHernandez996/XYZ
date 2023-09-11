@@ -224,6 +224,14 @@ void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& Selectio
 	Parms.SelectionActorIds=SelectionActorIds;
 	SelectionIdsEvent.ProcessMulticastDelegate<UObject>(&Parms);
 }
+	DEFINE_FUNCTION(AXYZPlayerController::execXYZActorDestroyed)
+	{
+		P_GET_PROPERTY(FIntProperty,Z_Param_ActorUId);
+		P_FINISH;
+		P_NATIVE_BEGIN;
+		P_THIS->XYZActorDestroyed_Implementation(Z_Param_ActorUId);
+		P_NATIVE_END;
+	}
 	DEFINE_FUNCTION(AXYZPlayerController::execQueueInput)
 	{
 		P_GET_STRUCT(FXYZInputMessage,Z_Param_InputMessage);
@@ -291,12 +299,23 @@ void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& Selectio
 	{
 		FXYZInputMessage InputMessage;
 	};
+	struct XYZPlayerController_eventXYZActorDestroyed_Parms
+	{
+		int32 ActorUId;
+	};
 	static FName NAME_AXYZPlayerController_QueueInput = FName(TEXT("QueueInput"));
 	void AXYZPlayerController::QueueInput(FXYZInputMessage const& InputMessage)
 	{
 		XYZPlayerController_eventQueueInput_Parms Parms;
 		Parms.InputMessage=InputMessage;
 		ProcessEvent(FindFunctionChecked(NAME_AXYZPlayerController_QueueInput),&Parms);
+	}
+	static FName NAME_AXYZPlayerController_XYZActorDestroyed = FName(TEXT("XYZActorDestroyed"));
+	void AXYZPlayerController::XYZActorDestroyed(int32 ActorUId)
+	{
+		XYZPlayerController_eventXYZActorDestroyed_Parms Parms;
+		Parms.ActorUId=ActorUId;
+		ProcessEvent(FindFunctionChecked(NAME_AXYZPlayerController_XYZActorDestroyed),&Parms);
 	}
 	void AXYZPlayerController::StaticRegisterNativesAXYZPlayerController()
 	{
@@ -310,6 +329,7 @@ void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& Selectio
 			{ "QueueInput", &AXYZPlayerController::execQueueInput },
 			{ "SelectActorFromPanel", &AXYZPlayerController::execSelectActorFromPanel },
 			{ "SelectActors", &AXYZPlayerController::execSelectActors },
+			{ "XYZActorDestroyed", &AXYZPlayerController::execXYZActorDestroyed },
 		};
 		FNativeFunctionRegistrar::RegisterFunctions(Class, Funcs, UE_ARRAY_COUNT(Funcs));
 	}
@@ -392,7 +412,7 @@ void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& Selectio
 		static const UECodeGen_Private::FFunctionParams FuncParams;
 	};
 	const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_AXYZPlayerController_OnInputReleased_Statics::NewProp_InputType_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, nullptr, METADATA_PARAMS(nullptr, 0) };
-	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_AXYZPlayerController_OnInputReleased_Statics::NewProp_InputType = { "InputType", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(XYZPlayerController_eventOnInputReleased_Parms, InputType), Z_Construct_UEnum_XYZ_EXYZInputType, METADATA_PARAMS(nullptr, 0) }; // 1490979030
+	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_AXYZPlayerController_OnInputReleased_Statics::NewProp_InputType = { "InputType", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(XYZPlayerController_eventOnInputReleased_Parms, InputType), Z_Construct_UEnum_XYZ_EXYZInputType, METADATA_PARAMS(nullptr, 0) }; // 3594544840
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AXYZPlayerController_OnInputReleased_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AXYZPlayerController_OnInputReleased_Statics::NewProp_InputType_Underlying,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AXYZPlayerController_OnInputReleased_Statics::NewProp_InputType,
@@ -427,7 +447,7 @@ void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& Selectio
 		static const UECodeGen_Private::FFunctionParams FuncParams;
 	};
 	const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_AXYZPlayerController_OnInputStarted_Statics::NewProp_InputType_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, nullptr, METADATA_PARAMS(nullptr, 0) };
-	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_AXYZPlayerController_OnInputStarted_Statics::NewProp_InputType = { "InputType", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(XYZPlayerController_eventOnInputStarted_Parms, InputType), Z_Construct_UEnum_XYZ_EXYZInputType, METADATA_PARAMS(nullptr, 0) }; // 1490979030
+	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_AXYZPlayerController_OnInputStarted_Statics::NewProp_InputType = { "InputType", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(XYZPlayerController_eventOnInputStarted_Parms, InputType), Z_Construct_UEnum_XYZ_EXYZInputType, METADATA_PARAMS(nullptr, 0) }; // 3594544840
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AXYZPlayerController_OnInputStarted_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AXYZPlayerController_OnInputStarted_Statics::NewProp_InputType_Underlying,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AXYZPlayerController_OnInputStarted_Statics::NewProp_InputType,
@@ -464,7 +484,7 @@ void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& Selectio
 		static const UECodeGen_Private::FFunctionParams FuncParams;
 	};
 	const UECodeGen_Private::FBytePropertyParams Z_Construct_UFunction_AXYZPlayerController_OnInputTriggered_Statics::NewProp_InputType_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, nullptr, METADATA_PARAMS(nullptr, 0) };
-	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_AXYZPlayerController_OnInputTriggered_Statics::NewProp_InputType = { "InputType", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(XYZPlayerController_eventOnInputTriggered_Parms, InputType), Z_Construct_UEnum_XYZ_EXYZInputType, METADATA_PARAMS(nullptr, 0) }; // 1490979030
+	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UFunction_AXYZPlayerController_OnInputTriggered_Statics::NewProp_InputType = { "InputType", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(XYZPlayerController_eventOnInputTriggered_Parms, InputType), Z_Construct_UEnum_XYZ_EXYZInputType, METADATA_PARAMS(nullptr, 0) }; // 3594544840
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AXYZPlayerController_OnInputTriggered_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AXYZPlayerController_OnInputTriggered_Statics::NewProp_InputType_Underlying,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AXYZPlayerController_OnInputTriggered_Statics::NewProp_InputType,
@@ -501,7 +521,7 @@ void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& Selectio
 		{ "NativeConst", "" },
 	};
 #endif
-	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_AXYZPlayerController_QueueInput_Statics::NewProp_InputMessage = { "InputMessage", nullptr, (EPropertyFlags)0x0010000008000082, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(XYZPlayerController_eventQueueInput_Parms, InputMessage), Z_Construct_UScriptStruct_FXYZInputMessage, METADATA_PARAMS(Z_Construct_UFunction_AXYZPlayerController_QueueInput_Statics::NewProp_InputMessage_MetaData, UE_ARRAY_COUNT(Z_Construct_UFunction_AXYZPlayerController_QueueInput_Statics::NewProp_InputMessage_MetaData)) }; // 1428212427
+	const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_AXYZPlayerController_QueueInput_Statics::NewProp_InputMessage = { "InputMessage", nullptr, (EPropertyFlags)0x0010000008000082, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(XYZPlayerController_eventQueueInput_Parms, InputMessage), Z_Construct_UScriptStruct_FXYZInputMessage, METADATA_PARAMS(Z_Construct_UFunction_AXYZPlayerController_QueueInput_Statics::NewProp_InputMessage_MetaData, UE_ARRAY_COUNT(Z_Construct_UFunction_AXYZPlayerController_QueueInput_Statics::NewProp_InputMessage_MetaData)) }; // 3577295131
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AXYZPlayerController_QueueInput_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AXYZPlayerController_QueueInput_Statics::NewProp_InputMessage,
 	};
@@ -585,6 +605,34 @@ void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& Selectio
 		if (!ReturnFunction)
 		{
 			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_AXYZPlayerController_SelectActors_Statics::FuncParams);
+		}
+		return ReturnFunction;
+	}
+	struct Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed_Statics
+	{
+		static const UECodeGen_Private::FIntPropertyParams NewProp_ActorUId;
+		static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+#if WITH_METADATA
+		static const UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[];
+#endif
+		static const UECodeGen_Private::FFunctionParams FuncParams;
+	};
+	const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed_Statics::NewProp_ActorUId = { "ActorUId", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(XYZPlayerController_eventXYZActorDestroyed_Parms, ActorUId), METADATA_PARAMS(nullptr, 0) };
+	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed_Statics::PropPointers[] = {
+		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed_Statics::NewProp_ActorUId,
+	};
+#if WITH_METADATA
+	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed_Statics::Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "XYZPlayerController.h" },
+	};
+#endif
+	const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed_Statics::FuncParams = { (UObject*(*)())Z_Construct_UClass_AXYZPlayerController, nullptr, "XYZActorDestroyed", nullptr, nullptr, sizeof(XYZPlayerController_eventXYZActorDestroyed_Parms), Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed_Statics::PropPointers, UE_ARRAY_COUNT(Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed_Statics::PropPointers), RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00024CC0, 0, 0, METADATA_PARAMS(Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed_Statics::Function_MetaDataParams, UE_ARRAY_COUNT(Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed_Statics::Function_MetaDataParams)) };
+	UFunction* Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed()
+	{
+		static UFunction* ReturnFunction = nullptr;
+		if (!ReturnFunction)
+		{
+			UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed_Statics::FuncParams);
 		}
 		return ReturnFunction;
 	}
@@ -704,12 +752,13 @@ void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& Selectio
 	const FClassFunctionLinkInfo Z_Construct_UClass_AXYZPlayerController_Statics::FuncInfo[] = {
 		{ &Z_Construct_UFunction_AXYZPlayerController_GetMousePositionOnViewport, "GetMousePositionOnViewport" }, // 4017315989
 		{ &Z_Construct_UFunction_AXYZPlayerController_OnControlGroupInputStarted, "OnControlGroupInputStarted" }, // 3978032771
-		{ &Z_Construct_UFunction_AXYZPlayerController_OnInputReleased, "OnInputReleased" }, // 2766023420
-		{ &Z_Construct_UFunction_AXYZPlayerController_OnInputStarted, "OnInputStarted" }, // 3616901374
-		{ &Z_Construct_UFunction_AXYZPlayerController_OnInputTriggered, "OnInputTriggered" }, // 1169026467
-		{ &Z_Construct_UFunction_AXYZPlayerController_QueueInput, "QueueInput" }, // 3577651640
+		{ &Z_Construct_UFunction_AXYZPlayerController_OnInputReleased, "OnInputReleased" }, // 2504771508
+		{ &Z_Construct_UFunction_AXYZPlayerController_OnInputStarted, "OnInputStarted" }, // 3302698196
+		{ &Z_Construct_UFunction_AXYZPlayerController_OnInputTriggered, "OnInputTriggered" }, // 3396188018
+		{ &Z_Construct_UFunction_AXYZPlayerController_QueueInput, "QueueInput" }, // 4137085768
 		{ &Z_Construct_UFunction_AXYZPlayerController_SelectActorFromPanel, "SelectActorFromPanel" }, // 3423428879
 		{ &Z_Construct_UFunction_AXYZPlayerController_SelectActors, "SelectActors" }, // 1853716492
+		{ &Z_Construct_UFunction_AXYZPlayerController_XYZActorDestroyed, "XYZActorDestroyed" }, // 983384884
 	};
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZPlayerController_Statics::Class_MetaDataParams[] = {
@@ -896,13 +945,13 @@ void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& Selectio
 	const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_SelectionStructure = { "SelectionStructure", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZPlayerController, SelectionStructure), Z_Construct_UClass_UXYZSelectionStructure_NoRegister, METADATA_PARAMS(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_SelectionStructure_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_SelectionStructure_MetaData)) };
 	const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredTime_ValueProp = { "InputTriggeredTime", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 1, METADATA_PARAMS(nullptr, 0) };
 	const UECodeGen_Private::FBytePropertyParams Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredTime_Key_KeyProp_Underlying = { "UnderlyingType", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Byte, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, nullptr, METADATA_PARAMS(nullptr, 0) };
-	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredTime_Key_KeyProp = { "InputTriggeredTime_Key", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, Z_Construct_UEnum_XYZ_EXYZInputType, METADATA_PARAMS(nullptr, 0) }; // 1490979030
+	const UECodeGen_Private::FEnumPropertyParams Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredTime_Key_KeyProp = { "InputTriggeredTime_Key", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Enum, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, 0, Z_Construct_UEnum_XYZ_EXYZInputType, METADATA_PARAMS(nullptr, 0) }; // 3594544840
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredTime_MetaData[] = {
 		{ "ModuleRelativePath", "XYZPlayerController.h" },
 	};
 #endif
-	const UECodeGen_Private::FMapPropertyParams Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredTime = { "InputTriggeredTime", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZPlayerController, InputTriggeredTime), EMapPropertyFlags::None, METADATA_PARAMS(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredTime_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredTime_MetaData)) }; // 1490979030
+	const UECodeGen_Private::FMapPropertyParams Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredTime = { "InputTriggeredTime", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Map, RF_Public|RF_Transient|RF_MarkAsNative, 1, nullptr, nullptr, STRUCT_OFFSET(AXYZPlayerController, InputTriggeredTime), EMapPropertyFlags::None, METADATA_PARAMS(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredTime_MetaData, UE_ARRAY_COUNT(Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredTime_MetaData)) }; // 3594544840
 	const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_AXYZPlayerController_Statics::PropPointers[] = {
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_ShortInputThreshold,
 		(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_AXYZPlayerController_Statics::NewProp_InputTriggeredCooldown,
@@ -968,9 +1017,9 @@ void FSelectionIdsEvent_DelegateWrapper(const FMulticastScriptDelegate& Selectio
 		static const FClassRegisterCompiledInInfo ClassInfo[];
 	};
 	const FClassRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_Statics::ClassInfo[] = {
-		{ Z_Construct_UClass_AXYZPlayerController, AXYZPlayerController::StaticClass, TEXT("AXYZPlayerController"), &Z_Registration_Info_UClass_AXYZPlayerController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZPlayerController), 4047193858U) },
+		{ Z_Construct_UClass_AXYZPlayerController, AXYZPlayerController::StaticClass, TEXT("AXYZPlayerController"), &Z_Registration_Info_UClass_AXYZPlayerController, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(AXYZPlayerController), 1228649682U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_4068469431(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_1476613127(TEXT("/Script/XYZ"),
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZPlayerController_h_Statics::ClassInfo),
 		nullptr, 0,
 		nullptr, 0);

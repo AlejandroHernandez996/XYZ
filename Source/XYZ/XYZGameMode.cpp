@@ -5,6 +5,7 @@
 #include "EngineUtils.h"
 #include "XYZInputManager.h"
 #include "XYZGameState.h"
+#include "XYZBlobManager.h"
 #include "UObject/ConstructorHelpers.h"
 
 AXYZGameMode::AXYZGameMode()
@@ -33,6 +34,7 @@ AXYZGameMode::AXYZGameMode()
 void AXYZGameMode::BeginPlay() {
 	Super::BeginPlay();
 	InputManager = NewObject<UXYZInputManager>(this, UXYZInputManager::StaticClass(), "InputManager");
+	BlobManager = NewObject<UXYZBlobManager>(this, UXYZBlobManager::StaticClass(), "BlobManager");
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -48,5 +50,6 @@ void AXYZGameMode::QueueInput(const FXYZInputMessage& InputMessage) {
 void AXYZGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	BlobManager->ProcessBlobs();
 	TickCount++;
 }

@@ -35,18 +35,16 @@ void EmptyLinkFunctionForGeneratedCodeXYZUnitState() {}
 	};
 	const UECodeGen_Private::FEnumeratorParam Z_Construct_UEnum_XYZ_EXYZUnitState_Statics::Enumerators[] = {
 		{ "EXYZUnitState::IDLE", (int64)EXYZUnitState::IDLE },
-		{ "EXYZUnitState::ATTACK", (int64)EXYZUnitState::ATTACK },
+		{ "EXYZUnitState::ACTION", (int64)EXYZUnitState::ACTION },
 		{ "EXYZUnitState::HOLD", (int64)EXYZUnitState::HOLD },
-		{ "EXYZUnitState::MOVE", (int64)EXYZUnitState::MOVE },
 	};
 #if WITH_METADATA
 	const UECodeGen_Private::FMetaDataPairParam Z_Construct_UEnum_XYZ_EXYZUnitState_Statics::Enum_MetaDataParams[] = {
-		{ "ATTACK.Name", "EXYZUnitState::ATTACK" },
+		{ "ACTION.Name", "EXYZUnitState::ACTION" },
 		{ "BlueprintType", "true" },
 		{ "HOLD.Name", "EXYZUnitState::HOLD" },
 		{ "IDLE.Name", "EXYZUnitState::IDLE" },
 		{ "ModuleRelativePath", "XYZUnitState.h" },
-		{ "MOVE.Name", "EXYZUnitState::MOVE" },
 	};
 #endif
 	const UECodeGen_Private::FEnumParams Z_Construct_UEnum_XYZ_EXYZUnitState_Statics::EnumParams = {
@@ -74,9 +72,9 @@ void EmptyLinkFunctionForGeneratedCodeXYZUnitState() {}
 		static const FEnumRegisterCompiledInInfo EnumInfo[];
 	};
 	const FEnumRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZUnitState_h_Statics::EnumInfo[] = {
-		{ EXYZUnitState_StaticEnum, TEXT("EXYZUnitState"), &Z_Registration_Info_UEnum_EXYZUnitState, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 1534637437U) },
+		{ EXYZUnitState_StaticEnum, TEXT("EXYZUnitState"), &Z_Registration_Info_UEnum_EXYZUnitState, CONSTRUCT_RELOAD_VERSION_INFO(FEnumReloadVersionInfo, 3786229615U) },
 	};
-	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZUnitState_h_4109234682(TEXT("/Script/XYZ"),
+	static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZUnitState_h_1926973232(TEXT("/Script/XYZ"),
 		nullptr, 0,
 		nullptr, 0,
 		Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZUnitState_h_Statics::EnumInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_OneDrive_Documents_Unreal_Projects_XYZ_Source_XYZ_XYZUnitState_h_Statics::EnumInfo));
