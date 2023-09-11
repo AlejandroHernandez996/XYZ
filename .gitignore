@@ -17,7 +17,7 @@ Binaries/
 *.psess
 *.vscode
 *.code-workspace
-
+*.vs
 # macOS specific ignores
 .DS_Store
 
