@@ -50,7 +50,7 @@ void UXYZSimpleMovingBlob::ProcessBlob()
             FVector ActorLocation = Actor->GetActorLocation();
             FVector DirectonFromCenter = ActorLocation - InitialCenter;
             FVector AgentTargetLocation = TargetLocation + DirectonFromCenter;
-            Actor->GetController<AXYZAIController>()->XYZMoveToLocation(AgentTargetLocation);
+            Actor->GetController<AXYZAIController>()->XYZAttackMoveToLocation(AgentTargetLocation);
         }
     }
     
@@ -86,7 +86,13 @@ void UXYZSimpleMovingBlob::MovePack(FAgentPack* AgentPack, int32 Level) {
     }
     for (int i = 0; i < AgentPack->Agents.Num(); i++) {
         if (AgentPack->Agents[i]) {
-            AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
+            AgentPack->Agents[i]->TargetLocation = TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i];
+            if (bAttackMove) {
+                AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZAttackMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
+                }
+            else {
+                AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
+            }
         }
     }
     MovePack(AgentPack->NextPack.Get(), Level + 1);

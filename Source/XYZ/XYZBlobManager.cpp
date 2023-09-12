@@ -60,6 +60,7 @@ void UXYZBlobManager::QueueAction(UXYZAction* Action) {
 
     bool bIsBlobEqual = true;
     UXYZBlob* NewBlob = UXYZBlobFactory::CreateBlobFromAction(Action, NextBlobId);
+    if (!NewBlob) return;
     UXYZBlob* ExistingBlob = nullptr;
 
     if (ActiveBlobs.Num() > 0) {

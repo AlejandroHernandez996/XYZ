@@ -28,9 +28,6 @@ AXYZActor::AXYZActor()
 
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
-
-    GetCharacterMovement()->JumpZVelocity = 700.f;
-    GetCharacterMovement()->AirControl = 0.35f;
     GetCharacterMovement()->MaxWalkSpeed = 500.f;
     GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
     GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
@@ -50,26 +47,29 @@ void AXYZActor::BeginPlay()
 void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-    if (Health == 0.0f) {
-        for (auto It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
-        {
-            AXYZPlayerController* PlayerController = Cast<AXYZPlayerController>(It->Get());
-            if (PlayerController)
-            {
-                PlayerController->XYZActorDestroyed(UActorId);
-            }
-        }
-        Destroy();
-    }
-    if (GetLocalRole() == ROLE_Authority) {
 
-        if (ActionQueue.Num() > 0 && ActionQueue[0]) {
-            if (ActionQueue[0]->IsFlaggedForDeuque()) {
-                ActionQueue.RemoveAt(0);
-            }
+    if (GetLocalRole() == ROLE_Authority) {
+        if (State == EXYZUnitState::MOVING) {
+            ScanXYZActorsAhead();
         }
-        if (ActionQueue.Num() > 0 && ActionQueue[0]) {
-            ActionQueue[0]->TryAction(DeltaTime);
+        if (bIsAggresive) {
+            if (!TargetActor || TargetActor->Health <= 0.0f) {
+                TargetActor = FindClosestActor(true);
+            }
+            if (TargetActor && TargetActor->TeamId != TeamId) {
+                AttackMoveTarget();
+            }
+            if (TargetActor && TargetActor->Health == 0.0f) {
+                TargetActor = nullptr;
+            }
+
+        }
+        if (Health == 0.0f)
+        {
+            if (this) {
+                GetWorld()->GetFirstPlayerController<AXYZPlayerController>()->XYZActorDestroyed(UActorId);
+                Destroy();
+            }
         }
     }
 }
@@ -77,7 +77,6 @@ void AXYZActor::Tick(float DeltaTime)
 void AXYZActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
     DOREPLIFETIME(AXYZActor, Health);
     DOREPLIFETIME(AXYZActor, MaxHealth);
     DOREPLIFETIME(AXYZActor, MoveSpeed);
@@ -86,17 +85,9 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifet
     DOREPLIFETIME(AXYZActor, AttackRate);
     DOREPLIFETIME(AXYZActor, AttackRange);
     DOREPLIFETIME(AXYZActor, UActorId);
-
 }
 
 void AXYZActor::QueueAction(UXYZAction* Action) {
-	if (!Action) return;
-    if (!Action->bQueueInput && ActionQueue.Num() > 0 && ActionQueue[0]) {
-        ActionQueue[0]->CancelAction();
-        ActionQueue.Empty();
-    }
-	ActionQueue.Add(Action);
-
 }
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType) {
@@ -107,10 +98,9 @@ void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType) {
     else {
         SelectionDecal->SetMaterial(0, DecalMaterials[DecalType]);
     }
-    //SelectionDecal->MarkRenderStateDirty();
 }
 
-void AXYZActor::Attack(AXYZActor* TargetActor) {
+void AXYZActor::Attack() {
     if (GetLocalRole() != ROLE_Authority) {
         return;
     }
@@ -154,4 +144,77 @@ AXYZAIController* AXYZActor::GetXYZAIController() {
         XYZAIController = GetController<AXYZAIController>();
     }
     return XYZAIController;
+}
+
+void AXYZActor::ScanXYZActorsAhead() {
+    FVector Start = GetActorLocation();
+    FVector ForwardVector = GetActorForwardVector();
+    float Distance = 65.0f;
+
+    FVector End = ((ForwardVector * Distance) + Start);
+
+    FVector LeftVector = ForwardVector.RotateAngleAxis(-45, FVector(0, 0, 1));
+    FVector EndLeft = ((LeftVector * Distance) + Start);
+
+    FVector RightVector = ForwardVector.RotateAngleAxis(45, FVector(0, 0, 1));
+    FVector EndRight = ((RightVector * Distance) + Start);
+
+    TSet<AXYZActor*> ActorsFound;
+    ActorsFound.Add(ScanAndPush(Start, EndLeft, ActorsFound));
+    ActorsFound.Add(ScanAndPush(Start, EndRight, ActorsFound));
+    ActorsFound.Add(ScanAndPush(Start, End, ActorsFound));
+}
+
+AXYZActor* AXYZActor::ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> ActorsFound) {
+    FHitResult HitResult;
+    FCollisionQueryParams CollisionParams;
+    CollisionParams.AddIgnoredActor(this);
+    bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Pawn, CollisionParams);
+
+    if (bHit && HitResult.GetActor() && HitResult.GetActor()->IsA(AXYZActor::StaticClass()))
+    {
+        AXYZActor* OtherXYZActor = Cast<AXYZActor>(HitResult.GetActor());
+        if (OtherXYZActor && OtherXYZActor->State == EXYZUnitState::IDLE && !ActorsFound.Contains(OtherXYZActor) && OtherXYZActor->TeamId == TeamId)
+        {
+            FVector Direction = End - Start;
+            Direction.Normalize();
+            FVector PushLocation = (Direction * 200.0f) + OtherXYZActor->GetActorLocation();
+            OtherXYZActor->GetXYZAIController()->XYZMoveToLocation(PushLocation);
+            return OtherXYZActor;
+        }
+    }
+
+    return nullptr;
+}
+
+void AXYZActor::AttackMoveTarget() {
+    AXYZAIController* ActorController = GetXYZAIController();
+    if (!TargetActor) return;
+
+    FVector ActorLocation = GetActorLocation();
+    FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
+    if (TargetActor != this && TargetActor->Health > 0.0f) {
+        
+        FVector TargetActorLocation = TargetActor->GetActorLocation();
+        
+        FVector Direction = TargetActorLocation - ActorLocation;
+        Direction.Z = 0;
+        Direction.Normalize();
+        
+        FVector2D TargetLocation2D = FVector2D(TargetActorLocation.X, TargetActorLocation.Y);
+        float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
+        
+        if (DistanceToTarget <= AttackRange)
+        {
+            ActorController->XYZStopMovement();
+            Attack();
+        }
+        else {
+            ActorController->XYZAttackMoveToLocation(TargetActor->GetActorLocation());
+        }
+    }
+    else {
+        TargetActor = nullptr;
+    }
+    
 }

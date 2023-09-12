@@ -20,5 +20,6 @@ public:
 	bool bHasCompletedMove;
 	void XYZMoveToActor(class AXYZActor* Actor, float AcceptanceRadius = 1.0f);
 	void XYZMoveToLocation(FVector TargetLocation, float AcceptanceRadius = 1.0f);
+	void XYZAttackMoveToLocation(FVector TargetLocation, float AcceptanceRadius = 1.0f);
 	void XYZStopMovement();
 };

@@ -81,7 +81,7 @@ public:
     UXYZAction* PrevAction;
 
     UFUNCTION()
-        void Attack(AXYZActor* TargetActor);
+        void Attack();
     UPROPERTY()
         FTimerHandle AttackTimer;
     UPROPERTY()
@@ -103,4 +103,16 @@ public:
         class AXYZAIController* XYZAIController;
     UFUNCTION()
         class AXYZAIController* GetXYZAIController();
+    UFUNCTION()
+        void ScanXYZActorsAhead();
+    UFUNCTION()
+        AXYZActor* ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> ActorsFound);
+    UPROPERTY()
+        FVector TargetLocation;
+    UPROPERTY()
+        AXYZActor* TargetActor;
+    UPROPERTY()
+        bool bIsAggresive = true;
+    UFUNCTION()
+        void AttackMoveTarget();
 };

@@ -10,9 +10,10 @@ class XYZ_API UXYZSimpleMovingBlob : public UXYZBlob
     GENERATED_BODY()
 
 public:
-    void MovePack(FAgentPack* AgentPack, int32 LayerIndex);
+    virtual void MovePack(FAgentPack* AgentPack, int32 LayerIndex);
     void FillPack(FAgentPack* AgentPack, TArray<AXYZActor*>& SortedAgents, int32 LayerIndex);
     virtual void ProcessBlob() override;
+    bool bAttackMove = false;
 
     int32 SortedAgentIndex = 0;
     FVector CurrentTargetLocation;

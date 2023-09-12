@@ -335,13 +335,22 @@ void AXYZPlayerController::SelectActorFromPanel(int32 UActorId) {
 }
 
 void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
-	GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(ActorUId);
-
 	if (GetLocalRole() != ROLE_Authority) {
-		if (SelectionStructure->Contains(ActorUId)) {
-			SelectionStructure->Remove(ActorUId);
+		if (GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Contains(ActorUId)) {
+			AXYZActor* Actor = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[ActorUId];
+			if (!Actor) return;
+			Actor->GetMesh()->SetSimulatePhysics(true);
+			Actor->GetMesh()->SetCollisionProfileName("Ragdoll");
+			FVector ForceDirection = FVector(0, 0, 3000);  // Replace with your force direction
+			Actor->GetMesh()->AddForce(ForceDirection);
+			Actor->GetMesh()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+			if (SelectionStructure->Contains(ActorUId)) {
+				SelectionStructure->Remove(ActorUId);
+			}
+			SelectionStructure->RemoveFromControlGroups(ActorUId);
+			OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
+			Actor->SetActorHiddenInGame(true);
 		}
-		SelectionStructure->RemoveFromControlGroups(ActorUId);
-		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 	}
+	GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(ActorUId);
 }
