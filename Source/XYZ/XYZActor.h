@@ -101,5 +101,6 @@ public:
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
         class AXYZAIController* XYZAIController;
-    FIntPoint GridPosition;
+    UFUNCTION()
+        class AXYZAIController* GetXYZAIController();
 };

@@ -35,12 +35,12 @@ void AXYZGameMode::BeginPlay() {
 	Super::BeginPlay();
 	InputManager = NewObject<UXYZInputManager>(this, UXYZInputManager::StaticClass(), "InputManager");
 	BlobManager = NewObject<UXYZBlobManager>(this, UXYZBlobManager::StaticClass(), "BlobManager");
+	InputManager->XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
 	PrimaryActorTick.bCanEverTick = true;
 }
 
 void AXYZGameMode::QueueInput(const FXYZInputMessage& InputMessage) {
 	if (GetLocalRole() != ROLE_Authority) return;
-	InputManager->XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
 	int32 TickCountCopy = TickCount;
 	FXYZInputMessage TickInput = FXYZInputMessage(InputMessage, TickCountCopy);
 	InputManager->QueueInput(TickInput);

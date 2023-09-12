@@ -12,8 +12,8 @@ class XYZ_API UXYZActionFactory : public UObject
 
 public:
     UFUNCTION(BlueprintCallable, Category = "Action")
-       static UXYZAction* CreateAction(AXYZActor* _Actor, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount);
+       static UXYZAction* CreateAction(TArray<int32> SelectedActors, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount, AXYZGameState* GameState);
 
     UFUNCTION(BlueprintCallable, Category = "Action")
-       static UXYZAction* MakeAction(AXYZActor* _Actor, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount, UClass* ActionClass, FName ActionName);
+       static UXYZAction* MakeAction(TArray<int32> SelectedActors, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount, UClass* ActionClass, FName ActionName, AXYZGameState* GameState);
 };

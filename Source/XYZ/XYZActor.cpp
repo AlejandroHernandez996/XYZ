@@ -148,3 +148,10 @@ AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors) {
 
     return ClosestActor;
 }
+
+AXYZAIController* AXYZActor::GetXYZAIController() {
+    if (!XYZAIController) {
+        XYZAIController = GetController<AXYZAIController>();
+    }
+    return XYZAIController;
+}

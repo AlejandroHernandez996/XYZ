@@ -59,6 +59,7 @@ void UXYZBlobManager::RemoveInactiveBlobs()
 void UXYZBlobManager::QueueAction(UXYZAction* Action) {
 
     bool bIsBlobEqual = true;
+    UXYZBlob* NewBlob = UXYZBlobFactory::CreateBlobFromAction(Action, NextBlobId);
     UXYZBlob* ExistingBlob = nullptr;
 
     if (ActiveBlobs.Num() > 0) {
@@ -77,7 +78,7 @@ void UXYZBlobManager::QueueAction(UXYZAction* Action) {
         }
     }
 
-    if (ExistingBlob) {
+    if (ExistingBlob && ExistingBlob->GetClass() == NewBlob->GetClass()) {
         if (!Action->bQueueInput) {
             ExistingBlob->bOverrideBlob = true;
             ExistingBlob->ActionQueue.Empty();
@@ -86,12 +87,11 @@ void UXYZBlobManager::QueueAction(UXYZAction* Action) {
         UE_LOG(LogTemp, Warning, TEXT("Existing Blob Enqueued Action"));
     }
     else {
-        UXYZBlob* Blob = UXYZBlobFactory::CreateBlobFromAction(Action, NextBlobId);
-        Blob->AgentsInBlob = Action->ActorSet;
-        Blob->ActionQueue.Enqueue(Action);
+        NewBlob->AgentsInBlob = Action->ActorSet;
+        NewBlob->ActionQueue.Enqueue(Action);
         UE_LOG(LogTemp, Warning, TEXT("New Blob Enqueued Action"));
-        Blob->BlobId = NextBlobId;
+        NewBlob->BlobId = NextBlobId;
         NextBlobId++;
-        AddBlob(Blob);
+        AddBlob(NewBlob);
     }
 }

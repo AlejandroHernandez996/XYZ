@@ -17,8 +17,7 @@ class XYZ_API UXYZAction : public UObject
 
 public:
     UFUNCTION()
-        void Initialize(AXYZActor* _Actor, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput) {
-        Actor = _Actor;
+        void Initialize(AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput) {
         TargetActor = _TargetActor;
         bQueueInput = _bQueueInput;
         TargetLocation = _TargetLocation;
