@@ -14,6 +14,8 @@
 #include "XYZGameMode.h"
 #include "XYZPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/BoxComponent.h"
+#include "XYZActionFactory.h"
 
 // Sets default values
 AXYZActor::AXYZActor()
@@ -39,11 +41,10 @@ AXYZActor::AXYZActor()
 
 void AXYZActor::BeginPlay()
 {
-	Super::BeginPlay();
-    
+    Super::BeginPlay();
+
     TArray<UActorComponent*> DecalComponents = GetComponentsByClass(UDecalComponent::StaticClass());
     SelectionDecal = Cast<UDecalComponent>(DecalComponents[0]);
-   
 }
 
 void AXYZActor::Tick(float DeltaTime)
@@ -84,7 +85,6 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifet
     DOREPLIFETIME(AXYZActor, AttackDamage);
     DOREPLIFETIME(AXYZActor, AttackRate);
     DOREPLIFETIME(AXYZActor, AttackRange);
-
     DOREPLIFETIME(AXYZActor, UActorId);
 
 }

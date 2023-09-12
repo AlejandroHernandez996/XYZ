@@ -10,17 +10,12 @@ class XYZ_API UXYZSimpleMovingBlob : public UXYZBlob
     GENERATED_BODY()
 
 public:
-    FVector TargetLocation;
-    FVector InitialCenter;
-    void FindInitialCenterLocation();
     void MovePack(FAgentPack* AgentPack, int32 LayerIndex);
     void FillPack(FAgentPack* AgentPack, TArray<AXYZActor*>& SortedAgents, int32 LayerIndex);
     virtual void ProcessBlob() override;
 
     int32 SortedAgentIndex = 0;
     FVector CurrentTargetLocation;
-    float AgentDensity;
-
 };
 
 USTRUCT()
@@ -28,13 +23,15 @@ struct FAgentPack
 {
     GENERATED_USTRUCT_BODY()
 
-    float DISTANCE_FROM_AGENT = 175.0f;
+    float DISTANCE_FROM_AGENT = 120.0f;
     
     TArray<AXYZActor*> Agents;
     
     TArray<FVector> SectorDirections;
 
     TSharedPtr<FAgentPack> NextPack;
+
+    AXYZActor* CenterAgent;
 
     int32 GetLayerNodeCount(int32 Layer) {
         return 1 + 3 * Layer * (Layer + 1);

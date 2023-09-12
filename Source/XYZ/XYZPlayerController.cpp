@@ -193,7 +193,6 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 	
 	// if still below short press threshold do not do anything with this input
 	if (InputTriggeredTime[InputType] <= ShortInputThreshold) {
-		return;
 	}
 
 	if (!bCanInputRepeatWhileTriggered && InputType != EXYZInputType::PRIMARY_INPUT) return;
@@ -333,25 +332,6 @@ void AXYZPlayerController::SelectActorFromPanel(int32 UActorId) {
 		SelectActors({ GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[UActorId]});
 		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 	}
-}
-
-bool AXYZPlayerController::IsMouseOverWidget()
-{
-	TArray<UUserWidget*> FoundWidgets;
-	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass(), false);
-	bool bWidgetIsHovered = false;
-	for (UUserWidget* Widget : FoundWidgets)
-	{
-		if (Widget->GetName().Contains("Healthbar"))
-			continue;
-
-		if (Widget->IsHovered()) {
-			bWidgetIsHovered = true;
-			return true;
-		}
-			
-	}
-	return bWidgetIsHovered;
 }
 
 void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {

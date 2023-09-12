@@ -8,5 +8,6 @@ enum class EXYZUnitState : uint8
 {
 	IDLE,
 	ACTION,
+	MOVING,
 	HOLD,
 };

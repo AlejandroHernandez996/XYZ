@@ -11,9 +11,11 @@ class XYZ_API UXYZBlobManager : public UObject
 
 public:
     UPROPERTY()
-    TMap<int32, class UXYZBlob*> ActiveBlobs;
+    TSet<class UXYZBlob*> ActiveBlobs;
     int32 NextBlobId;
 
     void AddBlob(class UXYZBlob* Blob);
+    void RemoveInactiveBlobs();
     void ProcessBlobs();
+    void QueueAction(class UXYZAction* Action);
 };

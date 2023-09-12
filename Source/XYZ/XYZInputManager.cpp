@@ -21,8 +21,9 @@ void UXYZInputManager::QueueInput(const FXYZInputMessage& InputMessage)
 
 void UXYZInputManager::ExecuteInput(const FXYZInputMessage& InputMessage)
 {
+    InputIndex++;
     if (!XYZGameState) return;
-    
+    if (InputMessage.SelectedActors.Num() == 0) return;
     AXYZActor* FirstActor = XYZGameState->ActorsByUID.Contains(InputMessage.SelectedActors[0]) ? XYZGameState->ActorsByUID[InputMessage.SelectedActors[0]] : nullptr;
     AXYZActor* TargetActor = XYZGameState->ActorsByUID.Contains(InputMessage.XYZTargetActor) ? XYZGameState->ActorsByUID[InputMessage.XYZTargetActor] : nullptr;
 
@@ -31,10 +32,9 @@ void UXYZInputManager::ExecuteInput(const FXYZInputMessage& InputMessage)
         for (int i = 0; i < InputMessage.SelectedActors.Num(); i++) {
             XYZAction->ActorSet.Add(XYZGameState->ActorsByUID[InputMessage.SelectedActors[i]]);
         }
-        UXYZBlob* Blob = UXYZBlobFactory::CreateBlobFromAction(XYZAction);
-        Blob->Action = XYZAction;
-        Blob->AgentsInBlob = XYZAction->ActorSet;
-        XYZGameState->GetWorld()->GetAuthGameMode<AXYZGameMode>()->BlobManager->AddBlob(Blob);
+
+        UXYZBlobManager* BlobManager = XYZGameState->GetWorld()->GetAuthGameMode<AXYZGameMode>()->BlobManager;
+        BlobManager->QueueAction(XYZAction);
         return;
     }
 
@@ -44,7 +44,6 @@ void UXYZInputManager::ExecuteInput(const FXYZInputMessage& InputMessage)
         AXYZActor* SelectedActor = XYZGameState->ActorsByUID.Contains(UActorId) ? XYZGameState->ActorsByUID[UActorId] : nullptr;
         if (!SelectedActor) continue;
         UXYZAction* XYZAction = UXYZActionFactory::CreateAction(SelectedActor, TargetActor, InputMessage.TargetLocation, InputMessage.bQueueInput, InputMessage.InputType, InputIndex);
-        InputIndex++;
         SelectedActor->QueueAction(XYZAction);
     }
     FString messageString = InputMessage.ToString();

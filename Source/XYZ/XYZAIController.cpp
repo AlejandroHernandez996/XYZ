@@ -17,14 +17,16 @@ void AXYZAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollow
 {
     if (Result.Code == EPathFollowingResult::Success)
     {
-        bHasCompletedMove = true;
+        GetPawn<AXYZActor>()->State = EXYZUnitState::IDLE;
     }
 }
-void AXYZAIController::XYZMoveToActor(AXYZActor* Actor) {
+void AXYZAIController::XYZMoveToActor(AXYZActor* Actor, float AcceptanceRadius) {
 
     if (!Actor) return;
-    MoveToActor(Actor, 50.0f, true, true, false, false);
+    MoveToActor(Actor, AcceptanceRadius, true, true, false, false);
+    GetPawn<AXYZActor>()->State = EXYZUnitState::MOVING;
 }
-void AXYZAIController::XYZMoveToLocation(FVector TargetLocation) {
-    MoveToLocation(TargetLocation, 50.0f, true, true, false, false);
+void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float AcceptanceRadius) {
+    MoveToLocation(TargetLocation, AcceptanceRadius, true, true, false, false);
+    GetPawn<AXYZActor>()->State = EXYZUnitState::MOVING;
 }

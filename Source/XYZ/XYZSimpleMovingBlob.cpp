@@ -1,32 +1,39 @@
 #include "XYZSimpleMovingBlob.h"
 #include "XYZActor.h"
+#include "XYZAction.h"
 #include "CoreMinimal.h"
+#include "XYZUnitState.h"
 #include "XYZAIController.h"
 
 void UXYZSimpleMovingBlob::ProcessBlob()
 {
-    if (!bInProgress) {
-        bInProgress = true;
-        FindInitialCenterLocation();
-        float TotalDistance = 0.0f;
+    if (ActionQueue.IsEmpty() || AgentsInBlob.IsEmpty()) return;
+    if (CenterAgent && CenterAgent->State == EXYZUnitState::MOVING && !bOverrideBlob) return;
+    bOverrideBlob = false;
+    UXYZAction* ActionToProcess;
+    ActionQueue.Dequeue(ActionToProcess);
+    UE_LOG(LogTemp, Warning, TEXT("DeEnqueued Action"));
+    if (!ActionToProcess) return;
+    TargetLocation = ActionToProcess->TargetLocation;
 
-        FVector MinBounds = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
-        FVector MaxBounds = FVector(FLT_MIN, FLT_MIN, FLT_MIN);
-        for (AXYZActor* Actor : AgentsInBlob)
-        {
-            FVector ActorPosition = Actor->GetActorLocation();
-            float Distance = FVector::Dist(ActorPosition, InitialCenter);
-            TotalDistance += Distance;
+    FindInitialCenterLocation();
+    FindCenterAgent();
 
-            FVector Location = Actor->GetActorLocation();
-            MinBounds = MinBounds.ComponentMin(Location);
-            MaxBounds = MaxBounds.ComponentMax(Location);
-        }
+    FVector MinBounds = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
+    FVector MaxBounds = FVector(FLT_MIN, FLT_MIN, FLT_MIN);
+    for (AXYZActor* Actor : AgentsInBlob)
+    {
+        FVector Location = Actor->GetActorLocation();
+        MinBounds = MinBounds.ComponentMin(Location);
+        MaxBounds = MaxBounds.ComponentMax(Location);
+        Actor->State = EXYZUnitState::MOVING;
+    }
 
-        float AverageDistance = TotalDistance / static_cast<float>(AgentsInBlob.Num());
+    float Area = (MaxBounds.X - MinBounds.X) * (MaxBounds.Y - MinBounds.Y);
+    float Density = (float)AgentsInBlob.Num() / Area;
 
-        // Handle special cases based on the number of agents
-        int32 NumAgents = AgentsInBlob.Num();
+    if (Density < 0.000040f)
+    {
         TArray<AXYZActor*> SortedAgents = AgentsInBlob.Array();
         Algo::Sort(SortedAgents, [this](AXYZActor* A, AXYZActor* B) {
             float DistanceA = FVector::DistSquared(A->GetActorLocation(), InitialCenter);
@@ -34,17 +41,10 @@ void UXYZSimpleMovingBlob::ProcessBlob()
             return DistanceA < DistanceB;
             });
         TSharedPtr<FAgentPack> AgentPack = MakeShared<FAgentPack>();
-;
-        float Area = (MaxBounds.X - MinBounds.X) * (MaxBounds.Y - MinBounds.Y);
-        float Density = (float)NumAgents / Area;
-        UE_LOG(LogTemp, Warning, TEXT("Density of actors: %f actor/m^2"), Density);
-
-        if (Density < 0.000040f)
-        {
-            FillPack(AgentPack.Get(), SortedAgents, 0);
-            MovePack(AgentPack.Get(), 0);
-            return;
-        }
+        FillPack(AgentPack.Get(), SortedAgents, 0);
+        MovePack(AgentPack.Get(), 0);
+    }
+    else {
         for (AXYZActor* Actor : AgentsInBlob)
         {
             FVector ActorLocation = Actor->GetActorLocation();
@@ -54,15 +54,7 @@ void UXYZSimpleMovingBlob::ProcessBlob()
         }
     }
     
-}
-
-void UXYZSimpleMovingBlob::FindInitialCenterLocation() {
-    InitialCenter = FVector::ZeroVector;
-    for (AXYZActor* Actor : AgentsInBlob)
-    {
-        InitialCenter += Actor->GetActorLocation();
-    }
-    InitialCenter /= AgentsInBlob.Num();
+    
 }
 
 void UXYZSimpleMovingBlob::FillPack(FAgentPack* AgentPack, TArray<AXYZActor*>& SortedAgents, int32 LayerIndex) {
@@ -99,3 +91,4 @@ void UXYZSimpleMovingBlob::MovePack(FAgentPack* AgentPack, int32 Level) {
     }
     MovePack(AgentPack->NextPack.Get(), Level + 1);
 }
+

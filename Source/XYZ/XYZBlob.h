@@ -11,9 +11,47 @@ class XYZ_API UXYZBlob : public UObject
     GENERATED_BODY()
 
 public:
-    TSet<AXYZActor*> AgentsInBlob;
-    class UXYZAction* Action;
     int32 BlobId;
+
     bool bInProgress;
+    bool bOverrideBlob;
+
+    FVector TargetLocation;
+    FVector InitialCenter;
+    float AgentDensity;
+
+    UPROPERTY()
+        class AXYZActor* CenterAgent;
+    UPROPERTY()
+    TSet<AXYZActor*> AgentsInBlob;
+    TQueue<UXYZAction*> ActionQueue;
+
     virtual void ProcessBlob();
+    void FindCenterAgent();
+    void FindInitialCenterLocation();
+
+    FString ToString() const
+    {
+        FString result;
+
+        result.Append(FString::Printf(TEXT("BlobId: %d, AgentCount: %d, Agents: ["), BlobId, AgentsInBlob.Num()));
+
+        for (AXYZActor* Agent : AgentsInBlob)
+        {
+            if (Agent)
+            {
+                result.Append(FString::Printf(TEXT("%d, "), Agent->UActorId));
+            }
+        }
+
+        // Remove trailing ", "
+        if (result.EndsWith(TEXT(", ")))
+        {
+            result.RemoveAt(result.Len() - 2, 2, false);
+        }
+
+        result.Append(TEXT("]"));
+
+        return result;
+    }
 };

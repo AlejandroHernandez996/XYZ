@@ -2,11 +2,12 @@
 #include "XYZSimpleMovingBlob.h"
 #include "XYZMoveAction.h"  // Assuming this exists
 
-UXYZBlob* UXYZBlobFactory::CreateBlobFromAction(const UXYZAction* Action)
+UXYZBlob* UXYZBlobFactory::CreateBlobFromAction(const UXYZAction* Action, int32 BlobId)
 {
     if (Action->IsA<UXYZMoveAction>())
     {
-        UXYZSimpleMovingBlob* NewBlob = NewObject<UXYZSimpleMovingBlob>(UXYZSimpleMovingBlob::StaticClass(), "SimpleMovingBlob");
+        FName BlobName(*("SimpleMovingBlob_" + FString::FromInt(BlobId)));
+        UXYZSimpleMovingBlob* NewBlob = NewObject<UXYZSimpleMovingBlob>(UXYZSimpleMovingBlob::StaticClass(), BlobName);
         NewBlob->TargetLocation = Action->TargetLocation; 
         return NewBlob;
     }

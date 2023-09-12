@@ -18,6 +18,6 @@ public:
 	void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
 	bool bIsMoving;
 	bool bHasCompletedMove;
-	void XYZMoveToActor(class AXYZActor* Actor);
-	void XYZMoveToLocation(FVector TargetLocation);
+	void XYZMoveToActor(class AXYZActor* Actor, float AcceptanceRadius = 1.0f);
+	void XYZMoveToLocation(FVector TargetLocation, float AcceptanceRadius = 1.0f);
 };

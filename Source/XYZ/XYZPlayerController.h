@@ -26,6 +26,7 @@ class AXYZPlayerController : public APlayerController
 public:
 	AXYZPlayerController();
 
+	int32 TeamId = 0;
 	/** Time Threshold to know if it was a short press */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	float ShortInputThreshold;
@@ -138,10 +139,6 @@ protected:
 	// We look for the location in the world where the player has pressed the input
 	FHitResult XYZActorHit;
 	bool bXYZActorHitSuccessful = false;
-
-	int32 TeamId = 0;
-
-	bool IsMouseOverWidget();
 
 private:
 	UPROPERTY()

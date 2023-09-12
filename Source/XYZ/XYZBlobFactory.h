@@ -13,5 +13,5 @@ class XYZ_API UXYZBlobFactory : public UObject
 
 public:
     UFUNCTION(BlueprintCallable)
-        static UXYZBlob* CreateBlobFromAction(const UXYZAction* Action);
+        static UXYZBlob* CreateBlobFromAction(const UXYZAction* Action, int32 BlobId);
 };
