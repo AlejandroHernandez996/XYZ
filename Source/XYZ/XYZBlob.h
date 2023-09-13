@@ -26,6 +26,9 @@ public:
     TSet<AXYZActor*> AgentsInBlob;
     TQueue<UXYZAction*> ActionQueue;
 
+    UPROPERTY()
+        class AXYZActor* TargetActor;
+
     virtual void ProcessBlob();
     void FindCenterAgent();
     void FindInitialCenterLocation();

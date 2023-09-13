@@ -15,11 +15,16 @@ class XYZ_API AXYZAIController : public AAIController
 	GENERATED_BODY()
 public:
 	virtual void BeginPlay() override;
-	void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
+
+	FVector CurrentTargetLocation;
 	bool bIsMoving;
 	bool bHasCompletedMove;
+
+	void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
 	void XYZMoveToActor(class AXYZActor* Actor, float AcceptanceRadius = 1.0f);
 	void XYZMoveToLocation(FVector TargetLocation, float AcceptanceRadius = 1.0f);
 	void XYZAttackMoveToLocation(FVector TargetLocation, float AcceptanceRadius = 1.0f);
+	void XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceRadius = 1.0f);
 	void XYZStopMovement();
+	void RecalculateMove();
 };

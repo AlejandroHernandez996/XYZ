@@ -36,6 +36,9 @@ public:
         EXYZUnitState State = EXYZUnitState::IDLE;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
+        EXYZUnitState PreviousState = EXYZUnitState::IDLE;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
         FString DisplayName;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
@@ -64,6 +67,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
         float VisionRange;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats", Replicated)
+        float CapsuleRadius = 50.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Decal")
         TMap<EXYZDecalType, UMaterialInterface*> DecalMaterials;
@@ -96,6 +102,11 @@ public:
         void QueueAction(UXYZAction* Action);
     UFUNCTION()
         AXYZActor* FindClosestActor(bool bIgnoreFriendlyActors);
+    UFUNCTION()
+        void SetState(EXYZUnitState UnitState){
+        PreviousState = UnitState;
+        State = UnitState;
+    }
     bool bCancelActionFlag;
 
 public:

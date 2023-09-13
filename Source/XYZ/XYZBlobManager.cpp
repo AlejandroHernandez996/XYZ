@@ -9,6 +9,7 @@ void UXYZBlobManager::ProcessBlobs()
     {
         Blob->ProcessBlob();
     }
+    RemoveInactiveBlobs();
 }
 
 void UXYZBlobManager::AddBlob(UXYZBlob* NewBlob)

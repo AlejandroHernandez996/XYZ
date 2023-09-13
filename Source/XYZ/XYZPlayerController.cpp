@@ -349,7 +349,6 @@ void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
 			}
 			SelectionStructure->RemoveFromControlGroups(ActorUId);
 			OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
-			Actor->SetActorHiddenInGame(true);
 		}
 	}
 	GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(ActorUId);

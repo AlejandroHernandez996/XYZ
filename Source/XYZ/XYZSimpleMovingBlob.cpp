@@ -8,14 +8,24 @@
 void UXYZSimpleMovingBlob::ProcessBlob()
 {
     if (ActionQueue.IsEmpty() || AgentsInBlob.IsEmpty()) return;
-    if (CenterAgent && CenterAgent->State == EXYZUnitState::MOVING && !bOverrideBlob) return;
+    if (CenterAgent && (CenterAgent->State == EXYZUnitState::MOVING || CenterAgent->State == EXYZUnitState::ATTACK_MOVING) && !bOverrideBlob) return;
     bOverrideBlob = false;
     UXYZAction* ActionToProcess;
     ActionQueue.Dequeue(ActionToProcess);
     UE_LOG(LogTemp, Warning, TEXT("DeEnqueued Action"));
     if (!ActionToProcess) return;
     TargetLocation = ActionToProcess->TargetLocation;
+    TargetActor = ActionToProcess->TargetActor;
 
+    if (TargetActor) {
+        for (AXYZActor* Actor : AgentsInBlob)
+        {
+            if (Actor) {
+                Actor->GetXYZAIController()->XYZAttackMoveToTarget(TargetActor);
+            }
+        }
+        return;
+    }
     FindInitialCenterLocation();
     FindCenterAgent();
 
@@ -26,7 +36,6 @@ void UXYZSimpleMovingBlob::ProcessBlob()
         FVector Location = Actor->GetActorLocation();
         MinBounds = MinBounds.ComponentMin(Location);
         MaxBounds = MaxBounds.ComponentMax(Location);
-        Actor->State = EXYZUnitState::MOVING;
     }
 
     float Area = (MaxBounds.X - MinBounds.X) * (MaxBounds.Y - MinBounds.Y);

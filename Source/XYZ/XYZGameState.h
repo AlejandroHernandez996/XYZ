@@ -21,4 +21,5 @@ public:
 	TMap<int32, class AXYZActor*> ActorsByUID;
 
 	TArray<class AXYZActor*> GetAllActors();
+	int32 ActorIndex;
 };

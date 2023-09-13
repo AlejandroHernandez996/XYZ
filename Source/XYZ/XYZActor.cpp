@@ -47,23 +47,8 @@ void AXYZActor::BeginPlay()
 void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+    GetCapsuleComponent()->SetCapsuleRadius(CapsuleRadius);
     if (GetLocalRole() == ROLE_Authority) {
-        if (State == EXYZUnitState::MOVING) {
-            ScanXYZActorsAhead();
-        }
-        if (bIsAggresive) {
-            if (!TargetActor || TargetActor->Health <= 0.0f) {
-                TargetActor = FindClosestActor(true);
-            }
-            if (TargetActor && TargetActor->TeamId != TeamId) {
-                AttackMoveTarget();
-            }
-            if (TargetActor && TargetActor->Health == 0.0f) {
-                TargetActor = nullptr;
-            }
-
-        }
         if (Health == 0.0f)
         {
             if (this) {
@@ -71,6 +56,21 @@ void AXYZActor::Tick(float DeltaTime)
                 Destroy();
             }
         }
+        if (State == EXYZUnitState::MOVING || State == EXYZUnitState::ATTACK_MOVING) {
+            ScanXYZActorsAhead();
+        }
+        if (State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::IDLE || State == EXYZUnitState::ATTACKING) {
+            if (!TargetActor || TargetActor->Health <= 0.0f) {
+                TargetActor = FindClosestActor(true);
+            }
+            if (TargetActor) {
+                AttackMoveTarget();
+            }
+            if (TargetActor && TargetActor->Health <= 0.0f) {
+                TargetActor = nullptr;
+            }
+        }
+        
     }
 }
 
@@ -85,6 +85,7 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifet
     DOREPLIFETIME(AXYZActor, AttackRate);
     DOREPLIFETIME(AXYZActor, AttackRange);
     DOREPLIFETIME(AXYZActor, UActorId);
+    DOREPLIFETIME(AXYZActor, CapsuleRadius);
 }
 
 void AXYZActor::QueueAction(UXYZAction* Action) {
@@ -109,7 +110,7 @@ void AXYZActor::Attack() {
         GetWorld()->GetTimerManager().SetTimer(AttackTimer, [this]() {
             bIsAttackOnCooldown = false;
             }, AttackRate, false);
-        TargetActor->Health -= AttackDamage;
+        TargetActor->Health = FMath::Clamp(TargetActor->Health - AttackDamage, 0.0f, TargetActor->MaxHealth);
         UE_LOG(LogTemp, Warning, TEXT("Attacking for %d enemy health %d"), AttackDamage, TargetActor->Health);
     }
 }
@@ -159,9 +160,17 @@ void AXYZActor::ScanXYZActorsAhead() {
     FVector RightVector = ForwardVector.RotateAngleAxis(45, FVector(0, 0, 1));
     FVector EndRight = ((RightVector * Distance) + Start);
 
+    FVector Left22Vector = ForwardVector.RotateAngleAxis(-22, FVector(0, 0, 1));
+    FVector End22Left = ((LeftVector * Distance) + Start);
+
+    FVector Right22Vector = ForwardVector.RotateAngleAxis(22, FVector(0, 0, 1));
+    FVector End22Right = ((RightVector * Distance) + Start);
+
     TSet<AXYZActor*> ActorsFound;
     ActorsFound.Add(ScanAndPush(Start, EndLeft, ActorsFound));
+    ActorsFound.Add(ScanAndPush(Start, End22Left, ActorsFound));
     ActorsFound.Add(ScanAndPush(Start, EndRight, ActorsFound));
+    ActorsFound.Add(ScanAndPush(Start, End22Right, ActorsFound));
     ActorsFound.Add(ScanAndPush(Start, End, ActorsFound));
 }
 
@@ -174,13 +183,17 @@ AXYZActor* AXYZActor::ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> A
     if (bHit && HitResult.GetActor() && HitResult.GetActor()->IsA(AXYZActor::StaticClass()))
     {
         AXYZActor* OtherXYZActor = Cast<AXYZActor>(HitResult.GetActor());
-        if (OtherXYZActor && OtherXYZActor->State == EXYZUnitState::IDLE && !ActorsFound.Contains(OtherXYZActor) && OtherXYZActor->TeamId == TeamId)
+        if (!OtherXYZActor) return nullptr;
+        if (OtherXYZActor->State == EXYZUnitState::IDLE && !ActorsFound.Contains(OtherXYZActor) && OtherXYZActor->TeamId == TeamId)
         {
             FVector Direction = End - Start;
             Direction.Normalize();
-            FVector PushLocation = (Direction * 200.0f) + OtherXYZActor->GetActorLocation();
+            FVector PushLocation = (Direction * 100.0f) + OtherXYZActor->GetActorLocation();
             OtherXYZActor->GetXYZAIController()->XYZMoveToLocation(PushLocation);
             return OtherXYZActor;
+        }
+        if (OtherXYZActor && OtherXYZActor->State == EXYZUnitState::ATTACKING && !ActorsFound.Contains(OtherXYZActor)) {
+            GetXYZAIController()->RecalculateMove();
         }
     }
 
@@ -189,8 +202,6 @@ AXYZActor* AXYZActor::ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> A
 
 void AXYZActor::AttackMoveTarget() {
     AXYZAIController* ActorController = GetXYZAIController();
-    if (!TargetActor) return;
-
     FVector ActorLocation = GetActorLocation();
     FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
     if (TargetActor != this && TargetActor->Health > 0.0f) {
@@ -208,6 +219,7 @@ void AXYZActor::AttackMoveTarget() {
         {
             ActorController->XYZStopMovement();
             Attack();
+            SetState(EXYZUnitState::ATTACKING);
         }
         else {
             ActorController->XYZAttackMoveToLocation(TargetActor->GetActorLocation());
