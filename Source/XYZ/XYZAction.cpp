@@ -32,5 +32,4 @@ void UXYZAction::CancelAction() {
 
 void UXYZAction::StartAction() {
     ActionState = EXYZActionState::IN_PROGRESS;
-    Actor->State = EXYZUnitState::ACTION;
 }

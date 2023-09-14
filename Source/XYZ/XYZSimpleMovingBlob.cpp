@@ -8,27 +8,14 @@
 void UXYZSimpleMovingBlob::ProcessBlob()
 {
     if (ActionQueue.IsEmpty() || AgentsInBlob.IsEmpty()) return;
-    if (CenterAgent && (CenterAgent->State == EXYZUnitState::MOVING || CenterAgent->State == EXYZUnitState::ATTACK_MOVING) && !bOverrideBlob) return;
+    if (CenterAgent && CenterAgent->State == EXYZUnitState::MOVING && !bOverrideBlob) return;
+    FindInitialCenterLocation();
+    FindCenterAgent();
     bOverrideBlob = false;
     UXYZAction* ActionToProcess;
     ActionQueue.Dequeue(ActionToProcess);
-    UE_LOG(LogTemp, Warning, TEXT("DeEnqueued Action"));
     if (!ActionToProcess) return;
     TargetLocation = ActionToProcess->TargetLocation;
-    TargetActor = ActionToProcess->TargetActor;
-
-    if (TargetActor) {
-        for (AXYZActor* Actor : AgentsInBlob)
-        {
-            if (Actor) {
-                Actor->GetXYZAIController()->XYZAttackMoveToTarget(TargetActor);
-            }
-        }
-        return;
-    }
-    FindInitialCenterLocation();
-    FindCenterAgent();
-
     FVector MinBounds = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
     FVector MaxBounds = FVector(FLT_MIN, FLT_MIN, FLT_MIN);
     for (AXYZActor* Actor : AgentsInBlob)
@@ -59,7 +46,7 @@ void UXYZSimpleMovingBlob::ProcessBlob()
             FVector ActorLocation = Actor->GetActorLocation();
             FVector DirectonFromCenter = ActorLocation - InitialCenter;
             FVector AgentTargetLocation = TargetLocation + DirectonFromCenter;
-            Actor->GetController<AXYZAIController>()->XYZAttackMoveToLocation(AgentTargetLocation);
+            Actor->GetController<AXYZAIController>()->XYZMoveToLocation(AgentTargetLocation);
         }
     }
     
@@ -96,12 +83,7 @@ void UXYZSimpleMovingBlob::MovePack(FAgentPack* AgentPack, int32 Level) {
     for (int i = 0; i < AgentPack->Agents.Num(); i++) {
         if (AgentPack->Agents[i]) {
             AgentPack->Agents[i]->TargetLocation = TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i];
-            if (bAttackMove) {
-                AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZAttackMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
-                }
-            else {
-                AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
-            }
+            AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
         }
     }
     MovePack(AgentPack->NextPack.Get(), Level + 1);

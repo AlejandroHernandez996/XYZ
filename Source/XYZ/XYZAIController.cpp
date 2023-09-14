@@ -30,7 +30,7 @@ void AXYZAIController::XYZMoveToActor(AXYZActor* Actor, float AcceptanceRadius) 
     GetPawn<AXYZActor>()->SetState(EXYZUnitState::MOVING);
     CurrentTargetLocation = Actor->GetActorLocation();
     bIsMoving = true;
-    GetPawn<AXYZActor>()->CapsuleRadius = 25.0f;
+    GetPawn<AXYZActor>()->CapsuleRadius = 35.0f;
 }
 
 void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float AcceptanceRadius) {
@@ -40,7 +40,7 @@ void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float Acceptanc
     CurrentTargetLocation = TargetLocation;
     bIsMoving = true;
 
-    GetPawn<AXYZActor>()->CapsuleRadius = 25.0f;
+    GetPawn<AXYZActor>()->CapsuleRadius = 35.0f;
 }
 
 void AXYZAIController::XYZAttackMoveToLocation(FVector TargetLocation, float AcceptanceRadius) {
@@ -49,7 +49,7 @@ void AXYZAIController::XYZAttackMoveToLocation(FVector TargetLocation, float Acc
     GetPawn<AXYZActor>()->SetState(EXYZUnitState::ATTACK_MOVING);
     CurrentTargetLocation = TargetLocation;
     bIsMoving = true;
-    GetPawn<AXYZActor>()->CapsuleRadius = 25.0f;
+    GetPawn<AXYZActor>()->CapsuleRadius = 35.0f;
 }
 
 void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceRadius) {
@@ -59,7 +59,7 @@ void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceR
     GetPawn<AXYZActor>()->SetState(EXYZUnitState::ATTACK_MOVING);
     GetPawn<AXYZActor>()->TargetActor = Actor;
     bIsMoving = true;
-    GetPawn<AXYZActor>()->CapsuleRadius = 25.0f;
+    GetPawn<AXYZActor>()->CapsuleRadius = 35.0f;
 }
 
 void AXYZAIController::XYZStopMovement() {

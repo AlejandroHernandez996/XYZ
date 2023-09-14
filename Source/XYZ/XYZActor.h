@@ -103,10 +103,22 @@ public:
     UFUNCTION()
         AXYZActor* FindClosestActor(bool bIgnoreFriendlyActors);
     UFUNCTION()
-        void SetState(EXYZUnitState UnitState){
-        PreviousState = UnitState;
-        State = UnitState;
-    }
+    void SetState(EXYZUnitState UnitState){
+        switch (State) {
+            case EXYZUnitState::IDLE:
+                TargetActor = nullptr;
+                break;
+            case EXYZUnitState::MOVING:
+                TargetActor = nullptr;
+                break;
+            case EXYZUnitState::ATTACK_MOVING:
+                break;
+            case EXYZUnitState::ATTACKING:
+                break;
+            }
+            PreviousState = State;
+            State = UnitState;
+        }
     bool bCancelActionFlag;
 
 public:

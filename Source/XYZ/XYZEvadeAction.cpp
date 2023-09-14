@@ -10,7 +10,7 @@ void UXYZEvadeAction::ProcessAction(float DeltaTime)
     Actor->State = EXYZUnitState::IDLE;
 
     AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
-    if (!Actor->GetController<AXYZAIController>()->bIsMoving)  // Replace with your actual distance tolerance if necessary
+    if (!Actor->GetController<AXYZAIController>()->bIsMoving) 
     {
         AIController->MoveToLocation(TargetLocation);
         AIController->bIsMoving = true;

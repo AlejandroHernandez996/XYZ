@@ -149,6 +149,9 @@ private:
 
 	bool bBoxSelectFlag;
 
+	UPROPERTY()
+		class AXYZCameraController* CameraController;
+
 public:
 	UFUNCTION(NetMulticast, Reliable)
 		void XYZActorDestroyed(int32 ActorUId);

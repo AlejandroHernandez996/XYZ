@@ -18,6 +18,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "XYZCameraController.h"
+#include "EngineUtils.h"
 
 AXYZPlayerController::AXYZPlayerController()
 {
@@ -32,6 +34,7 @@ AXYZPlayerController::AXYZPlayerController()
 		InputTriggeredTime.Add(static_cast<EXYZInputType>(EnumValue), 0.0f);
 	}
 	InputTriggeredCooldown = .16f;
+	ShortInputThreshold = .25f;
 	SelectionStructure = NewObject<UXYZSelectionStructure>(this, UXYZSelectionStructure::StaticClass(), "SelectionStructure");
 	PrimaryActorTick.bCanEverTick = true;
 }
@@ -44,6 +47,13 @@ void AXYZPlayerController::BeginPlay()
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
+	}
+	if (GetLocalRole() != ROLE_Authority) {
+		for (TActorIterator<AXYZCameraController> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		{
+			CameraController = *ActorItr;
+		}
+
 	}
 }
 
@@ -149,6 +159,7 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			// Fire the SelectionBox event
 			OnSelectionBox.Broadcast(BoxSelectStart.X, BoxSelectStart.Y);
 			bBoxSelectFlag = true;
+			CameraController->bBlockMovementFlag = true;
 			break;
 		case EXYZInputType::SECONDARY_INPUT:
 			if (!bAllowMouseInput) return;
@@ -175,7 +186,7 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			CreateAndQueueInput(SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, false);
 			break;
 		case EXYZInputType::CLEAR:
-			SelectActors({});
+			SelectionStructure->Empty();
 			OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 			break;
 	}
@@ -216,7 +227,6 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 
 void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 {
-	//LONG INPUT RELEASE
 	FHitResult BoxHitStart, BoxHitEnd;
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
 	int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
@@ -229,13 +239,44 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		bSecondaryModifier = false;
 		break;
 	case EXYZInputType::PRIMARY_INPUT:
-		if (!bAllowMouseInput) return;
-		if (!bBoxSelectFlag) break;
+		if (!bAllowMouseInput || !bBoxSelectFlag) break;
+		if (bSecondaryModifier && InputTriggeredTime[InputType] <= ShortInputThreshold) {
+			TArray<AXYZActor*> SelectedActors = GetHUD<AXYZHUD>()->SelectedActors;
+			SelectedActors.RemoveAll([&](AXYZActor* Actor)
+				{
+					if (Actor)
+					{
+						return Actor->TeamId != TeamId;
+					}
+					return true;
+				});
+			if (SelectedActors.Num() > 0) {
+				AXYZActor* SelectedActor = SelectedActors[0];
+				if (SelectedActor) {
+					TArray<AXYZActor*> AllMatchingSelectedActorOnScreen = GetHUD<AXYZHUD>()->AllActorsOnScreen;
+					AllMatchingSelectedActorOnScreen.RemoveAll([&](AXYZActor* Actor)
+						{
+							if (Actor)
+							{
+								return Actor->TeamId != TeamId || Actor->ActorId != SelectedActor->ActorId;
+							}
+							return true;
+						});
+					if (AllMatchingSelectedActorOnScreen.Num() > 0) {
+						SelectActors(AllMatchingSelectedActorOnScreen);
+					}
+				}
+			}
+			GetHUD<AXYZHUD>()->AllActorsOnScreen.Empty();
+		}
+		else {
+			SelectActors(GetHUD<AXYZHUD>()->SelectedActors);
+		}
 		bBoxSelectFlag = false;
-		OnSelectionBoxReleased.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
-		SelectActors(GetHUD<AXYZHUD>()->SelectedActors);
-		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		GetHUD<AXYZHUD>()->bSelectActors = false;
+		CameraController->bBlockMovementFlag = false;
+		OnSelectionBoxReleased.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		break;
 	case EXYZInputType::ATTACK_MOVE:
 		break;
@@ -247,7 +288,6 @@ void AXYZPlayerController::SelectActors(TArray<AXYZActor*> _XYZActors){
 	TArray<AXYZActor*> XYZActors = XYZActorsSet.Array();
 
 	if (XYZActors.IsEmpty()) {
-		SelectionStructure->Empty();
 		return;
 	}
 

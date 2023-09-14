@@ -11,15 +11,7 @@ void UXYZAttackAction::ProcessAction(float DeltaTime)
 
 void UXYZAttackAction::CancelAction() {
     Super::CancelAction();
-    AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
-    if (!AIController) return;
-    AIController->bIsMoving = false;
-    AIController->bHasCompletedMove = false;
 }
 void UXYZAttackAction::CompleteAction() {
     Super::CompleteAction();
-    AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
-    if (!AIController) return;
-    AIController->bIsMoving = false;
-    AIController->bHasCompletedMove = false;
 }

@@ -29,7 +29,6 @@ AXYZActor::AXYZActor()
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
     GetCharacterMovement()->MaxWalkSpeed = 500.f;
-    GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
     GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -150,7 +149,7 @@ AXYZAIController* AXYZActor::GetXYZAIController() {
 void AXYZActor::ScanXYZActorsAhead() {
     FVector Start = GetActorLocation();
     FVector ForwardVector = GetActorForwardVector();
-    float Distance = 65.0f;
+    float Distance = 60.0f;
 
     FVector End = ((ForwardVector * Distance) + Start);
 
@@ -189,11 +188,15 @@ AXYZActor* AXYZActor::ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> A
             FVector Direction = End - Start;
             Direction.Normalize();
             FVector PushLocation = (Direction * 100.0f) + OtherXYZActor->GetActorLocation();
+            if (Direction == GetActorForwardVector()) {
+                PushLocation = (OtherXYZActor->GetActorRightVector() * 100.0f) + OtherXYZActor->GetActorLocation();
+            }
             OtherXYZActor->GetXYZAIController()->XYZMoveToLocation(PushLocation);
             return OtherXYZActor;
         }
         if (OtherXYZActor && OtherXYZActor->State == EXYZUnitState::ATTACKING && !ActorsFound.Contains(OtherXYZActor)) {
             GetXYZAIController()->RecalculateMove();
+            return OtherXYZActor;
         }
     }
 
