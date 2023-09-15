@@ -10,5 +10,6 @@ enum class EXYZUnitState : uint8
 	MOVING,
 	ATTACKING,
 	ATTACK_MOVING,
+	FOLLOWING,
 	HOLD,
 };

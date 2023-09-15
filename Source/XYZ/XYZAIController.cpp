@@ -18,14 +18,19 @@ void AXYZAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollow
 {
     if (Result.Code == EPathFollowingResult::Success)
     {
-        GetPawn<AXYZActor>()->SetState(EXYZUnitState::IDLE);
+        if (GetPawn<AXYZActor>()->State == EXYZUnitState::MOVING) {
+            GetPawn<AXYZActor>()->SetState(EXYZUnitState::IDLE);
+        }
         bIsMoving = false;
         GetPawn<AXYZActor>()->CapsuleRadius = 50.0f;
     }
 }
 
 void AXYZAIController::XYZMoveToActor(AXYZActor* Actor, float AcceptanceRadius) {
-    if (!Actor) return;
+    if (!Actor || GetPawn<AXYZActor>() == Actor) {
+        XYZStopMovement();
+        return;
+    }
     MoveToActor(Actor, AcceptanceRadius, true, true, false, false);
     GetPawn<AXYZActor>()->SetState(EXYZUnitState::MOVING);
     CurrentTargetLocation = Actor->GetActorLocation();
@@ -53,10 +58,26 @@ void AXYZAIController::XYZAttackMoveToLocation(FVector TargetLocation, float Acc
 }
 
 void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceRadius) {
-    if (!GetPawn<AXYZActor>() || !Actor) return;
+    if (!GetPawn<AXYZActor>() || !Actor || GetPawn<AXYZActor>() == Actor) {
+        XYZStopMovement();
+        return;
+    }
     MoveToActor(Actor, AcceptanceRadius, true, true, false, false);
     CurrentTargetLocation = Actor->GetActorLocation();
     GetPawn<AXYZActor>()->SetState(EXYZUnitState::ATTACK_MOVING);
+    GetPawn<AXYZActor>()->TargetActor = Actor;
+    bIsMoving = true;
+    GetPawn<AXYZActor>()->CapsuleRadius = 35.0f;
+}
+
+void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius) {
+    if (!GetPawn<AXYZActor>() || !Actor || GetPawn<AXYZActor>() == Actor) {
+        XYZStopMovement();
+        return;
+    }
+    MoveToActor(Actor, AcceptanceRadius, true, true, false, false);
+    CurrentTargetLocation = Actor->GetActorLocation();
+    GetPawn<AXYZActor>()->SetState(EXYZUnitState::FOLLOWING);
     GetPawn<AXYZActor>()->TargetActor = Actor;
     bIsMoving = true;
     GetPawn<AXYZActor>()->CapsuleRadius = 35.0f;
@@ -66,7 +87,9 @@ void AXYZAIController::XYZStopMovement() {
     if (!GetPawn<AXYZActor>()) return;
     StopMovement();
     CurrentTargetLocation = GetPawn<AXYZActor>()->GetActorLocation();
-    GetPawn<AXYZActor>()->SetState(EXYZUnitState::IDLE);
+    if (GetPawn<AXYZActor>()->State != EXYZUnitState::ATTACKING) {
+        GetPawn<AXYZActor>()->SetState(EXYZUnitState::IDLE);
+    }
     bIsMoving = false;
     GetPawn<AXYZActor>()->CapsuleRadius = 50.0f;
 }
@@ -82,6 +105,9 @@ void AXYZAIController::RecalculateMove() {
         break;
     case EXYZUnitState::ATTACK_MOVING:
         XYZAttackMoveToLocation(CurrentTargetLocation);
+        break;
+    case EXYZUnitState::FOLLOWING:
+        XYZFollowTarget(GetPawn<AXYZActor>()->TargetActor);
         break;
     }
 }

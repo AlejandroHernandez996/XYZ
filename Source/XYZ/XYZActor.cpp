@@ -55,7 +55,7 @@ void AXYZActor::Tick(float DeltaTime)
                 Destroy();
             }
         }
-        if (State == EXYZUnitState::MOVING || State == EXYZUnitState::ATTACK_MOVING) {
+        if (State == EXYZUnitState::MOVING || State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::FOLLOWING) {
             ScanXYZActorsAhead();
         }
         if (State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::IDLE || State == EXYZUnitState::ATTACKING) {
@@ -65,8 +65,13 @@ void AXYZActor::Tick(float DeltaTime)
             if (TargetActor) {
                 AttackMoveTarget();
             }
-            if (TargetActor && TargetActor->Health <= 0.0f) {
-                TargetActor = nullptr;
+        }
+        if (State == EXYZUnitState::FOLLOWING) {
+            if (!TargetActor || TargetActor->Health <= 0.0f) {
+                GetXYZAIController()->StopMovement();
+            }
+            else {
+                GetXYZAIController()->RecalculateMove();
             }
         }
         
@@ -182,7 +187,8 @@ AXYZActor* AXYZActor::ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> A
     if (bHit && HitResult.GetActor() && HitResult.GetActor()->IsA(AXYZActor::StaticClass()))
     {
         AXYZActor* OtherXYZActor = Cast<AXYZActor>(HitResult.GetActor());
-        if (!OtherXYZActor) return nullptr;
+       
+        if (!OtherXYZActor || OtherXYZActor == TargetActor) return nullptr;
         if (OtherXYZActor->State == EXYZUnitState::IDLE && !ActorsFound.Contains(OtherXYZActor) && OtherXYZActor->TeamId == TeamId)
         {
             FVector Direction = End - Start;
@@ -220,9 +226,9 @@ void AXYZActor::AttackMoveTarget() {
         
         if (DistanceToTarget <= AttackRange)
         {
-            ActorController->XYZStopMovement();
             Attack();
             SetState(EXYZUnitState::ATTACKING);
+            ActorController->XYZStopMovement();
         }
         else {
             ActorController->XYZAttackMoveToLocation(TargetActor->GetActorLocation());
