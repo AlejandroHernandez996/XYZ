@@ -11,22 +11,27 @@ class XYZ_API UXYZBlob : public UObject
     GENERATED_BODY()
 
 public:
+    UPROPERTY()
     int32 BlobId;
     UPROPERTY()
     TSet<AXYZActor*> AgentsInBlob;
 
     TMap<AXYZActor*, TSharedPtr<FActionList>> AgentToNodeCache;
 
+    UPROPERTY()
     int32 ActionListSize = 0;
     TSharedPtr<FActionList> Head;
     TSharedPtr<FActionList> Tail;
 
+    UFUNCTION()
     virtual void ProcessBlob();
+    UFUNCTION()
     void InitializeBlob();
+    UFUNCTION()
     bool IsBlobProcessable();
-    void FindCenterAgent();
-    void FindInitialCenterLocation();
+    UFUNCTION()
     void AddAction(class UXYZAction* Action);
+    UFUNCTION()
     void RemoveAgent(AXYZActor* Agent);
 
     FString ToString() const

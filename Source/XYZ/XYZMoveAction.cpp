@@ -30,8 +30,8 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> Agents)
             return DistanceA < DistanceB;
             });
         TSharedPtr<FAgentPack> AgentPack = MakeShared<FAgentPack>();
-        FillPack(AgentPack.Get(), SortedAgents, 0);
-        MovePack(AgentPack.Get(), 0);
+        FillPack(AgentPack, SortedAgents, 0);
+        MovePack(AgentPack, 0);
     }
     else {
         for (AXYZActor* Actor : Agents)
@@ -45,7 +45,7 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> Agents)
 
 }
 
-void UXYZMoveAction::FillPack(FAgentPack* AgentPack, TArray<AXYZActor*>& SortedAgents, int32 LayerIndex) {
+void UXYZMoveAction::FillPack(TSharedPtr<FAgentPack> AgentPack, TArray<AXYZActor*>& SortedAgents, int32 LayerIndex) {
     int32 LayerNodes = AgentPack->GetLayerNodeCount(LayerIndex);
     AgentPack->SetSectorDirections(LayerNodes);
     for (int i = 0; i < AgentPack->SectorDirections.Num(); i++) {
@@ -63,10 +63,10 @@ void UXYZMoveAction::FillPack(FAgentPack* AgentPack, TArray<AXYZActor*>& SortedA
     }
 
     AgentPack->NextPack = MakeShared<FAgentPack>();
-    FillPack(AgentPack->NextPack.Get(), SortedAgents, LayerIndex + 1);
+    FillPack(AgentPack->NextPack, SortedAgents, LayerIndex + 1);
 
 }
-void UXYZMoveAction::MovePack(FAgentPack* AgentPack, int32 Level) {
+void UXYZMoveAction::MovePack(TSharedPtr<FAgentPack> AgentPack, int32 Level) {
     if (!AgentPack)return;
     if (AgentPack->Agents.Num() == 0) {
         return;
@@ -77,10 +77,31 @@ void UXYZMoveAction::MovePack(FAgentPack* AgentPack, int32 Level) {
             AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
         }
     }
-    MovePack(AgentPack->NextPack.Get(), Level + 1);
+    MovePack(AgentPack->NextPack, Level + 1);
 }
 
 bool UXYZMoveAction::HasAgentComplete(AXYZActor* Agent) {
 
     return Agent->State == EXYZUnitState::IDLE;
+}
+
+AXYZActor* UXYZMoveAction::FindCenterAgent(TSet<AXYZActor*> Agents, FVector CenterLocation) {
+    if (Agents.IsEmpty()) return nullptr;
+    TArray<AXYZActor*> SortedAgents = Agents.Array();
+    Algo::Sort(SortedAgents, [this, CenterLocation](AXYZActor* A, AXYZActor* B) {
+        float DistanceA = FVector::DistSquared(A->GetActorLocation(), CenterLocation);
+        float DistanceB = FVector::DistSquared(B->GetActorLocation(), CenterLocation);
+        return DistanceA < DistanceB;
+        });
+
+    return SortedAgents[0];
+}
+
+FVector UXYZMoveAction::FindInitialCenterLocation(TSet<AXYZActor*> Agents) {
+    FVector Center = FVector::ZeroVector;
+    for (AXYZActor* Actor : Agents)
+    {
+        Center += Actor->GetActorLocation();
+    }
+    return Center /= Agents.Num();
 }

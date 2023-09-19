@@ -2,7 +2,6 @@
 #include "XYZAction.h"
 #include "XYZGameState.h"
 #include "XYZActionFactory.h"
-#include "XYZMoveAction.h"
 #include "XYZGameMode.h"
 #include "XYZBlobManager.h"
 #include "XYZBlobFactory.h"
@@ -24,6 +23,8 @@ void UXYZInputManager::ExecuteInput(const FXYZInputMessage& InputMessage)
     AXYZActor* TargetActor = XYZGameState->ActorsByUID.Contains(InputMessage.XYZTargetActor) ? XYZGameState->ActorsByUID[InputMessage.XYZTargetActor] : nullptr;
     UXYZAction* XYZAction = UXYZActionFactory::CreateAction(InputMessage.SelectedActors, TargetActor, InputMessage.TargetLocation, InputMessage.bQueueInput, InputMessage.InputType, InputIndex, XYZGameState);
     UXYZBlobManager* BlobManager = XYZGameState->GetWorld()->GetAuthGameMode<AXYZGameMode>()->BlobManager;
-    BlobManager->QueueAction(XYZAction);
+    if (XYZAction) {
+        BlobManager->Actions.Add(XYZAction);
+    }
     InputIndex++;
 }

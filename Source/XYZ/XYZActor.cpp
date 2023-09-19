@@ -67,6 +67,9 @@ void AXYZActor::Tick(float DeltaTime)
             if (TargetActor) {
                 AttackMoveTarget();
             }
+            if (!TargetActor && State == EXYZUnitState::ATTACKING) {
+                SetState(EXYZUnitState::IDLE);
+            }
         }
         if (State == EXYZUnitState::FOLLOWING) {
             if (!TargetActor || TargetActor->Health <= 0.0f) {

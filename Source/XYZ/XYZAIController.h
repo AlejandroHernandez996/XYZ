@@ -16,16 +16,26 @@ class XYZ_API AXYZAIController : public AAIController
 public:
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
 	FVector CurrentTargetLocation;
+	UPROPERTY()
 	bool bIsMoving;
+	UPROPERTY()
 	bool bHasCompletedMove;
 
 	void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result);
+	UFUNCTION()
 	void XYZMoveToActor(class AXYZActor* Actor, float AcceptanceRadius = 1.0f);
+	UFUNCTION()
 	void XYZMoveToLocation(FVector TargetLocation, float AcceptanceRadius = 1.0f);
+	UFUNCTION()
 	void XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius = 1.0f);
+	UFUNCTION()
 	void XYZAttackMoveToLocation(FVector TargetLocation, float AcceptanceRadius = 1.0f);
+	UFUNCTION()
 	void XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceRadius = 1.0f);
+	UFUNCTION()
 	void XYZStopMovement();
+	UFUNCTION()
 	void RecalculateMove();
 };

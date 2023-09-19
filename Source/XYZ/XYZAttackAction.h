@@ -14,11 +14,6 @@ class XYZ_API UXYZAttackAction : public UXYZAction
 {
 	GENERATED_BODY()
 public:
-	virtual void ProcessAction(TSet<AXYZActor*> Agents) { return; }
-	virtual bool HasAgentComplete(class AXYZActor* Agent) { return true; }
-	UPROPERTY(BlueprintReadWrite, Category = "Attack")
-		float TargetLocationThreshold = 1.0f;
-	UPROPERTY(BlueprintReadWrite, Category = "Attack")
-		bool bIgnoreAllies = true;
-	bool bIsAttackMove;
+	virtual void ProcessAction(TSet<AXYZActor*> Agents) override;
+	virtual bool HasAgentComplete(class AXYZActor* Agent) override;
 };

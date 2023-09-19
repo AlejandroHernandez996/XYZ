@@ -21,12 +21,13 @@ public:
 	TArray<class AXYZActor*> SelectedActors;
 	UPROPERTY()
 	TArray<class AXYZActor*> AllActorsOnScreen;
-	FVector2D BoxStart, BoxEnd;
+	FVector2D BoxStart;
+	FVector2D BoxEnd;
 	bool bSelectActors;
-
 	FVector2D TopLeft;
 	FVector2D BottomRight;
 
+	UFUNCTION()
 	void ClearActors() {
 		SelectedActors.Empty();
 		AllActorsOnScreen.Empty();

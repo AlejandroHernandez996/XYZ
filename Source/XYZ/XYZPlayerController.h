@@ -25,7 +25,7 @@ class AXYZPlayerController : public APlayerController
 
 public:
 	AXYZPlayerController();
-
+	UPROPERTY()
 	int32 TeamId = 0;
 	/** Time Threshold to know if it was a short press */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -149,7 +149,7 @@ private:
 
 	bool bBoxSelectFlag;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class AXYZCameraController* CameraController;
 
 public:

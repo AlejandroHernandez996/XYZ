@@ -5,9 +5,14 @@
 
 void UXYZBlobManager::ProcessBlobs()
 {
+    for (; ActionIndex < Actions.Num(); ActionIndex++) {
+        QueueAction(Actions[ActionIndex]);
+    }
     for (UXYZBlob* Blob : ActiveBlobs)
     {
-        Blob->ProcessBlob();
+        if (Blob) {
+            Blob->ProcessBlob();
+        }
     }
     RemoveInactiveBlobs();
 }
@@ -46,7 +51,7 @@ void UXYZBlobManager::RemoveInactiveBlobs()
 {
     TArray<UXYZBlob*> BlobsToRemove;
     for (UXYZBlob* Blob : ActiveBlobs) {
-        if (Blob->AgentsInBlob.Num() == 0) {
+        if (Blob->AgentsInBlob.Num() == 0 || Blob->Tail->QueuedAgents.Num() == Blob->AgentsInBlob.Num()) {
             BlobsToRemove.Add(Blob);
             Blob->InitializeBlob();
             Blob->AgentsInBlob.Empty();
@@ -54,6 +59,7 @@ void UXYZBlobManager::RemoveInactiveBlobs()
     }
     for (UXYZBlob* Blob : BlobsToRemove) {
         ActiveBlobs.Remove(Blob);
+        UE_LOG(LogTemp, Warning, TEXT("Removed Blob"));
     }
 }
 

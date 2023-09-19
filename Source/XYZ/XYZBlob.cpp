@@ -5,12 +5,15 @@ void UXYZBlob::InitializeBlob() {
     Head = MakeShared<FActionList>();
     Tail = MakeShared<FActionList>();
 
-    Head.Get()->Next = Tail;
-    Tail.Get()->Previous = Head;
+    Head->Next = Tail;
+    Tail->Previous = Head;
+    Head->Action = nullptr;
+    Tail->Action = nullptr;
 
-    Head.Get()->CompletedAgents = AgentsInBlob;
+    Head->CompletedAgents = AgentsInBlob;
 
     AgentToNodeCache.Empty();
+    ActionListSize = 0;
     for (AXYZActor* Agent : AgentsInBlob) {
         if (Agent) {
             AgentToNodeCache.Add(Agent, Head);
@@ -19,7 +22,9 @@ void UXYZBlob::InitializeBlob() {
 }
 void UXYZBlob::ProcessBlob()
 {
-    if (!IsBlobProcessable()) return;
+    if (!IsBlobProcessable()) {
+        return;
+    }
 
     TSharedPtr<FActionList> CurrentNodePtr = Head->Next;
     if (!Head.Get()->CompletedAgents.IsEmpty()) {
@@ -36,7 +41,9 @@ void UXYZBlob::ProcessBlob()
     while (CurrentNodePtr != nullptr) {
         FActionList* CurrentNode = CurrentNodePtr.Get();
         UXYZAction* CurrentAction = CurrentNode->Action;
-        if (CurrentNodePtr == Tail || !CurrentAction) break;
+        if (CurrentNodePtr == Tail || !CurrentAction) {
+            break;
+        }
         // Process all queued Agents
         // Add queued agents to processing set
         // clear queued agent set
@@ -55,9 +62,16 @@ void UXYZBlob::ProcessBlob()
         if (!CurrentNode->ProcessingAgents.IsEmpty()) {
             TSet<AXYZActor*> AgentsToBeCompleted;
             for (AXYZActor* Agent : CurrentNode->ProcessingAgents) {
-                if (Agent && CurrentAction->HasAgentComplete(Agent)) {
-                    AgentsToBeCompleted.Add(Agent);
+                if (Agent) {
+                    if (CurrentAction) {
+                        if (CurrentAction->HasAgentComplete(Agent)) {
+                            AgentsToBeCompleted.Add(Agent);
+                        }
+                    }
                 }
+                //if (Agent && CurrentAction && CurrentAction->HasAgentComplete(Agent)) {
+                //    AgentsToBeCompleted.Add(Agent);
+                //}
             }
             for (AXYZActor* Agent : AgentsToBeCompleted) {
                 CurrentNode->ProcessingAgents.Remove(Agent);
@@ -80,6 +94,22 @@ void UXYZBlob::ProcessBlob()
         }
         CurrentNodePtr = CurrentNodePtr.Get()->Next;
     }
+    CurrentNodePtr = Head->Next;
+    while (CurrentNodePtr != Tail) {
+        if (CurrentNodePtr->QueuedAgents.IsEmpty() &&
+            CurrentNodePtr->ProcessingAgents.IsEmpty() &&
+            CurrentNodePtr->CompletedAgents.IsEmpty()) {
+            CurrentNodePtr->Previous->Next = CurrentNodePtr->Next;
+            CurrentNodePtr->Next->Previous = CurrentNodePtr->Previous;
+            CurrentNodePtr->Action = nullptr;
+            ActionListSize--;
+        }
+        else {
+            break;
+        }
+        CurrentNodePtr = CurrentNodePtr.Get()->Next;
+    }
+
 }
 
 void UXYZBlob::AddAction(UXYZAction* Action) {

@@ -12,12 +12,13 @@ class XYZ_API UXYZInputManager : public UObject
 public:
     UXYZInputManager();
 
+    UFUNCTION()
     void QueueInput(const FXYZInputMessage& InputMessage);
-    void DequeueInput();
+    UFUNCTION()
     void ExecuteInput(const FXYZInputMessage& InputMessage);
-    int32 InputIndex = 0;
 
     UPROPERTY()
+    int32 InputIndex = 0;
+    UPROPERTY()
     class AXYZGameState* XYZGameState;
-    
 };

@@ -17,43 +17,48 @@ class XYZ_API UXYZSelectionStructure : public UObject
 	GENERATED_BODY()
 	
 
-private:
+public:
 	//<ActorId, <UniqueActorId,XYZActor>>
 	TMap<int32, TMap<int32, AXYZActor*>> SelectedActors;
     TArray<TMap<int32, TMap<int32, AXYZActor*>>> ControlGroups;
+    UPROPERTY()
     AXYZActor* SelectedEnemy;
 
+    UPROPERTY()
+        int32 ActiveIndex;
+    UPROPERTY()
+        int32 Num;
 public:
-
     void Add(AXYZActor* Actor);
     void Add(TArray<AXYZActor*> Actors);
     void Remove(AXYZActor* Actor);
     void Remove(int32 ActorUId);
     void Remove(TArray<AXYZActor*> Actors);
-
-    void InitControlGroups(int32 ControlGroupCount);
-    void SetControlGroup(int32 ControlGroupIndex);
-    void AddToControlGroup(int32 ControlGroupIndex);
-    void SelectControlGroup(int32 ControlGroupIndex);
-    void RemoveFromControlGroups(int32 ActorUId);
-
-    void SelectEnemyActor(AXYZActor* Actor);
-
-    TArray<AXYZActor*> ToArray();
-    TArray<int32> ToActorIdArray();
-
     bool Contains(AXYZActor* Actor);
     bool Contains(int32 ActorUId);
 
+    UFUNCTION()
+    void InitControlGroups(int32 ControlGroupCount);
+    UFUNCTION()
+    void SetControlGroup(int32 ControlGroupIndex);
+    UFUNCTION()
+    void AddToControlGroup(int32 ControlGroupIndex);
+    UFUNCTION()
+    void SelectControlGroup(int32 ControlGroupIndex);
+    UFUNCTION()
+    void RemoveFromControlGroups(int32 ActorUId);
+    
+    UFUNCTION()
+    void SelectEnemyActor(AXYZActor* Actor);
+    UFUNCTION()
+    TArray<AXYZActor*> ToArray();
+    UFUNCTION()
+    TArray<int32> ToActorIdArray();
+
+    UFUNCTION()
     void Empty();
-
+    UFUNCTION()
     bool IsEmpty();
-
+    UFUNCTION()
     FString ToString() const;
-
-    int32 ActiveIndex;
-
-public:
-    int32 Num;
-
 };

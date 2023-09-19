@@ -96,6 +96,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Decal")
         UDecalComponent* SelectionDecal;
 
+    UFUNCTION()
     void ShowDecal(bool bShowDecal, EXYZDecalType DecalType);
 
     UFUNCTION()
