@@ -3,33 +3,24 @@
 
 #include "XYZAction.h"
 #include "XYZActor.h"
-#include "XYZAIController.h"
-#include "XYZUnitState.h"
 
-void UXYZAction::TryAction(float DeltaTime) {
-    AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
-    if (!AIController) {
-        CancelAction();
-        return;
-    }
-    if (ActionState == EXYZActionState::QUEUED) {
-        StartAction();
-    }
-    if (!IsFlaggedForDeuque()) {
-        ProcessAction(DeltaTime);
-    }
+AXYZActor* UXYZAction::FindCenterAgent(TSet<AXYZActor*> Agents, FVector CenterLocation) {
+    if (Agents.IsEmpty()) return nullptr;
+    TArray<AXYZActor*> SortedAgents = Agents.Array();
+    Algo::Sort(SortedAgents, [this, CenterLocation](AXYZActor* A, AXYZActor* B) {
+        float DistanceA = FVector::DistSquared(A->GetActorLocation(), CenterLocation);
+        float DistanceB = FVector::DistSquared(B->GetActorLocation(), CenterLocation);
+        return DistanceA < DistanceB;
+        });
+
+    return SortedAgents[0];
 }
 
-void UXYZAction::CompleteAction() {
-    ActionState = EXYZActionState::COMPLETE;
-    Actor->State = EXYZUnitState::IDLE;
-}
-
-void UXYZAction::CancelAction() {
-    ActionState = EXYZActionState::CANCELLED;
-    Actor->State = EXYZUnitState::IDLE;
-}
-
-void UXYZAction::StartAction() {
-    ActionState = EXYZActionState::IN_PROGRESS;
+FVector UXYZAction::FindInitialCenterLocation(TSet<AXYZActor*> Agents) {
+    FVector Center = FVector::ZeroVector;
+    for (AXYZActor* Actor : Agents)
+    {
+        Center += Actor->GetActorLocation();
+    }
+    return Center /= Agents.Num();
 }

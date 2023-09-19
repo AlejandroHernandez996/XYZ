@@ -40,7 +40,9 @@ void AXYZActor::BeginPlay()
     Super::BeginPlay();
 
     TArray<UActorComponent*> DecalComponents = GetComponentsByClass(UDecalComponent::StaticClass());
-    SelectionDecal = Cast<UDecalComponent>(DecalComponents[0]);
+    if (DecalComponents.Num() == 1) {
+        SelectionDecal = Cast<UDecalComponent>(DecalComponents[0]);
+    }
 }
 
 void AXYZActor::Tick(float DeltaTime)
@@ -97,6 +99,7 @@ void AXYZActor::QueueAction(UXYZAction* Action) {
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType) {
 
+    if (!SelectionDecal) return;
     if (!bShowDecal) {
         SelectionDecal->SetMaterial(0, DecalMaterials[EXYZDecalType::NEUTRAL]);
     }
@@ -115,6 +118,12 @@ void AXYZActor::Attack() {
             bIsAttackOnCooldown = false;
             }, AttackRate, false);
         TargetActor->Health = FMath::Clamp(TargetActor->Health - AttackDamage, 0.0f, TargetActor->MaxHealth);
+        FVector Direction = TargetActor->GetActorLocation() - GetActorLocation();
+        Direction.Z = 0; 
+        Direction.Normalize();
+
+        FRotator TargetRotation = Direction.Rotation();
+        SetActorRotation(TargetRotation);
         UE_LOG(LogTemp, Warning, TEXT("Attacking for %d enemy health %d"), AttackDamage, TargetActor->Health);
     }
 }

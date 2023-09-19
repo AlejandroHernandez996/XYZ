@@ -5,33 +5,29 @@
 #include "XYZActor.h"
 #include "XYZBlob.generated.h"
 
-UCLASS(Abstract)
+UCLASS()
 class XYZ_API UXYZBlob : public UObject
 {
     GENERATED_BODY()
 
 public:
     int32 BlobId;
-
-    bool bInProgress;
-    bool bOverrideBlob;
-
-    FVector TargetLocation;
-    FVector InitialCenter;
-    float AgentDensity;
-
-    UPROPERTY()
-        class AXYZActor* CenterAgent;
     UPROPERTY()
     TSet<AXYZActor*> AgentsInBlob;
-    TQueue<UXYZAction*> ActionQueue;
 
-    UPROPERTY()
-        class AXYZActor* TargetActor;
+    TMap<AXYZActor*, TSharedPtr<FActionList>> AgentToNodeCache;
+
+    int32 ActionListSize = 0;
+    TSharedPtr<FActionList> Head;
+    TSharedPtr<FActionList> Tail;
 
     virtual void ProcessBlob();
+    void InitializeBlob();
+    bool IsBlobProcessable();
     void FindCenterAgent();
     void FindInitialCenterLocation();
+    void AddAction(class UXYZAction* Action);
+    void RemoveAgent(AXYZActor* Agent);
 
     FString ToString() const
     {
@@ -53,26 +49,24 @@ public:
 };
 
 USTRUCT()
-struct FAgentPack
+struct FActionList
 {
     GENERATED_USTRUCT_BODY()
+public:
+    UPROPERTY()
+        class UXYZAction* Action;
+        TSharedPtr<FActionList> Next;
+        TSharedPtr<FActionList> Previous;
+    UPROPERTY()
+        TSet<AXYZActor*> QueuedAgents;
+    UPROPERTY()
+        TSet<AXYZActor*> ProcessingAgents;
+    UPROPERTY()
+        TSet<AXYZActor*> CompletedAgents;
 
-        float DISTANCE_FROM_AGENT = 120.0f;
-    TArray<AXYZActor*> Agents;
-    TArray<FVector> SectorDirections;
-    TSharedPtr<FAgentPack> NextPack;
-    AXYZActor* CenterAgent;
-
-    int32 GetLayerNodeCount(int32 Layer) {
-        return 1 + 3 * Layer * (Layer + 1);
-    }
-
-    void SetSectorDirections(int32 NumberOfSectors) {
-        for (int32 i = 0; i < NumberOfSectors; ++i)
-        {
-            float Angle = i * 2 * PI / NumberOfSectors; // Divide circle into 6 sectors
-            FVector Direction(FMath::Cos(Angle), FMath::Sin(Angle), 0);
-            SectorDirections.Add(Direction);
-        }
+    void RemoveAgent(AXYZActor* Agent) {
+        QueuedAgents.Remove(Agent);
+        ProcessingAgents.Remove(Agent);
+        CompletedAgents.Remove(Agent);
     }
 };

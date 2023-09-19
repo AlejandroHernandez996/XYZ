@@ -4,42 +4,83 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-void UXYZMoveAction::ProcessAction(float DeltaTime)
+void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> Agents)
 {
-    Super::ProcessAction(DeltaTime);
+    FVector CenterLocation = FindInitialCenterLocation(Agents);
+    AXYZActor* CenterAgent = FindCenterAgent(Agents, CenterLocation);
 
-    AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
-    if (!AIController) {
-        return;
-    }
-    if (!Actor->GetController<AXYZAIController>()->bIsMoving)  // Replace with your actual distance tolerance if necessary
+    FVector MinBounds = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
+    FVector MaxBounds = FVector(FLT_MIN, FLT_MIN, FLT_MIN);
+    for (AXYZActor* Actor : Agents)
     {
-        AIController->XYZMoveToLocation(TargetLocation);
-        AIController->bIsMoving = true;
+        FVector Location = Actor->GetActorLocation();
+        MinBounds = MinBounds.ComponentMin(Location);
+        MaxBounds = MaxBounds.ComponentMax(Location);
     }
-    else if(AIController->bHasCompletedMove)
+
+    float Area = (MaxBounds.X - MinBounds.X) * (MaxBounds.Y - MinBounds.Y);
+    float Density = (float)Agents.Num() / Area;
+
+    if (Density < 0.000040f)
     {
-        CompleteAction();
-        AIController->bIsMoving = false;
-        AIController->bHasCompletedMove = false;
+        TArray<AXYZActor*> SortedAgents = Agents.Array();
+        Algo::Sort(SortedAgents, [this, CenterLocation](AXYZActor* A, AXYZActor* B) {
+            float DistanceA = FVector::DistSquared(A->GetActorLocation(), CenterLocation);
+            float DistanceB = FVector::DistSquared(B->GetActorLocation(), CenterLocation);
+            return DistanceA < DistanceB;
+            });
+        TSharedPtr<FAgentPack> AgentPack = MakeShared<FAgentPack>();
+        FillPack(AgentPack.Get(), SortedAgents, 0);
+        MovePack(AgentPack.Get(), 0);
     }
+    else {
+        for (AXYZActor* Actor : Agents)
+        {
+            FVector ActorLocation = Actor->GetActorLocation();
+            FVector DirectonFromCenter = ActorLocation - CenterLocation;
+            FVector AgentTargetLocation = TargetLocation + DirectonFromCenter;
+            Actor->GetController<AXYZAIController>()->XYZMoveToLocation(AgentTargetLocation);
+        }
+    }
+
 }
 
-void UXYZMoveAction::CancelAction() {
-    Super::CancelAction();
-    AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
-    if (!AIController) {
-        return;
+void UXYZMoveAction::FillPack(FAgentPack* AgentPack, TArray<AXYZActor*>& SortedAgents, int32 LayerIndex) {
+    int32 LayerNodes = AgentPack->GetLayerNodeCount(LayerIndex);
+    AgentPack->SetSectorDirections(LayerNodes);
+    for (int i = 0; i < AgentPack->SectorDirections.Num(); i++) {
+        if (SortedAgents.IsEmpty()) {
+            return;
+        }
+        FVector CurrentTargetLocation = TargetLocation + AgentPack->DISTANCE_FROM_AGENT * LayerIndex * AgentPack->SectorDirections[i];
+        Algo::Sort(SortedAgents, [this, CurrentTargetLocation](AXYZActor* A, AXYZActor* B) {
+            float DistanceA = FVector::DistSquared(A->GetActorLocation(), CurrentTargetLocation);
+            float DistanceB = FVector::DistSquared(B->GetActorLocation(), CurrentTargetLocation);
+            return DistanceA < DistanceB;
+            });
+        AgentPack->Agents.Add(SortedAgents[0]);
+        SortedAgents.RemoveAt(0);
     }
-    AIController->bIsMoving = false;
-    AIController->bHasCompletedMove = false;
+
+    AgentPack->NextPack = MakeShared<FAgentPack>();
+    FillPack(AgentPack->NextPack.Get(), SortedAgents, LayerIndex + 1);
+
 }
-void UXYZMoveAction::CompleteAction() {
-    Super::CompleteAction();
-    AXYZAIController* AIController = Actor->GetController<AXYZAIController>();
-    if (!AIController) {
+void UXYZMoveAction::MovePack(FAgentPack* AgentPack, int32 Level) {
+    if (!AgentPack)return;
+    if (AgentPack->Agents.Num() == 0) {
         return;
     }
-    AIController->bIsMoving = false;
-    AIController->bHasCompletedMove = false;
+    for (int i = 0; i < AgentPack->Agents.Num(); i++) {
+        if (AgentPack->Agents[i]) {
+            AgentPack->Agents[i]->TargetLocation = TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i];
+            AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
+        }
+    }
+    MovePack(AgentPack->NextPack.Get(), Level + 1);
+}
+
+bool UXYZMoveAction::HasAgentComplete(AXYZActor* Agent) {
+
+    return Agent->State == EXYZUnitState::IDLE;
 }

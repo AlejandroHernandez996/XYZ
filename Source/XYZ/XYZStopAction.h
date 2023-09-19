@@ -15,5 +15,6 @@ class XYZ_API UXYZStopAction : public UXYZAction
 	GENERATED_BODY()
 
 public:
-	virtual void ProcessAction(float DeltaTime) override;
+    virtual void ProcessAction(TSet<AXYZActor*> Agents) override;
+    virtual bool HasAgentComplete(AXYZActor* Agent) { return true; }
 };

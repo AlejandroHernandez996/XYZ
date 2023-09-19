@@ -5,12 +5,11 @@
 #include "XYZActor.h"
 #include "XYZAIController.h"
 
-void UXYZStopAction::ProcessAction(float DeltaTime)
+void UXYZStopAction::ProcessAction(TSet<AXYZActor*> Agents)
 {
-    if (!Actor) {
-        CancelAction();
-        return;
-    }
-    Actor->GetController<AXYZAIController>()->StopMovement();
-    CompleteAction();
+	for (AXYZActor* Agent : Agents) {
+		if (Agent && Agent->GetXYZAIController()) {
+			Agent->GetXYZAIController()->XYZStopMovement();
+		}
+	}
 }

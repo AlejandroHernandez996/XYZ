@@ -3,16 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "XYZBlob.h"
-#include "XYZSimpleAttackTargetBlob.generated.h"
+#include "XYZActor.h"
+#include "XYZBuilding.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class XYZ_API UXYZSimpleAttackTargetBlob : public UXYZBlob
+class XYZ_API AXYZBuilding : public AXYZActor
 {
 	GENERATED_BODY()
 public:
-	virtual void ProcessBlob() override;
+	virtual void BeginPlay() override;
 };

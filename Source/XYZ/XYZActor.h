@@ -120,6 +120,7 @@ public:
             State = UnitState;
         }
     bool bCancelActionFlag;
+    bool bCanMove = true;
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
