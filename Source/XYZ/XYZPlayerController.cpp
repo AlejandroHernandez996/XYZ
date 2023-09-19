@@ -61,11 +61,49 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
-	if (bAttackModifier || !SelectionStructure->IsEmpty() && HitActor && HitActor->TeamId != TeamId) {
-		CurrentMouseCursor = EMouseCursor::Crosshairs;
+	bool bHoveringEnemy = HitActor && HitActor->TeamId != TeamId;
+
+	// Holding A and has a selection if not just default to regular cursor logic
+	if (bAttackModifier && !SelectionStructure->IsEmpty()) {
+
+		// Hovering an actor
+		if (HitActor) {
+			if (bHoveringEnemy) {
+				// Red Crosshair
+				CurrentMouseCursor = EMouseCursor::Crosshairs;
+			}
+			else {
+				// Yellow Crosshair
+				CurrentMouseCursor = EMouseCursor::ResizeUpDown;
+			}
+		}
+		else {
+			// Green Crosshair
+			CurrentMouseCursor = EMouseCursor::ResizeLeftRight;
+		}
 	}
-	else{
-		CurrentMouseCursor = EMouseCursor::Default;
+	else {
+		if (SelectionStructure->IsEmpty()) {
+			if (HitActor && bHoveringEnemy) {
+				CurrentMouseCursor = EMouseCursor::TextEditBeam;
+			}
+			else {
+				CurrentMouseCursor = EMouseCursor::Default;
+			}
+		}
+		else {
+			if (HitActor) {
+				if (bHoveringEnemy) {
+					CurrentMouseCursor = EMouseCursor::GrabHand;
+				}
+				else {
+					CurrentMouseCursor = EMouseCursor::Hand;
+				}
+			}
+			else {
+				CurrentMouseCursor = EMouseCursor::Default;
+			}
+		}
 	}
 
 	float x, y;
@@ -131,6 +169,11 @@ void AXYZPlayerController::OnControlGroupInputStarted(int32 ControlGroupIndex) {
 		SelectionStructure->SelectControlGroup(ControlGroupIndex);
 		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 	}
+	TArray<int32> ControlGroups;
+	for (TMap<int32, TMap<int32, AXYZActor*>> ControlGroup : SelectionStructure->ControlGroups) {
+		ControlGroups.Add(ControlGroup.Num());
+	}
+	OnControlGroupEvent.Broadcast(ControlGroups);
 }
 
 void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
@@ -389,6 +432,12 @@ void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
 			}
 			SelectionStructure->RemoveFromControlGroups(ActorUId);
 			OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
+
+			TArray<int32> ControlGroups;
+			for (TMap<int32, TMap<int32, AXYZActor*>> ControlGroup : SelectionStructure->ControlGroups) {
+				ControlGroups.Add(ControlGroup.Num());
+			}
+			OnControlGroupEvent.Broadcast(ControlGroups);
 		}
 	}
 	GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(ActorUId);

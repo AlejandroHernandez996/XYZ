@@ -17,6 +17,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxEvent, float, x, float
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxTriggeredEvent, float, x, float, y);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxReleasedEvent, float, x, float, y);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSelectionIdsEvent, const TArray<int32>&, SelectionActorIds);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FControlGroupEvent, const TArray<int32>&, ControlGroups);
 
 UCLASS()
 class AXYZPlayerController : public APlayerController
@@ -99,6 +100,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 		FSelectionIdsEvent OnSelectionIdsEvent;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+		FControlGroupEvent OnControlGroupEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool bAllowMouseInput = true;
