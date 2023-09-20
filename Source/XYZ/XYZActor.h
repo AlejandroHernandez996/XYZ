@@ -32,7 +32,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
         int32 TeamId;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)
         EXYZUnitState State = EXYZUnitState::IDLE;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")

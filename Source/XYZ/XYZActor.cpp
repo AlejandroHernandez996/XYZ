@@ -97,6 +97,7 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifet
     DOREPLIFETIME(AXYZActor, AttackRate);
     DOREPLIFETIME(AXYZActor, AttackRange);
     DOREPLIFETIME(AXYZActor, UActorId);
+    DOREPLIFETIME(AXYZActor, State);
 }
 
 void AXYZActor::QueueAction(UXYZAction* Action) {
@@ -198,31 +199,24 @@ AXYZActor* AXYZActor::ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> A
     CollisionParams.AddIgnoredActor(this);
     bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Pawn, CollisionParams);
 
-    if (bHit && HitResult.GetActor() && 
-        HitResult.GetActor()->IsA(AXYZActor::StaticClass()) && 
-        !HitResult.GetActor()->IsA(AXYZBuilding::StaticClass()) && 
-        !HitResult.GetActor()->IsA(AXYZWorker::StaticClass()))
+    if (!bHit || !HitResult.GetActor()) return nullptr;
+    if(!HitResult.GetActor()->IsA(AXYZActor::StaticClass())) return nullptr;
+    if (HitResult.GetActor()->IsA(AXYZBuilding::StaticClass())) return nullptr;
+    
+    AXYZActor* OtherXYZActor = Cast<AXYZActor>(HitResult.GetActor());
+    
+    if (!OtherXYZActor || OtherXYZActor == TargetActor) return nullptr;
+    if (OtherXYZActor->State == EXYZUnitState::IDLE && !ActorsFound.Contains(OtherXYZActor) && OtherXYZActor->TeamId == TeamId)
     {
-        AXYZActor* OtherXYZActor = Cast<AXYZActor>(HitResult.GetActor());
-       
-        if (!OtherXYZActor || OtherXYZActor == TargetActor) return nullptr;
-        if (OtherXYZActor->State == EXYZUnitState::IDLE && !ActorsFound.Contains(OtherXYZActor) && OtherXYZActor->TeamId == TeamId)
-        {
-            FVector Direction = End - Start;
-            Direction.Normalize();
-            FVector PushLocation = (Direction * 100.0f) + OtherXYZActor->GetActorLocation();
-            if (Direction == GetActorForwardVector()) {
-                PushLocation = (OtherXYZActor->GetActorRightVector() * 100.0f) + OtherXYZActor->GetActorLocation();
-            }
-            OtherXYZActor->GetXYZAIController()->XYZMoveToLocation(PushLocation);
-            return OtherXYZActor;
+        FVector Direction = End - Start;
+        Direction.Normalize();
+        FVector PushLocation = (Direction * 100.0f) + OtherXYZActor->GetActorLocation();
+        if (Direction == GetActorForwardVector()) {
+            PushLocation = (OtherXYZActor->GetActorRightVector() * 100.0f) + OtherXYZActor->GetActorLocation();
         }
-        if (OtherXYZActor && OtherXYZActor->State == EXYZUnitState::ATTACKING && !ActorsFound.Contains(OtherXYZActor)) {
-            GetXYZAIController()->RecalculateMove();
-            return OtherXYZActor;
-        }
+        OtherXYZActor->GetXYZAIController()->XYZMoveToLocation(PushLocation);
+        return OtherXYZActor;
     }
-
     return nullptr;
 }
 

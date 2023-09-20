@@ -37,18 +37,17 @@ void AXYZAIController::XYZMoveToActor(AXYZActor* Actor, float AcceptanceRadius) 
         XYZStopMovement();
         return;
     }
-    MoveToActor(Actor, AcceptanceRadius, true, true, false, false);
     GetPawn<AXYZActor>()->SetState(EXYZUnitState::MOVING);
     CurrentTargetLocation = Actor->GetActorLocation();
     bIsMoving = true;
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCapsuleRadius(35.0f);
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCollisionProfileName("Pawn");
     GetPawn<AXYZActor>()->GetCharacterMovement()->bUseRVOAvoidance = true;
+    MoveToActor(Actor, AcceptanceRadius, true, true, false, false);
 }
 
 void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float AcceptanceRadius) {
     if (!GetPawn<AXYZActor>()) return;
-    MoveToLocation(TargetLocation, AcceptanceRadius, true, true, false, false);
     GetPawn<AXYZActor>()->SetState(EXYZUnitState::MOVING);
     CurrentTargetLocation = TargetLocation;
     bIsMoving = true;
@@ -56,17 +55,18 @@ void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float Acceptanc
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCapsuleRadius(35.0f);
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCollisionProfileName("Pawn");
     GetPawn<AXYZActor>()->GetCharacterMovement()->bUseRVOAvoidance = true;
+    MoveToLocation(TargetLocation, AcceptanceRadius, true, true, false, false);
 }
 
 void AXYZAIController::XYZAttackMoveToLocation(FVector TargetLocation, float AcceptanceRadius) {
     if (!GetPawn<AXYZActor>()) return;
-    MoveToLocation(TargetLocation, AcceptanceRadius, true, true, false, false);
     GetPawn<AXYZActor>()->SetState(EXYZUnitState::ATTACK_MOVING);
     CurrentTargetLocation = TargetLocation;
     bIsMoving = true;
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCapsuleRadius(35.0f);
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCollisionProfileName("Pawn");
     GetPawn<AXYZActor>()->GetCharacterMovement()->bUseRVOAvoidance = true;
+    MoveToLocation(TargetLocation, AcceptanceRadius, true, true, false, false);
 }
 
 void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceRadius) {
@@ -74,7 +74,6 @@ void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceR
         XYZStopMovement();
         return;
     }
-    MoveToActor(Actor, AcceptanceRadius, true, true, false, false);
     CurrentTargetLocation = Actor->GetActorLocation();
     GetPawn<AXYZActor>()->SetState(EXYZUnitState::ATTACK_MOVING);
     GetPawn<AXYZActor>()->TargetActor = Actor;
@@ -82,6 +81,7 @@ void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceR
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCapsuleRadius(35.0f);
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCollisionProfileName("Pawn");
     GetPawn<AXYZActor>()->GetCharacterMovement()->bUseRVOAvoidance = true;
+    MoveToActor(Actor, AcceptanceRadius, true, true, false, false);
 }
 
 void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius) {
@@ -89,7 +89,6 @@ void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius)
         XYZStopMovement();
         return;
     }
-    MoveToActor(Actor, AcceptanceRadius, true, true, false, false);
     CurrentTargetLocation = Actor->GetActorLocation();
     GetPawn<AXYZActor>()->SetState(EXYZUnitState::FOLLOWING);
     GetPawn<AXYZActor>()->TargetActor = Actor;
@@ -97,6 +96,7 @@ void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius)
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCapsuleRadius(35.0f);
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCollisionProfileName("Pawn");
     GetPawn<AXYZActor>()->GetCharacterMovement()->bUseRVOAvoidance = true;
+    MoveToActor(Actor, AcceptanceRadius, true, true, false, false);
 }
 
 void AXYZAIController::XYZGatherResource(AXYZResourceActor* Resource, float AcceptanceRadius) {
@@ -105,19 +105,21 @@ void AXYZAIController::XYZGatherResource(AXYZResourceActor* Resource, float Acce
         return;
     }
     GetPawn<AXYZActor>()->GetCharacterMovement()->bUseRVOAvoidance = false;
-    // Assume TargetActor is the actor you are facing.
+    GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCollisionProfileName("MineralWalk");
+    GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCapsuleRadius(35.0f);
+    GetPawn<AXYZActor>()->SetState(EXYZUnitState::GATHERING);
+    GetPawn<AXYZActor>()->TargetActor = Resource;
+
     UCapsuleComponent* CapsuleComp = Resource->GetCapsuleComponent();
     FVector MyLocation = GetPawn<AXYZActor>()->GetActorLocation();
     FVector TargetLocation = Resource->GetActorLocation();
     FVector ClosestPoint;
     CapsuleComp->GetClosestPointOnCollision(MyLocation, ClosestPoint);
+
     MoveToLocation(ClosestPoint, AcceptanceRadius, true, true, false, false);
-    CurrentTargetLocation = Resource->GetActorLocation();
-    GetPawn<AXYZActor>()->SetState(EXYZUnitState::GATHERING);
-    GetPawn<AXYZActor>()->TargetActor = Resource;
+
     bIsMoving = true;
-    GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCapsuleRadius(35.0f);
-    GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCollisionProfileName("MineralWalk");
+    CurrentTargetLocation = ClosestPoint;
 }
 
 void AXYZAIController::XYZReturnResource(AXYZBaseBuilding* Base, float AcceptanceRadius) {
@@ -126,29 +128,32 @@ void AXYZAIController::XYZReturnResource(AXYZBaseBuilding* Base, float Acceptanc
         return;
     }
     GetPawn<AXYZActor>()->GetCharacterMovement()->bUseRVOAvoidance = false;
+    GetPawn<AXYZActor>()->SetState(EXYZUnitState::RETURNING);
+    GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCapsuleRadius(35.0f);
+    GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCollisionProfileName("MineralWalk");
+
     UCapsuleComponent* CapsuleComp = Base->GetCapsuleComponent();
     FVector MyLocation = GetPawn<AXYZActor>()->GetActorLocation();
     FVector TargetLocation = Base->GetActorLocation();
     FVector ClosestPoint;
     CapsuleComp->GetClosestPointOnCollision(MyLocation, ClosestPoint);
+
     MoveToLocation(ClosestPoint, AcceptanceRadius, true, true, false, false);
-    CurrentTargetLocation = Base->GetActorLocation();
-    GetPawn<AXYZActor>()->SetState(EXYZUnitState::RETURNING);
+
     bIsMoving = true;
-    GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCapsuleRadius(35.0f);
-    GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCollisionProfileName("MineralWalk");
+    CurrentTargetLocation = ClosestPoint;
 }
 
 void AXYZAIController::XYZStopMovement() {
     if (!GetPawn<AXYZActor>()) return;
     StopMovement();
     GetPawn<AXYZActor>()->GetCharacterMovement()->bUseRVOAvoidance = true;
-    CurrentTargetLocation = GetPawn<AXYZActor>()->GetActorLocation();
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCollisionProfileName("Pawn");
-    bIsMoving = false;
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCapsuleRadius(GetPawn<AXYZActor>()->InitialCapsuleRadius);
+    bIsMoving = false;
+    CurrentTargetLocation = GetPawn<AXYZActor>()->GetActorLocation();
 
-    if (GetPawn<AXYZActor>()->State != EXYZUnitState::ATTACKING && GetPawn<AXYZActor>()->State == EXYZUnitState::RETURNING && GetPawn<AXYZActor>()->State == EXYZUnitState::GATHERING) {
+    if (GetPawn<AXYZActor>()->State != EXYZUnitState::ATTACKING) {
         GetPawn<AXYZActor>()->SetState(EXYZUnitState::IDLE);
     }
 }
@@ -157,11 +162,12 @@ void AXYZAIController::XYZHold() {
     if (!GetPawn<AXYZActor>()) return;
     StopMovement();
     GetPawn<AXYZActor>()->GetCharacterMovement()->bUseRVOAvoidance = true;
-    CurrentTargetLocation = GetPawn<AXYZActor>()->GetActorLocation();
     GetPawn<AXYZActor>()->SetState(EXYZUnitState::HOLD);
-    bIsMoving = false;
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCapsuleRadius(GetPawn<AXYZActor>()->InitialCapsuleRadius);
     GetPawn<AXYZActor>()->GetCapsuleComponent()->SetCollisionProfileName("Pawn");
+    bIsMoving = false;
+    CurrentTargetLocation = GetPawn<AXYZActor>()->GetActorLocation();
+
 }
 void AXYZAIController::RecalculateMove() {
     if (!GetPawn<AXYZActor>()) return;
