@@ -63,7 +63,7 @@ void AXYZWorker::Gather() {
             bIsGatheringResource = true;
             GetWorld()->GetTimerManager().SetTimer(AttackTimer, this, &AXYZWorker::StartReturningResource, GatherRate, false);
             TargetActor->Health = FMath::Clamp(TargetActor->Health - AttackDamage, 0.0f, TargetActor->MaxHealth);
-            GetXYZAIController()->XYZStopMovement();
+            GetXYZAIController()->StopMovement();
         }
        
     }

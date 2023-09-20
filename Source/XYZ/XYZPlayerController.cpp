@@ -211,7 +211,9 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			// Fire the SelectionBox event
 			OnSelectionBox.Broadcast(BoxSelectStart.X, BoxSelectStart.Y);
 			bBoxSelectFlag = true;
-			CameraController->bBlockMovementFlag = true;
+			if (CameraController) {
+				CameraController->bBlockMovementFlag = true;
+			}
 			break;
 		case EXYZInputType::SECONDARY_INPUT:
 			if (!bAllowMouseInput) return;
@@ -335,7 +337,9 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		}
 		bBoxSelectFlag = false;
 		GetHUD<AXYZHUD>()->bSelectActors = false;
-		CameraController->bBlockMovementFlag = false;
+		if (CameraController) {
+			CameraController->bBlockMovementFlag = false;
+		}
 		OnSelectionBoxReleased.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
 		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		break;
