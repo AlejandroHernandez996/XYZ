@@ -4,6 +4,8 @@ Saved/
 Intermediate/
 Build/
 Binaries/
+.vs/
+*.suo
 *.VC.db
 *.opensdf
 *.sdf
