@@ -8,4 +8,5 @@ enum class EXYZResourceType : uint8
 {
 	MINERAL,
 	GAS,
+	NONE
 };

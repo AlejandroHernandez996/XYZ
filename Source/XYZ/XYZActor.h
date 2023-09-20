@@ -68,9 +68,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
         float VisionRange;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats", Replicated)
-        float CapsuleRadius = 50.0f;
-
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Decal")
         TMap<EXYZDecalType, UMaterialInterface*> DecalMaterials;
 
@@ -104,24 +101,12 @@ public:
     UFUNCTION()
         AXYZActor* FindClosestActor(bool bIgnoreFriendlyActors);
     UFUNCTION()
-    void SetState(EXYZUnitState UnitState){
-        switch (State) {
-            case EXYZUnitState::IDLE:
-                TargetActor = nullptr;
-                break;
-            case EXYZUnitState::MOVING:
-                TargetActor = nullptr;
-                break;
-            case EXYZUnitState::ATTACK_MOVING:
-                break;
-            case EXYZUnitState::ATTACKING:
-                break;
-            }
-            PreviousState = State;
-            State = UnitState;
-        }
+        void SetState(EXYZUnitState UnitState);
+
     bool bCancelActionFlag;
     bool bCanMove = true;
+
+    float InitialCapsuleRadius;
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")

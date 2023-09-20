@@ -22,8 +22,9 @@ public:
 	TMap<int32, TMap<int32, AXYZActor*>> SelectedActors;
     TArray<TMap<int32, TMap<int32, AXYZActor*>>> ControlGroups;
     UPROPERTY()
-    AXYZActor* SelectedEnemy;
-
+        class AXYZActor* SelectedEnemy;
+    UPROPERTY()
+        class AXYZActor* SelectedResource;
     UPROPERTY()
         int32 ActiveIndex;
     UPROPERTY()
@@ -50,6 +51,8 @@ public:
     
     UFUNCTION()
     void SelectEnemyActor(AXYZActor* Actor);
+    UFUNCTION()
+    void SelectResource(AXYZActor* Resource);
     UFUNCTION()
     TArray<AXYZActor*> ToArray();
     UFUNCTION()

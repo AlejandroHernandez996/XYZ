@@ -11,5 +11,7 @@ enum class EXYZUnitState : uint8
 	ATTACKING,
 	ATTACK_MOVING,
 	FOLLOWING,
+	RETURNING,
+	GATHERING,
 	HOLD,
 };

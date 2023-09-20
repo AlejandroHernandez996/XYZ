@@ -14,5 +14,6 @@ enum class EXYZInputType : uint8
 	NONE,
 	CLEAR,
 	EVADE,
+	HOLD,
 	STOP,
 };

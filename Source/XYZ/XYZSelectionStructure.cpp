@@ -4,6 +4,7 @@
 #include "XYZSelectionStructure.h"
 #include "Components/DecalComponent.h"
 #include "XYZDecalType.h"
+#include "XYZResourceActor.h"
 #include "XYZActor.h"
 
 void UXYZSelectionStructure::Add(AXYZActor* Actor) {
@@ -33,6 +34,10 @@ void UXYZSelectionStructure::Add(TArray<AXYZActor*> Actors) {
     if (SelectedEnemy) {
         SelectedEnemy->ShowDecal(false, EXYZDecalType::ENEMY);
         SelectedEnemy = nullptr;
+    }
+    if (SelectedResource) {
+        SelectedResource->ShowDecal(false, EXYZDecalType::RESOURCE);
+        SelectedResource = nullptr;
     }
     
     for (auto Actor : Actors) {
@@ -156,6 +161,17 @@ void UXYZSelectionStructure::SelectEnemyActor(AXYZActor* Actor) {
     Actor->ShowDecal(true, EXYZDecalType::ENEMY);
 }
 
+void UXYZSelectionStructure::SelectResource(AXYZActor* Resource) {
+    if (SelectedResource) {
+        SelectedResource->ShowDecal(false, EXYZDecalType::RESOURCE);
+        SelectedResource = nullptr;
+    }
+    Empty();
+
+    SelectedResource = Resource;
+    Resource->ShowDecal(true, EXYZDecalType::RESOURCE);
+}
+
 TArray<AXYZActor*> UXYZSelectionStructure::ToArray() {
     TArray<AXYZActor*> ResultArray;
     if (SelectedActors.IsEmpty()) return ResultArray;
@@ -202,6 +218,10 @@ void UXYZSelectionStructure::Empty() {
     if (SelectedEnemy) {
         SelectedEnemy->ShowDecal(false, EXYZDecalType::ENEMY);
         SelectedEnemy = nullptr;
+    }
+    if (SelectedResource) {
+        SelectedResource->ShowDecal(false, EXYZDecalType::RESOURCE);
+        SelectedResource = nullptr;
     }
     if (SelectedActors.IsEmpty()) return;
 

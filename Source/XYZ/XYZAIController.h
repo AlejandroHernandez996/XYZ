@@ -35,7 +35,13 @@ public:
 	UFUNCTION()
 	void XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceRadius = 1.0f);
 	UFUNCTION()
+		void XYZGatherResource(class AXYZResourceActor* Resource, float AcceptanceRadius = 1.0f);
+	UFUNCTION()
+		void XYZReturnResource(class AXYZBaseBuilding* Base, float AcceptanceRadius = 1.0f);
+	UFUNCTION()
 	void XYZStopMovement();
 	UFUNCTION()
 	void RecalculateMove();
+	UFUNCTION()
+		void XYZHold();
 };

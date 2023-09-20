@@ -16,6 +16,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/BoxComponent.h"
 #include "XYZActionFactory.h"
+#include "XYZResourceActor.h"
+#include "XYZWorker.h"
+#include "XYZBuilding.h"
 
 // Sets default values
 AXYZActor::AXYZActor()
@@ -24,8 +27,6 @@ AXYZActor::AXYZActor()
 	PrimaryActorTick.bStartWithTickEnabled = true;
     bReplicates = true;
 
-    GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
     GetCharacterMovement()->MaxWalkSpeed = 500.f;
@@ -33,6 +34,8 @@ AXYZActor::AXYZActor()
 
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
     AIControllerClass = AXYZAIController::StaticClass();
+    Health = 100.0f;
+    MaxHealth = 100.0f;
 }
 
 void AXYZActor::BeginPlay()
@@ -43,12 +46,12 @@ void AXYZActor::BeginPlay()
     if (DecalComponents.Num() == 1) {
         SelectionDecal = Cast<UDecalComponent>(DecalComponents[0]);
     }
+    InitialCapsuleRadius = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
 }
 
 void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-    GetCapsuleComponent()->SetCapsuleRadius(CapsuleRadius);
     if (GetLocalRole() == ROLE_Authority) {
         if (Health == 0.0f)
         {
@@ -60,7 +63,7 @@ void AXYZActor::Tick(float DeltaTime)
         if (State == EXYZUnitState::MOVING || State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::FOLLOWING) {
             ScanXYZActorsAhead();
         }
-        if (State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::IDLE || State == EXYZUnitState::ATTACKING) {
+        if (State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::IDLE || State == EXYZUnitState::ATTACKING || State == EXYZUnitState::HOLD) {
             if (!TargetActor || TargetActor->Health <= 0.0f) {
                 TargetActor = FindClosestActor(true);
             }
@@ -94,7 +97,6 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifet
     DOREPLIFETIME(AXYZActor, AttackRate);
     DOREPLIFETIME(AXYZActor, AttackRange);
     DOREPLIFETIME(AXYZActor, UActorId);
-    DOREPLIFETIME(AXYZActor, CapsuleRadius);
 }
 
 void AXYZActor::QueueAction(UXYZAction* Action) {
@@ -140,7 +142,7 @@ AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors) {
     for (AXYZActor* OtherActor : GameState->GetAllActors())
     {
         bool bTargetIsFriendlyAndShouldIgnore = OtherActor->TeamId == TeamId && bIgnoreFriendlyActors;
-        if (!OtherActor || OtherActor == this || bTargetIsFriendlyAndShouldIgnore || OtherActor->Health <= 0.0f) {
+        if (!OtherActor || OtherActor == this || bTargetIsFriendlyAndShouldIgnore || OtherActor->Health <= 0.0f || OtherActor->IsA(AXYZResourceActor::StaticClass())) {
             continue;
         }
 
@@ -196,7 +198,10 @@ AXYZActor* AXYZActor::ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> A
     CollisionParams.AddIgnoredActor(this);
     bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Pawn, CollisionParams);
 
-    if (bHit && HitResult.GetActor() && HitResult.GetActor()->IsA(AXYZActor::StaticClass()))
+    if (bHit && HitResult.GetActor() && 
+        HitResult.GetActor()->IsA(AXYZActor::StaticClass()) && 
+        !HitResult.GetActor()->IsA(AXYZBuilding::StaticClass()) && 
+        !HitResult.GetActor()->IsA(AXYZWorker::StaticClass()))
     {
         AXYZActor* OtherXYZActor = Cast<AXYZActor>(HitResult.GetActor());
        
@@ -239,15 +244,39 @@ void AXYZActor::AttackMoveTarget() {
         if (DistanceToTarget <= AttackRange)
         {
             Attack();
-            SetState(EXYZUnitState::ATTACKING);
-            ActorController->XYZStopMovement();
+            if (State != EXYZUnitState::HOLD) {
+                SetState(EXYZUnitState::ATTACKING);
+                ActorController->XYZStopMovement();
+            }
         }
-        else {
+        else if(State != EXYZUnitState::HOLD){
             ActorController->XYZAttackMoveToLocation(TargetActor->GetActorLocation());
+            TargetActor = nullptr;
         }
     }
     else {
         TargetActor = nullptr;
     }
     
+}
+
+void AXYZActor::SetState(EXYZUnitState UnitState) {
+    PreviousState = State;
+    State = UnitState;
+    switch (State) {
+    case EXYZUnitState::GATHERING:
+        break;
+    case EXYZUnitState::RETURNING:
+        break;
+    case EXYZUnitState::IDLE:
+        TargetActor = nullptr;
+        break;
+    case EXYZUnitState::MOVING:
+        TargetActor = nullptr;
+        break;
+    case EXYZUnitState::ATTACK_MOVING:
+        break;
+    case EXYZUnitState::ATTACKING:
+        break;
+    }
 }

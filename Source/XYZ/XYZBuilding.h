@@ -15,4 +15,9 @@ class XYZ_API AXYZBuilding : public AXYZActor
 	GENERATED_BODY()
 public:
 	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+	UPROPERTY(Replicated)
+		FVector RallyPoint;
+	UPROPERTY()
+		bool bCanRally;
 };

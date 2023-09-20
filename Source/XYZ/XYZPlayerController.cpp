@@ -19,7 +19,9 @@
 #include "UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "XYZCameraController.h"
+#include "XYZResourceActor.h"
 #include "EngineUtils.h"
+#include "XYZBuilding.h"
 
 AXYZPlayerController::AXYZPlayerController()
 {
@@ -68,7 +70,7 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 
 		// Hovering an actor
 		if (HitActor) {
-			if (bHoveringEnemy) {
+			if (bHoveringEnemy && !HitActor->IsA(AXYZResourceActor::StaticClass())) {
 				// Red Crosshair
 				CurrentMouseCursor = EMouseCursor::Crosshairs;
 			}
@@ -94,7 +96,12 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		else {
 			if (HitActor) {
 				if (bHoveringEnemy) {
-					CurrentMouseCursor = EMouseCursor::GrabHand;
+					if (HitActor->IsA(AXYZResourceActor::StaticClass())) {
+						CurrentMouseCursor = EMouseCursor::GrabHandClosed;
+					}
+					else {
+						CurrentMouseCursor = EMouseCursor::GrabHand;
+					}
 				}
 				else {
 					CurrentMouseCursor = EMouseCursor::Hand;
@@ -142,6 +149,8 @@ void AXYZPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(StopInputAction, ETriggerEvent::Triggered, this, &AXYZPlayerController::OnInputTriggered, EXYZInputType::STOP);
 		EnhancedInputComponent->BindAction(StopInputAction, ETriggerEvent::Completed, this, &AXYZPlayerController::OnInputReleased, EXYZInputType::STOP);
 		EnhancedInputComponent->BindAction(StopInputAction, ETriggerEvent::Canceled, this, &AXYZPlayerController::OnInputReleased, EXYZInputType::STOP);
+
+		EnhancedInputComponent->BindAction(HoldInputAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnInputStarted, EXYZInputType::HOLD);
 
 		EnhancedInputComponent->BindAction(PrimaryModifierInputAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnInputStarted, EXYZInputType::PRIMARY_MOD);
 		EnhancedInputComponent->BindAction(PrimaryModifierInputAction, ETriggerEvent::Completed, this, &AXYZPlayerController::OnInputReleased, EXYZInputType::PRIMARY_MOD);
@@ -225,6 +234,10 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			}
 			break;
 		case EXYZInputType::STOP:
+			bAttackModifier = false;
+			CreateAndQueueInput(SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, false);
+			break;
+		case EXYZInputType::HOLD:
 			bAttackModifier = false;
 			CreateAndQueueInput(SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, InputType, false);
 			break;
@@ -312,6 +325,11 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 			}
 			GetHUD<AXYZHUD>()->AllActorsOnScreen.Empty();
 		}
+		else if (InputTriggeredTime[InputType] <= ShortInputThreshold && FVector2D::Distance(BoxSelectStart, BoxSelectEnd) < 10.0f){
+			if (HitActor) {
+				SelectActors({ HitActor });
+			}
+		}
 		else {
 			SelectActors(GetHUD<AXYZHUD>()->SelectedActors);
 		}
@@ -334,11 +352,27 @@ void AXYZPlayerController::SelectActors(TArray<AXYZActor*> _XYZActors){
 		return;
 	}
 
+	if (XYZActors.Num() == 1 && XYZActors[0]->IsA(AXYZResourceActor::StaticClass())) {
+		SelectionStructure->SelectResource(XYZActors[0]);
+		return;
+	}
+
 	if (XYZActors.Num() == 1 && XYZActors[0]->TeamId != TeamId) {
 		SelectionStructure->SelectEnemyActor(XYZActors[0]);
 		return;
 	}
-
+	XYZActors.RemoveAll([&](AXYZActor* Actor) {
+		return Actor->IsA(AXYZResourceActor::StaticClass());
+		});
+	bool bSelectionOnlyBuildings = true;
+	for (AXYZActor* Actor : XYZActors) {
+		bSelectionOnlyBuildings = bSelectionOnlyBuildings && Actor->IsA(AXYZBuilding::StaticClass());
+	}
+	if (!bSelectionOnlyBuildings) {
+		XYZActors.RemoveAll([&](AXYZActor* Actor) {
+			return Actor->IsA(AXYZBuilding::StaticClass());
+			});
+	}
 	TArray<AXYZActor*> OwnedXYZActors;
 	for (auto XYZActor : XYZActors) {
 		if (XYZActor->TeamId == TeamId) {

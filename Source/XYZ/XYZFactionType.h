@@ -8,5 +8,6 @@ enum class EXYZFactionType : uint8
 {
 	X,
 	Y,
-	Z
+	Z,
+	N
 };

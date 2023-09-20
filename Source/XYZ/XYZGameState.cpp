@@ -4,6 +4,8 @@
 #include "XYZGameState.h"
 #include "EngineUtils.h"
 #include "XYZActor.h"
+#include "Engine.h"
+#include "Net/UnrealNetwork.h"
 #include "UObject/ConstructorHelpers.h"
 
 void AXYZGameState::BeginPlay() {
@@ -27,4 +29,11 @@ TArray<class AXYZActor*> AXYZGameState::GetAllActors() {
 	TArray< AXYZActor*> AllActors;
 	ActorsByUID.GenerateValueArray(AllActors);
 	return AllActors;
+}
+
+void AXYZGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AXYZGameState, GasByTeamId);
+	DOREPLIFETIME(AXYZGameState, MineralsByTeamId);
 }

@@ -4,10 +4,13 @@
 #include "XYZAttackAction.h"
 #include "XYZMoveAction.h"
 #include "XYZStopAction.h"
+#include "XYZHoldAction.h"
+#include "XYZGatherAction.h"
 #include "XYZInputType.h"
 #include "XYZFollowAction.h"
 #include "XYZGameState.h"
 #include "XYZActor.h"
+#include "XYZResourceActor.h"
 
 UXYZAction* UXYZActionFactory::CreateAction(TArray<int32> _SelectedActors, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount, AXYZGameState* GameState)
 {
@@ -20,7 +23,12 @@ UXYZAction* UXYZActionFactory::CreateAction(TArray<int32> _SelectedActors, AXYZA
     UXYZAction* CreatedAction = nullptr;
     if (InputType == EXYZInputType::SECONDARY_INPUT) {
         if (_TargetActor) {
-            if (bAreSelectedSameTeamAsTarget) {
+            if (_TargetActor->IsA(AXYZResourceActor::StaticClass())) {
+                FString f = "Gather_Action_" + FString::FromInt(ActionCount);
+                FName ActionName = FName(*f);
+                CreatedAction = MakeAction(_SelectedActors, _TargetActor, _TargetLocation, _bQueueInput, InputType, ActionCount, UXYZGatherAction::StaticClass(), ActionName, GameState);
+            }
+            else if (bAreSelectedSameTeamAsTarget) {
                 FString f = "Follow_Action_" + FString::FromInt(ActionCount);
                 FName ActionName = FName(*f);
                 CreatedAction = MakeAction(_SelectedActors, _TargetActor, _TargetLocation, _bQueueInput, InputType, ActionCount, UXYZFollowAction::StaticClass(), ActionName, GameState);
@@ -47,7 +55,11 @@ UXYZAction* UXYZActionFactory::CreateAction(TArray<int32> _SelectedActors, AXYZA
         FName ActionName = FName(*f);
         CreatedAction = MakeAction(_SelectedActors, _TargetActor, _TargetLocation, _bQueueInput, InputType, ActionCount, UXYZAttackAction::StaticClass(), ActionName, GameState);
     }
-
+    if (InputType == EXYZInputType::HOLD) {
+        FString f = "Hold_Action_" + FString::FromInt(ActionCount);
+        FName ActionName = FName(*f);
+        CreatedAction = MakeAction(_SelectedActors, _TargetActor, _TargetLocation, _bQueueInput, InputType, ActionCount, UXYZHoldAction::StaticClass(), ActionName, GameState);
+    }
     return CreatedAction;
 }
 

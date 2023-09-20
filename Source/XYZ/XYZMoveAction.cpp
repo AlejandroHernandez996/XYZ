@@ -31,7 +31,7 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> Agents)
             });
         TSharedPtr<FAgentPack> AgentPack = MakeShared<FAgentPack>();
         FillPack(AgentPack, SortedAgents, 0);
-        MovePack(AgentPack, 0);
+        MovePack(AgentPack, 0, false);
     }
     else {
         for (AXYZActor* Actor : Agents)
@@ -66,7 +66,7 @@ void UXYZMoveAction::FillPack(TSharedPtr<FAgentPack> AgentPack, TArray<AXYZActor
     FillPack(AgentPack->NextPack, SortedAgents, LayerIndex + 1);
 
 }
-void UXYZMoveAction::MovePack(TSharedPtr<FAgentPack> AgentPack, int32 Level) {
+void UXYZMoveAction::MovePack(TSharedPtr<FAgentPack> AgentPack, int32 Level, bool bIsAttackMove) {
     if (!AgentPack)return;
     if (AgentPack->Agents.Num() == 0) {
         return;
@@ -74,10 +74,15 @@ void UXYZMoveAction::MovePack(TSharedPtr<FAgentPack> AgentPack, int32 Level) {
     for (int i = 0; i < AgentPack->Agents.Num(); i++) {
         if (AgentPack->Agents[i]) {
             AgentPack->Agents[i]->TargetLocation = TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i];
-            AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
+            if (bIsAttackMove) {
+                AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZAttackMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
+            }
+            else {
+                AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
+            }
         }
     }
-    MovePack(AgentPack->NextPack, Level + 1);
+    MovePack(AgentPack->NextPack, Level + 1, bIsAttackMove);
 }
 
 bool UXYZMoveAction::HasAgentComplete(AXYZActor* Agent) {

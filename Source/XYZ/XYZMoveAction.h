@@ -17,7 +17,7 @@ class XYZ_API UXYZMoveAction : public UXYZAction
 public:
 	virtual void ProcessAction(TSet<AXYZActor*> Agents) override;
 	virtual bool HasAgentComplete(class AXYZActor* Agent) override;
-	void MovePack(TSharedPtr<FAgentPack> AgentPack, int32 LayerIndex);
+	void MovePack(TSharedPtr<FAgentPack> AgentPack, int32 LayerIndex, bool bIsAttackMove);
 	void FillPack(TSharedPtr<FAgentPack> AgentPack, TArray<AXYZActor*>& SortedAgents, int32 LayerIndex);
 	UFUNCTION()
 	class AXYZActor* FindCenterAgent(TSet<AXYZActor*> Agents, FVector CenterLocation);

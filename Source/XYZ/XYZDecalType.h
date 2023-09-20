@@ -8,5 +8,6 @@ enum class EXYZDecalType : uint8
 {
 	FRIENDLY,
 	ENEMY,
-	NEUTRAL
+	NEUTRAL,
+	RESOURCE
 };

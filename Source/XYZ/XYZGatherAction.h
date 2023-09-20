@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "XYZMoveAction.h"
-#include "XYZAttackAction.generated.h"
+#include "XYZAction.h"
+#include "XYZGatherAction.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class XYZ_API UXYZAttackAction : public UXYZMoveAction
+class XYZ_API UXYZGatherAction : public UXYZAction
 {
 	GENERATED_BODY()
 public:
