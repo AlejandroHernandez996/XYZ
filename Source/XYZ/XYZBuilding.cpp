@@ -7,7 +7,13 @@
 
 void AXYZBuilding::BeginPlay() {
     Super::BeginPlay();
-    bCanMove = false;
+    UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+    if (CapsuleComp)
+    {
+        float CapsuleRadius = CapsuleComp->GetScaledCapsuleRadius();
+        FVector ForwardVector = GetActorForwardVector();
+        RallyPoint = GetActorLocation() + (ForwardVector * CapsuleRadius* 1.1f);
+    }
 }
 
 void AXYZBuilding::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const

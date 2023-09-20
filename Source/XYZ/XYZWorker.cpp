@@ -12,6 +12,13 @@
 #include "Net/UnrealNetwork.h"
 
 void AXYZWorker::Tick(float DeltaTime) {
+    if (FloatingMesh) {
+        float Time = GetWorld()->GetTimeSeconds();
+        FVector NewLocation = FloatingMesh->GetRelativeLocation();
+
+        NewLocation.Z += FMath::Sin(Time * FloatSpeed) * FloatAmplitude * DeltaTime;
+        FloatingMesh->SetRelativeLocation(NewLocation);
+    }
 	Super::Tick(DeltaTime);
     if (GetLocalRole() != ROLE_Authority) return;
 
@@ -35,6 +42,7 @@ void AXYZWorker::Tick(float DeltaTime) {
             GetXYZAIController()->XYZStopMovement();
         }
     }
+    
 }
 void AXYZWorker::Gather() {
     AXYZAIController* ActorController = GetXYZAIController();

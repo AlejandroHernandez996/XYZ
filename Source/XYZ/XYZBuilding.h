@@ -14,10 +14,17 @@ class XYZ_API AXYZBuilding : public AXYZActor
 {
 	GENERATED_BODY()
 public:
+	int32 MAX_BUILD_QUEUE_SIZE = 6;
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 	UPROPERTY(Replicated)
 		FVector RallyPoint;
 	UPROPERTY()
+		class AXYZActor* RallyTarget;
+	UPROPERTY()
 		bool bCanRally;
+	UPROPERTY()
+	TArray<class UXYZBuildingAbility*> BuildQueue;
+	UPROPERTY()
+		float TimeToBuild;
 };

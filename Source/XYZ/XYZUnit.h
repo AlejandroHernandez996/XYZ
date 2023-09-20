@@ -15,4 +15,10 @@ class XYZ_API AXYZUnit : public AXYZActor
 	GENERATED_BODY()
 	
 protected:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Cost")
+		int32 SupplyCost;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Cost")
+		int32 GasCost;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Cost")
+		int32 MineralCost;
 };
