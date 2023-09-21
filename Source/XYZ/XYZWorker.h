@@ -15,6 +15,7 @@ class XYZ_API AXYZWorker : public AXYZUnit
 {
 	GENERATED_BODY()
 public:
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION()
 		void Gather();

@@ -44,4 +44,6 @@ public:
 	void RecalculateMove();
 	UFUNCTION()
 		void XYZHold();
+	UFUNCTION()
+		AXYZActor* GetXYZActor();
 };

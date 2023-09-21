@@ -11,6 +11,16 @@
 #include "XYZGameState.h"
 #include "Net/UnrealNetwork.h"
 
+void AXYZWorker::BeginPlay() {
+    Super::BeginPlay();
+    if (GetLocalRole() == ROLE_Authority) {
+        FindClosestResource();
+        if (TargetActor) {
+            GetXYZAIController()->XYZGatherResource(Cast<AXYZResourceActor>(TargetActor));
+        }
+    }
+}
+
 void AXYZWorker::Tick(float DeltaTime) {
     if (FloatingMesh) {
         float Time = GetWorld()->GetTimeSeconds();
@@ -21,8 +31,8 @@ void AXYZWorker::Tick(float DeltaTime) {
     }
 	Super::Tick(DeltaTime);
     if (GetLocalRole() != ROLE_Authority) return;
-
     if (State == EXYZUnitState::GATHERING) {
+        GetCharacterMovement()->bUseRVOAvoidance = false;
         if (!TargetActor) {
             FindClosestResource();
         }
@@ -33,7 +43,8 @@ void AXYZWorker::Tick(float DeltaTime) {
             GetXYZAIController()->XYZStopMovement();
         }
     }
-    if (State == EXYZUnitState::RETURNING) {
+    else if (State == EXYZUnitState::RETURNING) {
+        GetCharacterMovement()->bUseRVOAvoidance = false;
         FindClosestBase();
         if (ClosestBase) {
             Return();
@@ -42,30 +53,31 @@ void AXYZWorker::Tick(float DeltaTime) {
             GetXYZAIController()->XYZStopMovement();
         }
     }
+    else {
+        GetCharacterMovement()->bUseRVOAvoidance = true;
+    }
     
 }
 void AXYZWorker::Gather() {
     AXYZAIController* ActorController = GetXYZAIController();
-    FVector ActorLocation = GetActorLocation();
+    FVector ActorLocation = GetActorLocation() + GetActorForwardVector() * CurrentCapsuleRadius;
     FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
     if (TargetActor && TargetActor->IsA(AXYZResourceActor::StaticClass()) && TargetActor->Health > 0.0f) {
 
         UCapsuleComponent* CapsuleComp = TargetActor->GetCapsuleComponent();
-        FVector MyLocation = GetActorLocation();
         FVector ClosestPoint;
-        CapsuleComp->GetClosestPointOnCollision(MyLocation, ClosestPoint);
+        CapsuleComp->GetClosestPointOnCollision(ActorLocation, ClosestPoint);
 
         FVector2D TargetLocation2D = FVector2D(ClosestPoint.X, ClosestPoint.Y);
         float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
 
-        if (DistanceToTarget <= AttackRange && !bIsGatheringResource)
+        if (DistanceToTarget <= CurrentCapsuleRadius * 3.0f && !bIsGatheringResource)
         {
             bIsGatheringResource = true;
             GetWorld()->GetTimerManager().SetTimer(AttackTimer, this, &AXYZWorker::StartReturningResource, GatherRate, false);
             TargetActor->Health = FMath::Clamp(TargetActor->Health - AttackDamage, 0.0f, TargetActor->MaxHealth);
             GetXYZAIController()->StopMovement();
         }
-       
     }
     else {
         TargetActor = nullptr;
@@ -84,18 +96,17 @@ void AXYZWorker::StartReturningResource() {
 }
 void AXYZWorker::Return() {
     AXYZAIController* ActorController = GetXYZAIController();
-    FVector ActorLocation = GetActorLocation();
+    FVector ActorLocation = GetActorLocation() + GetActorForwardVector() * CurrentCapsuleRadius;
     FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
     if (ClosestBase && State == EXYZUnitState::RETURNING && HeldResource != EXYZResourceType::NONE) {
         UCapsuleComponent* CapsuleComp = ClosestBase->GetCapsuleComponent();
-        FVector MyLocation = GetActorLocation();
         FVector ClosestPoint;
-        CapsuleComp->GetClosestPointOnCollision(MyLocation, ClosestPoint);
+        CapsuleComp->GetClosestPointOnCollision(ActorLocation, ClosestPoint);
 
         FVector2D TargetLocation2D = FVector2D(ClosestPoint.X, ClosestPoint.Y);
         float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
 
-        if (DistanceToTarget <= AttackRange && HeldResource != EXYZResourceType::NONE)
+        if (DistanceToTarget <= CurrentCapsuleRadius*3.0f && HeldResource != EXYZResourceType::NONE)
         {
             if (HeldResource == EXYZResourceType::MINERAL) {
                 GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += 5;

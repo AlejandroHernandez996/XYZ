@@ -52,7 +52,7 @@ void UXYZMoveAction::FillPack(TSharedPtr<FAgentPack> AgentPack, TArray<AXYZActor
         if (SortedAgents.IsEmpty()) {
             return;
         }
-        FVector CurrentTargetLocation = TargetLocation + AgentPack->DISTANCE_FROM_AGENT * LayerIndex * AgentPack->SectorDirections[i];
+        FVector CurrentTargetLocation = TargetLocation + SortedAgents[0]->CurrentCapsuleRadius * LayerIndex * AgentPack->SectorDirections[i];
         Algo::Sort(SortedAgents, [this, CurrentTargetLocation](AXYZActor* A, AXYZActor* B) {
             float DistanceA = FVector::DistSquared(A->GetActorLocation(), CurrentTargetLocation);
             float DistanceB = FVector::DistSquared(B->GetActorLocation(), CurrentTargetLocation);
@@ -72,13 +72,14 @@ void UXYZMoveAction::MovePack(TSharedPtr<FAgentPack> AgentPack, int32 Level, boo
         return;
     }
     for (int i = 0; i < AgentPack->Agents.Num(); i++) {
-        if (AgentPack->Agents[i]) {
-            AgentPack->Agents[i]->TargetLocation = TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i];
+        AXYZActor* Agent = AgentPack->Agents[i];
+        if (Agent) {
+            Agent->TargetLocation = TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i];
             if (bIsAttackMove) {
-                AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZAttackMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
+                Agent->GetController<AXYZAIController>()->XYZAttackMoveToLocation(TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i]);
             }
             else {
-                AgentPack->Agents[i]->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation + AgentPack->DISTANCE_FROM_AGENT * Level * AgentPack->SectorDirections[i]);
+                Agent->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i]);
             }
         }
     }

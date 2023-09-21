@@ -26,14 +26,17 @@ AXYZActor::AXYZActor()
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
     bReplicates = true;
-
-    GetCharacterMovement()->bOrientRotationToMovement = true;
-    GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); 
-    GetCharacterMovement()->MaxWalkSpeed = 500.f;
-    GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
-
-    AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-    AIControllerClass = AXYZAIController::StaticClass();
+    if (GetLocalRole() == ROLE_Authority) {
+        GetCharacterMovement()->bOrientRotationToMovement = true;
+        GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
+        GetCharacterMovement()->MaxWalkSpeed = 500.f;
+        GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+        InitialCapsuleRadius = GetCapsuleComponent()->GetScaledCapsuleRadius();
+        CurrentCapsuleRadius = InitialCapsuleRadius;
+        AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+        AIControllerClass = AXYZAIController::StaticClass();
+    }
+    
     Health = 100.0f;
     MaxHealth = 100.0f;
 }
@@ -42,16 +45,22 @@ void AXYZActor::BeginPlay()
 {
     Super::BeginPlay();
 
-    TArray<UActorComponent*> DecalComponents = GetComponentsByClass(UDecalComponent::StaticClass());
-    if (DecalComponents.Num() == 1) {
-        SelectionDecal = Cast<UDecalComponent>(DecalComponents[0]);
+    if (GetLocalRole() != ROLE_Authority) {
+        TArray<UActorComponent*> DecalComponents = GetComponentsByClass(UDecalComponent::StaticClass());
+        if (DecalComponents.Num() == 1) {
+            SelectionDecal = Cast<UDecalComponent>(DecalComponents[0]);
+        }
     }
-    InitialCapsuleRadius = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
 }
 
 void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+    GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
+    GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 1.25f;
+    GetCharacterMovement()->bUseRVOAvoidance = bHasAvoidance;
+    GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
+
     if (GetLocalRole() == ROLE_Authority) {
         if (Health == 0.0f)
         {
@@ -98,6 +107,8 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifet
     DOREPLIFETIME(AXYZActor, AttackRange);
     DOREPLIFETIME(AXYZActor, UActorId);
     DOREPLIFETIME(AXYZActor, State);
+    DOREPLIFETIME(AXYZActor, bHasAvoidance);
+    DOREPLIFETIME(AXYZActor, CollisionName);
 }
 
 void AXYZActor::QueueAction(UXYZAction* Action) {
@@ -142,7 +153,7 @@ AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors) {
     float ClosestDistanceSqr = FLT_MAX;
     for (AXYZActor* OtherActor : GameState->GetAllActors())
     {
-        bool bTargetIsFriendlyAndShouldIgnore = OtherActor->TeamId == TeamId && bIgnoreFriendlyActors;
+        bool bTargetIsFriendlyAndShouldIgnore = OtherActor && OtherActor->TeamId == TeamId && bIgnoreFriendlyActors;
         if (!OtherActor || OtherActor == this || bTargetIsFriendlyAndShouldIgnore || OtherActor->Health <= 0.0f || OtherActor->IsA(AXYZResourceActor::StaticClass())) {
             continue;
         }
@@ -169,7 +180,7 @@ AXYZAIController* AXYZActor::GetXYZAIController() {
 void AXYZActor::ScanXYZActorsAhead() {
     FVector Start = GetActorLocation();
     FVector ForwardVector = GetActorForwardVector();
-    float Distance = 60.0f;
+    float Distance = CurrentCapsuleRadius * 2.0f;
 
     FVector End = ((ForwardVector * Distance) + Start);
 
@@ -186,11 +197,27 @@ void AXYZActor::ScanXYZActorsAhead() {
     FVector End22Right = ((RightVector * Distance) + Start);
 
     TSet<AXYZActor*> ActorsFound;
-    ActorsFound.Add(ScanAndPush(Start, EndLeft, ActorsFound));
-    ActorsFound.Add(ScanAndPush(Start, End22Left, ActorsFound));
-    ActorsFound.Add(ScanAndPush(Start, EndRight, ActorsFound));
-    ActorsFound.Add(ScanAndPush(Start, End22Right, ActorsFound));
-    ActorsFound.Add(ScanAndPush(Start, End, ActorsFound));
+    AXYZActor* ScannedActor = ScanAndPush(Start, EndLeft, ActorsFound);
+    if (ScannedActor) {
+        ActorsFound.Add(ScannedActor);
+    }
+    ScannedActor = ScanAndPush(Start, EndRight, ActorsFound);
+    if (ScannedActor) {
+        ActorsFound.Add(ScannedActor);
+    }
+    ScannedActor = ScanAndPush(Start, End22Left, ActorsFound);
+    if (ScannedActor) {
+        ActorsFound.Add(ScannedActor);
+    }
+    ScannedActor = ScanAndPush(Start, End22Right, ActorsFound);
+    if (ScannedActor) {
+        ActorsFound.Add(ScannedActor);
+    }
+    ScannedActor = ScanAndPush(Start, End, ActorsFound);
+    if (ScannedActor) {
+        ActorsFound.Add(ScannedActor);
+    }
+    bHasAvoidance = ActorsFound.IsEmpty();
 }
 
 AXYZActor* AXYZActor::ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> ActorsFound) {
@@ -210,9 +237,9 @@ AXYZActor* AXYZActor::ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> A
     {
         FVector Direction = End - Start;
         Direction.Normalize();
-        FVector PushLocation = (Direction * 100.0f) + OtherXYZActor->GetActorLocation();
+        FVector PushLocation = (Direction * OtherXYZActor->GetCapsuleComponent()->GetScaledCapsuleRadius() * 2.0f) + OtherXYZActor->GetActorLocation();
         if (Direction == GetActorForwardVector()) {
-            PushLocation = (OtherXYZActor->GetActorRightVector() * 100.0f) + OtherXYZActor->GetActorLocation();
+            PushLocation = (OtherXYZActor->GetActorRightVector() * OtherXYZActor->GetCapsuleComponent()->GetScaledCapsuleRadius()*2.0f) + OtherXYZActor->GetActorLocation();
         }
         OtherXYZActor->GetXYZAIController()->XYZMoveToLocation(PushLocation);
         return OtherXYZActor;

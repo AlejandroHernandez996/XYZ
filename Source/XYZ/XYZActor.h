@@ -107,6 +107,12 @@ public:
     bool bCanMove = true;
 
     float InitialCapsuleRadius;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", Replicated)
+    float CurrentCapsuleRadius;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", Replicated)
+        bool bHasAvoidance;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", Replicated)
+        FName CollisionName;
 
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")

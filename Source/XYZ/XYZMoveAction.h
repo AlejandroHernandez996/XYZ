@@ -30,7 +30,6 @@ struct FAgentPack
 {
     GENERATED_USTRUCT_BODY()
 public:
-        float DISTANCE_FROM_AGENT = 120.0f;
     UPROPERTY()
         TArray<AXYZActor*> Agents;
     UPROPERTY()

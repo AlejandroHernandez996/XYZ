@@ -24,6 +24,16 @@ void AXYZGameState::BeginPlay() {
 		ActorsByUID.Add(Actor->UActorId, Actor);
 	}
 }
+void AXYZGameState::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+	for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		AXYZActor* Actor = *ActorItr;
+		if (!ActorsByUID.Contains(Actor->UActorId)) {
+			ActorsByUID.Add(Actor->UActorId, Actor);
+		}
+	}
+}
 
 TArray<class AXYZActor*> AXYZGameState::GetAllActors() {
 	TArray< AXYZActor*> AllActors;
