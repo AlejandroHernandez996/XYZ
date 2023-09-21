@@ -227,22 +227,25 @@ AXYZActor* AXYZActor::ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> A
     bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Pawn, CollisionParams);
 
     if (!bHit || !HitResult.GetActor()) return nullptr;
-    if(!HitResult.GetActor()->IsA(AXYZActor::StaticClass())) return nullptr;
+    if (!HitResult.GetActor()->IsA(AXYZActor::StaticClass())) return nullptr;
     if (HitResult.GetActor()->IsA(AXYZBuilding::StaticClass())) return nullptr;
-    
+
     AXYZActor* OtherXYZActor = Cast<AXYZActor>(HitResult.GetActor());
-    
+
     if (!OtherXYZActor || OtherXYZActor == TargetActor) return nullptr;
-    if (OtherXYZActor->State == EXYZUnitState::IDLE && !ActorsFound.Contains(OtherXYZActor) && OtherXYZActor->TeamId == TeamId)
+    if (!ActorsFound.Contains(OtherXYZActor) && OtherXYZActor->TeamId == TeamId)
     {
         FVector Direction = End - Start;
         Direction.Normalize();
         FVector PushLocation = (Direction * OtherXYZActor->GetCapsuleComponent()->GetScaledCapsuleRadius() * 2.0f) + OtherXYZActor->GetActorLocation();
-        if (Direction == GetActorForwardVector()) {
-            PushLocation = (OtherXYZActor->GetActorRightVector() * OtherXYZActor->GetCapsuleComponent()->GetScaledCapsuleRadius()*2.0f) + OtherXYZActor->GetActorLocation();
+        if (OtherXYZActor->State == EXYZUnitState::IDLE) {
+            
+            if (Direction == GetActorForwardVector()) {
+                PushLocation = (OtherXYZActor->GetActorRightVector() * OtherXYZActor->GetCapsuleComponent()->GetScaledCapsuleRadius() * 2.0f) + OtherXYZActor->GetActorLocation();
+            }
+            OtherXYZActor->GetXYZAIController()->XYZMoveToLocation(PushLocation);
+            return OtherXYZActor;
         }
-        OtherXYZActor->GetXYZAIController()->XYZMoveToLocation(PushLocation);
-        return OtherXYZActor;
     }
     return nullptr;
 }
