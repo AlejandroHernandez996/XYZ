@@ -13,12 +13,7 @@
 
 void AXYZWorker::BeginPlay() {
     Super::BeginPlay();
-    if (GetLocalRole() == ROLE_Authority) {
-        FindClosestResource();
-        if (TargetActor) {
-            GetXYZAIController()->XYZGatherResource(Cast<AXYZResourceActor>(TargetActor));
-        }
-    }
+    State = EXYZUnitState::GATHERING;
 }
 
 void AXYZWorker::Tick(float DeltaTime) {
@@ -77,6 +72,9 @@ void AXYZWorker::Gather() {
             GetWorld()->GetTimerManager().SetTimer(AttackTimer, this, &AXYZWorker::StartReturningResource, GatherRate, false);
             TargetActor->Health = FMath::Clamp(TargetActor->Health - AttackDamage, 0.0f, TargetActor->MaxHealth);
             GetXYZAIController()->StopMovement();
+        }
+        else if(!bIsGatheringResource && !GetCharacterMovement()->IsMovementInProgress()){
+            GetXYZAIController()->XYZGatherResource(Cast<AXYZResourceActor>(TargetActor));
         }
     }
     else {

@@ -67,11 +67,17 @@ void AXYZActor::Tick(float DeltaTime)
             GetWorld()->GetFirstPlayerController<AXYZPlayerController>()->XYZActorDestroyed(UActorId);
             GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(UActorId);
             GetXYZAIController()->XYZStopMovement();
+            GetCapsuleComponent()->SetCollisionProfileName("Ragdoll");
+            CurrentCapsuleRadius = 0.0f;
+            CollisionName = "Ragdoll";
             FTimerHandle TimerHandle;
             GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
                 {
                     Destroy();
                 }, 2.0f, false);
+        }
+        if (State == EXYZUnitState::MOVING && !GetCharacterMovement()->IsMovingOnGround()) {
+            GetXYZAIController()->RecalculateMove();
         }
         if (State == EXYZUnitState::MOVING || State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::FOLLOWING) {
             ScanXYZActorsAhead();

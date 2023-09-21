@@ -45,4 +45,5 @@ public:
 		float FloatSpeed;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
+	bool bFirstMineralGathered;
 };
