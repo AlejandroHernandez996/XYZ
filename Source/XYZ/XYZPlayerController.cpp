@@ -22,6 +22,8 @@
 #include "XYZResourceActor.h"
 #include "EngineUtils.h"
 #include "XYZBuilding.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AXYZPlayerController::AXYZPlayerController()
 {
@@ -351,7 +353,9 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 void AXYZPlayerController::SelectActors(TArray<AXYZActor*> _XYZActors){
 	TSet<AXYZActor*> XYZActorsSet = TSet<AXYZActor*>(_XYZActors);
 	TArray<AXYZActor*> XYZActors = XYZActorsSet.Array();
-
+	XYZActors.RemoveAll([&](AXYZActor* Actor) {
+		return Actor->Health <= 0.0f;
+		});
 	if (XYZActors.IsEmpty()) {
 		return;
 	}
@@ -456,27 +460,42 @@ void AXYZPlayerController::SelectActorFromPanel(int32 UActorId) {
 }
 
 void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
-	if (GetLocalRole() != ROLE_Authority) {
-		if (GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Contains(ActorUId)) {
-			AXYZActor* Actor = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[ActorUId];
-			if (!Actor) return;
-			Actor->GetMesh()->SetSimulatePhysics(true);
-			Actor->GetMesh()->SetCollisionProfileName("Ragdoll");
-			FVector ForceDirection = FVector(0, 0, 3000);  // Replace with your force direction
-			Actor->GetMesh()->AddForce(ForceDirection);
-			Actor->GetMesh()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-			if (SelectionStructure->Contains(ActorUId)) {
-				SelectionStructure->Remove(ActorUId);
-			}
-			SelectionStructure->RemoveFromControlGroups(ActorUId);
-			OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
-
-			TArray<int32> ControlGroups;
-			for (TMap<int32, TMap<int32, AXYZActor*>> ControlGroup : SelectionStructure->ControlGroups) {
-				ControlGroups.Add(ControlGroup.Num());
-			}
-			OnControlGroupEvent.Broadcast(ControlGroups);
+	if (GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Contains(ActorUId)) {
+		AXYZActor* Actor = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[ActorUId];
+		if (!Actor) return;
+		USkeletalMeshComponent* Ragdoll = Actor->GetMesh();
+		Ragdoll->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		Ragdoll->SetCollisionProfileName("Ragdoll");
+		Ragdoll->SetSimulatePhysics(true);
+		FVector ForceDirection = FVector(0, 0, 6000);
+		Ragdoll->AddForce(ForceDirection);
+		Actor->ShowDecal(false, EXYZDecalType::NEUTRAL);
+		if (SelectionStructure->Contains(ActorUId)) {
+			SelectionStructure->Remove(ActorUId);
 		}
+		SelectionStructure->RemoveFromControlGroups(ActorUId);
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
+
+		TArray<int32> ControlGroups;
+		for (TMap<int32, TMap<int32, AXYZActor*>> ControlGroup : SelectionStructure->ControlGroups) {
+			ControlGroups.Add(ControlGroup.Num());
+		}
+		OnControlGroupEvent.Broadcast(ControlGroups);
+		GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(ActorUId);
+
+		TArray<UActorComponent*> Components = Actor->GetComponentsByClass(UActorComponent::StaticClass());
+		for (UActorComponent* Component : Components)
+		{
+			if (USceneComponent* SceneComponent = Cast<USceneComponent>(Component))
+			{
+				if (Cast<USkeletalMeshComponent>(SceneComponent))
+				{
+					continue;
+				}
+				SceneComponent->SetVisibility(false);
+			}
+		}
+
 	}
-	GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(ActorUId);
+	
 }

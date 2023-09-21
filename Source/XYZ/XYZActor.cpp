@@ -64,10 +64,14 @@ void AXYZActor::Tick(float DeltaTime)
     if (GetLocalRole() == ROLE_Authority) {
         if (Health == 0.0f)
         {
-            if (this) {
-                GetWorld()->GetFirstPlayerController<AXYZPlayerController>()->XYZActorDestroyed(UActorId);
-                Destroy();
-            }
+            GetWorld()->GetFirstPlayerController<AXYZPlayerController>()->XYZActorDestroyed(UActorId);
+            GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(UActorId);
+            GetXYZAIController()->XYZStopMovement();
+            FTimerHandle TimerHandle;
+            GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
+                {
+                    Destroy();
+                }, 2.0f, false);
         }
         if (State == EXYZUnitState::MOVING || State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::FOLLOWING) {
             ScanXYZActorsAhead();
@@ -274,8 +278,7 @@ void AXYZActor::AttackMoveTarget() {
             }
         }
         else if(State != EXYZUnitState::HOLD){
-            ActorController->XYZAttackMoveToLocation(TargetActor->GetActorLocation());
-            TargetActor = nullptr;
+            ActorController->XYZAttackMoveToTarget(TargetActor);
         }
     }
     else {

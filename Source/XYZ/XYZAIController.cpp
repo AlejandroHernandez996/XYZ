@@ -75,7 +75,7 @@ void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceR
         return;
     }
     CurrentTargetLocation = Actor->GetActorLocation();
-    GetXYZActor()->SetState(EXYZUnitState::ATTACK_MOVING);
+    GetXYZActor()->SetState(EXYZUnitState::ATTACKING);
     GetXYZActor()->TargetActor = Actor;
     bIsMoving = true;
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius * 0.75f;

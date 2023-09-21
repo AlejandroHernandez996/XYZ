@@ -161,7 +161,7 @@ private:
 		class AXYZCameraController* CameraController;
 
 public:
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(Client, Reliable)
 		void XYZActorDestroyed(int32 ActorUId);
 	void XYZActorDestroyed_Implementation(int32 ActorUId);
 

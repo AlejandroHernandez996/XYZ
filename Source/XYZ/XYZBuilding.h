@@ -27,4 +27,6 @@ public:
 	TArray<class UXYZBuildingAbility*> BuildQueue;
 	UPROPERTY()
 		float TimeToBuild;
+	UPROPERTY()
+		int32 SupplyGain;
 };
