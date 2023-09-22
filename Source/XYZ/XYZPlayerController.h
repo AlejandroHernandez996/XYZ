@@ -26,7 +26,7 @@ class AXYZPlayerController : public APlayerController
 
 public:
 	AXYZPlayerController();
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	int32 TeamId = -1;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 

@@ -54,21 +54,55 @@ void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
         CancelProduction();
         return;
     }
-    if (TimeToBuild == -1.0f) {
-        TotalBuildTime = CurrentAbility->BuildTime;
+
+    AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
+    if (!GameState) return;
+    int32 CurrentSupply = GameState->SupplyByTeamId[TeamId];
+    int32 MaxSupply = GameState->SupplyByTeamId[TeamId + 2];
+
+    bool bIsSupplyReserved = GameState->ReservedSupplyByBuilding[TeamId].Contains(UActorId);
+
+    if (!bIsTraining) {
+        bIsTraining = true;
         TimeToBuild = 0.0f;
+        TotalBuildTime = CurrentAbility->BuildTime;
+        
     }
-    else if (TimeToBuild >= TotalBuildTime) {
+
+    if (!bIsSupplyReserved && CurrentSupply + CurrentAbility->SupplyCost <= MaxSupply) {
+        GameState->ReservedSupplyByBuilding[TeamId].Add(UActorId, CurrentAbility->SupplyCost);
+        GameState->SupplyByTeamId[TeamId] += CurrentAbility->SupplyCost;
+    }
+
+    // IF OVERCAPPED AND IS RESERVING REMOVE RESERVE AND SUBTRACT FROM SUPPLY ALSO RESET TRAINING
+    if (CurrentSupply > MaxSupply && bIsSupplyReserved) {
+        TimeToBuild = 0.0f;
+        GameState->ReservedSupplyByBuilding[TeamId].Remove(UActorId);
+        GameState->SupplyByTeamId[TeamId + 2] -= CurrentAbility->SupplyCost;
+        return;
+    }
+
+    // CURRENT SUPPLY + SUPPLY COST >= MAX RESET BUILD TIME
+    if (CurrentSupply > MaxSupply && !bIsSupplyReserved) {
+        TimeToBuild = 0.0f;
+        return;
+    }
+
+    if (TimeToBuild >= TotalBuildTime) {
         TrainUnit(CurrentAbility->UnitTemplate);
         CancelProduction();
         return;
     }
-    TimeToBuild += DeltaTime;
+
+    if (bIsSupplyReserved) {
+        TimeToBuild += DeltaTime;
+    }
 }
 
 void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
     AXYZGameState* GameState = GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>();
-    if (BuildQueueNum < MAX_BUILD_QUEUE_SIZE && GameState->MineralsByTeamId[TeamId] - BuildingAbility->MineralCost >= 0) {
+    if (BuildQueueNum < MAX_BUILD_QUEUE_SIZE && 
+        GameState->MineralsByTeamId[TeamId] - BuildingAbility->MineralCost >= 0) {
         GameState->MineralsByTeamId[TeamId] -= BuildingAbility->MineralCost;
         BuildQueue.Enqueue(BuildingAbility);
         BuildQueueNum++;
@@ -92,6 +126,7 @@ void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     }
     AXYZActor* SpawnActor = GetWorld()->SpawnActor<AXYZActor>(UnitTemplate, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
     SpawnActor->TeamId = TeamId;
+    GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[SpawnActor->TeamId + 2] += SpawnActor->SupplyGain;
     GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->ActorIndex++;
     SpawnActor->UActorId = GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->ActorIndex;
 
@@ -112,6 +147,7 @@ void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     else if (SpawnPoint != RallyPoint) {
         SpawnActor->GetXYZAIController()->XYZMoveToLocation(RallyPoint);
     }
+    bIsTraining = false;
 }
 
 void AXYZBuilding::CancelProduction() {
@@ -121,8 +157,20 @@ void AXYZBuilding::CancelProduction() {
     TimeToBuild = -1.0f;
     TotalBuildTime = -1.0f;
     BuildQueueNum--;
+
+    int32 CurrentSupply = GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId];
+    int32 MaxSupply = GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId + 2];
+    bool bIsSupplyReserved = GetWorld()->GetGameState<AXYZGameState>()->ReservedSupplyByBuilding[TeamId].Contains(UActorId);
+
     if (CurrentAbility->bCanCancel) {
         GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += CurrentAbility->MineralCost;
+        if (bIsSupplyReserved) {
+            GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId] -= CurrentAbility->SupplyCost;
+        }
     }
+    if (bIsSupplyReserved) {
+        GetWorld()->GetGameState<AXYZGameState>()->ReservedSupplyByBuilding[TeamId].Remove(UActorId);
+    }
+
     CurrentAbility->bCanCancel = true;
 }

@@ -135,4 +135,9 @@ public:
         bool bIsAggresive = true;
     UFUNCTION()
         void AttackMoveTarget();
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+        int32 SupplyCost;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+        int32 SupplyGain;
 };

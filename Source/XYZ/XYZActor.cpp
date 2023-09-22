@@ -89,6 +89,9 @@ void AXYZActor::Tick(float DeltaTime)
                 }
             }
             GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(UActorId);
+            GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId] -= SupplyCost;
+            GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId + 2] -= SupplyGain;
+
             GetXYZAIController()->XYZStopMovement();
             GetCapsuleComponent()->SetCollisionProfileName("Ragdoll");
             CurrentCapsuleRadius = 0.0f;

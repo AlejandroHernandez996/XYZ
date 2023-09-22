@@ -62,6 +62,7 @@ void AXYZGameMode::Tick(float DeltaSeconds)
 		PlayerControllers = FoundControllers;
 		for (int i = 0; i < PlayerControllers.Num(); i++) {
 			PlayerControllers[i]->TeamId = i;
+			
 		}
 	}
 	BlobManager->ProcessBlobs();

@@ -23,11 +23,12 @@ public:
 	TMap<int32, class AXYZActor*> ActorsByUID;
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
-		TArray<int32> MineralsByTeamId = { 0,0 };
+		TArray<int32> MineralsByTeamId = { 2000,0 };
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		TArray<int32> GasByTeamId = { 0,0 };
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		TArray<int32> SupplyByTeamId = { 0,0,0,0 };
+	TMap<int32,TMap<int32, int32>> ReservedSupplyByBuilding;
 	UFUNCTION()
 	TArray<class AXYZActor*> GetAllActors();
 

@@ -39,10 +39,9 @@ public:
 		float TotalBuildTime = -1.0f;
 	UFUNCTION()
 		void TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate);
-	UPROPERTY(BlueprintReadOnly)
-		int32 SupplyGain;
 	UFUNCTION()
 		void ProcessBuildQueue(float DeltaTime);
 	UFUNCTION()
 		void CancelProduction();
+	bool bIsTraining;
 };
