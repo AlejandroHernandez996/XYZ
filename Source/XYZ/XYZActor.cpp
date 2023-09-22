@@ -96,6 +96,8 @@ void AXYZActor::Tick(float DeltaTime)
             CollisionName = "Ragdoll";
             FTimerHandle TimerHandle;
             SetState(EXYZUnitState::DEAD);
+            GetXYZAIController()->UnPossess();
+            TargetActor = nullptr;
             GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
                 {
                     Destroy();
