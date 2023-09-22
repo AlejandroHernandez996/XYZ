@@ -37,6 +37,10 @@ void AXYZAIController::XYZMoveToActor(AXYZActor* Actor, float AcceptanceRadius) 
         XYZStopMovement();
         return;
     }
+    if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
+        Cast<AXYZBuilding>(GetXYZActor())->RallyTarget = Actor;
+        return;
+    }
     GetXYZActor()->SetState(EXYZUnitState::MOVING);
     CurrentTargetLocation = Actor->GetActorLocation();
     bIsMoving = true;
@@ -48,6 +52,10 @@ void AXYZAIController::XYZMoveToActor(AXYZActor* Actor, float AcceptanceRadius) 
 
 void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float AcceptanceRadius) {
     if (!GetXYZActor()) return;
+    if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
+        Cast<AXYZBuilding>(GetXYZActor())->RallyPoint = TargetLocation;
+        return;
+    }
     GetXYZActor()->SetState(EXYZUnitState::MOVING);
     CurrentTargetLocation = TargetLocation;
     bIsMoving = true;
@@ -60,6 +68,9 @@ void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float Acceptanc
 
 void AXYZAIController::XYZAttackMoveToLocation(FVector TargetLocation, float AcceptanceRadius) {
     if (!GetXYZActor()) return;
+    if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
+        return;
+    }
     GetXYZActor()->SetState(EXYZUnitState::ATTACK_MOVING);
     CurrentTargetLocation = TargetLocation;
     bIsMoving = true;
@@ -72,6 +83,9 @@ void AXYZAIController::XYZAttackMoveToLocation(FVector TargetLocation, float Acc
 void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceRadius) {
     if (!GetXYZActor() || !Actor || GetXYZActor() == Actor) {
         XYZStopMovement();
+        return;
+    }
+    if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
         return;
     }
     CurrentTargetLocation = Actor->GetActorLocation();
@@ -89,6 +103,9 @@ void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius)
         XYZStopMovement();
         return;
     }
+    if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
+        return;
+    }
     CurrentTargetLocation = Actor->GetActorLocation();
     GetXYZActor()->SetState(EXYZUnitState::FOLLOWING);
     GetXYZActor()->TargetActor = Actor;
@@ -102,6 +119,9 @@ void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius)
 void AXYZAIController::XYZGatherResource(AXYZResourceActor* Resource, float AcceptanceRadius) {
     if (!GetXYZActor() || !Resource || !GetXYZActor()->IsA(AXYZWorker::StaticClass())) {
         XYZStopMovement();
+        return;
+    }
+    if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
         return;
     }
     GetXYZActor()->bHasAvoidance = false;
@@ -127,6 +147,9 @@ void AXYZAIController::XYZReturnResource(AXYZBaseBuilding* Base, float Acceptanc
         XYZStopMovement();
         return;
     }
+    if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
+        return;
+    }
     GetXYZActor()->bHasAvoidance = false;
     GetXYZActor()->SetState(EXYZUnitState::RETURNING);
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius * 0.75f;
@@ -145,6 +168,9 @@ void AXYZAIController::XYZReturnResource(AXYZBaseBuilding* Base, float Acceptanc
 
 void AXYZAIController::XYZStopMovement() {
     if (!GetXYZActor()) return;
+    if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
+        return;
+    }
     StopMovement();
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
     GetXYZActor()->CollisionName = "Pawn";
@@ -159,6 +185,9 @@ void AXYZAIController::XYZStopMovement() {
 
 void AXYZAIController::XYZHold() {
     if (!GetXYZActor()) return;
+    if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
+        return;
+    }
     StopMovement();
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
     GetXYZActor()->SetState(EXYZUnitState::HOLD);
