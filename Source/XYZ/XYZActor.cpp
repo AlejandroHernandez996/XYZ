@@ -56,6 +56,8 @@ void AXYZActor::BeginPlay()
 void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+    if (State == EXYZUnitState::DEAD) return;
+
     GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
     GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 1.25f;
     GetCharacterMovement()->bUseRVOAvoidance = bHasAvoidance;
@@ -71,10 +73,12 @@ void AXYZActor::Tick(float DeltaTime)
             CurrentCapsuleRadius = 0.0f;
             CollisionName = "Ragdoll";
             FTimerHandle TimerHandle;
+            SetState(EXYZUnitState::DEAD);
             GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
                 {
                     Destroy();
                 }, 2.0f, false);
+            return;
         }
         if (State == EXYZUnitState::MOVING && !GetCharacterMovement()->IsMovingOnGround()) {
             GetXYZAIController()->RecalculateMove();
@@ -310,6 +314,9 @@ void AXYZActor::SetState(EXYZUnitState UnitState) {
     case EXYZUnitState::ATTACK_MOVING:
         break;
     case EXYZUnitState::ATTACKING:
+        break;
+    case EXYZUnitState::DEAD:
+        TargetActor = nullptr;
         break;
     }
 }

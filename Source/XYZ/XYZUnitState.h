@@ -14,4 +14,5 @@ enum class EXYZUnitState : uint8
 	RETURNING,
 	GATHERING,
 	HOLD,
+	DEAD
 };
