@@ -41,6 +41,10 @@ void AXYZAIController::XYZMoveToActor(AXYZActor* Actor, float AcceptanceRadius) 
         Cast<AXYZBuilding>(GetXYZActor())->RallyTarget = Actor;
         return;
     }
+    if (GetXYZActor()->IsA(AXYZWorker::StaticClass()) && Actor->IsA(AXYZResourceActor::StaticClass())) {
+        XYZGatherResource(Cast<AXYZResourceActor>(Actor));
+        return;
+    }
     GetXYZActor()->SetState(EXYZUnitState::MOVING);
     CurrentTargetLocation = Actor->GetActorLocation();
     bIsMoving = true;
@@ -54,6 +58,7 @@ void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float Acceptanc
     if (!GetXYZActor()) return;
     if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
         Cast<AXYZBuilding>(GetXYZActor())->RallyPoint = TargetLocation;
+        Cast<AXYZBuilding>(GetXYZActor())->RallyTarget = nullptr;
         return;
     }
     GetXYZActor()->SetState(EXYZUnitState::MOVING);
@@ -86,6 +91,7 @@ void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceR
         return;
     }
     if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
+        Cast<AXYZBuilding>(GetXYZActor())->RallyTarget = Actor;
         return;
     }
     CurrentTargetLocation = Actor->GetActorLocation();
@@ -104,8 +110,22 @@ void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius)
         return;
     }
     if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
+        Cast<AXYZBuilding>(GetXYZActor())->RallyTarget = Actor;
         return;
     }
+    if (GetXYZActor()->IsA(AXYZWorker::StaticClass()) && Cast<AXYZWorker>(GetXYZActor())->HeldResource == EXYZResourceType::MINERAL && Actor->IsA(AXYZBaseBuilding::StaticClass())) {
+        Cast<AXYZWorker>(GetXYZActor())->StartReturningResource();
+        Cast<AXYZWorker>(GetXYZActor())->FindClosestBase();
+        if (Cast<AXYZWorker>(GetXYZActor())->ClosestBase) {
+            XYZReturnResource(Cast<AXYZWorker>(GetXYZActor())->ClosestBase);
+        }
+        return;
+    }
+    if (GetXYZActor()->IsA(AXYZWorker::StaticClass()) && Actor->IsA(AXYZResourceActor::StaticClass())) {
+        XYZGatherResource(Cast<AXYZResourceActor>(Actor));
+        return;
+    }
+
     CurrentTargetLocation = Actor->GetActorLocation();
     GetXYZActor()->SetState(EXYZUnitState::FOLLOWING);
     GetXYZActor()->TargetActor = Actor;

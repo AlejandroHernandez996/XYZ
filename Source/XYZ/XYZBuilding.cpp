@@ -8,6 +8,7 @@
 #include "XYZGameState.h"
 #include "XYZGameMode.h"
 #include "XYZPlayerController.h"
+#include "XYZAIController.h"
 
 void AXYZBuilding::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
@@ -24,7 +25,7 @@ void AXYZBuilding::BeginPlay() {
     {
         float CapsuleRadius = CapsuleComp->GetScaledCapsuleRadius();
         FVector ForwardVector = GetActorForwardVector();
-        SpawnPoint = GetActorLocation() + (ForwardVector * CapsuleRadius* 1.5f);
+        SpawnPoint = GetActorLocation() + (ForwardVector * CapsuleRadius* 2.0f);
         RallyPoint = SpawnPoint;
     }
     for (UXYZAbility* Ability : Abilities) {
@@ -78,14 +79,39 @@ void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     FActorSpawnParameters SpawnParams;
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
     FVector SpawnLocation = SpawnPoint;
+    FVector Start = SpawnLocation + FVector(0, 0, 1000); // Start 1000 units above
+    FVector End = SpawnLocation - FVector(0, 0, 10000);   // End 1000 units below
 
-    AXYZActor* SpawnActor = GetWorld()->SpawnActor<AXYZActor>(UnitTemplate, SpawnLocation, SpawnPoint.Rotation(), SpawnParams);
+    FHitResult HitResult;
+
+    bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic); // You can change the collision channel as per your requirement
+
+    if (bHit)
+    {
+        SpawnLocation.Z = HitResult.Location.Z;
+    }
+    AXYZActor* SpawnActor = GetWorld()->SpawnActor<AXYZActor>(UnitTemplate, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
     SpawnActor->TeamId = TeamId;
     GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->ActorIndex++;
     SpawnActor->UActorId = GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->ActorIndex;
 
     UXYZBuildingAbility* CurrentAbility = *BuildQueue.Peek();
     CurrentAbility->bCanCancel = false;
+
+    if (RallyTarget) {
+        if (RallyTarget->TeamId == 2) {
+            SpawnActor->GetXYZAIController()->XYZMoveToActor(RallyTarget);
+        }
+        else if (RallyTarget->TeamId == TeamId) {
+            SpawnActor->GetXYZAIController()->XYZFollowTarget(RallyTarget);
+        }
+        else {
+            SpawnActor->GetXYZAIController()->XYZAttackMoveToTarget(RallyTarget);
+        }
+    }
+    else if (SpawnPoint != RallyPoint) {
+        SpawnActor->GetXYZAIController()->XYZMoveToLocation(RallyPoint);
+    }
 }
 
 void AXYZBuilding::CancelProduction() {
