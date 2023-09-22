@@ -7,7 +7,7 @@
 /**
  * Represents a basic ability in the XYZ game.
  */
-UCLASS(Abstract)
+UCLASS(Abstract, Blueprintable, BlueprintType)
 class XYZ_API UXYZAbility : public UObject
 {
     GENERATED_BODY()

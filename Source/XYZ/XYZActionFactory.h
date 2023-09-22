@@ -12,7 +12,7 @@ class XYZ_API UXYZActionFactory : public UObject
 
 public:
     UFUNCTION(BlueprintCallable, Category = "Action")
-       static UXYZAction* CreateAction(TArray<int32> SelectedActors, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount, AXYZGameState* GameState);
+       static UXYZAction* CreateAction(TArray<int32> SelectedActors, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount, AXYZGameState* GameState, int32 ActiveActorId, int32 AbilityIndex);
 
     UFUNCTION(BlueprintCallable, Category = "Action")
        static UXYZAction* MakeAction(TArray<int32> SelectedActors, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount, UClass* ActionClass, FName ActionName, AXYZGameState* GameState);

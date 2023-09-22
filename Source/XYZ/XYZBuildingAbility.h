@@ -15,8 +15,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 		TSubclassOf<class AXYZActor> UnitTemplate;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 BuildTime;
+		float BuildTime;
 	UPROPERTY()
 		class AXYZBuilding* OwningBuilding;
+	UPROPERTY()
+		bool bCanCancel = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 MineralCost = 0;
 	virtual void Activate() override;
 };

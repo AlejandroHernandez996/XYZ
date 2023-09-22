@@ -80,8 +80,13 @@ public:
 		class UInputAction* ClearSelectionInputAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* CycleSelectionInputAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		TArray<UInputAction*> ControlGroupInputActions;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		TArray<UInputAction*> AbilityInputActions;
 
 	bool bPrimaryModifier;
 	bool bSecondaryModifier;
@@ -118,7 +123,6 @@ protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds);
 
-
 	virtual void SetupInputComponent() override;
 	
 	/** Input handlers for SetDestination action. */
@@ -131,6 +135,10 @@ protected:
 
 	UFUNCTION()
 	void OnControlGroupInputStarted(int32 ControlGroupIndex);
+	UFUNCTION()
+		void OnAbilityInputStarted(int32 AbilityIndex);
+	UFUNCTION()
+		void OnCycleSelectionInputStarted();
 
 	UFUNCTION()
 	void SelectActors(TArray<AXYZActor*> Actors);
@@ -167,6 +175,10 @@ public:
 		void XYZActorDestroyed(int32 ActorUId);
 	void XYZActorDestroyed_Implementation(int32 ActorUId);
 
+	UFUNCTION(Server, Reliable)
+		void PingServerGameIsLoaded();
+	void PingServerGameIsLoaded_Implementation();
+	bool bPingedGameLoaded;
 };
 
 

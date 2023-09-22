@@ -7,31 +7,26 @@
 #include "Engine.h"
 #include "Net/UnrealNetwork.h"
 #include "UObject/ConstructorHelpers.h"
+#include "XYZGameMode.h"
+#include "XYZPlayerController.h"
 
+AXYZGameState::AXYZGameState() {
+	PrimaryActorTick.bCanEverTick = true;
+}
 void AXYZGameState::BeginPlay() {
 	Super::BeginPlay();
-	if (GetLocalRole() == ROLE_Authority) {
-		for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-		{
-			AXYZActor* Actor = *ActorItr;
-			Actor->UActorId = ActorIndex;
-			ActorIndex++;
-		}
-	}
-	for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-	{
-		AXYZActor* Actor = *ActorItr;
-		ActorsByUID.Add(Actor->UActorId, Actor);
-	}
 }
 void AXYZGameState::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-	{
-		AXYZActor* Actor = *ActorItr;
-		if (!ActorsByUID.Contains(Actor->UActorId)) {
-			ActorsByUID.Add(Actor->UActorId, Actor);
+
+	if (bClientLoaded && ROLE_Authority == GetLocalRole() && !bLinkedActors) {
+		for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		{
+			AXYZActor* Actor = *ActorItr;
+			ActorIndex++;
+			Actor->UActorId = ActorIndex;
 		}
+		bLinkedActors = true;
 	}
 }
 

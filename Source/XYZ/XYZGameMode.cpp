@@ -40,6 +40,8 @@ void AXYZGameMode::QueueInput(const FXYZInputMessage& InputMessage) {
 	if (GetLocalRole() != ROLE_Authority) return;
 	int32 TickCountCopy = TickCount;
 	FXYZInputMessage TickInput = FXYZInputMessage(InputMessage, TickCountCopy);
+	TickInput.AbilityIndex = InputMessage.AbilityIndex;
+	TickInput.ActiveActorId = InputMessage.ActiveActorId;
 	InputManager->QueueInput(TickInput);
 	bHandleInputQueue = true;
 }

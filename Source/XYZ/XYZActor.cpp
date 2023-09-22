@@ -52,11 +52,27 @@ void AXYZActor::BeginPlay()
             SelectionDecal = Cast<UDecalComponent>(DecalComponents[0]);
         }
     }
+
+    int AbilityIndex = 0;
+    Abilities.Empty();
+    if (GetLocalRole() == ROLE_Authority) {
+        for (TSubclassOf<class UXYZAbility> AbilityTemplate : AbilityTemplates) {
+            UXYZAbility* Ability = NewObject<UXYZAbility>(this, AbilityTemplate, FName(GetName() + "Ability_" + FString::FromInt(AbilityIndex)));
+            if (Ability) {
+                Abilities.Add(Ability);
+            }
+            AbilityIndex++;
+        }
+    }
 }
 
 void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+    AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
+    if (UActorId != 0 && GameState && !GameState->ActorsByUID.Contains(UActorId)) {
+        GameState->ActorsByUID.Add(UActorId, this);
+    }
     if (State == EXYZUnitState::DEAD) return;
 
     GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
@@ -128,6 +144,9 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifet
     DOREPLIFETIME(AXYZActor, State);
     DOREPLIFETIME(AXYZActor, bHasAvoidance);
     DOREPLIFETIME(AXYZActor, CollisionName);
+    DOREPLIFETIME(AXYZActor, TeamId);
+    DOREPLIFETIME(AXYZActor, ActorId);
+
 }
 
 void AXYZActor::QueueAction(UXYZAction* Action) {

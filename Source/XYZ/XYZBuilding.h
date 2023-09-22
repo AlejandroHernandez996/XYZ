@@ -34,9 +34,9 @@ public:
 	UFUNCTION()
 		void EnqueueAbility(class UXYZBuildingAbility* BuildingAbility);
 	UPROPERTY(BlueprintReadOnly, Replicated)
-		float TimeToBuild;
+		float TimeToBuild = -1.0f;
 	UPROPERTY(BlueprintReadOnly, Replicated)
-		float TotalBuildTime;
+		float TotalBuildTime = -1.0f;
 	UFUNCTION()
 		void TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate);
 	UPROPERTY(BlueprintReadOnly)

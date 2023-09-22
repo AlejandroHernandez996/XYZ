@@ -12,7 +12,7 @@
 #include "XYZGameState.h"
 #include "DrawDebugHelpers.h"
 #include "XYZSelectionStructure.h"
-#include "Kismet/GameplayStatics.h" // Include this header
+#include "Kismet/GameplayStatics.h" 
 #include "XYZHUD.h"
 #include "GameFramework/PlayerState.h"
 #include "EnhancedInputSubsystems.h"
@@ -31,7 +31,6 @@ AXYZPlayerController::AXYZPlayerController()
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
 
-	// Initialize the InputTriggeredTime map with default values
 	for (int32 EnumValue = static_cast<int32>(EXYZInputType::PRIMARY_INPUT);
 		EnumValue <= static_cast<int32>(EXYZInputType::STOP);
 		EnumValue++)
@@ -46,9 +45,7 @@ AXYZPlayerController::AXYZPlayerController()
 
 void AXYZPlayerController::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
-	//Add Input Mapping Context
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
@@ -64,26 +61,26 @@ void AXYZPlayerController::BeginPlay()
 
 void AXYZPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+	if (GetLocalRole() !=  ROLE_Authority && GetWorld()->GetGameState<AXYZGameState>() && !bPingedGameLoaded) {
+		bPingedGameLoaded = true;
+		PingServerGameIsLoaded();
+	}
+
 
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
 	bool bHoveringEnemy = HitActor && HitActor->TeamId != TeamId;
 
-	// Holding A and has a selection if not just default to regular cursor logic
 	if (bAttackModifier && !SelectionStructure->IsEmpty()) {
 
-		// Hovering an actor
 		if (HitActor) {
 			if (bHoveringEnemy && !HitActor->IsA(AXYZResourceActor::StaticClass())) {
-				// Red Crosshair
 				CurrentMouseCursor = EMouseCursor::Crosshairs;
 			}
 			else {
-				// Yellow Crosshair
 				CurrentMouseCursor = EMouseCursor::ResizeUpDown;
 			}
 		}
 		else {
-			// Green Crosshair
 			CurrentMouseCursor = EMouseCursor::ResizeLeftRight;
 		}
 	}
@@ -127,12 +124,9 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 
 void AXYZPlayerController::SetupInputComponent()
 {
-	// set up gameplay key bindings
 	Super::SetupInputComponent();
-	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
-		// Setup mouse input events
 		EnhancedInputComponent->BindAction(PrimaryInputAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnInputStarted, EXYZInputType::PRIMARY_INPUT);
 		EnhancedInputComponent->BindAction(PrimaryInputAction, ETriggerEvent::Triggered, this, &AXYZPlayerController::OnInputTriggered, EXYZInputType::PRIMARY_INPUT);
 		EnhancedInputComponent->BindAction(PrimaryInputAction, ETriggerEvent::Completed, this, &AXYZPlayerController::OnInputReleased, EXYZInputType::PRIMARY_INPUT);
@@ -162,9 +156,13 @@ void AXYZPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SecondaryModifierInputAction, ETriggerEvent::Completed, this, &AXYZPlayerController::OnInputReleased, EXYZInputType::SECONDARY_MOD);
 
 		EnhancedInputComponent->BindAction(ClearSelectionInputAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnInputStarted, EXYZInputType::CLEAR);
+		EnhancedInputComponent->BindAction(CycleSelectionInputAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnCycleSelectionInputStarted);
 
 		for (int32 i = 0; i < ControlGroupInputActions.Num(); i++) {
 			EnhancedInputComponent->BindAction(ControlGroupInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnControlGroupInputStarted, i);
+		}
+		for (int32 i = 0; i < AbilityInputActions.Num(); i++) {
+			EnhancedInputComponent->BindAction(AbilityInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnAbilityInputStarted, i);
 		}
 		SelectionStructure->InitControlGroups(ControlGroupInputActions.Num());
 	}
@@ -182,10 +180,25 @@ void AXYZPlayerController::OnControlGroupInputStarted(int32 ControlGroupIndex) {
 		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 	}
 	TArray<int32> ControlGroups;
-	for (TMap<int32, TMap<int32, AXYZActor*>> ControlGroup : SelectionStructure->ControlGroups) {
+	for (TSortedMap<int32, TMap<int32, AXYZActor*>> ControlGroup : SelectionStructure->ControlGroups) {
 		ControlGroups.Add(ControlGroup.Num());
 	}
 	OnControlGroupEvent.Broadcast(ControlGroups);
+}
+
+void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {
+	if (SelectionStructure->IsEmpty()) return;
+
+	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
+	int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
+	FXYZInputMessage AbilityInput = FXYZInputMessage(PlayerState->GetUniqueId().ToString(), SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, EXYZInputType::ABILITY, bPrimaryModifier);
+	AbilityInput.AbilityIndex = AbilityIndex;
+	AbilityInput.ActiveActorId = SelectionStructure->ActiveActor;
+	QueueInput(AbilityInput);
+}
+
+void AXYZPlayerController::OnCycleSelectionInputStarted() {
+	SelectionStructure->CycleSelection();
 }
 
 void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
@@ -211,7 +224,6 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			GetHUD<AXYZHUD>()->bSelectActors = true;
 			GetHUD<AXYZHUD>()->BoxStart = BoxSelectStart;
 			GetHUD<AXYZHUD>()->BoxEnd = BoxSelectStart;
-			// Fire the SelectionBox event
 			OnSelectionBox.Broadcast(BoxSelectStart.X, BoxSelectStart.Y);
 			bBoxSelectFlag = true;
 			if (CameraController) {
@@ -253,7 +265,6 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 	}
 }
 
-// Triggered every frame when the input is held down
 void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 {
 	InputTriggeredTime[InputType] += GetWorld()->GetDeltaSeconds();
@@ -263,7 +274,6 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 		GetHUD<AXYZHUD>()->BoxEnd = BoxSelectEnd;
 	}
 	
-	// if still below short press threshold do not do anything with this input
 	if (InputTriggeredTime[InputType] <= ShortInputThreshold) {
 	}
 
@@ -478,7 +488,7 @@ void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
 		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 
 		TArray<int32> ControlGroups;
-		for (TMap<int32, TMap<int32, AXYZActor*>> ControlGroup : SelectionStructure->ControlGroups) {
+		for (TSortedMap<int32, TMap<int32, AXYZActor*>> ControlGroup : SelectionStructure->ControlGroups) {
 			ControlGroups.Add(ControlGroup.Num());
 		}
 		OnControlGroupEvent.Broadcast(ControlGroups);
@@ -500,8 +510,12 @@ void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
 	}
 	
 }
-
 void AXYZPlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AXYZPlayerController, TeamId);
+}
+
+void AXYZPlayerController::PingServerGameIsLoaded_Implementation() {
+	AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
+	GameState->bClientLoaded = true;
 }

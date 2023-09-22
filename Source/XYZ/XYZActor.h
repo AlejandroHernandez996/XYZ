@@ -23,13 +23,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
     virtual void BeginPlay() override;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)
         int32 ActorId;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)
         int32 UActorId;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)
         int32 TeamId;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)
@@ -74,6 +74,8 @@ public:
     virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
+        TArray<TSubclassOf<class UXYZAbility>> AbilityTemplates;
+    UPROPERTY(BlueprintReadOnly, Category = "Abilities")
         TArray<class UXYZAbility*> Abilities;
     UFUNCTION()
         void UseAbility(int32 Index);

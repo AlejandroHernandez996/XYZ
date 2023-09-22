@@ -19,12 +19,14 @@ class XYZ_API UXYZSelectionStructure : public UObject
 
 public:
 	//<ActorId, <UniqueActorId,XYZActor>>
-	TMap<int32, TMap<int32, AXYZActor*>> SelectedActors;
-    TArray<TMap<int32, TMap<int32, AXYZActor*>>> ControlGroups;
+    TSortedMap<int32, TMap<int32, AXYZActor*>> SelectedActors;
+    TArray<TSortedMap<int32, TMap<int32, AXYZActor*>>> ControlGroups;
     UPROPERTY()
         class AXYZActor* SelectedEnemy;
     UPROPERTY()
         class AXYZActor* SelectedResource;
+    UPROPERTY()
+        int32 ActiveActor;
     UPROPERTY()
         int32 ActiveIndex;
     UPROPERTY()
@@ -48,6 +50,9 @@ public:
     void SelectControlGroup(int32 ControlGroupIndex);
     UFUNCTION()
     void RemoveFromControlGroups(int32 ActorUId);
+
+    UFUNCTION()
+        void CycleSelection();
     
     UFUNCTION()
     void SelectEnemyActor(AXYZActor* Actor);
@@ -57,6 +62,8 @@ public:
     TArray<AXYZActor*> ToArray();
     UFUNCTION()
     TArray<int32> ToActorIdArray();
+    UFUNCTION()
+        TArray<int32> GetActiveActorIds();
 
     UFUNCTION()
     void Empty();

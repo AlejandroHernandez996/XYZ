@@ -20,6 +20,10 @@ void UXYZSelectionStructure::Add(AXYZActor* Actor) {
         }
     }
     else {
+        if (SelectedActors.IsEmpty()) {
+            ActiveIndex = 0;
+            ActiveActor = Actor->ActorId;
+        }
         // ActorId does not exist in the map, so create a new key-value pair.
         TMap<int32, AXYZActor*> InnerMap;
         InnerMap.Add(Actor->UActorId, Actor);
@@ -69,25 +73,31 @@ void UXYZSelectionStructure::Remove(int32 ActorUId)
     if (KeyOfInnerMap != -1) {
         SelectedActors.Remove(KeyOfInnerMap);
     }
+    if (SelectedActors.IsEmpty()) {
+        ActiveActor = -1;
+        ActiveIndex = -1;
+    }
 }
 
 void UXYZSelectionStructure::Remove(AXYZActor* Actor) {
-    // First check if ActorId already exists as a key in the map.
     if (Contains(Actor)) {
         SelectedActors[Actor->ActorId].Remove(Actor->UActorId);
         UE_LOG(LogTemp, Warning, TEXT("Removed Actor"));
         Actor->ShowDecal(false, EXYZDecalType::FRIENDLY);
         Num--;
-        // Optionally, remove the ActorId key if it has an empty map as a value.
         if (SelectedActors[Actor->ActorId].Num() == 0) {
             SelectedActors.Remove(Actor->ActorId);
         }
+    }
+    if (SelectedActors.IsEmpty()) {
+        ActiveActor = -1;
+        ActiveIndex = -1;
     }
 }
 
 void UXYZSelectionStructure::InitControlGroups(int32 ControlGroupCount) {
     for (int i = 0; i < ControlGroupCount; i++) {
-        TMap <int32, TMap<int32, AXYZActor*>> ControlGroup;
+        TSortedMap <int32, TMap<int32, AXYZActor*>> ControlGroup;
         ControlGroups.Add(ControlGroup);
     }
 }
@@ -124,13 +134,14 @@ void UXYZSelectionStructure::SelectControlGroup(int32 ControlGroupIndex) {
         }
     }
     Add(ResultArray);
+
 }
 
 void UXYZSelectionStructure::RemoveFromControlGroups(int32 ActorUId) {
 
     int32 KeyOfInnerMap = -1;
     for (int i = 0; i < ControlGroups.Num(); i++) {
-        TMap<int32, TMap<int32, AXYZActor*>> ControlGroup = ControlGroups[i];
+        TSortedMap<int32, TMap<int32, AXYZActor*>> ControlGroup = ControlGroups[i];
 
         for (auto& OuterElement : ControlGroup)
         {
@@ -197,6 +208,18 @@ TArray<int32> UXYZSelectionStructure::ToActorIdArray() {
     return ResultArray;
 }
 
+TArray<int32> UXYZSelectionStructure::GetActiveActorIds() {
+    TArray<int32> ResultArray;
+    if (ActiveIndex > -1 && ActiveActor > -1) {
+        if (SelectedActors.Contains(ActiveActor)) {
+            for (auto& InnerKeyValPair : SelectedActors[ActiveActor]) {
+                ResultArray.Add(InnerKeyValPair.Value->UActorId);
+            }
+        }
+    }
+    return ResultArray;
+}
+
 bool UXYZSelectionStructure::Contains(AXYZActor* Actor) {
     return Actor && SelectedActors.Contains(Actor->ActorId) && SelectedActors[Actor->ActorId].Contains(Actor->UActorId);
 }
@@ -232,6 +255,8 @@ void UXYZSelectionStructure::Empty() {
         }
     }
     SelectedActors.Empty();
+    ActiveActor = -1;
+    ActiveIndex = -1;
     Num = 0;
 }
 
@@ -239,6 +264,22 @@ bool UXYZSelectionStructure::IsEmpty() {
     return SelectedActors.IsEmpty();
 }
 
+void UXYZSelectionStructure::CycleSelection() {
+    if (SelectedActors.IsEmpty()) return;
+
+    ActiveIndex++;
+    if (ActiveIndex >= SelectedActors.Num()) {
+        ActiveIndex = 0;
+    }
+    TArray<int32> Keys;
+    Keys.Reserve(SelectedActors.Num()); // Optional, but can optimize the allocation
+
+    for (auto& Pair : SelectedActors)
+    {
+        Keys.Add(Pair.Key);
+    }
+    ActiveActor = Keys[ActiveIndex];
+}
 FString UXYZSelectionStructure::ToString() const {
     FString ResultString;
 

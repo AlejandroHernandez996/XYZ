@@ -43,6 +43,11 @@ struct FXYZInputMessage
     UPROPERTY()
         int32 Tick;
 
+    UPROPERTY()
+        int32 AbilityIndex = -1;
+    UPROPERTY()
+        int32 ActiveActorId = -1;
+
     FXYZInputMessage()
     {
         // Set default values

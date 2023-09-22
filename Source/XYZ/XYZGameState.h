@@ -16,6 +16,7 @@ class XYZ_API AXYZGameState : public AGameStateBase
 	GENERATED_BODY()
 
 public:
+	AXYZGameState();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(BlueprintReadOnly)
@@ -33,4 +34,7 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 	int32 ActorIndex;
+
+	bool bLinkedActors = false;
+	bool bClientLoaded;
 };

@@ -2,6 +2,7 @@
 #include "XYZActionFactory.h"
 #include "XYZAction.h"
 #include "XYZAttackAction.h"
+#include "XYZAbilityAction.h"
 #include "XYZMoveAction.h"
 #include "XYZStopAction.h"
 #include "XYZHoldAction.h"
@@ -12,7 +13,7 @@
 #include "XYZActor.h"
 #include "XYZResourceActor.h"
 
-UXYZAction* UXYZActionFactory::CreateAction(TArray<int32> _SelectedActors, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount, AXYZGameState* GameState)
+UXYZAction* UXYZActionFactory::CreateAction(TArray<int32> _SelectedActors, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount, AXYZGameState* GameState, int32 ActiveActorId, int32 AbilityIndex)
 {
     if (_SelectedActors.Num() == 0) return nullptr;
     bool bAreSelectedSameTeamAsTarget = false;
@@ -59,6 +60,13 @@ UXYZAction* UXYZActionFactory::CreateAction(TArray<int32> _SelectedActors, AXYZA
         FString f = "Hold_Action_" + FString::FromInt(ActionCount);
         FName ActionName = FName(*f);
         CreatedAction = MakeAction(_SelectedActors, _TargetActor, _TargetLocation, _bQueueInput, InputType, ActionCount, UXYZHoldAction::StaticClass(), ActionName, GameState);
+    }
+    if (InputType == EXYZInputType::ABILITY) {
+        FString f = "Ability_Action_" + FString::FromInt(ActionCount);
+        FName ActionName = FName(*f);
+        CreatedAction = MakeAction(_SelectedActors, _TargetActor, _TargetLocation, _bQueueInput, InputType, ActionCount, UXYZAbilityAction::StaticClass(), ActionName, GameState);
+        Cast<UXYZAbilityAction>(CreatedAction)->AbilityIndex = AbilityIndex;
+        Cast<UXYZAbilityAction>(CreatedAction)->ActiveActorId = ActiveActorId;
     }
     return CreatedAction;
 }
