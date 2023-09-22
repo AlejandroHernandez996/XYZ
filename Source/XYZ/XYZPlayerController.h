@@ -26,8 +26,10 @@ class AXYZPlayerController : public APlayerController
 
 public:
 	AXYZPlayerController();
-	UPROPERTY()
-	int32 TeamId = 0;
+	UPROPERTY(Replicated)
+	int32 TeamId = -1;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
 	/** Time Threshold to know if it was a short press */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	float ShortInputThreshold;

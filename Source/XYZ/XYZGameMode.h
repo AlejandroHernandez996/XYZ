@@ -27,7 +27,8 @@ public:
 	class UXYZInputManager* InputManager;
 	UPROPERTY()
 	class UXYZBlobManager* BlobManager;
-
+	UPROPERTY()
+		TArray<class AXYZPlayerController*> PlayerControllers;
 	bool bHandleInputQueue;
 };
 

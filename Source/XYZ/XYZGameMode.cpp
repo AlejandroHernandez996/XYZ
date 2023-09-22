@@ -47,6 +47,21 @@ void AXYZGameMode::QueueInput(const FXYZInputMessage& InputMessage) {
 void AXYZGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	TArray<AXYZPlayerController*> FoundControllers;
+	// TODO - eventually make it only find a set amount and then stop looking
+	for (auto It = GetWorld()->GetControllerIterator(); It; It++) {
+		if (It->Get()) {
+			if (Cast<AXYZPlayerController>(It->Get())) {
+				FoundControllers.Add(Cast<AXYZPlayerController>(It->Get()));
+			}
+		}
+	}
+	if (FoundControllers.Num() > 0) {
+		PlayerControllers = FoundControllers;
+		for (int i = 0; i < PlayerControllers.Num(); i++) {
+			PlayerControllers[i]->TeamId = i;
+		}
+	}
 	BlobManager->ProcessBlobs();
 	TickCount++;
 }

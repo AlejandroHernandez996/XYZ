@@ -74,7 +74,9 @@ public:
     virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-        TArray<UXYZAbility*> Abilities;
+        TArray<class UXYZAbility*> Abilities;
+    UFUNCTION()
+        void UseAbility(int32 Index);
 
     UPROPERTY()
     TArray<UXYZAction*> ActionQueue;

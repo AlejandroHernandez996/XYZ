@@ -19,4 +19,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
         FString Name;
 
+    UFUNCTION()
+        virtual void Activate() {};
 };

@@ -14,19 +14,35 @@ class XYZ_API AXYZBuilding : public AXYZActor
 {
 	GENERATED_BODY()
 public:
+	virtual void Tick(float DeltaTime);
+	UPROPERTY(BlueprintReadOnly)
 	int32 MAX_BUILD_QUEUE_SIZE = 6;
+	UPROPERTY(BlueprintReadOnly, Replicated)
+		int32 BuildQueueNum = 0;
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 		FVector RallyPoint;
+	UPROPERTY(BlueprintReadOnly, Replicated)
+		FVector SpawnPoint;
 	UPROPERTY()
 		class AXYZActor* RallyTarget;
 	UPROPERTY()
 		bool bCanRally;
-	UPROPERTY()
-	TArray<class UXYZBuildingAbility*> BuildQueue;
-	UPROPERTY()
+
+	TQueue<class UXYZBuildingAbility*> BuildQueue;
+	UFUNCTION()
+		void EnqueueAbility(class UXYZBuildingAbility* BuildingAbility);
+	UPROPERTY(BlueprintReadOnly, Replicated)
 		float TimeToBuild;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly, Replicated)
+		float TotalBuildTime;
+	UFUNCTION()
+		void TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate);
+	UPROPERTY(BlueprintReadOnly)
 		int32 SupplyGain;
+	UFUNCTION()
+		void ProcessBuildQueue(float DeltaTime);
+	UFUNCTION()
+		void CancelProduction();
 };

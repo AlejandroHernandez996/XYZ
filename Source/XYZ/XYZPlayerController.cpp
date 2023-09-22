@@ -24,6 +24,7 @@
 #include "XYZBuilding.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 AXYZPlayerController::AXYZPlayerController()
 {
@@ -498,4 +499,9 @@ void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
 
 	}
 	
+}
+
+void AXYZPlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AXYZPlayerController, TeamId);
 }

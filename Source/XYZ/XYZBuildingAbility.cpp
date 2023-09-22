@@ -2,4 +2,8 @@
 
 
 #include "XYZBuildingAbility.h"
+#include "XYZBuilding.h"
 
+void UXYZBuildingAbility::Activate() {
+	OwningBuilding->EnqueueAbility(this);
+}

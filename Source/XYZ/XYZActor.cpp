@@ -19,6 +19,7 @@
 #include "XYZResourceActor.h"
 #include "XYZWorker.h"
 #include "XYZBuilding.h"
+#include "XYZAbility.h"
 
 // Sets default values
 AXYZActor::AXYZActor()
@@ -66,7 +67,11 @@ void AXYZActor::Tick(float DeltaTime)
     if (GetLocalRole() == ROLE_Authority) {
         if (Health == 0.0f)
         {
-            GetWorld()->GetFirstPlayerController<AXYZPlayerController>()->XYZActorDestroyed(UActorId);
+            for (AXYZPlayerController* XYZController : GetWorld()->GetAuthGameMode<AXYZGameMode>()->PlayerControllers) {
+                if (XYZController) {
+                    XYZController->XYZActorDestroyed(UActorId);
+                }
+            }
             GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(UActorId);
             GetXYZAIController()->XYZStopMovement();
             GetCapsuleComponent()->SetCollisionProfileName("Ragdoll");
@@ -318,5 +323,11 @@ void AXYZActor::SetState(EXYZUnitState UnitState) {
     case EXYZUnitState::DEAD:
         TargetActor = nullptr;
         break;
+    }
+}
+
+void AXYZActor::UseAbility(int32 Index) {
+    if (Index >= 0 && Index < Abilities.Num() && Abilities[Index] && !Abilities.IsEmpty()) {
+        Abilities[Index]->Activate();
     }
 }

@@ -6,17 +6,17 @@
 #include "XYZAbility.h"
 #include "XYZBuildingAbility.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class XYZ_API UXYZBuildingAbility : public UXYZAbility
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
-		class AXYZUnit* UnitTemplate;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+		TSubclassOf<class AXYZActor> UnitTemplate;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 BuildTime;
+	UPROPERTY()
+		class AXYZBuilding* OwningBuilding;
+	virtual void Activate() override;
 };
