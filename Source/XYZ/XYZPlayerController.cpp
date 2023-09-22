@@ -519,3 +519,12 @@ void AXYZPlayerController::PingServerGameIsLoaded_Implementation() {
 	AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
 	GameState->bClientLoaded = true;
 }
+
+AXYZActor* AXYZPlayerController::GetActiveSelectedActor() {
+	AXYZActor* Result = nullptr;
+	TArray<int32> ActiveActorIds = SelectionStructure->GetActiveActorIds();
+	if (!ActiveActorIds.IsEmpty() && GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Contains(ActiveActorIds[0])) {
+		Result = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[ActiveActorIds[0]];
+	}
+	return Result;
+}

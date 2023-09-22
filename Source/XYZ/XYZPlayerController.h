@@ -145,7 +145,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 		void SelectActorFromPanel(int32 UActorId);
-
+	UFUNCTION(BlueprintCallable, Category = "UI")
+		class AXYZActor* GetActiveSelectedActor();
 	void CreateAndQueueInput(TArray<int32> _SelectedActors, int32 _XYZTargetActor, FVector _TargetLocation, EXYZInputType _InputType, bool _bQueueInput);
 	UFUNCTION(Server, Reliable)
 	void QueueInput(const FXYZInputMessage& InputMessage);

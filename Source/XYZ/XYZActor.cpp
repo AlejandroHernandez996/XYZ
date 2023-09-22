@@ -55,14 +55,12 @@ void AXYZActor::BeginPlay()
 
     int AbilityIndex = 0;
     Abilities.Empty();
-    if (GetLocalRole() == ROLE_Authority) {
-        for (TSubclassOf<class UXYZAbility> AbilityTemplate : AbilityTemplates) {
-            UXYZAbility* Ability = NewObject<UXYZAbility>(this, AbilityTemplate, FName(GetName() + "Ability_" + FString::FromInt(AbilityIndex)));
-            if (Ability) {
-                Abilities.Add(Ability);
-            }
-            AbilityIndex++;
+    for (TSubclassOf<class UXYZAbility> AbilityTemplate : AbilityTemplates) {
+        UXYZAbility* Ability = NewObject<UXYZAbility>(this, AbilityTemplate, FName(GetName() + "Ability_" + FString::FromInt(AbilityIndex)));
+        if (Ability) {
+            Abilities.Add(Ability);
         }
+        AbilityIndex++;
     }
 }
 
