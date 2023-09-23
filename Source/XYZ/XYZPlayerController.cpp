@@ -286,7 +286,6 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 	switch (InputType) {
 	case EXYZInputType::PRIMARY_INPUT:
 		if (!bAllowMouseInput) return;
-		if (!bBoxSelectFlag || !bAllowMouseInput) return;
 		OnSelectionBoxTriggered.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
 		break;
 	case EXYZInputType::ATTACK_MOVE:
@@ -340,7 +339,7 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 			}
 			GetHUD<AXYZHUD>()->AllActorsOnScreen.Empty();
 		}
-		else if (InputTriggeredTime[InputType] <= ShortInputThreshold && FVector2D::Distance(BoxSelectStart, BoxSelectEnd) < 10.0f){
+		else if (FVector2D::Distance(BoxSelectStart, BoxSelectEnd) < 25.0f){
 			if (HitActor) {
 				SelectActors({ HitActor });
 			}
@@ -353,6 +352,7 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		if (CameraController) {
 			CameraController->bBlockMovementFlag = false;
 		}
+		OnSelectionBoxTriggered.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
 		OnSelectionBoxReleased.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
 		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		break;

@@ -94,6 +94,10 @@ void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceR
         Cast<AXYZBuilding>(GetXYZActor())->RallyTarget = Actor;
         return;
     }
+    if (Actor->IsA(AXYZResourceActor::StaticClass())) {
+        XYZMoveToActor(Actor);
+        return;
+    }
     CurrentTargetLocation = Actor->GetActorLocation();
     GetXYZActor()->SetState(EXYZUnitState::ATTACKING);
     GetXYZActor()->TargetActor = Actor;

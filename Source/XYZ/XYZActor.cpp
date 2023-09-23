@@ -377,7 +377,7 @@ void AXYZActor::PlayAnimationMontage(EXYZAnimMontageType AnimType) {
                 TimerHandle,
                 [this]()
                 {
-                    GetMesh()->GetAnimInstance()->StopAllMontages(0.0f);
+                    GetMesh()->GetAnimInstance()->StopAllMontages(.25f);
                 },
                 Montage->GetPlayLength(), 
                 false 
