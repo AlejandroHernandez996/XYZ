@@ -137,26 +137,14 @@ void UXYZSelectionStructure::SelectControlGroup(int32 ControlGroupIndex) {
 
 }
 
-void UXYZSelectionStructure::RemoveFromControlGroups(int32 ActorUId) {
+void UXYZSelectionStructure::RemoveFromControlGroups(int32 ActorUId, int32 ActorId) {
 
-    int32 KeyOfInnerMap = -1;
     for (int i = 0; i < ControlGroups.Num(); i++) {
-        TSortedMap<int32, TMap<int32, AXYZActor*>> ControlGroup = ControlGroups[i];
-
-        for (auto& OuterElement : ControlGroup)
-        {
-            TMap<int32, AXYZActor*>& InnerMap = OuterElement.Value;
-            if (InnerMap.Contains(ActorUId)) {
-                InnerMap.Remove(ActorUId);
-                if (InnerMap.Num() == 0) {
-                    OuterElement.Key = KeyOfInnerMap;
-                }
-                break;
+        if (ControlGroups[i].Contains(ActorId) && ControlGroups[i][ActorId].Contains(ActorUId)) {
+            ControlGroups[i][ActorId].Remove(ActorUId);
+            if (ControlGroups[i][ActorId].IsEmpty()) {
+                ControlGroups[i].Remove(ActorId);
             }
-
-        }
-        if (KeyOfInnerMap != -1) {
-            ControlGroup.Remove(KeyOfInnerMap);
         }
     }
 }
@@ -294,5 +282,22 @@ FString UXYZSelectionStructure::ToString() const {
     }
 
     return ResultString;
+}
+
+TArray<int32> UXYZSelectionStructure::GetControlGroupAmounts() {
+    TArray<int32> Amounts;
+    for (const TSortedMap<int32, TMap<int32, AXYZActor*>>& SortedMap : ControlGroups)
+    {
+        int32 CurrentCount = 0;
+
+        TArray<TMap<int32, AXYZActor*>> Actors;
+        SortedMap.GenerateValueArray(Actors);
+        for (auto& InnerMap: Actors)
+        {
+            CurrentCount += InnerMap.Num();
+        }
+        Amounts.Add(CurrentCount);
+    }
+    return Amounts;
 }
 

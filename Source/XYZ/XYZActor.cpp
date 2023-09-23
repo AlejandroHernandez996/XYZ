@@ -20,6 +20,10 @@
 #include "XYZWorker.h"
 #include "XYZBuilding.h"
 #include "XYZAbility.h"
+#include "XYZBlobManager.h"
+#include "XYZBlob.h"
+#include "Animation/AnimMontage.h"
+#include "Animation/AnimInstance.h"
 
 // Sets default values
 AXYZActor::AXYZActor()
@@ -89,7 +93,9 @@ void AXYZActor::Tick(float DeltaTime)
             GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(UActorId);
             GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId] -= SupplyCost;
             GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId + 2] -= SupplyGain;
-
+            for (UXYZBlob* Blob : Cast<AXYZGameMode>(GetWorld()->GetAuthGameMode())->BlobManager->ActiveBlobs) {
+                Blob->RemoveAgent(this);
+            }
             GetXYZAIController()->XYZStopMovement();
             GetCapsuleComponent()->SetCollisionProfileName("Ragdoll");
             CurrentCapsuleRadius = 0.0f;
@@ -175,6 +181,12 @@ void AXYZActor::Attack() {
         GetWorld()->GetTimerManager().SetTimer(AttackTimer, [this]() {
             bIsAttackOnCooldown = false;
             }, AttackRate, false);
+
+        for (AXYZPlayerController* XYZController : GetWorld()->GetAuthGameMode<AXYZGameMode>()->PlayerControllers) {
+            if (XYZController) {
+                XYZController->PlayAnimationMontage(EXYZAnimMontageType::ATTACK, this);
+            }
+        }
         TargetActor->Health = FMath::Clamp(TargetActor->Health - AttackDamage, 0.0f, TargetActor->MaxHealth);
         FVector Direction = TargetActor->GetActorLocation() - GetActorLocation();
         Direction.Z = 0; 
@@ -351,5 +363,25 @@ void AXYZActor::SetState(EXYZUnitState UnitState) {
 void AXYZActor::UseAbility(int32 Index) {
     if (Index >= 0 && Index < Abilities.Num() && Abilities[Index] && !Abilities.IsEmpty()) {
         Abilities[Index]->Activate();
+    }
+}
+
+void AXYZActor::PlayAnimationMontage(EXYZAnimMontageType AnimType) {
+
+    if (AnimMontageMap.Contains(AnimType)) {
+        UAnimMontage* Montage = AnimMontageMap[AnimType];
+        if (Montage) {
+            GetMesh()->GetAnimInstance()->Montage_Play(Montage);
+            FTimerHandle TimerHandle;
+            GetWorldTimerManager().SetTimer(
+                TimerHandle,
+                [this]()
+                {
+                    GetMesh()->GetAnimInstance()->StopAllMontages(0.0f);
+                },
+                Montage->GetPlayLength(), 
+                false 
+            );
+        }
     }
 }

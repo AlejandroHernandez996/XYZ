@@ -8,6 +8,7 @@
 #include "InputActionValue.h"
 #include "XYZInputType.h"
 #include "XYZInputMessage.h"
+#include "XYZAnimMontageType.h"
 #include "XYZPlayerController.generated.h"
 
 /** Forward declaration to improve compiling times */
@@ -155,14 +156,10 @@ protected:
 	FHitResult WorldHit;
 	bool bWorldHitSuccessful = false;
 
-	// We look for the location in the world where the player has pressed the input
 	FHitResult XYZActorHit;
 	bool bXYZActorHitSuccessful = false;
 
 private:
-	UPROPERTY()
-	class UXYZSelectionStructure* SelectionStructure;
-
 	UPROPERTY()
 	TMap<EXYZInputType, float> InputTriggeredTime;
 
@@ -172,6 +169,9 @@ private:
 		class AXYZCameraController* CameraController;
 
 public:
+	UPROPERTY(BlueprintReadOnly)
+		class UXYZSelectionStructure* SelectionStructure;
+
 	UFUNCTION(Client, Reliable)
 		void XYZActorDestroyed(int32 ActorUId);
 	void XYZActorDestroyed_Implementation(int32 ActorUId);
@@ -180,6 +180,10 @@ public:
 		void PingServerGameIsLoaded();
 	void PingServerGameIsLoaded_Implementation();
 	bool bPingedGameLoaded;
+
+	UFUNCTION(Client, Reliable)
+		void PlayAnimationMontage(EXYZAnimMontageType AnimationType, AXYZActor* Actor);
+	void PlayAnimationMontage_Implementation(EXYZAnimMontageType AnimationType, AXYZActor* Actor);
 };
 
 

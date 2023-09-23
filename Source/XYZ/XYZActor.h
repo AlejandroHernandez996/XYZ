@@ -8,6 +8,7 @@
 #include "XYZFactionType.h"
 #include "XYZDecalType.h"
 #include "XYZUnitState.h"
+#include "XYZAnimMontageType.h"
 #include "XYZActor.generated.h"
 
 UCLASS()
@@ -140,4 +141,14 @@ public:
         int32 SupplyCost;
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
         int32 SupplyGain;
+
+    UPROPERTY()
+        class UXYZBlob* CurrentBlob;
+
+    UPROPERTY(EditAnywhere)
+        TMap<EXYZAnimMontageType, class UAnimMontage*> AnimMontageMap;
+    
+    UFUNCTION()
+        void PlayAnimationMontage(EXYZAnimMontageType AnimMontageType);
+
 };

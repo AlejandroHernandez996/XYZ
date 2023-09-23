@@ -125,7 +125,7 @@ void UXYZBlob::AddAction(UXYZAction* Action) {
 }
 
 void UXYZBlob::RemoveAgent(AXYZActor* Agent) {
-    if (Agent) {
+    if (Agent && AgentsInBlob.Contains(Agent)) {
         AgentsInBlob.Remove(Agent);
         if (AgentToNodeCache.Contains(Agent)) {
             AgentToNodeCache[Agent].Get()->RemoveAgent(Agent);

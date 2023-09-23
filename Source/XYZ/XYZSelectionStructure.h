@@ -49,8 +49,9 @@ public:
     UFUNCTION()
     void SelectControlGroup(int32 ControlGroupIndex);
     UFUNCTION()
-    void RemoveFromControlGroups(int32 ActorUId);
-
+    void RemoveFromControlGroups(int32 ActorUId, int32 ActorId);
+    UFUNCTION(BlueprintCallable)
+        TArray<int32> GetControlGroupAmounts();
     UFUNCTION()
         void CycleSelection();
     

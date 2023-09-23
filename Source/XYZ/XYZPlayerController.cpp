@@ -484,7 +484,7 @@ void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
 		if (SelectionStructure->Contains(ActorUId)) {
 			SelectionStructure->Remove(ActorUId);
 		}
-		SelectionStructure->RemoveFromControlGroups(ActorUId);
+		SelectionStructure->RemoveFromControlGroups(ActorUId, Actor->ActorId);
 		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 
 		TArray<int32> ControlGroups;
@@ -527,4 +527,10 @@ AXYZActor* AXYZPlayerController::GetActiveSelectedActor() {
 		Result = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[ActiveActorIds[0]];
 	}
 	return Result;
+}
+
+void AXYZPlayerController::PlayAnimationMontage_Implementation(EXYZAnimMontageType AnimType, AXYZActor* Actor) {
+	if (Actor->AnimMontageMap.Contains(AnimType)) {
+		Actor->PlayAnimationMontage(AnimType);
+	}
 }
