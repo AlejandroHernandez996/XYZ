@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{853033E5-4001-38E5-2968-B4B1752309A0}",
+	"EngineAssociation": "{386DF4F4-47A4-09C0-F773-02A58DD82DDA}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -19,7 +19,7 @@
 	"Plugins": [
 		{
 			"Name": "ModelingToolsEditorMode",
-			"Enabled": true,
+			"Enabled": false,
 			"TargetAllowList": [
 				"Editor"
 			]

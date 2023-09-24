@@ -51,7 +51,8 @@ void AXYZActor::BeginPlay()
     Super::BeginPlay();
 
     if (GetLocalRole() != ROLE_Authority) {
-        TArray<UActorComponent*> DecalComponents = GetComponentsByClass(UDecalComponent::StaticClass());
+        TArray<UActorComponent*> DecalComponents;
+        GetComponents(DecalComponents);
         if (DecalComponents.Num() == 1) {
             SelectionDecal = Cast<UDecalComponent>(DecalComponents[0]);
         }

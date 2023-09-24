@@ -494,7 +494,8 @@ void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
 		OnControlGroupEvent.Broadcast(ControlGroups);
 		GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(ActorUId);
 
-		TArray<UActorComponent*> Components = Actor->GetComponentsByClass(UActorComponent::StaticClass());
+		TArray<UActorComponent*> Components;
+		Actor->GetComponents(Components);
 		for (UActorComponent* Component : Components)
 		{
 			if (USceneComponent* SceneComponent = Cast<USceneComponent>(Component))
