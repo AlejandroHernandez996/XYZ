@@ -535,3 +535,17 @@ void AXYZPlayerController::PlayAnimationMontage_Implementation(EXYZAnimMontageTy
 		Actor->PlayAnimationMontage(AnimType);
 	}
 }
+
+void AXYZPlayerController::OnNetCleanup(UNetConnection* Connection)
+{
+	if (GetLocalRole() == ROLE_Authority && PlayerState != NULL)
+	{
+		AXYZGameMode* GameMode = Cast<AXYZGameMode>(GetWorld()->GetAuthGameMode());
+		if (GameMode)
+		{
+			GameMode->PreLogout(this);
+		}
+	}
+
+	Super::OnNetCleanup(Connection);
+}

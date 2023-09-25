@@ -18,7 +18,7 @@
 		"IsLicenseeVersion": 0,
 		"IsPromotedBuild": 0,
 		"BranchName": "UE5",
-		"BuildId": "8a39cfa4-7236-4bc0-96b0-d56e4917fe4f"
+		"BuildId": "b9e5d6ca-8828-47b6-aff4-8f69845d7a02"
 	},
 	"BuildProducts": [
 		{
@@ -31,6 +31,114 @@
 		},
 		{
 			"Path": "$(ProjectDir)/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointDiscord.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointDiscord.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointEOS.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointEOS.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointItchIo.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointItchIo.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointOculus.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointOculus.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointSteam.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointSteam.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointDiscordGameSDKRuntime.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointDiscordGameSDKRuntime.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSEditor.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSEditor.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSEditorTests.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSEditorTests.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSPlatformDefault.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSPlatformDefault.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSTests.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSTests.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSUtils.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSUtils.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSVoiceChat.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSVoiceChat.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointLibHydrogen.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointLibHydrogen.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
 		},
 		{
@@ -111,6 +219,14 @@
 		},
 		{
 			"Path": "$(EngineDir)/Binaries/Win64/OpenImageDenoise.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Binaries/Win64/RedpointEOS/EOSSDK-Win64-Shipping.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Binaries/Win64/RedpointEOS/x64/xaudio2_9redist.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
@@ -5450,6 +5566,30 @@
 			"Type": "RequiredResource"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemOculus/Binaries/Win64/UnrealEditor-OnlineSubsystemOculus.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemOculus/Binaries/Win64/UnrealEditor-OnlineSubsystemOculus.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemOculus/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemSteam/Binaries/Win64/UnrealEditor-OnlineSubsystemSteam.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemSteam/Binaries/Win64/UnrealEditor-OnlineSubsystemSteam.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemSteam/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemUtils/Binaries/Win64/UnrealEditor-OnlineBlueprintSupport.dll",
 			"Type": "DynamicLibrary"
 		},
@@ -5970,6 +6110,18 @@
 			"Type": "RequiredResource"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Runtime/PacketHandlers/AESGCMHandlerComponent/Binaries/Win64/UnrealEditor-AESGCMHandlerComponent.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/PacketHandlers/AESGCMHandlerComponent/Binaries/Win64/UnrealEditor-AESGCMHandlerComponent.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/PacketHandlers/AESGCMHandlerComponent/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Runtime/ProceduralMeshComponent/Binaries/Win64/UnrealEditor-ProceduralMeshComponent.dll",
 			"Type": "DynamicLibrary"
 		},
@@ -6071,6 +6223,18 @@
 		},
 		{
 			"Path": "$(EngineDir)/Plugins/Runtime/SoundFields/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/Steam/SteamShared/Binaries/Win64/UnrealEditor-SteamShared.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/Steam/SteamShared/Binaries/Win64/UnrealEditor-SteamShared.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/Steam/SteamShared/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
 		},
 		{
@@ -6263,6 +6427,10 @@
 		}
 	],
 	"RuntimeDependencies": [
+		{
+			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/OnlineSubsystemRedpointEOS.uplugin",
+			"Type": "UFS"
+		},
 		{
 			"Path": "$(ProjectDir)/XYZ.uproject",
 			"Type": "UFS"
@@ -24996,6 +25164,10 @@
 			"Type": "NonUFS"
 		},
 		{
+			"Path": "$(EngineDir)/Binaries/ThirdParty/Steamworks/Steamv153/Win64/steam_api64.dll",
+			"Type": "NonUFS"
+		},
+		{
 			"Path": "$(EngineDir)/Binaries/ThirdParty/Vorbis/Win64/VS2015/libvorbis_64.dll",
 			"Type": "NonUFS"
 		},
@@ -26157,6 +26329,14 @@
 		},
 		{
 			"Path": "$(EngineDir)/Binaries/Win64/OpenImageDenoise.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(EngineDir)/Binaries/Win64/RedpointEOS/EOSSDK-Win64-Shipping.dll",
+			"Type": "NonUFS"
+		},
+		{
+			"Path": "$(EngineDir)/Binaries/Win64/RedpointEOS/x64/xaudio2_9redist.dll",
 			"Type": "NonUFS"
 		},
 		{
@@ -29436,7 +29616,19 @@
 			"Type": "UFS"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemApple/OnlineSubsystemApple.uplugin",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemNull/OnlineSubsystemNull.uplugin",
+			"Type": "UFS"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemOculus/OnlineSubsystemOculus.uplugin",
+			"Type": "UFS"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemSteam/OnlineSubsystemSteam.uplugin",
 			"Type": "UFS"
 		},
 		{
@@ -29544,6 +29736,10 @@
 			"Type": "UFS"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Runtime/PacketHandlers/AESGCMHandlerComponent/AESGCMHandlerComponent.uplugin",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Runtime/ProceduralMeshComponent/ProceduralMeshComponent.uplugin",
 			"Type": "UFS"
 		},
@@ -29565,6 +29761,10 @@
 		},
 		{
 			"Path": "$(EngineDir)/Plugins/Runtime/SoundFields/SoundFields.uplugin",
+			"Type": "UFS"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/Steam/SteamShared/SteamShared.uplugin",
 			"Type": "UFS"
 		},
 		{

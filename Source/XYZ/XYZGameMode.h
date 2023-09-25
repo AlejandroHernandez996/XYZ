@@ -30,6 +30,37 @@ public:
 	UPROPERTY()
 		TArray<class AXYZPlayerController*> PlayerControllers;
 	bool bHandleInputQueue;
+
+public:
+	void RegisterExistingPlayers();
+
+	UPROPERTY()
+		class ULoginHandler* LoginHandler;
+	UPROPERTY()
+		class USessionHandler* SessionHandler;
+	UPROPERTY()
+		class UUserInfoRetriver* UserRetriever;
+	UPROPERTY()
+		class UUserStatRetriever* UserStatRetriever;
+	UPROPERTY()
+		class UUserStatUpdater* UserStatUpdater;
+	void PreLogout(APlayerController* InPlayerController);
+
+private:
+	bool bIsConnectingToSession;
+	bool bIsFindingSession;
+	bool bIsJoiningSession;
+	bool bIsLoggingIn;
+	bool bIsStartingSession;
+	bool bIsCreatingSession;
+	bool bRetrivedUsersInfo;
+
+	int32 NumOfPlayers;
+
+	bool bAllExistingPlayersRegistered;
+
+	void PostLogin(APlayerController* InPlayerController) override;
+
 };
 
 

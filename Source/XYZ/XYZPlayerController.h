@@ -184,6 +184,8 @@ public:
 	UFUNCTION(Client, Reliable)
 		void PlayAnimationMontage(EXYZAnimMontageType AnimationType, AXYZActor* Actor);
 	void PlayAnimationMontage_Implementation(EXYZAnimMontageType AnimationType, AXYZActor* Actor);
+
+	void OnNetCleanup(UNetConnection* Connection) override;
 };
 
 
