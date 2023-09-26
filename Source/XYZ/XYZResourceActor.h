@@ -15,5 +15,6 @@ class XYZ_API AXYZResourceActor : public AXYZActor
 {
 	GENERATED_BODY()
 public:
+	virtual void ProcessActor() override;
 	EXYZResourceType ResourceType = EXYZResourceType::MINERAL;
 };

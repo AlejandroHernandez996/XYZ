@@ -3,3 +3,7 @@
 
 #include "XYZResourceActor.h"
 
+void AXYZResourceActor::ProcessActor()
+{
+	
+}

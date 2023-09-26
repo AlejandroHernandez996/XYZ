@@ -105,6 +105,7 @@ void AXYZGameMode::Tick(float DeltaSeconds)
     {
         TArray<AXYZActor*> Actors;
         Cast<AXYZGameState>(GetWorld()->GetGameState())->ActorsByUID.GenerateValueArray(Actors);
+        
         for(AXYZActor* Actor : Actors)
         {
             if(Actor)

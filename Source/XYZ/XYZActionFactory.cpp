@@ -78,7 +78,10 @@ UXYZAction* UXYZActionFactory::MakeAction(TArray<int32> _SelectedActors, AXYZAct
     {
         NewAction->Initialize(_TargetActor, _TargetLocation, _bQueueInput);
         for (int i = 0; i < _SelectedActors.Num(); i++) {
-            NewAction->ActorSet.Add(GameState->ActorsByUID[_SelectedActors[i]]);
+            if(GameState->ActorsByUID.Contains(_SelectedActors[i]))
+            {
+                NewAction->ActorSet.Add(GameState->ActorsByUID[_SelectedActors[i]]);
+            }
         }
     }
     

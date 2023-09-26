@@ -82,10 +82,6 @@ void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
-	if(GameState && HasAuthority() && GetWorld()->GetAuthGameMode<AXYZGameMode>()->bHasGameStarted)
-	{
-		GameState->AddActorServer(this);
-	}
 	if(!HasAuthority() && UActorId != -1 && !GameState->ActorsByUID.Contains(UActorId))
 	{
 		GameState->AddActorClient(this, UActorId);
@@ -279,7 +275,7 @@ void AXYZActor::AttackMoveTarget()
 	AXYZAIController* ActorController = GetXYZAIController();
 	FVector ActorLocation = GetActorLocation();
 	FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
-	if (TargetActor != this && TargetActor->Health > 0.0f)
+	if (TargetActor && TargetActor != this && TargetActor->Health > 0.0f)
 	{
 		FVector TargetActorLocation = TargetActor->GetActorLocation();
 

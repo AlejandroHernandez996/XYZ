@@ -23,8 +23,7 @@ void AXYZGameState::Tick(float DeltaTime) {
 		for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 		{
 			AXYZActor* Actor = *ActorItr;
-			ActorIndex++;
-			Actor->UActorId = ActorIndex;
+			AddActorServer(Actor);
 
 			if (Actor->TeamId == 0 || Actor->TeamId == 1) {
 				SupplyByTeamId[Actor->TeamId] += Actor->SupplyCost;
