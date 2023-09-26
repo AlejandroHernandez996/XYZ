@@ -121,6 +121,14 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 
 	bWorldHitSuccessful = GetHitResultAtScreenPosition(GetMousePositionOnViewport(), ECollisionChannel::ECC_WorldStatic, true, WorldHit);
 	bXYZActorHitSuccessful = GetHitResultAtScreenPosition(GetMousePositionOnViewport(), ECollisionChannel::ECC_WorldStatic, true, XYZActorHit);
+
+	if(CameraController && bMoveCameraFlag && !HasAuthority())
+	{
+
+		FVector LocationWithOffset = FVector(CameraLocation.X, CameraLocation.Y, CameraController->GetActorLocation().Z) + FVector(-250, 50,0.0f);
+		CameraController->SetActorLocation(CameraLocation);
+		bMoveCameraFlag = false;
+	}
 }
 
 void AXYZPlayerController::SetupInputComponent()
@@ -472,6 +480,7 @@ void AXYZPlayerController::SelectActorFromPanel(int32 UActorId) {
 }
 
 void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
+	if(!GetWorld() || !GetWorld()->GetGameState<AXYZGameState>()) return;
 	if (GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Contains(ActorUId)) {
 		AXYZActor* Actor = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[ActorUId];
 		if (!Actor) return;
@@ -515,6 +524,19 @@ void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
 void AXYZPlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AXYZPlayerController, TeamId);
+}
+
+void AXYZPlayerController::Disconnect_Implementation()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "DISCONNECTED FROM MATCH");
+	UGameplayStatics::OpenLevel((UObject*)GetGameInstance(), FName(TEXT("MainMenuMap")));
+}
+
+void AXYZPlayerController::FocusCameraOnLocation_Implementation(FVector Location)
+{
+	if(HasAuthority()) return;
+	bMoveCameraFlag = true;
+	CameraLocation =Location; 
 }
 
 void AXYZPlayerController::PingServerGameIsLoaded_Implementation() {

@@ -12,7 +12,9 @@
 #include "SessionHandler.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
+#include "XYZBaseBuilding.h"
 #include "XYZDeathManager.h"
+#include "XYZMatchManager.h"
 #include "Interfaces/OnlineIdentityInterface.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -44,6 +46,9 @@ void AXYZGameMode::BeginPlay() {
 	BlobManager = NewObject<UXYZBlobManager>(this, UXYZBlobManager::StaticClass(), "BlobManager");
 	InputManager->XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
     DeathManager = NewObject<UXYZDeathManager>(this, UXYZDeathManager::StaticClass(), "DeathManager");
+    MatchManager = NewObject<UXYZMatchManager>(this, UXYZMatchManager::StaticClass(), "MatchManager");
+    MatchManager->XYZGameMode = this;
+    MatchManager->XYZGameState = GetGameState<AXYZGameState>();
 	
     SessionHandler = NewObject<USessionHandler>(this);
     UserRetriever = NewObject<UUserInfoRetriver>(this);
@@ -98,11 +103,23 @@ void AXYZGameMode::Tick(float DeltaSeconds)
                 PlayerControllers.Add(FoundControllers[i]);
             }
             bHasGameStarted = true;
+            GetGameState<AXYZGameState>()->LoadGameState();
+            TArray<AXYZActor*> Actors;
+            GetGameState<AXYZGameState>()->ActorsByUID.GenerateValueArray(Actors);
+
+            for(AXYZActor* Actor : Actors)
+            {
+                if(Actor->IsA(AXYZBaseBuilding::StaticClass()))
+                {
+                    PlayerControllers[Actor->TeamId]->FocusCameraOnLocation(Actor->GetActorLocation());
+                }
+            }
         }
     }
 
-    if(bHasGameStarted)
+    if(bHasGameStarted && !bHasGameEnded)
     {
+        
         TArray<AXYZActor*> Actors;
         Cast<AXYZGameState>(GetWorld()->GetGameState())->ActorsByUID.GenerateValueArray(Actors);
         
@@ -116,6 +133,7 @@ void AXYZGameMode::Tick(float DeltaSeconds)
         InputManager->ProcessInputs();
         BlobManager->ProcessBlobs();
         DeathManager->ProcessDeaths(DeltaSeconds);
+        MatchManager->Process();
         TickCount++;
     }
 	

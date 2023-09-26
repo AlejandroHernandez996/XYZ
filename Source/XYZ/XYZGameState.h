@@ -19,10 +19,17 @@ public:
 	AXYZGameState();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	
 	UFUNCTION()
 	void AddActorServer(class AXYZActor* Actor);
 	UFUNCTION()
 	void AddActorClient(class AXYZActor* Actor, int32 ActorUId);
+	
+	UFUNCTION()
+	void LoadGameState();
+	UPROPERTY()
+	bool bLoadedGameState;
+	
 	UPROPERTY(BlueprintReadOnly)
 	TMap<int32, class AXYZActor*> ActorsByUID;
 

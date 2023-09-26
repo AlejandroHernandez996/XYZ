@@ -29,7 +29,17 @@ public:
 	AXYZPlayerController();
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	int32 TeamId = -1;
+	bool bMoveCameraFlag;
+	FVector CameraLocation;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
+	UFUNCTION(BlueprintCallable, Client, Reliable)
+	void Disconnect();
+	void Disconnect_Implementation();
+
+	UFUNCTION(BlueprintCallable, Client, Reliable)
+	void FocusCameraOnLocation(FVector Location);
+	void FocusCameraOnLocation_Implementation(FVector Location);
 
 	/** Time Threshold to know if it was a short press */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)

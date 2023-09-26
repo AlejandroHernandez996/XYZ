@@ -30,9 +30,12 @@ public:
 	UPROPERTY()
 	class UXYZDeathManager* DeathManager;
 	UPROPERTY()
+	class UXYZMatchManager* MatchManager;
+	UPROPERTY()
 		TArray<class AXYZPlayerController*> PlayerControllers;
 	bool bHandleInputQueue;
 	bool bHasGameStarted;
+	bool bHasGameEnded;
 	
 	void RegisterExistingPlayers();
 
