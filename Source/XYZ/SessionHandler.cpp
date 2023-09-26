@@ -28,6 +28,7 @@ void USessionHandler::CreateSession()
     if (!Session->CreateSession(0, FName(TEXT("MyLocalSessionName")), *SessionSettings))
     {
         // Call didn't start, return error.
+        bHasCreatedSession = false;
     }
 }
 
@@ -43,9 +44,7 @@ void USessionHandler::HandleCreateSessionComplete(FName SessionName,bool bWasSuc
 
     AXYZGameMode* MyGameMode = Cast<AXYZGameMode>(GetWorld()->GetAuthGameMode());
     MyGameMode->RegisterExistingPlayers();
-
     bHasCreatedSession = bWasSuccessful;
-
 }
 
 void USessionHandler::FindSession()

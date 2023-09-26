@@ -16,7 +16,6 @@
 #include "XYZHUD.h"
 #include "GameFramework/PlayerState.h"
 #include "EnhancedInputSubsystems.h"
-#include "UMG/Public/Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "XYZCameraController.h"
 #include "XYZResourceActor.h"
@@ -46,6 +45,7 @@ AXYZPlayerController::AXYZPlayerController()
 void AXYZPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	SetupInputComponent();
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
@@ -61,6 +61,7 @@ void AXYZPlayerController::BeginPlay()
 
 void AXYZPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+	
 	if (GetLocalRole() !=  ROLE_Authority && GetWorld()->GetGameState<AXYZGameState>() && !bPingedGameLoaded) {
 		bPingedGameLoaded = true;
 		PingServerGameIsLoaded();

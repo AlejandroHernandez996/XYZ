@@ -44,4 +44,6 @@ public:
 	UFUNCTION()
 		void CancelProduction();
 	bool bIsTraining;
+
+	void ProcessActor() override;
 };

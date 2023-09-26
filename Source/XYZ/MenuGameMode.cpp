@@ -16,7 +16,7 @@ AMenuGameMode::AMenuGameMode()
 {
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = true;
-    PrimaryActorTick.TickInterval = .2f;
+    PrimaryActorTick.TickInterval = 1.0f;
 }
 
 void AMenuGameMode::BeginPlay()
@@ -58,6 +58,7 @@ void AMenuGameMode::Tick(float DeltaSeconds) {
             break;
         case EMainMenuStateEnum::FINDING_SESSION:
             UE_LOG(LogTemp, Log, TEXT("Finding Session..."));
+            SessionHandler->FindSession();
             if (SessionHandler->bHasFoundSession) {
                 MenuState = EMainMenuStateEnum::FOUND_SESSION;
             }

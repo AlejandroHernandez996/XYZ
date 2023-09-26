@@ -19,6 +19,10 @@ public:
 	AXYZGameState();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	UFUNCTION()
+	void AddActorServer(class AXYZActor* Actor);
+	UFUNCTION()
+	void AddActorClient(class AXYZActor* Actor, int32 ActorUId);
 	UPROPERTY(BlueprintReadOnly)
 	TMap<int32, class AXYZActor*> ActorsByUID;
 
@@ -31,7 +35,6 @@ public:
 	TMap<int32,TMap<int32, int32>> ReservedSupplyByBuilding;
 	UFUNCTION()
 	TArray<class AXYZActor*> GetAllActors();
-
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 	int32 ActorIndex;

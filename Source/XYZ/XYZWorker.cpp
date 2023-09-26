@@ -8,6 +8,7 @@
 #include "XYZResourceActor.h"
 #include "XYZAIController.h"
 #include "Engine.h"
+#include "XYZGameMode.h"
 #include "XYZGameState.h"
 #include "Net/UnrealNetwork.h"
 
@@ -17,15 +18,20 @@ void AXYZWorker::BeginPlay() {
 }
 
 void AXYZWorker::Tick(float DeltaTime) {
-    if (FloatingMesh) {
+    Super::Tick(DeltaTime);
+    if (FloatingMesh && !HasAuthority()) {
         float Time = GetWorld()->GetTimeSeconds();
         FVector NewLocation = FloatingMesh->GetRelativeLocation();
 
         NewLocation.Z += FMath::Sin(Time * FloatSpeed) * FloatAmplitude * DeltaTime;
         FloatingMesh->SetRelativeLocation(NewLocation);
     }
-	Super::Tick(DeltaTime);
-    if (GetLocalRole() != ROLE_Authority) return;
+    
+}
+
+void AXYZWorker::ProcessActor()
+{
+    Super::ProcessActor();
     if (State == EXYZUnitState::GATHERING) {
         GetCharacterMovement()->bUseRVOAvoidance = false;
         if (!TargetActor) {
@@ -51,8 +57,8 @@ void AXYZWorker::Tick(float DeltaTime) {
     else {
         GetCharacterMovement()->bUseRVOAvoidance = true;
     }
-    
 }
+
 void AXYZWorker::Gather() {
     AXYZAIController* ActorController = GetXYZAIController();
     FVector ActorLocation = GetActorLocation() + GetActorForwardVector() * CurrentCapsuleRadius;

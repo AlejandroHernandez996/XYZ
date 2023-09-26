@@ -12,10 +12,6 @@
 
 void AXYZBuilding::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
-    if (GetLocalRole() != ROLE_Authority) {
-        return;
-    }
-    ProcessBuildQueue(DeltaTime);
 }
 
 void AXYZBuilding::BeginPlay() {
@@ -127,8 +123,7 @@ void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     AXYZActor* SpawnActor = GetWorld()->SpawnActor<AXYZActor>(UnitTemplate, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
     SpawnActor->TeamId = TeamId;
     GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[SpawnActor->TeamId + 2] += SpawnActor->SupplyGain;
-    GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->ActorIndex++;
-    SpawnActor->UActorId = GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->ActorIndex;
+    GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->AddActorServer(SpawnActor);
 
     UXYZBuildingAbility* CurrentAbility = *BuildQueue.Peek();
     CurrentAbility->bCanCancel = false;
@@ -173,4 +168,10 @@ void AXYZBuilding::CancelProduction() {
     }
 
     CurrentAbility->bCanCancel = true;
+}
+
+void AXYZBuilding::ProcessActor()
+{
+    Super::ProcessActor();
+    ProcessBuildQueue(GetWorld()->DeltaTimeSeconds);
 }

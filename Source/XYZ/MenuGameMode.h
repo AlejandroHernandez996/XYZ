@@ -39,10 +39,15 @@ public:
 		FString GetUsername();
 	UFUNCTION(BlueprintCallable)
 		FString GetStateToString();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Handler")
+		float SessionTimeout = 1.0f;
+	
 private:
 	bool bIsConnectingToSession;
 	bool bIsFindingSession;
 	bool bIsJoiningSession;
 	bool bIsLoggingIn;
 	bool bRetrievingStats;
+
+	float TimeToTimeout = 0.0f;
 };

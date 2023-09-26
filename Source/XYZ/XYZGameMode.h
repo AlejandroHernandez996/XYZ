@@ -28,14 +28,14 @@ public:
 	UPROPERTY()
 	class UXYZBlobManager* BlobManager;
 	UPROPERTY()
+	class UXYZDeathManager* DeathManager;
+	UPROPERTY()
 		TArray<class AXYZPlayerController*> PlayerControllers;
 	bool bHandleInputQueue;
-
-public:
+	bool bHasGameStarted;
+	
 	void RegisterExistingPlayers();
 
-	UPROPERTY()
-		class ULoginHandler* LoginHandler;
 	UPROPERTY()
 		class USessionHandler* SessionHandler;
 	UPROPERTY()
@@ -47,19 +47,16 @@ public:
 	void PreLogout(APlayerController* InPlayerController);
 
 private:
-	bool bIsConnectingToSession;
-	bool bIsFindingSession;
-	bool bIsJoiningSession;
-	bool bIsLoggingIn;
 	bool bIsStartingSession;
 	bool bIsCreatingSession;
 	bool bRetrivedUsersInfo;
+	bool bStartedSesion;
 
 	int32 NumOfPlayers;
-
 	bool bAllExistingPlayersRegistered;
 
 	void PostLogin(APlayerController* InPlayerController) override;
+
 
 };
 

@@ -14,7 +14,7 @@ UXYZInputManager::UXYZInputManager()
 
 void UXYZInputManager::QueueInput(const FXYZInputMessage& InputMessage)
 {
-    ExecuteInput(InputMessage);
+    InputQueue.Add(InputMessage);
 }
 
 void UXYZInputManager::ExecuteInput(const FXYZInputMessage& InputMessage)
@@ -36,4 +36,12 @@ void UXYZInputManager::ExecuteInput(const FXYZInputMessage& InputMessage)
         BlobManager->Actions.Add(XYZAction);
     }
     InputIndex++;
+}
+
+void UXYZInputManager::ProcessInputs()
+{
+    for(;InputQueueIndex < InputQueue.Num();InputQueueIndex++)
+    {
+        ExecuteInput(InputQueue[InputQueueIndex]);
+    }
 }

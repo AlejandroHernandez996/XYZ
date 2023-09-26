@@ -6,13 +6,13 @@
 #include "XYZInputManager.h"
 #include "XYZGameState.h"
 #include "XYZBlobManager.h"
-#include "LoginHandler.h"
 #include "UserInfoRetriver.h"
 #include "UserStatRetriever.h"
 #include "UserStatUpdater.h"
 #include "SessionHandler.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
+#include "XYZDeathManager.h"
 #include "Interfaces/OnlineIdentityInterface.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -38,67 +38,86 @@ AXYZGameMode::AXYZGameMode()
 
 void AXYZGameMode::BeginPlay() {
 	Super::BeginPlay();
+	PrimaryActorTick.bCanEverTick = true;
+
 	InputManager = NewObject<UXYZInputManager>(this, UXYZInputManager::StaticClass(), "InputManager");
 	BlobManager = NewObject<UXYZBlobManager>(this, UXYZBlobManager::StaticClass(), "BlobManager");
 	InputManager->XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
-	PrimaryActorTick.bCanEverTick = true;
-
-    // Create an instance of the LoginHandler
-    bUseSeamlessTravel = true;
-
-    // Call the Login function
+    DeathManager = NewObject<UXYZDeathManager>(this, UXYZDeathManager::StaticClass(), "DeathManager");
+	
     SessionHandler = NewObject<USessionHandler>(this);
-    LoginHandler = NewObject<ULoginHandler>(this);
     UserRetriever = NewObject<UUserInfoRetriver>(this);
     UserStatRetriever = NewObject<UUserStatRetriever>(this);
     UserStatUpdater = NewObject<UUserStatUpdater>(this);
 
     bAllExistingPlayersRegistered = false;
-    if (HasAuthority()) {
-        SessionHandler->CreateSession();
-    }
-    bIsCreatingSession = true;
+	bUseSeamlessTravel = true;
+
+	SessionHandler->CreateSession();
 }
 
 void AXYZGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-    if (SessionHandler && !bIsCreatingSession && SessionHandler->bHasCreatedSession && NumOfPlayers >= 2) {
+    if (SessionHandler && SessionHandler->bHasCreatedSession && NumOfPlayers == 2 && !bStartedSesion && bHasGameStarted) {
         IOnlineSubsystem* Subsystem = Online::GetSubsystem(this->GetWorld());
         IOnlineSessionPtr Session = Subsystem->GetSessionInterface();
-        bIsCreatingSession = true;
         Session->StartSession("MyLocalSessionName");
+        bStartedSesion = true;
     }
-
-    if (NumOfPlayers >= 2 && !bRetrivedUsersInfo) {
+    
+    if (NumOfPlayers == 2 && !bRetrivedUsersInfo && !bHasGameStarted) {
         TArray<TSharedRef<const FUniqueNetId>> UniqueNetIds;
+        int i = 0;
         for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
         {
-            // Get the UniqueNetId for each player
             TSharedRef<const FUniqueNetId> UniqueNetId = It->Get()->PlayerState->UniqueId.GetUniqueNetId().ToSharedRef();
+            Cast<AXYZPlayerController>(It->Get())->TeamId = i;
+            PlayerControllers.Add(Cast<AXYZPlayerController>(It->Get()));
             UniqueNetIds.Add(UniqueNetId);
+            i++;
         }
-        UserRetriever->GetAllUserNetIdsToDisplayNames(UniqueNetIds);
-        bRetrivedUsersInfo = UserRetriever->bRetrievedAllUsers;
+        if(UniqueNetIds.Num() == 2)
+        {
+            UserRetriever->GetAllUserNetIdsToDisplayNames(UniqueNetIds);
+            bRetrivedUsersInfo = UserRetriever->bRetrievedAllUsers;
+        }
     }
-	TArray<AXYZPlayerController*> FoundControllers;
-	// TODO - eventually make it only find a set amount and then stop looking
-	for (auto It = GetWorld()->GetControllerIterator(); It; It++) {
-		if (It->Get()) {
-			if (Cast<AXYZPlayerController>(It->Get())) {
-				FoundControllers.Add(Cast<AXYZPlayerController>(It->Get()));
-			}
-		}
-	}
-	if (FoundControllers.Num() > 0) {
-		PlayerControllers = FoundControllers;
-		for (int i = 0; i < PlayerControllers.Num(); i++) {
-			PlayerControllers[i]->TeamId = i;
-			
-		}
-	}
-	BlobManager->ProcessBlobs();
-	TickCount++;
+    if(bRetrivedUsersInfo && !bHasGameStarted)
+    {
+        TArray<AXYZPlayerController*> FoundControllers;
+        for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+        {
+            FoundControllers.Add(Cast<AXYZPlayerController>(It->Get()));
+        }
+        if(FoundControllers.Num() == 2)
+        {
+            for(int i = 0;i < FoundControllers.Num();i++)
+            {
+                FoundControllers[i]->TeamId = i;
+                PlayerControllers.Add(FoundControllers[i]);
+            }
+            bHasGameStarted = true;
+        }
+    }
+
+    if(bHasGameStarted)
+    {
+        TArray<AXYZActor*> Actors;
+        Cast<AXYZGameState>(GetWorld()->GetGameState())->ActorsByUID.GenerateValueArray(Actors);
+        for(AXYZActor* Actor : Actors)
+        {
+            if(Actor)
+            {
+                Actor->ProcessActor();
+            }
+        }
+        InputManager->ProcessInputs();
+        BlobManager->ProcessBlobs();
+        DeathManager->ProcessDeaths(DeltaSeconds);
+        TickCount++;
+    }
+	
 }
 
 void AXYZGameMode::QueueInput(const FXYZInputMessage& InputMessage) {

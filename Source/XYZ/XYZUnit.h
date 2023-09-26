@@ -13,4 +13,6 @@ UCLASS()
 class XYZ_API AXYZUnit : public AXYZActor
 {
 	GENERATED_BODY()
+public:
+	void ProcessActor() override;
 };

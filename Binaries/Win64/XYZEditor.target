@@ -18,7 +18,7 @@
 		"IsLicenseeVersion": 0,
 		"IsPromotedBuild": 0,
 		"BranchName": "UE5",
-		"BuildId": "b9e5d6ca-8828-47b6-aff4-8f69845d7a02"
+		"BuildId": "e9f04ab3-04c8-4d08-ad66-3f151f224857"
 	},
 	"BuildProducts": [
 		{
@@ -34,111 +34,111 @@
 			"Type": "RequiredResource"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointDiscord.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointDiscord.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointDiscord.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointDiscord.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointEOS.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointEOS.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointEOS.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointEOS.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointItchIo.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointItchIo.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointItchIo.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointItchIo.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointOculus.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointOculus.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointOculus.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointOculus.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointSteam.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointSteam.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointSteam.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-OnlineSubsystemRedpointSteam.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointDiscordGameSDKRuntime.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointDiscordGameSDKRuntime.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointDiscordGameSDKRuntime.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointDiscordGameSDKRuntime.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSEditor.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSEditor.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSEditor.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSEditor.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSEditorTests.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSEditorTests.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSEditorTests.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSEditorTests.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSPlatformDefault.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSPlatformDefault.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSPlatformDefault.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSPlatformDefault.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSTests.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSTests.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSTests.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSTests.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSUtils.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSUtils.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSUtils.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSUtils.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSVoiceChat.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSVoiceChat.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointEOSVoiceChat.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointEOSVoiceChat.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointLibHydrogen.dll",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointLibHydrogen.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor-RedpointLibHydrogen.pdb",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor-RedpointLibHydrogen.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/Binaries/Win64/UnrealEditor.modules",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
 		},
 		{
@@ -5198,23 +5198,63 @@
 			"Type": "RequiredResource"
 		},
 		{
-			"Path": "$(EngineDir)/Plugins/Media/AndroidMedia/Binaries/Win64/UnrealEditor-AndroidMediaEditor.dll",
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RD.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(EngineDir)/Plugins/Media/AndroidMedia/Binaries/Win64/UnrealEditor-AndroidMediaEditor.pdb",
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RD.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(EngineDir)/Plugins/Media/AndroidMedia/Binaries/Win64/UnrealEditor-AndroidMediaFactory.dll",
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderBlueprint.dll",
 			"Type": "DynamicLibrary"
 		},
 		{
-			"Path": "$(EngineDir)/Plugins/Media/AndroidMedia/Binaries/Win64/UnrealEditor-AndroidMediaFactory.pdb",
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderBlueprint.pdb",
 			"Type": "SymbolFile"
 		},
 		{
-			"Path": "$(EngineDir)/Plugins/Media/AndroidMedia/Binaries/Win64/UnrealEditor.modules",
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderGameControl.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderGameControl.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderLC.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderLC.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderLink.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderLink.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderLogging.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderLogging.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderShaderInfo.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderShaderInfo.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
 		},
 		{
@@ -5526,6 +5566,18 @@
 			"Type": "RequiredResource"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineServicesOSSAdapter/Binaries/Win64/UnrealEditor-OnlineServicesOSSAdapter.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineServicesOSSAdapter/Binaries/Win64/UnrealEditor-OnlineServicesOSSAdapter.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineServicesOSSAdapter/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Online/OnlineServices/Binaries/Win64/UnrealEditor-OnlineServicesCommon.dll",
 			"Type": "DynamicLibrary"
 		},
@@ -5551,6 +5603,42 @@
 		},
 		{
 			"Path": "$(EngineDir)/Plugins/Online/OnlineServices/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemAmazon/Binaries/Win64/UnrealEditor-OnlineSubsystemAmazon.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemAmazon/Binaries/Win64/UnrealEditor-OnlineSubsystemAmazon.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemAmazon/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemFacebook/Binaries/Win64/UnrealEditor-OnlineSubsystemFacebook.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemFacebook/Binaries/Win64/UnrealEditor-OnlineSubsystemFacebook.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemFacebook/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemGoogle/Binaries/Win64/UnrealEditor-OnlineSubsystemGoogle.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemGoogle/Binaries/Win64/UnrealEditor-OnlineSubsystemGoogle.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemGoogle/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
 		},
 		{
@@ -5654,46 +5742,6 @@
 			"Type": "RequiredResource"
 		},
 		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidDeviceProfileSelector/Binaries/Win64/UnrealEditor-AndroidDeviceProfileCommandlets.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidDeviceProfileSelector/Binaries/Win64/UnrealEditor-AndroidDeviceProfileCommandlets.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidDeviceProfileSelector/Binaries/Win64/UnrealEditor-AndroidDeviceProfileSelector.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidDeviceProfileSelector/Binaries/Win64/UnrealEditor-AndroidDeviceProfileSelector.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidDeviceProfileSelector/Binaries/Win64/UnrealEditor.modules",
-			"Type": "RequiredResource"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidFileServer/Binaries/Win64/UnrealEditor-AndroidFileServer.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidFileServer/Binaries/Win64/UnrealEditor-AndroidFileServer.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidFileServer/Binaries/Win64/UnrealEditor-AndroidFileServerEditor.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidFileServer/Binaries/Win64/UnrealEditor-AndroidFileServerEditor.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidFileServer/Binaries/Win64/UnrealEditor.modules",
-			"Type": "RequiredResource"
-		},
-		{
 			"Path": "$(EngineDir)/Plugins/Runtime/AndroidPermission/Binaries/Win64/UnrealEditor-AndroidPermission.dll",
 			"Type": "DynamicLibrary"
 		},
@@ -5703,38 +5751,6 @@
 		},
 		{
 			"Path": "$(EngineDir)/Plugins/Runtime/AndroidPermission/Binaries/Win64/UnrealEditor.modules",
-			"Type": "RequiredResource"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AppleImageUtils/Binaries/Win64/UnrealEditor-AppleImageUtils.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AppleImageUtils/Binaries/Win64/UnrealEditor-AppleImageUtils.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AppleImageUtils/Binaries/Win64/UnrealEditor-AppleImageUtilsBlueprintSupport.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AppleImageUtils/Binaries/Win64/UnrealEditor-AppleImageUtilsBlueprintSupport.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AppleImageUtils/Binaries/Win64/UnrealEditor.modules",
-			"Type": "RequiredResource"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/ArchVisCharacter/Binaries/Win64/UnrealEditor-ArchVisCharacter.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/ArchVisCharacter/Binaries/Win64/UnrealEditor-ArchVisCharacter.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/ArchVisCharacter/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
 		},
 		{
@@ -5919,26 +5935,6 @@
 		},
 		{
 			"Path": "$(EngineDir)/Plugins/Runtime/GeometryProcessing/Binaries/Win64/UnrealEditor.modules",
-			"Type": "RequiredResource"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/GooglePAD/Binaries/Win64/UnrealEditor-GooglePAD.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/GooglePAD/Binaries/Win64/UnrealEditor-GooglePAD.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/GooglePAD/Binaries/Win64/UnrealEditor-GooglePADEditor.dll",
-			"Type": "DynamicLibrary"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/GooglePAD/Binaries/Win64/UnrealEditor-GooglePADEditor.pdb",
-			"Type": "SymbolFile"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/GooglePAD/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
 		},
 		{
@@ -6428,7 +6424,7 @@
 	],
 	"RuntimeDependencies": [
 		{
-			"Path": "$(ProjectDir)/Plugins/EOSOnlineSubsystem/OnlineSubsystemRedpointEOS.uplugin",
+			"Path": "$(ProjectDir)/Plugins/OnlineSubsystemRedpointEOS/OnlineSubsystemRedpointEOS.uplugin",
 			"Type": "UFS"
 		},
 		{
@@ -29540,7 +29536,7 @@
 			"Type": "UFS"
 		},
 		{
-			"Path": "$(EngineDir)/Plugins/Media/AndroidMedia/AndroidMedia.uplugin",
+			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/RiderLink.uplugin",
 			"Type": "UFS"
 		},
 		{
@@ -29612,11 +29608,27 @@
 			"Type": "UFS"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineServicesOSSAdapter/OnlineServicesOSSAdapter.uplugin",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Online/OnlineServices/OnlineServices.uplugin",
 			"Type": "UFS"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemAmazon/OnlineSubsystemAmazon.uplugin",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemApple/OnlineSubsystemApple.uplugin",
+			"Type": "UFS"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemFacebook/OnlineSubsystemFacebook.uplugin",
+			"Type": "UFS"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Online/OnlineSubsystemGoogle/OnlineSubsystemGoogle.uplugin",
 			"Type": "UFS"
 		},
 		{
@@ -29648,23 +29660,7 @@
 			"Type": "UFS"
 		},
 		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidDeviceProfileSelector/AndroidDeviceProfileSelector.uplugin",
-			"Type": "UFS"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AndroidFileServer/AndroidFileServer.uplugin",
-			"Type": "UFS"
-		},
-		{
 			"Path": "$(EngineDir)/Plugins/Runtime/AndroidPermission/AndroidPermission.uplugin",
-			"Type": "UFS"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/AppleImageUtils/AppleImageUtils.uplugin",
-			"Type": "UFS"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/ArchVisCharacter/ArchVisCharacter.uplugin",
 			"Type": "UFS"
 		},
 		{
@@ -29705,10 +29701,6 @@
 		},
 		{
 			"Path": "$(EngineDir)/Plugins/Runtime/GeometryProcessing/GeometryProcessing.uplugin",
-			"Type": "UFS"
-		},
-		{
-			"Path": "$(EngineDir)/Plugins/Runtime/GooglePAD/GooglePAD.uplugin",
 			"Type": "UFS"
 		},
 		{

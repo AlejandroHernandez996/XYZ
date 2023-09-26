@@ -18,7 +18,7 @@ void AXYZGameState::BeginPlay() {
 }
 void AXYZGameState::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	if (bClientLoaded && ROLE_Authority == GetLocalRole() && !bLinkedActors) {
+	if (bClientLoaded && HasAuthority() && GetWorld()->GetAuthGameMode<AXYZGameMode>()->bHasGameStarted && !bLinkedActors) {
 		
 		for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 		{
@@ -52,4 +52,23 @@ void AXYZGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutL
 	DOREPLIFETIME(AXYZGameState, GasByTeamId);
 	DOREPLIFETIME(AXYZGameState, MineralsByTeamId);
 	DOREPLIFETIME(AXYZGameState, SupplyByTeamId);
+}
+
+void AXYZGameState::AddActorServer(AXYZActor* Actor)
+{
+	if(!ActorsByUID.Contains(Actor->UActorId))
+	{
+		Actor->UActorId = ActorIndex;
+		ActorsByUID.Add(ActorIndex, Actor);
+		ActorIndex++;
+	}
+	
+}
+
+void AXYZGameState::AddActorClient(AXYZActor* Actor, int32 ActorUId)
+{
+	if(!ActorsByUID.Contains(ActorUId))
+	{
+		ActorsByUID.Add(ActorUId, Actor);
+	}
 }

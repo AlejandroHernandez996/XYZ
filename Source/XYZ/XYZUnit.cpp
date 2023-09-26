@@ -3,3 +3,7 @@
 
 #include "XYZUnit.h"
 
+void AXYZUnit::ProcessActor()
+{
+	Super::ProcessActor();
+}

@@ -13,9 +13,12 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> Agents)
     FVector MaxBounds = FVector(FLT_MIN, FLT_MIN, FLT_MIN);
     for (AXYZActor* Actor : Agents)
     {
-        FVector Location = Actor->GetActorLocation();
-        MinBounds = MinBounds.ComponentMin(Location);
-        MaxBounds = MaxBounds.ComponentMax(Location);
+        if(Actor)
+        {
+            FVector Location = Actor->GetActorLocation();
+            MinBounds = MinBounds.ComponentMin(Location);
+            MaxBounds = MaxBounds.ComponentMax(Location);
+        }
     }
 
     float Area = (MaxBounds.X - MinBounds.X) * (MaxBounds.Y - MinBounds.Y);
@@ -36,10 +39,14 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> Agents)
     else {
         for (AXYZActor* Actor : Agents)
         {
-            FVector ActorLocation = Actor->GetActorLocation();
-            FVector DirectonFromCenter = ActorLocation - CenterLocation;
-            FVector AgentTargetLocation = TargetLocation + DirectonFromCenter;
-            Actor->GetController<AXYZAIController>()->XYZMoveToLocation(AgentTargetLocation);
+            if(Actor)
+            {
+                FVector ActorLocation = Actor->GetActorLocation();
+                FVector DirectonFromCenter = ActorLocation - CenterLocation;
+                FVector AgentTargetLocation = TargetLocation + DirectonFromCenter;
+                Actor->GetController<AXYZAIController>()->XYZMoveToLocation(AgentTargetLocation); 
+            }
+            
         }
     }
 
@@ -88,7 +95,11 @@ void UXYZMoveAction::MovePack(TSharedPtr<FAgentPack> AgentPack, int32 Level, boo
 
 bool UXYZMoveAction::HasAgentComplete(AXYZActor* Agent) {
 
-    return Agent->State == EXYZUnitState::IDLE;
+    if(Agent)
+    {
+        return Agent->State == EXYZUnitState::IDLE;
+    }
+    return true;
 }
 
 AXYZActor* UXYZMoveAction::FindCenterAgent(TSet<AXYZActor*> Agents, FVector CenterLocation) {
@@ -107,7 +118,10 @@ FVector UXYZMoveAction::FindInitialCenterLocation(TSet<AXYZActor*> Agents) {
     FVector Center = FVector::ZeroVector;
     for (AXYZActor* Actor : Agents)
     {
-        Center += Actor->GetActorLocation();
+        if(Actor)
+        {
+            Center += Actor->GetActorLocation();
+        }
     }
     return Center /= Agents.Num();
 }

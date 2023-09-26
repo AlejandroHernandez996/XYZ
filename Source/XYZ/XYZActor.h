@@ -82,7 +82,7 @@ public:
         void UseAbility(int32 Index);
 
     UPROPERTY()
-    TArray<UXYZAction*> ActionQueue;
+    TArray<class UXYZAction*> ActionQueue;
     UPROPERTY()
     UXYZAction* CurrentAction;
     UPROPERTY()
@@ -102,8 +102,6 @@ public:
     void ShowDecal(bool bShowDecal, EXYZDecalType DecalType);
 
     UFUNCTION()
-        void QueueAction(UXYZAction* Action);
-    UFUNCTION()
         AXYZActor* FindClosestActor(bool bIgnoreFriendlyActors);
     UFUNCTION()
         void SetState(EXYZUnitState UnitState);
@@ -119,7 +117,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Collision", Replicated)
         FName CollisionName;
 
-public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
         class AXYZAIController* XYZAIController;
     UFUNCTION()
@@ -150,5 +147,8 @@ public:
     
     UFUNCTION()
         void PlayAnimationMontage(EXYZAnimMontageType AnimMontageType);
+
+    UFUNCTION()
+    virtual void ProcessActor();
 
 };
