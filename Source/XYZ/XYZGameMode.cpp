@@ -22,18 +22,6 @@ AXYZGameMode::AXYZGameMode()
 {
 	PlayerControllerClass = AXYZPlayerController::StaticClass();
 
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/TopDown/Blueprints/BP_TopDownCharacter"));
-	if (PlayerPawnBPClass.Class != nullptr)
-	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
-	}
-
-	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/TopDown/Blueprints/BP_TopDownPlayerController"));
-	if(PlayerControllerBPClass.Class != NULL)
-	{
-		PlayerControllerClass = PlayerControllerBPClass.Class;
-	}
-
 	PrimaryActorTick.bCanEverTick = true;
 	TickCount = 0;
 }
@@ -135,6 +123,20 @@ void AXYZGameMode::Tick(float DeltaSeconds)
         DeathManager->ProcessDeaths(DeltaSeconds);
         MatchManager->Process();
         TickCount++;
+        if (bHasGameEnded)
+        {
+            FTimerHandle TimerHandle;
+
+            GetWorld()->GetTimerManager().SetTimer(
+                TimerHandle,
+                [this]() 
+                {
+                    SessionHandler->DestroySession();
+                },
+                3.0f, 
+                false 
+            );
+        }
     }
 	
 }
@@ -253,7 +255,7 @@ void AXYZGameMode::PostLogin(APlayerController* InPlayerController)
 void AXYZGameMode::PreLogout(APlayerController* InPlayerController)
 {
     check(IsValid(InPlayerController));
-
+    bHasGameEnded = true;
     // This code handles logins for both the local player (listen server) and remote players (net connection).
     FUniqueNetIdRepl UniqueNetIdRepl;
     if (InPlayerController->IsLocalPlayerController())

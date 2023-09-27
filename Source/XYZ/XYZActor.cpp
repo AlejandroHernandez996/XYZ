@@ -147,7 +147,6 @@ void AXYZActor::Attack()
 
 		FRotator TargetRotation = Direction.Rotation();
 		SetActorRotation(TargetRotation);
-		UE_LOG(LogTemp, Warning, TEXT("Attacking for %d enemy health %d"), AttackDamage, TargetActor->Health);
 	}
 }
 

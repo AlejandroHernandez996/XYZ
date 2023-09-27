@@ -45,26 +45,22 @@ void AMenuGameMode::Tick(float DeltaSeconds) {
             MenuState = EMainMenuStateEnum::LOGGING_IN;
             break;
         case EMainMenuStateEnum::LOGGING_IN:
-            UE_LOG(LogTemp, Log, TEXT("Logging In..."));
             if (LoginHandler->bIsLoggedIn) {
                 MenuState = EMainMenuStateEnum::LOGGED_IN;
             }
             break;
         case EMainMenuStateEnum::LOGGED_IN:
-            UE_LOG(LogTemp, Log, TEXT("Logged In..."));
             if (UserRetriever->UserDisplayNameMap.IsEmpty()) {
                 UserRetriever->SetUserNetIdsToDisplayName(GetWorld()->GetFirstPlayerController<APlayerController>());
             }
             break;
         case EMainMenuStateEnum::FINDING_SESSION:
-            UE_LOG(LogTemp, Log, TEXT("Finding Session..."));
             SessionHandler->FindSession();
             if (SessionHandler->bHasFoundSession) {
                 MenuState = EMainMenuStateEnum::FOUND_SESSION;
             }
             break;
         case EMainMenuStateEnum::FOUND_SESSION:
-            UE_LOG(LogTemp, Log, TEXT("Found Session..."));
             MenuState = EMainMenuStateEnum::JOINING_SESSION;
             SessionHandler->JoinSession();
             break;

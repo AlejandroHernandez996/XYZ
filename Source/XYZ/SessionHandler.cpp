@@ -15,7 +15,7 @@ void USessionHandler::CreateSession()
             &USessionHandler::HandleCreateSessionComplete));
 
     TSharedRef<FOnlineSessionSettings> SessionSettings = MakeShared<FOnlineSessionSettings>();
-    SessionSettings->NumPublicConnections = 8; // The number of players.
+    SessionSettings->NumPublicConnections = 2; // The number of players.
     SessionSettings->bShouldAdvertise = true;  // Set to true to make this session discoverable with FindSessions.
     SessionSettings->bUsesPresence = false;    // Set to true if you want this session to be discoverable by presence (Epic Social Overlay).
 
@@ -81,7 +81,13 @@ void USessionHandler::HandleFindSessionsComplete(
 {
     IOnlineSubsystem* Subsystem = Online::GetSubsystem(this->GetWorld());
     IOnlineSessionPtr Session = Subsystem->GetSessionInterface();
-
+    if (bCancelFindSessionFlag) {
+        bFailedSession = true;
+        bCancelFindSessionFlag = false;
+        bHasFoundSession = false;
+        return;
+    }
+    
     if (bWasSuccessful)
     {
         for (auto RawResult : Search->SearchResults)
@@ -104,12 +110,7 @@ void USessionHandler::HandleFindSessionsComplete(
 
     Session->ClearOnFindSessionsCompleteDelegate_Handle(this->FindSessionsDelegateHandle);
     this->FindSessionsDelegateHandle.Reset();
-    if (bCancelFindSessionFlag) {
-        bHasFoundSession = bWasSuccessful;
-        bFailedSession = !bWasSuccessful;
-        bCancelFindSessionFlag = false;
-    }
-    
+    bHasFoundSession = bWasSuccessful;
 }
 
 void USessionHandler::JoinSession()

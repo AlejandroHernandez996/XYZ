@@ -28,5 +28,6 @@ void UXYZMatchManager::Process()
 	if(!bPlayerHasABuilding[0] || !bPlayerHasABuilding[1])
 	{
 		XYZGameMode->bHasGameEnded = true;
+		XYZGameState->bHasGameEnded = true;
 	}
 }

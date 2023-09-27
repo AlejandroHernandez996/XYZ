@@ -36,7 +36,6 @@ AXYZPlayerController::AXYZPlayerController()
 	{
 		InputTriggeredTime.Add(static_cast<EXYZInputType>(EnumValue), 0.0f);
 	}
-	InputTriggeredCooldown = .16f;
 	ShortInputThreshold = .25f;
 	SelectionStructure = NewObject<UXYZSelectionStructure>(this, UXYZSelectionStructure::StaticClass(), "SelectionStructure");
 	PrimaryActorTick.bCanEverTick = true;
@@ -45,7 +44,6 @@ AXYZPlayerController::AXYZPlayerController()
 void AXYZPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	SetupInputComponent();
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
@@ -129,6 +127,13 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		CameraController->SetActorLocation(CameraLocation);
 		bMoveCameraFlag = false;
 	}
+	for (int32 EnumValue = static_cast<int32>(EXYZInputType::PRIMARY_INPUT);
+			EnumValue <= static_cast<int32>(EXYZInputType::STOP);
+			EnumValue++)
+	{
+		InputTriggeredTime[static_cast<EXYZInputType>(EnumValue)] += DeltaTime;
+	}
+	
 }
 
 void AXYZPlayerController::SetupInputComponent()
@@ -213,11 +218,13 @@ void AXYZPlayerController::OnCycleSelectionInputStarted() {
 void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 {
 	InputTriggeredTime[InputType] = 0.0f;
+
 	FXYZInputMessage InputMessage;
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
 	int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
 	switch (InputType) {
 		case EXYZInputType::PRIMARY_INPUT:
+			UE_LOG(LogTemp, Warning, TEXT("Primary Input Pressed"));
 			if (!bAllowMouseInput) return;
 			if (bAttackModifier) {
 				if (SelectionStructure->IsEmpty()) return;
@@ -276,8 +283,6 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 
 void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 {
-	InputTriggeredTime[InputType] += GetWorld()->GetDeltaSeconds();
-
 	if (InputType == EXYZInputType::PRIMARY_INPUT) {
 		BoxSelectEnd = GetMousePositionOnViewport();
 		GetHUD<AXYZHUD>()->BoxEnd = BoxSelectEnd;
@@ -312,12 +317,19 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 
 	switch (InputType) {
 	case EXYZInputType::PRIMARY_MOD:
+		UE_LOG(LogTemp, Warning, TEXT("Primary Mod Released"));
 		bPrimaryModifier = false;
 		break;
 	case EXYZInputType::SECONDARY_MOD:
 		bSecondaryModifier = false;
 		break;
 	case EXYZInputType::PRIMARY_INPUT:
+		UE_LOG(LogTemp, Warning, TEXT("Primary Input Released"));
+		if(bBlockPrimaryInputFlagForAttack)
+		{
+			bBlockPrimaryInputFlagForAttack = false;
+			break;
+		}
 		if (!bAllowMouseInput || !bBoxSelectFlag) break;
 		if (bSecondaryModifier && InputTriggeredTime[InputType] <= ShortInputThreshold) {
 			TArray<AXYZActor*> SelectedActors = GetHUD<AXYZHUD>()->SelectedActors;
@@ -460,7 +472,6 @@ void AXYZPlayerController::QueueInput_Implementation(const FXYZInputMessage& Inp
 					if (!ActorsByUId.Contains(UActorId)) {
 						return;
 					}
-					UE_LOG(LogTemp, Warning, TEXT("ActorsByUId[UActorId]->TeamId: %d, XYZController->TeamId: %d"), ActorsByUId[UActorId]->TeamId, XYZController->TeamId);
 					if (ActorsByUId[UActorId]->TeamId != XYZController->TeamId) {
 						return;
 					}
