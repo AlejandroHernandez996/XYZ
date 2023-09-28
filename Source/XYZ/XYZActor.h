@@ -105,7 +105,7 @@ public:
     UFUNCTION()
         AXYZActor* FindClosestActor(bool bIgnoreFriendlyActors);
     UFUNCTION()
-        void SetState(EXYZUnitState UnitState);
+        virtual void SetState(EXYZUnitState UnitState);
 
     bool bCancelActionFlag;
     bool bCanMove = true;

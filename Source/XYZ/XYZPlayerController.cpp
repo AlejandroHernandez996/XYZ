@@ -36,6 +36,12 @@ AXYZPlayerController::AXYZPlayerController()
 	{
 		InputTriggeredTime.Add(static_cast<EXYZInputType>(EnumValue), 0.0f);
 	}
+	for (int32 EnumValue = static_cast<int32>(EXYZInputType::PRIMARY_INPUT);
+		EnumValue <= static_cast<int32>(EXYZInputType::STOP);
+		EnumValue++)
+	{
+		LastInputTime.Add(static_cast<EXYZInputType>(EnumValue), 0.0f);
+	}
 	ShortInputThreshold = .25f;
 	SelectionStructure = NewObject<UXYZSelectionStructure>(this, UXYZSelectionStructure::StaticClass(), "SelectionStructure");
 	PrimaryActorTick.bCanEverTick = true;
@@ -132,6 +138,16 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 	{
 		InputTriggeredTime[static_cast<EXYZInputType>(EnumValue)] += DeltaTime;
 	}
+	for (int32 EnumValue = static_cast<int32>(EXYZInputType::PRIMARY_INPUT);
+			EnumValue <= static_cast<int32>(EXYZInputType::STOP);
+			EnumValue++)
+	{
+		LastInputTime[static_cast<EXYZInputType>(EnumValue)] += DeltaTime;
+	}
+	for(int32 i = 0;i < LastControlGroupInputTime.Num();i++)
+	{
+		LastControlGroupInputTime[i] += DeltaTime;
+	}
 	
 }
 
@@ -173,6 +189,7 @@ void AXYZPlayerController::SetupInputComponent()
 
 		for (int32 i = 0; i < ControlGroupInputActions.Num(); i++) {
 			EnhancedInputComponent->BindAction(ControlGroupInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnControlGroupInputStarted, i);
+			LastControlGroupInputTime.Add(i,0.0f);
 		}
 		for (int32 i = 0; i < AbilityInputActions.Num(); i++) {
 			EnhancedInputComponent->BindAction(AbilityInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnAbilityInputStarted, i);
@@ -182,6 +199,8 @@ void AXYZPlayerController::SetupInputComponent()
 }
 
 void AXYZPlayerController::OnControlGroupInputStarted(int32 ControlGroupIndex) {
+	bool bDoubleInput = LastControlGroupInputTime[ControlGroupIndex] <= DoubleInputThreshold;
+	LastControlGroupInputTime[ControlGroupIndex] = 0.0f;
 	if (bPrimaryModifier) {
 		SelectionStructure->AddToControlGroup(ControlGroupIndex);
 	}
@@ -191,6 +210,11 @@ void AXYZPlayerController::OnControlGroupInputStarted(int32 ControlGroupIndex) {
 	else {
 		SelectionStructure->SelectControlGroup(ControlGroupIndex);
 		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
+		if(bDoubleInput && !SelectionStructure->IsEmpty())
+		{
+			FVector TargetActorLocation = SelectionStructure->ToArray()[0]->GetActorLocation();
+			CameraController->SetActorLocation(FVector(TargetActorLocation.X, TargetActorLocation.Y, CameraController->GetActorLocation().Z) + FVector(-250.0f, 50.0f, 0.0f));
+		}
 	}
 	TArray<int32> ControlGroups;
 	for (TSortedMap<int32, TMap<int32, AXYZActor*>> ControlGroup : SelectionStructure->ControlGroups) {
@@ -216,8 +240,6 @@ void AXYZPlayerController::OnCycleSelectionInputStarted() {
 
 void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 {
-	InputTriggeredTime[InputType] = 0.0f;
-
 	FXYZInputMessage InputMessage;
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
 	int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
@@ -313,7 +335,9 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 	FHitResult BoxHitStart, BoxHitEnd;
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
 	int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
-
+	InputTriggeredTime[InputType] = 0.0f;
+	bool bDoubleInput = LastInputTime[InputType] <= DoubleInputThreshold;
+	LastInputTime[InputType] = 0.0f;
 	switch (InputType) {
 	case EXYZInputType::PRIMARY_MOD:
 		UE_LOG(LogTemp, Warning, TEXT("Primary Mod Released"));
@@ -332,7 +356,7 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		if (!bAllowMouseInput || !bBoxSelectFlag) break;
 		if (FVector2D::Distance(BoxSelectStart, BoxSelectEnd) < 25.0f){
 			if (HitActor) {
-				if (bSecondaryModifier) {
+				if (bSecondaryModifier || bDoubleInput) {
 					TArray<AXYZActor*> SelectedActors = GetHUD<AXYZHUD>()->SelectedActors;
 					SelectedActors.RemoveAll([&](AXYZActor* Actor)
 						{

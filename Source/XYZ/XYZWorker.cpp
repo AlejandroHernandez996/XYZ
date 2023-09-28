@@ -56,7 +56,42 @@ void AXYZWorker::Process(float DeltaTime)
     }
     else if (State == EXYZUnitState::MINING)
     {
-        TimeToGather += DeltaTime;
+        AXYZResourceActor* Resource = Cast<AXYZResourceActor>(TargetActor);
+        if(!Resource || !Resource->Workers.Contains(this))
+        {
+            SetState(EXYZUnitState::GATHERING);
+        }
+        else
+        {
+            if(HeldResource != EXYZResourceType::NONE)
+            {
+                StartReturningResource();
+            }
+            else if(TimeToGather >= GatherRate)
+            {
+                TargetActor->Health = FMath::Clamp(TargetActor->Health - AttackDamage, 0.0f, TargetActor->MaxHealth);
+                TimeToGather = 0;
+                StartReturningResource();
+            }
+            else
+            {
+                if(Resource->Workers[this])
+                {
+                    TimeToGather += DeltaTime;
+                }
+                else if(Resource->Workers.Num() < Resource->RESOURCE_CAPACITY)
+                {
+                    Resource->Workers[this] = true;
+                }
+                else
+                {
+                    Resource->RemoveWorker(this);
+                    TargetActor = nullptr;
+                    SetState(EXYZUnitState::GATHERING);
+                }
+            }
+        }
+        
     }
     else {
         GetCharacterMovement()->bUseRVOAvoidance = true;
@@ -67,7 +102,8 @@ void AXYZWorker::Gather() {
     AXYZAIController* ActorController = GetXYZAIController();
     FVector ActorLocation = GetActorLocation() + GetActorForwardVector() * CurrentCapsuleRadius;
     FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
-    if (TargetActor && TargetActor->IsA(AXYZResourceActor::StaticClass()) && TargetActor->Health > 0.0f) {
+    AXYZResourceActor* ResourceActor = Cast<AXYZResourceActor>(TargetActor);
+    if (ResourceActor && TargetActor->Health > 0.0f) {
 
         UCapsuleComponent* CapsuleComp = TargetActor->GetCapsuleComponent();
         FVector ClosestPoint;
@@ -76,11 +112,10 @@ void AXYZWorker::Gather() {
         FVector2D TargetLocation2D = FVector2D(ClosestPoint.X, ClosestPoint.Y);
         float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
 
-        if (DistanceToTarget <= CurrentCapsuleRadius * 3.0f && !bIsGatheringResource)
+        if (DistanceToTarget <= CurrentCapsuleRadius * 3.0f)
         {
-            bIsGatheringResource = true;
-            GetWorld()->GetTimerManager().SetTimer(AttackTimer, this, &AXYZWorker::StartReturningResource, GatherRate, false);
-            TargetActor->Health = FMath::Clamp(TargetActor->Health - AttackDamage, 0.0f, TargetActor->MaxHealth);
+            SetState(EXYZUnitState::MINING);
+            ResourceActor->AddWorker(this);
             GetXYZAIController()->StopMovement();
         }
         else if(!bIsGatheringResource && !GetCharacterMovement()->IsMovementInProgress()){
@@ -93,14 +128,16 @@ void AXYZWorker::Gather() {
    
 }
 void AXYZWorker::StartReturningResource() {
-    if (State == EXYZUnitState::GATHERING) {
+    if (State == EXYZUnitState::MINING) {
         if(TargetActor && TargetActor->IsA(AXYZResourceActor::StaticClass()))
         {
             HeldResource = Cast<AXYZResourceActor>(TargetActor)->ResourceType;
-            TargetActor->Health -= 5;
             FindClosestBase();
             if (ClosestBase) {
                 GetXYZAIController()->XYZReturnResource(ClosestBase);
+            }
+            else {
+                SetState(EXYZUnitState::IDLE);
             }
         }else
         {
@@ -111,7 +148,6 @@ void AXYZWorker::StartReturningResource() {
     bIsGatheringResource = false;
 }
 void AXYZWorker::Return() {
-    AXYZAIController* ActorController = GetXYZAIController();
     FVector ActorLocation = GetActorLocation() + GetActorForwardVector() * CurrentCapsuleRadius;
     FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
     if (ClosestBase && State == EXYZUnitState::RETURNING && HeldResource != EXYZResourceType::NONE) {
@@ -131,7 +167,8 @@ void AXYZWorker::Return() {
                 GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->GasByTeamId[TeamId] += 5;
             }
             HeldResource = EXYZResourceType::NONE;
-            if (!TargetActor || !TargetActor->IsA(AXYZResourceActor::StaticClass())) {
+            if(!TargetActor)
+            {
                 FindClosestResource();
             }
             if (TargetActor && TargetActor->IsA(AXYZResourceActor::StaticClass())) {
@@ -172,24 +209,62 @@ void AXYZWorker::FindClosestResource()
     TArray<AActor*> FoundResources;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AXYZResourceActor::StaticClass(), FoundResources);
 
-    AXYZResourceActor* ClosestResource = nullptr;
+    int32 SmallestCapacity = INT_MAX;
     float ClosestDistance = FLT_MAX;
+    AXYZResourceActor* SmallestCapacityResource = nullptr;
 
     for (AActor* Resource : FoundResources)
     {
         float Distance = FVector::Dist(Resource->GetActorLocation(), GetActorLocation());
-        if (Distance < ClosestDistance && Resource->IsA(AXYZResourceActor::StaticClass()))
+        AXYZResourceActor* ResourceActor = Cast<AXYZResourceActor>(Resource);
+        if (ResourceActor && Distance <= 1000.0f)
         {
-            ClosestDistance = Distance;
-            ClosestResource = Cast<AXYZResourceActor>(Resource);
+            if(ResourceActor->Workers.Num() < SmallestCapacity)
+            {
+                SmallestCapacityResource = ResourceActor;
+                SmallestCapacity = ResourceActor->Workers.Num();
+                ClosestDistance = Distance;
+            }
+            else if(ResourceActor->Workers.Num() == SmallestCapacity && Distance < ClosestDistance)
+            {
+                SmallestCapacityResource = ResourceActor;
+                SmallestCapacity = ResourceActor->Workers.Num();
+                ClosestDistance = Distance;
+            }
         }
     }
-
-    TargetActor = ClosestResource;
+    TargetActor = SmallestCapacityResource;
 }
 
 void AXYZWorker::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
     DOREPLIFETIME(AXYZWorker, HeldResource);
+}
+
+void AXYZWorker::SetState(EXYZUnitState NewState)
+{
+    if(State == EXYZUnitState::MINING && NewState != EXYZUnitState::RETURNING && EXYZUnitState::GATHERING != NewState)
+    {
+        if(AXYZResourceActor* Resource = Cast<AXYZResourceActor>(TargetActor))
+        {
+            Resource->RemoveWorker(this);
+        }
+        TargetActor = nullptr;
+    }
+    else if(NewState == EXYZUnitState::DEAD ||
+        NewState == EXYZUnitState::MOVING ||
+        NewState == EXYZUnitState::HOLD ||
+        NewState == EXYZUnitState::FOLLOWING ||
+        NewState == EXYZUnitState::IDLE ||
+        NewState == EXYZUnitState::ATTACK_MOVING ||
+        NewState == EXYZUnitState::ATTACKING)
+    {
+        if(AXYZResourceActor* Resource = Cast<AXYZResourceActor>(TargetActor))
+        {
+            Resource->RemoveWorker(this);
+        }
+        TargetActor = nullptr;
+    }
+    Super::SetState(NewState);
 }

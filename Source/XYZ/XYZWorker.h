@@ -46,6 +46,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 		float FloatSpeed;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+	virtual void SetState(EXYZUnitState State) override;
 	void Process(float DeltaTime) override;
 
 	bool bFirstMineralGathered;

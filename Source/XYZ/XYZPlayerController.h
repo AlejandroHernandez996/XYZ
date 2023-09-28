@@ -130,13 +130,11 @@ public:
 	bool bAllowMouseInput = true;
 
 protected:
-	// To add mapping context
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds);
 
 	virtual void SetupInputComponent() override;
 	
-	/** Input handlers for SetDestination action. */
 	UFUNCTION()
 	void OnInputStarted(EXYZInputType InputType);
 	UFUNCTION()
@@ -173,6 +171,14 @@ private:
 	UPROPERTY()
 	TMap<EXYZInputType, float> InputTriggeredTime;
 
+	UPROPERTY()
+	TMap<EXYZInputType, float> LastInputTime;
+	UPROPERTY()
+	TMap<int32, float> LastControlGroupInputTime;
+	UPROPERTY()
+	float DoubleInputThreshold = .30f;
+	
+	UPROPERTY()
 	bool bBoxSelectFlag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
