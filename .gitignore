@@ -1,7 +1,6 @@
 # Visual Studio 2015 user specific files
 .vs/
 .idea/
-Plugins/*
 *.vcxproj
 
 # Compiled Object files
@@ -68,3 +67,8 @@ Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Plugins folder
+/Plugins/
+
+/Binaries/

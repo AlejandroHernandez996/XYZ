@@ -123,6 +123,7 @@ void AXYZGameMode::Tick(float DeltaSeconds)
         DeathManager->ProcessDeaths(DeltaSeconds);
         MatchManager->Process();
         TickCount++;
+        bHasGameEnded = bHasGameEnded || NumOfPlayers < 2;
         if (bHasGameEnded)
         {
             FTimerHandle TimerHandle;

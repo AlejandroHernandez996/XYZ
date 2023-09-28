@@ -5,5 +5,5 @@
 
 void AXYZResourceActor::ProcessActor()
 {
-	
+	Super::ProcessActor();
 }

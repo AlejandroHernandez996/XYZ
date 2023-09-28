@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "XYZActor.h"
-#include "XYZAction.h"
 #include "XYZGameState.h"
 #include "XYZDecalType.h"
 #include "DrawDebugHelpers.h"
@@ -14,14 +13,9 @@
 #include "XYZGameMode.h"
 #include "XYZPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Components/BoxComponent.h"
-#include "XYZActionFactory.h"
 #include "XYZResourceActor.h"
-#include "XYZWorker.h"
 #include "XYZBuilding.h"
 #include "XYZAbility.h"
-#include "XYZBlobManager.h"
-#include "XYZBlob.h"
 #include "XYZDeathManager.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
@@ -125,6 +119,7 @@ void AXYZActor::Attack()
 	{
 		return;
 	}
+	
 	if (TargetActor && !bIsAttackOnCooldown)
 	{
 		bIsAttackOnCooldown = true;
@@ -364,50 +359,8 @@ void AXYZActor::PlayAnimationMontage(EXYZAnimMontageType AnimType)
 void AXYZActor::ProcessActor()
 {
 	if (State == EXYZUnitState::DEAD) return;
-
-	GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
-	GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 1.25f;
-	GetCharacterMovement()->bUseRVOAvoidance = bHasAvoidance;
-	GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
-
 	if (Health == 0.0f)
 	{
 		GetWorld()->GetAuthGameMode<AXYZGameMode>()->DeathManager->QueueDeath(this);
-		return;
-	}
-	if (State == EXYZUnitState::MOVING && !GetCharacterMovement()->IsMovingOnGround())
-	{
-		GetXYZAIController()->RecalculateMove();
-	}
-	if (State == EXYZUnitState::MOVING || State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::FOLLOWING)
-	{
-		ScanXYZActorsAhead();
-	}
-	if (State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::IDLE || State == EXYZUnitState::ATTACKING ||
-		State == EXYZUnitState::HOLD)
-	{
-		if (!TargetActor || TargetActor->Health <= 0.0f)
-		{
-			TargetActor = FindClosestActor(true);
-		}
-		if (TargetActor)
-		{
-			AttackMoveTarget();
-		}
-		if (!TargetActor && State == EXYZUnitState::ATTACKING)
-		{
-			SetState(EXYZUnitState::IDLE);
-		}
-	}
-	if (State == EXYZUnitState::FOLLOWING)
-	{
-		if (!TargetActor || TargetActor->Health <= 0.0f)
-		{
-			GetXYZAIController()->StopMovement();
-		}
-		else
-		{
-			GetXYZAIController()->RecalculateMove();
-		}
 	}
 }

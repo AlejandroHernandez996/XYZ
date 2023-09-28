@@ -90,11 +90,19 @@ void AXYZWorker::Gather() {
 }
 void AXYZWorker::StartReturningResource() {
     if (State == EXYZUnitState::GATHERING) {
-        HeldResource = Cast<AXYZResourceActor>(TargetActor)->ResourceType;
-        FindClosestBase();
-        if (ClosestBase) {
-            GetXYZAIController()->XYZReturnResource(ClosestBase);
+        if(TargetActor && TargetActor->IsA(AXYZResourceActor::StaticClass()))
+        {
+            HeldResource = Cast<AXYZResourceActor>(TargetActor)->ResourceType;
+            TargetActor->Health -= 5;
+            FindClosestBase();
+            if (ClosestBase) {
+                GetXYZAIController()->XYZReturnResource(ClosestBase);
+            }
+        }else
+        {
+            SetState(EXYZUnitState::IDLE);
         }
+       
     }
     bIsGatheringResource = false;
 }

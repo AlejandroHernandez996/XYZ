@@ -11,10 +11,13 @@
 #include "XYZFollowAction.h"
 #include "XYZGameState.h"
 #include "XYZActor.h"
+#include "XYZBuilding.h"
 #include "XYZResourceActor.h"
+#include "XYZTrainingAbilityAction.h"
 
 UXYZAction* UXYZActionFactory::CreateAction(TArray<int32> _SelectedActors, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount, AXYZGameState* GameState, int32 ActiveActorId, int32 AbilityIndex)
 {
+    if(!GameState) return nullptr;
     if (_SelectedActors.Num() == 0) return nullptr;
     bool bAreSelectedSameTeamAsTarget = false;
 
@@ -62,11 +65,32 @@ UXYZAction* UXYZActionFactory::CreateAction(TArray<int32> _SelectedActors, AXYZA
         CreatedAction = MakeAction(_SelectedActors, _TargetActor, _TargetLocation, _bQueueInput, InputType, ActionCount, UXYZHoldAction::StaticClass(), ActionName, GameState);
     }
     if (InputType == EXYZInputType::ABILITY) {
+        UClass* ActionClass = UXYZAbilityAction::StaticClass();
         FString f = "Ability_Action_" + FString::FromInt(ActionCount);
         FName ActionName = FName(*f);
-        CreatedAction = MakeAction(_SelectedActors, _TargetActor, _TargetLocation, _bQueueInput, InputType, ActionCount, UXYZAbilityAction::StaticClass(), ActionName, GameState);
-        Cast<UXYZAbilityAction>(CreatedAction)->AbilityIndex = AbilityIndex;
-        Cast<UXYZAbilityAction>(CreatedAction)->ActiveActorId = ActiveActorId;
+        TArray<AXYZActor*> Actors;
+        GameState->ActorsByUID.GenerateValueArray(Actors);
+        AXYZActor* ActiveActor = nullptr;
+        for(AXYZActor* Actor : Actors)
+        {
+            if(Actor->ActorId == ActiveActorId)
+            {
+                ActiveActor = Actor;
+            }
+        }
+        if(ActiveActor)
+        {
+            if(ActiveActor->IsA(AXYZBuilding::StaticClass()))
+            {
+                f = "Training_Ability_Action_" + FString::FromInt(ActionCount);
+                ActionName = FName(*f);
+                ActionClass = UXYZTrainingAbilityAction::StaticClass();
+            }
+            CreatedAction = MakeAction(_SelectedActors, _TargetActor, _TargetLocation, _bQueueInput, InputType, ActionCount, ActionClass, ActionName, GameState);
+            Cast<UXYZAbilityAction>(CreatedAction)->AbilityIndex = AbilityIndex;
+            Cast<UXYZAbilityAction>(CreatedAction)->ActiveActorId = ActiveActorId;
+        }
+        
     }
     return CreatedAction;
 }

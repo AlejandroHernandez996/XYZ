@@ -7,10 +7,12 @@
 #include "XYZBlobManager.h"
 #include "XYZBlob.h"
 #include "XYZAIController.h"
+#include "XYZResourceActor.h"
 #include "Components/CapsuleComponent.h"
 
 void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 {
+	
 	FDeathStruct DeathStruct(Actor, CurrentTime + 2.0f);
 	AXYZGameState* XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
 	AXYZGameMode* XYZGameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
@@ -22,20 +24,27 @@ void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 			XYZController->XYZActorDestroyed(Actor->UActorId);
 		}
 	}
+	
 	XYZGameState->ActorsByUID.Remove(Actor->UActorId);
-	XYZGameState->SupplyByTeamId[Actor->TeamId] -= Actor->SupplyCost;
-	XYZGameState->SupplyByTeamId[Actor->TeamId + 2] -= Actor->SupplyGain;
-	for (UXYZBlob* Blob : XYZGameMode->BlobManager->ActiveBlobs)
+	if(!Actor->IsA(AXYZResourceActor::StaticClass()))
 	{
-		Blob->RemoveAgent(Actor);
+		XYZGameState->SupplyByTeamId[Actor->TeamId] -= Actor->SupplyCost;
+		XYZGameState->SupplyByTeamId[Actor->TeamId + 2] -= Actor->SupplyGain;
+		
+		for (UXYZBlob* Blob : XYZGameMode->BlobManager->ActiveBlobs)
+		{
+			Blob->RemoveAgent(Actor);
+		}
+		Actor->GetXYZAIController()->UnPossess();
+		Actor->GetXYZAIController()->XYZStopMovement();
 	}
-	Actor->GetXYZAIController()->XYZStopMovement();
+	
 	Actor->GetCapsuleComponent()->SetCollisionProfileName("Ragdoll");
 	Actor->CurrentCapsuleRadius = 0.0f;
 	Actor->CollisionName = "Ragdoll";
 	Actor->SetState(EXYZUnitState::DEAD);
-	Actor->GetXYZAIController()->UnPossess();
 	Actor->TargetActor = nullptr;
+	
 	DeathQueue.Add(DeathStruct);
 }
 

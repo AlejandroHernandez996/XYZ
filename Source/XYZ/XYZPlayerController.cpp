@@ -53,7 +53,6 @@ void AXYZPlayerController::BeginPlay()
 		{
 			CameraController = *ActorItr;
 		}
-
 	}
 }
 
@@ -331,40 +330,43 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 			break;
 		}
 		if (!bAllowMouseInput || !bBoxSelectFlag) break;
-		if (bSecondaryModifier && InputTriggeredTime[InputType] <= ShortInputThreshold) {
-			TArray<AXYZActor*> SelectedActors = GetHUD<AXYZHUD>()->SelectedActors;
-			SelectedActors.RemoveAll([&](AXYZActor* Actor)
-				{
-					if (Actor)
-					{
-						return Actor->TeamId != TeamId;
-					}
-					return true;
-				});
-			if (SelectedActors.Num() > 0) {
-				AXYZActor* SelectedActor = SelectedActors[0];
-				if (SelectedActor) {
-					TArray<AXYZActor*> AllMatchingSelectedActorOnScreen = GetHUD<AXYZHUD>()->AllActorsOnScreen;
-					AllMatchingSelectedActorOnScreen.RemoveAll([&](AXYZActor* Actor)
+		if (FVector2D::Distance(BoxSelectStart, BoxSelectEnd) < 25.0f){
+			if (HitActor) {
+				if (bSecondaryModifier) {
+					TArray<AXYZActor*> SelectedActors = GetHUD<AXYZHUD>()->SelectedActors;
+					SelectedActors.RemoveAll([&](AXYZActor* Actor)
 						{
 							if (Actor)
 							{
-								return Actor->TeamId != TeamId || Actor->ActorId != SelectedActor->ActorId;
+								return Actor->TeamId != TeamId;
 							}
 							return true;
 						});
-					if (AllMatchingSelectedActorOnScreen.Num() > 0) {
-						SelectActors(AllMatchingSelectedActorOnScreen);
+					if (SelectedActors.Num() > 0) {
+						AXYZActor* SelectedActor = SelectedActors[0];
+						if (SelectedActor) {
+							TArray<AXYZActor*> AllMatchingSelectedActorOnScreen = GetHUD<AXYZHUD>()->AllActorsOnScreen;
+							AllMatchingSelectedActorOnScreen.RemoveAll([&](AXYZActor* Actor)
+								{
+									if (Actor)
+									{
+										return Actor->TeamId != TeamId || Actor->ActorId != SelectedActor->ActorId;
+									}
+									return true;
+								});
+							if (AllMatchingSelectedActorOnScreen.Num() > 0) {
+								SelectActors(AllMatchingSelectedActorOnScreen);
+							}
+						}
 					}
+					GetHUD<AXYZHUD>()->AllActorsOnScreen.Empty();
+				}else
+				{
+					SelectActors({ HitActor });
 				}
 			}
-			GetHUD<AXYZHUD>()->AllActorsOnScreen.Empty();
 		}
-		else if (FVector2D::Distance(BoxSelectStart, BoxSelectEnd) < 25.0f){
-			if (HitActor) {
-				SelectActors({ HitActor });
-			}
-		}
+		
 		else {
 			SelectActors(GetHUD<AXYZHUD>()->SelectedActors);
 		}

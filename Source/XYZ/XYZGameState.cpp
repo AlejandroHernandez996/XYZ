@@ -72,6 +72,7 @@ void AXYZGameState::LoadGameState()
 	TMap<int32, int32> ReservedSupply1;
 	TMap<int32, int32> ReservedSupply2;
 	ReservedSupplyByBuilding.Add(0, ReservedSupply1);
+	ReservedSupplyByBuilding.Add(1, ReservedSupply2);
 
 	bLoadedGameState = true;
 }    
