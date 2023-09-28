@@ -3,7 +3,7 @@
 #include "XYZBlobFactory.h"
 #include "XYZAction.h"
 
-void UXYZBlobManager::ProcessBlobs()
+void UXYZBlobManager::Process(float DeltaSeconds)
 {
     for (; ActionIndex < Actions.Num(); ActionIndex++) {
         QueueAction(Actions[ActionIndex]);
@@ -11,7 +11,7 @@ void UXYZBlobManager::ProcessBlobs()
     for (UXYZBlob* Blob : ActiveBlobs)
     {
         if (Blob) {
-            Blob->ProcessBlob();
+            Blob->Process(DeltaSeconds);
         }
     }
     RemoveInactiveBlobs();

@@ -15,6 +15,11 @@ class XYZ_API AXYZResourceActor : public AXYZActor
 {
 	GENERATED_BODY()
 public:
-	virtual void ProcessActor() override;
+	virtual void Process(float DeltaSeconds) override;
+	UPROPERTY()
 	EXYZResourceType ResourceType = EXYZResourceType::MINERAL;
+	UPROPERTY()
+	int32 RESOURCE_CAPACITY = 2;
+	UPROPERTY()
+	int32 CurrentWorkers = 0;
 };

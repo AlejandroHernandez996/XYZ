@@ -1,11 +1,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Processable.h"
 #include "UObject/NoExportTypes.h"
 #include "XYZBlobManager.generated.h"
 
 UCLASS()
-class XYZ_API UXYZBlobManager : public UObject
+class XYZ_API UXYZBlobManager : public UObject, public IProcessable
 {
     GENERATED_BODY()
 
@@ -21,8 +22,7 @@ public:
     void AddBlob(class UXYZBlob* Blob);
     UFUNCTION()
     void RemoveInactiveBlobs();
-    UFUNCTION()
-    void ProcessBlobs();
+    void Process(float DeltaSeconds);
     UFUNCTION()
     void QueueAction(class UXYZAction* Action);
 };

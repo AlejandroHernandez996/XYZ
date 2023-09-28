@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Processable.h"
 #include "GameFramework/Character.h"
 #include "XYZAbility.h"
 #include "XYZFactionType.h"
@@ -12,7 +13,7 @@
 #include "XYZActor.generated.h"
 
 UCLASS()
-class XYZ_API AXYZActor : public ACharacter
+class XYZ_API AXYZActor : public ACharacter, public IProcessable
 {
 	GENERATED_BODY()
 	
@@ -148,7 +149,6 @@ public:
     UFUNCTION()
         void PlayAnimationMontage(EXYZAnimMontageType AnimMontageType);
 
-    UFUNCTION()
-    virtual void ProcessActor();
+    virtual void Process(float DeltaSeconds);
 
 };

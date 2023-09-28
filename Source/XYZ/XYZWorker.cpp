@@ -29,9 +29,9 @@ void AXYZWorker::Tick(float DeltaTime) {
     
 }
 
-void AXYZWorker::ProcessActor()
+void AXYZWorker::Process(float DeltaTime)
 {
-    Super::ProcessActor();
+    Super::Process(DeltaTime);
     if (State == EXYZUnitState::GATHERING) {
         GetCharacterMovement()->bUseRVOAvoidance = false;
         if (!TargetActor) {
@@ -53,6 +53,10 @@ void AXYZWorker::ProcessActor()
         else {
             GetXYZAIController()->XYZStopMovement();
         }
+    }
+    else if (State == EXYZUnitState::MINING)
+    {
+        TimeToGather += DeltaTime;
     }
     else {
         GetCharacterMovement()->bUseRVOAvoidance = true;

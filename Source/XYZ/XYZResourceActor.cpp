@@ -3,7 +3,7 @@
 
 #include "XYZResourceActor.h"
 
-void AXYZResourceActor::ProcessActor()
+void AXYZResourceActor::Process(float DeltaSeconds)
 {
-	Super::ProcessActor();
+	Super::Process(DeltaSeconds);
 }

@@ -37,7 +37,7 @@ void AXYZGameMode::BeginPlay() {
     MatchManager = NewObject<UXYZMatchManager>(this, UXYZMatchManager::StaticClass(), "MatchManager");
     MatchManager->XYZGameMode = this;
     MatchManager->XYZGameState = GetGameState<AXYZGameState>();
-	
+
     SessionHandler = NewObject<USessionHandler>(this);
     UserRetriever = NewObject<UUserInfoRetriver>(this);
     UserStatRetriever = NewObject<UUserStatRetriever>(this);
@@ -115,13 +115,13 @@ void AXYZGameMode::Tick(float DeltaSeconds)
         {
             if(Actor)
             {
-                Actor->ProcessActor();
+                Actor->Process(DeltaSeconds);
             }
         }
-        InputManager->ProcessInputs();
-        BlobManager->ProcessBlobs();
-        DeathManager->ProcessDeaths(DeltaSeconds);
-        MatchManager->Process();
+        InputManager->Process(DeltaSeconds);
+        BlobManager->Process(DeltaSeconds);
+        DeathManager->Process(DeltaSeconds);
+        MatchManager->Process(DeltaSeconds);
         TickCount++;
         bHasGameEnded = bHasGameEnded || NumOfPlayers < 2;
         if (bHasGameEnded)

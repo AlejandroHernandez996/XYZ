@@ -7,7 +7,7 @@
 #include "XYZBuilding.h"
 #include "XYZGameMode.h"
 
-void UXYZMatchManager::Process()
+void UXYZMatchManager::Process(float DeltaSeconds)
 {
 	TArray<bool> bPlayerHasABuilding = {false, false};
 	TArray<AXYZActor*> Actors;

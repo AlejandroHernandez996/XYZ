@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Processable.h"
 #include "GameFramework/GameModeBase.h"
 #include "XYZInputMessage.h"
 #include "XYZGameMode.generated.h"
@@ -48,6 +49,9 @@ public:
 	UPROPERTY()
 		class UUserStatUpdater* UserStatUpdater;
 	void PreLogout(APlayerController* InPlayerController);
+
+	UPROPERTY()
+	TArray<IProcessable*> Processables;
 
 private:
 	bool bIsStartingSession;

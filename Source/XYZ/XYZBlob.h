@@ -1,12 +1,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Processable.h"
 #include "UObject/NoExportTypes.h"
 #include "XYZActor.h"
 #include "XYZBlob.generated.h"
 
 UCLASS()
-class XYZ_API UXYZBlob : public UObject
+class XYZ_API UXYZBlob : public UObject, public IProcessable
 {
     GENERATED_BODY()
 
@@ -23,8 +24,7 @@ public:
     TSharedPtr<FActionList> Head;
     TSharedPtr<FActionList> Tail;
 
-    UFUNCTION()
-    virtual void ProcessBlob();
+    virtual void Process(float DeltaSeconds);
     UFUNCTION()
     void InitializeBlob();
     UFUNCTION()

@@ -356,7 +356,7 @@ void AXYZActor::PlayAnimationMontage(EXYZAnimMontageType AnimType)
 	}
 }
 
-void AXYZActor::ProcessActor()
+void AXYZActor::Process(float DeltaTime)
 {
 	if (State == EXYZUnitState::DEAD) return;
 	if (Health == 0.0f)

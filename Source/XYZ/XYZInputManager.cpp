@@ -38,7 +38,7 @@ void UXYZInputManager::ExecuteInput(const FXYZInputMessage& InputMessage)
     InputIndex++;
 }
 
-void UXYZInputManager::ProcessInputs()
+void UXYZInputManager::Process(float DeltaTime)
 {
     for(;InputQueueIndex < InputQueue.Num();InputQueueIndex++)
     {

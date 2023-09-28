@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Processable.h"
 #include "UObject/NoExportTypes.h"
 #include "XYZMatchManager.generated.h"
 
@@ -10,12 +11,11 @@
  * 
  */
 UCLASS()
-class XYZ_API UXYZMatchManager : public UObject
+class XYZ_API UXYZMatchManager : public UObject, public IProcessable
 {
 	GENERATED_BODY()
 public:
-	UFUNCTION()
-	void Process();
+	void Process(float DeltaSeconds);
 	UPROPERTY()
 	class AXYZGameState* XYZGameState;
 	UPROPERTY()

@@ -36,6 +36,8 @@ public:
 	UPROPERTY()
 		float GatherRate = 2.0f;
 	UPROPERTY()
+		float TimeToGather = 0.0f;
+	UPROPERTY()
 		bool bIsGatheringResource;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 		class UStaticMeshComponent* FloatingMesh;
@@ -44,7 +46,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 		float FloatSpeed;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-	void ProcessActor() override;
+	void Process(float DeltaTime) override;
 
 	bool bFirstMineralGathered;
 };

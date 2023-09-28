@@ -108,6 +108,22 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
 void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     FActorSpawnParameters SpawnParams;
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+    float CapsuleRadius = GetCapsuleComponent()->GetScaledCapsuleRadius();
+    FVector MyActorLocation = GetActorLocation(); 
+    
+    if(RallyPoint != SpawnPoint)
+    {
+        FVector DirectionToRallyPoint = RallyPoint - MyActorLocation; 
+        DirectionToRallyPoint.Normalize();
+        SpawnPoint = GetActorLocation() + (DirectionToRallyPoint * CapsuleRadius* 2.0f);
+    }
+    if(RallyTarget)
+    {
+        FVector DirectionToRallyTarget = RallyTarget->GetActorLocation() - MyActorLocation;
+        DirectionToRallyTarget.Normalize();
+        SpawnPoint = GetActorLocation() + (DirectionToRallyTarget * CapsuleRadius* 2.0f);
+    }
     FVector SpawnLocation = SpawnPoint;
     FVector Start = SpawnLocation + FVector(0, 0, 1000); // Start 1000 units above
     FVector End = SpawnLocation - FVector(0, 0, 10000);   // End 1000 units below
@@ -120,6 +136,7 @@ void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     {
         SpawnLocation.Z = HitResult.Location.Z;
     }
+    
     AXYZActor* SpawnActor = GetWorld()->SpawnActor<AXYZActor>(UnitTemplate, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
     SpawnActor->TeamId = TeamId;
     GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[SpawnActor->TeamId + 2] += SpawnActor->SupplyGain;
@@ -170,8 +187,8 @@ void AXYZBuilding::CancelProduction() {
     CurrentAbility->bCanCancel = true;
 }
 
-void AXYZBuilding::ProcessActor()
+void AXYZBuilding::Process(float DeltaTime)
 {
-    Super::ProcessActor();
+    Super::Process(DeltaTime);
     ProcessBuildQueue(GetWorld()->DeltaTimeSeconds);
 }

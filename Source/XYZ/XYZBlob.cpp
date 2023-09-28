@@ -20,7 +20,7 @@ void UXYZBlob::InitializeBlob() {
         }
     }
 }
-void UXYZBlob::ProcessBlob()
+void UXYZBlob::Process(float DeltaSeconds)
 {
     if (!IsBlobProcessable()) {
         return;

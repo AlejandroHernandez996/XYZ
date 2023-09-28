@@ -48,9 +48,9 @@ void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 	DeathQueue.Add(DeathStruct);
 }
 
-void UXYZDeathManager::ProcessDeaths(float DeltaTime)
+void UXYZDeathManager::Process(float DeltaSeconds)
 {
-	CurrentTime += DeltaTime;
+	CurrentTime += DeltaSeconds;
 	if(DeathQueue.IsEmpty()) return;
 	TArray<FDeathStruct> ActorsAlive;
 	for(FDeathStruct DeathStruct : DeathQueue)

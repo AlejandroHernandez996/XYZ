@@ -7,9 +7,9 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-void AXYZUnit::ProcessActor()
+void AXYZUnit::Process(float DeltaTime)
 {
-	Super::ProcessActor();
+	Super::Process(DeltaTime);
 	if (State == EXYZUnitState::DEAD) return;
 	GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
 	GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 1.25f;

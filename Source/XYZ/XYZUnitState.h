@@ -12,6 +12,7 @@ enum class EXYZUnitState : uint8
 	ATTACK_MOVING,
 	FOLLOWING,
 	RETURNING,
+	MINING,
 	GATHERING,
 	HOLD,
 	DEAD

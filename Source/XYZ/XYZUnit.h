@@ -14,5 +14,5 @@ class XYZ_API AXYZUnit : public AXYZActor
 {
 	GENERATED_BODY()
 public:
-	void ProcessActor() override;
+	void Process(float DeltaSeconds) override;
 };

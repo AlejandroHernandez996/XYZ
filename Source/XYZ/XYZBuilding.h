@@ -45,5 +45,5 @@ public:
 		void CancelProduction();
 	bool bIsTraining;
 
-	void ProcessActor() override;
+	void Process(float DeltaTime) override;
 };
