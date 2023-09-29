@@ -7,6 +7,7 @@
 #include "XYZBlobManager.h"
 #include "XYZBlob.h"
 #include "XYZAIController.h"
+#include "XYZMapManager.h"
 #include "XYZResourceActor.h"
 #include "Components/CapsuleComponent.h"
 
@@ -17,6 +18,7 @@ void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 	AXYZGameState* XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
 	AXYZGameMode* XYZGameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
 
+	XYZGameMode->MapManager->RemoveActorFromGrid(Actor);
 	for (AXYZPlayerController* XYZController : XYZGameMode->PlayerControllers)
 	{
 		if (XYZController)

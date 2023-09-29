@@ -17,6 +17,7 @@
 #include "XYZBuilding.h"
 #include "XYZAbility.h"
 #include "XYZDeathManager.h"
+#include "XYZMapManager.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 
@@ -79,6 +80,13 @@ void AXYZActor::Tick(float DeltaTime)
 	if(!HasAuthority() && UActorId != -1 && !GameState->ActorsByUID.Contains(UActorId))
 	{
 		GameState->AddActorClient(this, UActorId);
+	}
+	if(HasAuthority())
+	{
+		if(!(State == EXYZUnitState::DEAD || State == EXYZUnitState::HOLD || State == EXYZUnitState::IDLE || State == EXYZUnitState::MINING))
+		{
+			GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(this);
+		}
 	}
 }
 
@@ -145,6 +153,7 @@ void AXYZActor::Attack()
 	}
 }
 
+/*
 AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors)
 {
 	AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
@@ -169,6 +178,37 @@ AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors)
 		}
 	}
 
+	return ClosestActor;
+}
+*/
+
+AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors)
+{
+	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
+	TSet<AXYZActor*> ActorsInVision = MapManager->FindActorsInVisionRange(this);
+	FVector CurrentLocation = this->GetActorLocation();
+	AXYZActor* ClosestActor = nullptr;
+	float ClosestDistanceSqr = FLT_MAX;
+	for (AXYZActor* OtherActor : ActorsInVision)
+	{
+		if(!OtherActor) continue;
+		bool bTargetIsFriendlyAndShouldIgnore = OtherActor && OtherActor->TeamId == TeamId && bIgnoreFriendlyActors;
+		if (OtherActor == this ||
+			bTargetIsFriendlyAndShouldIgnore ||
+			OtherActor->Health <= 0.0f ||
+			OtherActor->IsA(AXYZResourceActor::StaticClass()))
+		{
+			continue;
+		}
+
+		float DistanceSqr = FVector::DistSquaredXY(CurrentLocation, OtherActor->GetActorLocation());
+		if (DistanceSqr < ClosestDistanceSqr && DistanceSqr <= FMath::Square(VisionRange))
+		{
+			ClosestDistanceSqr = DistanceSqr;
+			ClosestActor = OtherActor;
+		}
+	}
+	
 	return ClosestActor;
 }
 
@@ -273,6 +313,9 @@ void AXYZActor::AttackMoveTarget()
 	{
 		FVector TargetActorLocation = TargetActor->GetActorLocation();
 
+		// Assuming TargetActor has a CapsuleComponent named CapsuleComponent.
+		float TargetActorRadius = TargetActor->GetCapsuleComponent()->GetScaledCapsuleRadius();
+
 		FVector Direction = TargetActorLocation - ActorLocation;
 		Direction.Z = 0;
 		Direction.Normalize();
@@ -280,6 +323,8 @@ void AXYZActor::AttackMoveTarget()
 		FVector2D TargetLocation2D = FVector2D(TargetActorLocation.X, TargetActorLocation.Y);
 		float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
 
+		// Subtract the capsule's radius from the calculated distance.
+		DistanceToTarget -= TargetActorRadius;
 		if (DistanceToTarget <= AttackRange)
 		{
 			Attack();

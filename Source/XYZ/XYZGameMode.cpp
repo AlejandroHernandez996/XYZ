@@ -14,6 +14,7 @@
 #include "OnlineSubsystemUtils.h"
 #include "XYZBaseBuilding.h"
 #include "XYZDeathManager.h"
+#include "XYZMapManager.h"
 #include "XYZMatchManager.h"
 #include "Interfaces/OnlineIdentityInterface.h"
 #include "UObject/ConstructorHelpers.h"
@@ -37,6 +38,9 @@ void AXYZGameMode::BeginPlay() {
     MatchManager = NewObject<UXYZMatchManager>(this, UXYZMatchManager::StaticClass(), "MatchManager");
     MatchManager->XYZGameMode = this;
     MatchManager->XYZGameState = GetGameState<AXYZGameState>();
+    MapManager = NewObject<UXYZMapManager>(this, UXYZMapManager::StaticClass(), "MapManager");
+    MapManager->GameState = GetGameState<AXYZGameState>();
+    MapManager->InitializeGrid();
 
     SessionHandler = NewObject<USessionHandler>(this);
     UserRetriever = NewObject<UUserInfoRetriver>(this);
@@ -122,6 +126,7 @@ void AXYZGameMode::Tick(float DeltaSeconds)
         BlobManager->Process(DeltaSeconds);
         DeathManager->Process(DeltaSeconds);
         MatchManager->Process(DeltaSeconds);
+        MapManager->Process(DeltaSeconds);
         TickCount++;
         bHasGameEnded = bHasGameEnded || NumOfPlayers < 2;
         if (bHasGameEnded)

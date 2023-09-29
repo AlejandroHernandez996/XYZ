@@ -33,6 +33,8 @@ public:
 	UPROPERTY()
 	class UXYZMatchManager* MatchManager;
 	UPROPERTY()
+	class UXYZMapManager* MapManager;
+	UPROPERTY()
 		TArray<class AXYZPlayerController*> PlayerControllers;
 	bool bHandleInputQueue;
 	bool bHasGameStarted;

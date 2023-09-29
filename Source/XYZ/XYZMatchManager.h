@@ -22,4 +22,6 @@ public:
 	class AXYZGameMode* XYZGameMode;
 	UPROPERTY()
 	int32 WinnerIndex = -1;
+	UPROPERTY()
+	class AXYZGameState* GameState;
 };
