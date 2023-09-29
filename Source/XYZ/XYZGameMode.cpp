@@ -316,4 +316,14 @@ void AXYZGameMode::PreLogout(APlayerController* InPlayerController)
     {
         // The player could not be unregistered.
     }
+
+    AXYZPlayerController* DisconnectedController = Cast<AXYZPlayerController>(InPlayerController);
+    int32 OtherPlayedTeamId = DisconnectedController->TeamId == 1 ? 0 : 1;
+    AXYZPlayerController* OtherPlayer = PlayerControllers[OtherPlayedTeamId];
+
+    bHasGameEnded = true;
+    Cast<AXYZGameState>(GameState)->bHasGameEnded = true;
+
+    MatchManager->WinnerIndex = OtherPlayer->TeamId;
+    MatchManager->LoserIndex = DisconnectedController->TeamId;
 }
