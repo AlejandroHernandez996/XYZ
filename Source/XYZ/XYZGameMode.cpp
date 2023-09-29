@@ -129,9 +129,26 @@ void AXYZGameMode::Tick(float DeltaSeconds)
         MapManager->Process(DeltaSeconds);
         TickCount++;
         bHasGameEnded = bHasGameEnded || NumOfPlayers < 2;
-        if (bHasGameEnded)
+        if (bHasGameEnded && bHasCleanedUp)
         {
             FTimerHandle TimerHandle;
+
+            for(AXYZPlayerController* PlayerController : PlayerControllers)
+            {
+                bool bHasWon = MatchManager->WinnerIndex == PlayerController->TeamId;
+                int32 MatchStatus = bHasWon ? 1 : -1;
+                FString WinsOrLossesStat = bHasWon ? "wins" : "losses";
+                FString GamesStat = "games";
+                FString RatingStat = "rating";
+                int32 Rating = bHasWon ? 25 : -25;
+                
+                TSharedPtr<const FUniqueNetId> UniqueNetId = UserRetriever->GetControllerUniqueNetId(PlayerController);
+                UserStatUpdater->UpdateInt32Stat(UniqueNetId.ToSharedRef(), WinsOrLossesStat, 1);
+                UserStatUpdater->UpdateInt32Stat(UniqueNetId.ToSharedRef(), GamesStat, 1);
+                UserStatUpdater->UpdateInt32Stat(UniqueNetId.ToSharedRef(), RatingStat, Rating);
+
+                PlayerControllers[MatchManager->WinnerIndex]->UpdateMatchStatus(MatchStatus);
+            }
 
             GetWorld()->GetTimerManager().SetTimer(
                 TimerHandle,
@@ -142,6 +159,7 @@ void AXYZGameMode::Tick(float DeltaSeconds)
                 3.0f, 
                 false 
             );
+            bHasCleanedUp = true;
         }
     }
 	

@@ -202,6 +202,13 @@ public:
 	void PlayAnimationMontage_Implementation(EXYZAnimMontageType AnimationType, AXYZActor* Actor);
 
 	void OnNetCleanup(UNetConnection* Connection) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Match")
+		int32 MatchStatus;
+	UFUNCTION(Reliable, Client)
+	void UpdateMatchStatus(int32 Status);
+	void UpdateMatchStatus_Implementation(int32 Status);
+
 };
 
 

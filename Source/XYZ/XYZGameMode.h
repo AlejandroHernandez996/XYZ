@@ -18,6 +18,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	int32 TickCount = 0;
+
 	void QueueInput(const FXYZInputMessage& InputMessage);
 
 	TMap<uint32, TArray<uint32>> TeamResourcesMap;
@@ -39,7 +40,7 @@ public:
 	bool bHandleInputQueue;
 	bool bHasGameStarted;
 	bool bHasGameEnded;
-	
+	bool bHasCleanedUp;
 	void RegisterExistingPlayers();
 
 	UPROPERTY()

@@ -609,3 +609,8 @@ void AXYZPlayerController::OnNetCleanup(UNetConnection* Connection)
 
 	Super::OnNetCleanup(Connection);
 }
+
+void AXYZPlayerController::UpdateMatchStatus_Implementation(int32 Status)
+{
+	MatchStatus = Status;
+}

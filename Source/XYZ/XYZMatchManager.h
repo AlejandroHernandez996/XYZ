@@ -23,5 +23,7 @@ public:
 	UPROPERTY()
 	int32 WinnerIndex = -1;
 	UPROPERTY()
+	int32 LoserIndex = -1;
+	UPROPERTY()
 	class AXYZGameState* GameState;
 };

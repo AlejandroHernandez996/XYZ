@@ -9,7 +9,7 @@
 
 void UXYZMatchManager::Process(float DeltaSeconds)
 {
-	TArray<bool> bPlayerHasABuilding = {false, false};
+	TArray bPlayerHasABuilding = {false, false};
 	TArray<AXYZActor*> Actors;
 	if(!XYZGameState) return;
 	XYZGameState->ActorsByUID.GenerateValueArray(Actors);
@@ -25,9 +25,16 @@ void UXYZMatchManager::Process(float DeltaSeconds)
 		}
 	}
 
-	if(!bPlayerHasABuilding[0] || !bPlayerHasABuilding[1])
+	for(int i = 0;i < bPlayerHasABuilding.Num();i++)
 	{
-		XYZGameMode->bHasGameEnded = true;
-		XYZGameState->bHasGameEnded = true;
+		if(!bPlayerHasABuilding[i])
+		{
+			XYZGameMode->bHasGameEnded = !bPlayerHasABuilding[i];
+			XYZGameState->bHasGameEnded = !bPlayerHasABuilding[i];
+
+			WinnerIndex = i == 0 ? 1 : 0;
+			LoserIndex = i;
+			break;
+		}
 	}
 }
