@@ -18,7 +18,9 @@ public:
 	UFUNCTION()
 	void AddToUpdateSet(AXYZActor* Actor);
 
-	TMap<FVector2D, TSharedPtr<FGridCell>> Grid;
+	UPROPERTY()
+	TMap<FVector2D, FGridCell> Grid;
+	
 	UPROPERTY()
 	int32 GRID_SIZE = 50;
 	UPROPERTY()

@@ -7,7 +7,7 @@ void UXYZMapManager::InitializeGrid() {
 	for (int32 X = 0; X < GRID_SIZE; X++) {
 		for (int32 Y = 0; Y < GRID_SIZE; Y++) {
 			FVector2D GridCoord(X, Y);
-			TSharedPtr<FGridCell> NewCell = MakeShared<FGridCell>();
+			FGridCell NewCell;
 			
 			Grid.Add(GridCoord, NewCell);
 		}
@@ -23,7 +23,7 @@ void UXYZMapManager::AddActorToGrid(AXYZActor* Actor) {
 	FVector2D GridCoord = GetGridCoordinate(Actor->GetActorLocation());
 	if(IsGridCoordValid(GridCoord))
 	{
-		Grid[GridCoord]->ActorsInCell.Add(Actor);
+		Grid[GridCoord].ActorsInCell.Add(Actor);
 	}
 }
 
@@ -31,7 +31,7 @@ void UXYZMapManager::RemoveActorFromGrid(AXYZActor* Actor) {
 	FVector2D GridCoord = GetGridCoordinate(Actor->GetActorLocation());
 	if(IsGridCoordValid(GridCoord))
 	{
-		Grid[GridCoord]->ActorsInCell.Remove(Actor);
+		Grid[GridCoord].ActorsInCell.Remove(Actor);
 	}
 }
 
@@ -86,7 +86,7 @@ TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
             
 			if(IsGridCoordValid(GridCoord) && IsGridCoordValid(AdjacentCoord))
 			{
-				ActorsInRange = ActorsInRange.Union(Grid[AdjacentCoord]->ActorsInCell);
+				ActorsInRange = ActorsInRange.Union(Grid[AdjacentCoord].ActorsInCell);
 			}
 		}
 	}
@@ -95,15 +95,12 @@ TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
 
 void UXYZMapManager::ClearVision()
 {
-	TArray<TSharedPtr<FGridCell>> Cells;
+	TArray<FGridCell> Cells;
 	Grid.GenerateValueArray(Cells);
 
-	for(TSharedPtr<FGridCell> Cell : Cells)
+	for(FGridCell Cell : Cells)
 	{
-		if(Cell)
-		{
-			Cell->TeamVision = {false, false};
-		}
+		Cell.TeamVision = {false, false};
 	}
 }
 
@@ -125,9 +122,9 @@ void UXYZMapManager::GenerateVision() {
 			for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
 				FVector2D AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
 				if (IsGridCoordValid(AdjacentCoord) &&
-					Grid[AdjacentCoord]->TeamVision.Num() > Actor->TeamId &&
-					Grid[ActorGridCoord]->Height >= Grid[AdjacentCoord]->Height) {
-					Grid[AdjacentCoord]->TeamVision[Actor->TeamId] = true;
+					Grid[AdjacentCoord].TeamVision.Num() > Actor->TeamId &&
+					Grid[ActorGridCoord].Height >= Grid[AdjacentCoord].Height) {
+					Grid[AdjacentCoord].TeamVision[Actor->TeamId] = true;
 				}
 			}
 		}
@@ -136,5 +133,5 @@ void UXYZMapManager::GenerateVision() {
 
 bool UXYZMapManager::IsGridCoordValid(const FVector2D& Coord) const
 {
-	return Grid.Contains(Coord) && Grid[Coord];
+	return Grid.Contains(Coord);
 }

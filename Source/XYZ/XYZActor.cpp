@@ -191,9 +191,9 @@ AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors)
 	float ClosestDistanceSqr = FLT_MAX;
 	for (AXYZActor* OtherActor : ActorsInVision)
 	{
-		if(!OtherActor) continue;
 		bool bTargetIsFriendlyAndShouldIgnore = OtherActor && OtherActor->TeamId == TeamId && bIgnoreFriendlyActors;
-		if (OtherActor == this ||
+		if (!OtherActor ||
+			OtherActor == this ||
 			bTargetIsFriendlyAndShouldIgnore ||
 			OtherActor->Health <= 0.0f ||
 			OtherActor->IsA(AXYZResourceActor::StaticClass()))
