@@ -56,7 +56,12 @@ void AXYZPlayerController::BeginPlay()
 		{
 			CameraController = *ActorItr;
 		}
+		for (TActorIterator<AXYZFogOfWar> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		{
+			FogOfWar = *ActorItr;
+		}
 	}
+
 }
 
 void AXYZPlayerController::Tick(float DeltaTime) {
@@ -277,7 +282,6 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 		bAttackModifier = !SelectionStructure->IsEmpty();
 		break;
 	}
-	return;
 }
 
 void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)

@@ -22,7 +22,7 @@ public:
 	TMap<FVector2D, FGridCell> Grid;
 	
 	UPROPERTY()
-	int32 GRID_SIZE = 100;
+	int32 GRID_SIZE = 50;
 	UPROPERTY()
 	float MAP_SIZE = 10000.0f;
 	UPROPERTY()

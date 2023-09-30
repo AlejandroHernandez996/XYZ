@@ -50,7 +50,6 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 	}
 	GenerateVision();
 	SendVisibleActorsToClient();
-	//SendVisibilityGrid();
 	bHasSentVison = true;
 
 }
@@ -94,6 +93,7 @@ void UXYZMapManager::ClearVision()
 
 void UXYZMapManager::GenerateVision() {
 	TArray<AXYZActor*> Actors;
+	
 	GameState->ActorsByUID.GenerateValueArray(Actors);
 
 	for (AXYZActor* Actor : Actors) {
@@ -126,7 +126,6 @@ bool UXYZMapManager::IsGridCoordValid(const FVector2D& Coord) const
 
 void UXYZMapManager::SendVisibleActorsToClient()
 {
-	
 	TArray<FGridCell> GridCells;
 	Grid.GenerateValueArray(GridCells);
 	
@@ -233,12 +232,12 @@ void UXYZMapManager::SendVisibilityGrid()
 	for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
 	{
 		int32 TeamId = PlayerController->TeamId;
-		TSet<FVector2D> VisibleCellsIntersection = VisibleCells[TeamId].Intersect(LastNonVisibleCellsSent[TeamId]);
-		TSet<FVector2D> NonVisibleCellsIntersection = NonVisibleCells[TeamId].Intersect(LastVisibleCellsSent[TeamId]);
+		TSet<FVector2D> VisibleCellsDifference = VisibleCells[TeamId].Difference(LastNonVisibleCellsSent[TeamId]);
+		TSet<FVector2D> NonVisibleCellsDifference= NonVisibleCells[TeamId].Difference(LastVisibleCellsSent[TeamId]);
 
-		if(!VisibleCellsIntersection.IsEmpty() || !NonVisibleCellsIntersection.IsEmpty())
+		if(!VisibleCellsDifference.IsEmpty() || !NonVisibleCellsDifference.IsEmpty())
 		{
-			PlayerController->SendVisibilityGridCoords(VisibleCellsIntersection.Array(), NonVisibleCellsIntersection.Array());
+			PlayerController->SendVisibilityGridCoords(VisibleCellsDifference.Array(), {});
 		}
 
 	}

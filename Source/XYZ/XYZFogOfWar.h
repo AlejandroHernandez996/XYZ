@@ -17,6 +17,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
@@ -28,4 +29,7 @@ public:
 	void RevealCell(FVector2D Coord);
 	UFUNCTION()
 	void ConcealCell(FVector2D Coord);
+	UPROPERTY()
+	TSet<FVector2D> RevealCoords;
+
 };
