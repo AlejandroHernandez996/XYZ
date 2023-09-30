@@ -22,7 +22,7 @@ public:
 	TMap<FVector2D, FGridCell> Grid;
 	
 	UPROPERTY()
-	int32 GRID_SIZE = 50;
+	int32 GRID_SIZE = 100;
 	UPROPERTY()
 	float MAP_SIZE = 10000.0f;
 	UPROPERTY()
@@ -32,7 +32,11 @@ public:
 	TSet<class AXYZActor*> ActorsToUpdate;
 	UPROPERTY()
 	bool bHasProcessed;
-
+	UPROPERTY()
+	class AXYZGameState* GameState;
+	UPROPERTY()
+	class AXYZGameMode* GameMode;
+	
 	void InitializeGrid();
 	UFUNCTION()
 	FVector2D GetGridCoordinate(const FVector& WorldLocation);
@@ -48,6 +52,25 @@ public:
 	void GenerateVision();
 	UFUNCTION()
 	bool IsGridCoordValid(const FVector2D& Coord) const;
-	UPROPERTY()
-	class AXYZGameState* GameState;
+	UFUNCTION()
+	void SendVisibleActorsToClient();
+
+	TArray<TSet<int32>> LastVisibleSent = {{},{}};
+	TArray<TSet<int32>> LastNonVisibleSent = {{},{}};
+
+	TArray<TSet<FVector2D>> LastVisibleCellsSent = {{},{}};
+	TArray<TSet<FVector2D>> LastNonVisibleCellsSent = {{},{}};
+
+	UFUNCTION()
+	bool AreSetsEqual(const TSet<int32>& SetA, const TSet<int32>& SetB);
+	UFUNCTION()
+	bool AreSets2DEqual(const TSet<FVector2D>& SetA, const TSet<FVector2D>& SetB);
+
+	bool bHasSentVison;
+
+	UFUNCTION()
+	void SendVisibilityGrid();
+
+	float TimeToSendGrid = 1.0f;
+	float TimeSinceSent = 0.0f;
 };

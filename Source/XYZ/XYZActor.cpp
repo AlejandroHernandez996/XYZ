@@ -47,7 +47,6 @@ void AXYZActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	
 	if (GetLocalRole() != ROLE_Authority)
 	{
 		TArray<UDecalComponent*> DecalComponents;
@@ -70,7 +69,7 @@ void AXYZActor::BeginPlay()
 		}
 		AbilityIndex++;
 	}
-	
+	LastLocation = GetActorLocation();
 }
 
 void AXYZActor::Tick(float DeltaTime)
@@ -80,13 +79,6 @@ void AXYZActor::Tick(float DeltaTime)
 	if(!HasAuthority() && UActorId != -1 && !GameState->ActorsByUID.Contains(UActorId))
 	{
 		GameState->AddActorClient(this, UActorId);
-	}
-	if(HasAuthority())
-	{
-		if(!(State == EXYZUnitState::DEAD || State == EXYZUnitState::HOLD || State == EXYZUnitState::IDLE || State == EXYZUnitState::MINING))
-		{
-			GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(this);
-		}
 	}
 }
 
@@ -404,8 +396,12 @@ void AXYZActor::PlayAnimationMontage(EXYZAnimMontageType AnimType)
 void AXYZActor::Process(float DeltaTime)
 {
 	if (State == EXYZUnitState::DEAD) return;
-	if (Health == 0.0f)
+	if (Health <= 0.0f)
 	{
 		GetWorld()->GetAuthGameMode<AXYZGameMode>()->DeathManager->QueueDeath(this);
+	}else
+	{
+		GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(this);
+		LastLocation = GetActorLocation();
 	}
 }

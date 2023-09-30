@@ -24,6 +24,8 @@ public:
 public:	
 	virtual void Tick(float DeltaTime) override;
     virtual void BeginPlay() override;
+    UPROPERTY()
+    FVector LastLocation;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)
         int32 ActorId;

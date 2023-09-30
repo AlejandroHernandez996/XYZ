@@ -2,8 +2,6 @@
 
 #include "XYZPlayerController.h"
 #include "GameFramework/Pawn.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
@@ -16,13 +14,11 @@
 #include "XYZHUD.h"
 #include "GameFramework/PlayerState.h"
 #include "EnhancedInputSubsystems.h"
-#include "Blueprint/WidgetLayoutLibrary.h"
 #include "XYZCameraController.h"
 #include "XYZResourceActor.h"
 #include "EngineUtils.h"
 #include "XYZBuilding.h"
-#include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "XYZFogOfWar.h"
 #include "Net/UnrealNetwork.h"
 
 AXYZPlayerController::AXYZPlayerController()
@@ -43,13 +39,14 @@ AXYZPlayerController::AXYZPlayerController()
 		LastInputTime.Add(static_cast<EXYZInputType>(EnumValue), 0.0f);
 	}
 	ShortInputThreshold = .25f;
-	SelectionStructure = NewObject<UXYZSelectionStructure>(this, UXYZSelectionStructure::StaticClass(), "SelectionStructure");
 	PrimaryActorTick.bCanEverTick = true;
 }
 
 void AXYZPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	SelectionStructure = NewObject<UXYZSelectionStructure>(this, UXYZSelectionStructure::StaticClass(), "SelectionStructure");
+	SelectionStructure->InitControlGroups(ControlGroupInputActions.Num());
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
@@ -64,59 +61,14 @@ void AXYZPlayerController::BeginPlay()
 
 void AXYZPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	
+
 	if (GetLocalRole() !=  ROLE_Authority && GetWorld()->GetGameState<AXYZGameState>() && !bPingedGameLoaded) {
 		bPingedGameLoaded = true;
 		PingServerGameIsLoaded();
 	}
-
-
-	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
-	bool bHoveringEnemy = HitActor && HitActor->TeamId != TeamId;
-
-	if (bAttackModifier && !SelectionStructure->IsEmpty()) {
-
-		if (HitActor) {
-			if (bHoveringEnemy && !HitActor->IsA(AXYZResourceActor::StaticClass())) {
-				CurrentMouseCursor = EMouseCursor::Crosshairs;
-			}
-			else {
-				CurrentMouseCursor = EMouseCursor::ResizeUpDown;
-			}
-		}
-		else {
-			CurrentMouseCursor = EMouseCursor::ResizeLeftRight;
-		}
-	}
-	else {
-		if (SelectionStructure->IsEmpty()) {
-			if (HitActor && bHoveringEnemy) {
-				CurrentMouseCursor = EMouseCursor::TextEditBeam;
-			}
-			else {
-				CurrentMouseCursor = EMouseCursor::Default;
-			}
-		}
-		else {
-			if (HitActor) {
-				if (bHoveringEnemy) {
-					if (HitActor->IsA(AXYZResourceActor::StaticClass())) {
-						CurrentMouseCursor = EMouseCursor::GrabHandClosed;
-					}
-					else {
-						CurrentMouseCursor = EMouseCursor::GrabHand;
-					}
-				}
-				else {
-					CurrentMouseCursor = EMouseCursor::Hand;
-				}
-			}
-			else {
-				CurrentMouseCursor = EMouseCursor::Default;
-			}
-		}
-	}
-
+	UpdateVisibleActors();
+	UpdateMouseCursor();
+	
 	float x, y;
 	if (!GetWorld()->GetFirstPlayerController()->GetMousePosition(x, y)) {
 		OnSelectionBoxReleased.Broadcast(0, 0);
@@ -127,9 +79,8 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 
 	if(CameraController && bMoveCameraFlag && !HasAuthority())
 	{
-
 		FVector LocationWithOffset = FVector(CameraLocation.X, CameraLocation.Y, CameraController->GetActorLocation().Z) + FVector(-250, 50,0.0f);
-		CameraController->SetActorLocation(CameraLocation);
+		CameraController->SetActorLocation(LocationWithOffset);
 		bMoveCameraFlag = false;
 	}
 	for (int32 EnumValue = static_cast<int32>(EXYZInputType::PRIMARY_INPUT);
@@ -194,7 +145,6 @@ void AXYZPlayerController::SetupInputComponent()
 		for (int32 i = 0; i < AbilityInputActions.Num(); i++) {
 			EnhancedInputComponent->BindAction(AbilityInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnAbilityInputStarted, i);
 		}
-		SelectionStructure->InitControlGroups(ControlGroupInputActions.Num());
 	}
 }
 
@@ -613,4 +563,115 @@ void AXYZPlayerController::OnNetCleanup(UNetConnection* Connection)
 void AXYZPlayerController::UpdateMatchStatus_Implementation(int32 Status)
 {
 	MatchStatus = Status;
+}
+
+void AXYZPlayerController::SetVisibleEnemyActors_Implementation(const TArray<int32>& VisibleActors, const TArray<int32>& NonVisibleActors)
+{
+	NonVisibleEnemyActors = NonVisibleActors;
+	VisibleEnemyActors = VisibleActors;
+}
+
+void AXYZPlayerController::SendVisibilityGridCoords_Implementation(const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaNonVisible)
+{
+	if(FogOfWar)
+	{
+		for(FVector2D Coord : DeltaVisible)
+		{
+			FogOfWar->RevealCell(Coord);
+		}
+		for(FVector2D Coord : DeltaNonVisible)
+		{
+			FogOfWar->ConcealCell(Coord);
+		}
+	}
+	
+}
+
+void AXYZPlayerController::UpdateVisibleActors()
+{
+	if(GetLocalRole() != ROLE_Authority)
+	{
+		if(GetWorld())
+		{
+			AXYZGameState* XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
+
+			if(XYZGameState)
+			{
+				TArray<int32> ActorsNotFound;
+				for(int32 VisibleActor : VisibleEnemyActors)
+				{
+					if(XYZGameState->ActorsByUID.Contains(VisibleActor))
+					{
+						XYZGameState->ActorsByUID[VisibleActor]->SetActorHiddenInGame(false);
+					}else
+					{
+						ActorsNotFound.Add(VisibleActor);
+					}
+				}
+				VisibleEnemyActors = ActorsNotFound;
+				ActorsNotFound.Empty();
+				for(int32 NonVisibleActor : NonVisibleEnemyActors)
+				{
+					if(XYZGameState->ActorsByUID.Contains(NonVisibleActor))
+					{
+						XYZGameState->ActorsByUID[NonVisibleActor]->SetActorHiddenInGame(true);
+					}
+					else
+					{
+						ActorsNotFound.Add(NonVisibleActor);
+					}
+				}
+				NonVisibleEnemyActors = ActorsNotFound;
+			}
+		}
+	}
+}
+
+void AXYZPlayerController::UpdateMouseCursor()
+{
+	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
+	bool bHoveringEnemy = HitActor && HitActor->TeamId != TeamId;
+
+	if (bAttackModifier && SelectionStructure && !SelectionStructure->IsEmpty()) {
+
+		if (HitActor) {
+			if (bHoveringEnemy && !HitActor->IsA(AXYZResourceActor::StaticClass())) {
+				CurrentMouseCursor = EMouseCursor::Crosshairs;
+			}
+			else {
+				CurrentMouseCursor = EMouseCursor::ResizeUpDown;
+			}
+		}
+		else {
+			CurrentMouseCursor = EMouseCursor::ResizeLeftRight;
+		}
+	}
+	else {
+		if (SelectionStructure && SelectionStructure->IsEmpty()) {
+			if (HitActor && bHoveringEnemy) {
+				CurrentMouseCursor = EMouseCursor::TextEditBeam;
+			}
+			else {
+				CurrentMouseCursor = EMouseCursor::Default;
+			}
+		}
+		else {
+			if (HitActor) {
+				if (bHoveringEnemy) {
+					if (HitActor->IsA(AXYZResourceActor::StaticClass())) {
+						CurrentMouseCursor = EMouseCursor::GrabHandClosed;
+					}
+					else {
+						CurrentMouseCursor = EMouseCursor::GrabHand;
+					}
+				}
+				else {
+					CurrentMouseCursor = EMouseCursor::Hand;
+				}
+			}
+			else {
+				CurrentMouseCursor = EMouseCursor::Default;
+			}
+		}
+	}
 }

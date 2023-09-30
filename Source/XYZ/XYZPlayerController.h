@@ -209,6 +209,28 @@ public:
 	void UpdateMatchStatus(int32 Status);
 	void UpdateMatchStatus_Implementation(int32 Status);
 
+	UFUNCTION(Reliable, Client)
+	void SetVisibleEnemyActors(const TArray<int32>& VisibleActors, const TArray<int32>& NonVisibleActors);
+	void SetVisibleEnemyActors_Implementation(const TArray<int32>& VisibleActors, const TArray<int32>& NonVisibleActors);
+	
+	UFUNCTION(Reliable, Client)
+	void SendVisibilityGridCoords(const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaDNonVisible);
+	void SendVisibilityGridCoords_Implementation(const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaNonVisible);
+
+	UPROPERTY()
+	TArray<int32> VisibleEnemyActors;
+	UPROPERTY()
+	TArray<int32> NonVisibleEnemyActors;
+
+	UPROPERTY()
+	class AXYZFogOfWar* FogOfWar;
+
+	UFUNCTION()
+	void UpdateVisibleActors();
+	UFUNCTION()
+	void UpdateMouseCursor();
+
+	
 };
 
 

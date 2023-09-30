@@ -32,14 +32,19 @@ void AXYZGameMode::BeginPlay() {
 	PrimaryActorTick.bCanEverTick = true;
 
 	InputManager = NewObject<UXYZInputManager>(this, UXYZInputManager::StaticClass(), "InputManager");
-	BlobManager = NewObject<UXYZBlobManager>(this, UXYZBlobManager::StaticClass(), "BlobManager");
-	InputManager->XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
+    InputManager->XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
+
+    BlobManager = NewObject<UXYZBlobManager>(this, UXYZBlobManager::StaticClass(), "BlobManager");
+
     DeathManager = NewObject<UXYZDeathManager>(this, UXYZDeathManager::StaticClass(), "DeathManager");
+
     MatchManager = NewObject<UXYZMatchManager>(this, UXYZMatchManager::StaticClass(), "MatchManager");
     MatchManager->XYZGameMode = this;
     MatchManager->XYZGameState = GetGameState<AXYZGameState>();
+
     MapManager = NewObject<UXYZMapManager>(this, UXYZMapManager::StaticClass(), "MapManager");
     MapManager->GameState = GetGameState<AXYZGameState>();
+    MapManager->GameMode = this;
     MapManager->InitializeGrid();
 
     SessionHandler = NewObject<USessionHandler>(this);
@@ -122,11 +127,17 @@ void AXYZGameMode::Tick(float DeltaSeconds)
                 Actor->Process(DeltaSeconds);
             }
         }
+        
         InputManager->Process(DeltaSeconds);
+        
         BlobManager->Process(DeltaSeconds);
-        DeathManager->Process(DeltaSeconds);
-        MatchManager->Process(DeltaSeconds);
+        
         MapManager->Process(DeltaSeconds);
+        
+        DeathManager->Process(DeltaSeconds);
+
+        MatchManager->Process(DeltaSeconds);
+
         TickCount++;
         bHasGameEnded = bHasGameEnded || NumOfPlayers < 2;
         if (bHasGameEnded && bHasCleanedUp)
@@ -324,6 +335,9 @@ void AXYZGameMode::PreLogout(APlayerController* InPlayerController)
     bHasGameEnded = true;
     Cast<AXYZGameState>(GameState)->bHasGameEnded = true;
 
-    MatchManager->WinnerIndex = OtherPlayer->TeamId;
+    if(OtherPlayer)
+    {
+        MatchManager->WinnerIndex = OtherPlayer->TeamId;
+    }
     MatchManager->LoserIndex = DisconnectedController->TeamId;
 }

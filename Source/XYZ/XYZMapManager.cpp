@@ -1,9 +1,13 @@
 ﻿#include "XYZMapManager.h"
 #include "GridCell.h"
 #include "XYZActor.h"
+#include "XYZGameMode.h"
 #include "XYZGameState.h"
+#include "XYZPlayerController.h"
+#include "Misc/FileHelper.h"
 
 void UXYZMapManager::InitializeGrid() {
+	Grid.Empty();
 	for (int32 X = 0; X < GRID_SIZE; X++) {
 		for (int32 Y = 0; Y < GRID_SIZE; Y++) {
 			FVector2D GridCoord(X, Y);
@@ -28,7 +32,7 @@ void UXYZMapManager::AddActorToGrid(AXYZActor* Actor) {
 }
 
 void UXYZMapManager::RemoveActorFromGrid(AXYZActor* Actor) {
-	FVector2D GridCoord = GetGridCoordinate(Actor->GetActorLocation());
+	FVector2D GridCoord = GetGridCoordinate(Actor->LastLocation);
 	if(IsGridCoordValid(GridCoord))
 	{
 		Grid[GridCoord].ActorsInCell.Remove(Actor);
@@ -37,33 +41,18 @@ void UXYZMapManager::RemoveActorFromGrid(AXYZActor* Actor) {
 
 void UXYZMapManager::Process(float DeltaSeconds) {
 
-	double StartTime = FPlatformTime::Cycles();
-	if(bHasProcessed)
+	TArray<AXYZActor*> Actors;
+	GameState->ActorsByUID.GenerateValueArray(Actors);
+	InitializeGrid();
+	for(AXYZActor* Actor : Actors)
 	{
-		ClearVision();
-		for(AXYZActor* Actor : ActorsToUpdate)
-		{
-			RemoveActorFromGrid(Actor);
-			AddActorToGrid(Actor);
-		}
-		GenerateVision();
-		ActorsToUpdate.Empty();
-	}else
-	{
-		TArray<AXYZActor*> Actors;
-		GameState->ActorsByUID.GenerateValueArray(Actors);
-		for(AXYZActor* Actor : Actors)
-		{
-			AddActorToGrid(Actor);
-		}
-		GenerateVision();
-		bHasProcessed = true;
+		AddActorToGrid(Actor);
 	}
-	double EndTime = FPlatformTime::Cycles();
-	float ElapsedTime = FPlatformTime::ToSeconds(EndTime - StartTime);
+	GenerateVision();
+	SendVisibleActorsToClient();
+	//SendVisibilityGrid();
+	bHasSentVison = true;
 
-	UE_LOG(LogTemp, Warning, TEXT("Process function took %f seconds"), ElapsedTime);
-	
 }
 
 void UXYZMapManager::AddToUpdateSet(AXYZActor* Actor)
@@ -95,12 +84,11 @@ TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
 
 void UXYZMapManager::ClearVision()
 {
-	TArray<FGridCell> Cells;
-	Grid.GenerateValueArray(Cells);
-
-	for(FGridCell Cell : Cells)
-	{
-		Cell.TeamVision = {false, false};
+	for (int32 X = 0; X < GRID_SIZE; X++) {
+		for (int32 Y = 0; Y < GRID_SIZE; Y++) {
+			FVector2D GridCoord(X, Y);
+			Grid[GridCoord].TeamVision = {false, false};
+		}
 	}
 }
 
@@ -122,7 +110,7 @@ void UXYZMapManager::GenerateVision() {
 			for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
 				FVector2D AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
 				if (IsGridCoordValid(AdjacentCoord) &&
-					Grid[AdjacentCoord].TeamVision.Num() > Actor->TeamId &&
+					Actor->TeamId != 2 &&
 					Grid[ActorGridCoord].Height >= Grid[AdjacentCoord].Height) {
 					Grid[AdjacentCoord].TeamVision[Actor->TeamId] = true;
 				}
@@ -134,4 +122,128 @@ void UXYZMapManager::GenerateVision() {
 bool UXYZMapManager::IsGridCoordValid(const FVector2D& Coord) const
 {
 	return Grid.Contains(Coord);
+}
+
+void UXYZMapManager::SendVisibleActorsToClient()
+{
+	
+	TArray<FGridCell> GridCells;
+	Grid.GenerateValueArray(GridCells);
+	
+	for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
+	{
+		TSet<int32> VisibleActors;
+		TSet<int32> NonVisibleActors;
+
+		for(FGridCell Cell : GridCells)
+		{
+			if(Cell.ActorsInCell.IsEmpty()) continue;
+			
+			if(Cell.TeamVision[PlayerController->TeamId])
+			{
+				for(AXYZActor* Actor : Cell.ActorsInCell)
+				{
+					if(Actor && Actor->TeamId != PlayerController->TeamId && Actor->TeamId != 2)
+					{
+						VisibleActors.Add(Actor->UActorId);
+					}
+				}
+			}else
+			{
+				for(AXYZActor* Actor : Cell.ActorsInCell)
+				{
+					if(Actor && Actor->TeamId != PlayerController->TeamId && Actor->TeamId != 2)
+					{
+						NonVisibleActors.Add(Actor->UActorId);
+					}
+				}
+			}
+		}
+		bool bAreLastVisionSetsEqual = AreSetsEqual(LastVisibleSent[PlayerController->TeamId], VisibleActors);
+		bool bAreLastNonVisionSetsEqual = AreSetsEqual(LastNonVisibleSent[PlayerController->TeamId], NonVisibleActors);
+		bool bHasVisionChanged = !bAreLastVisionSetsEqual || !bAreLastNonVisionSetsEqual;
+		if(!bHasSentVison || bHasVisionChanged)
+		{
+			PlayerController->SetVisibleEnemyActors(VisibleActors.Array(), NonVisibleActors.Array());
+		}
+		LastNonVisibleSent[PlayerController->TeamId] = NonVisibleActors;
+		LastVisibleSent[PlayerController->TeamId] = VisibleActors;
+	}
+}
+
+bool UXYZMapManager::AreSetsEqual(const TSet<int32>& SetA, const TSet<int32>& SetB)
+{
+	if (SetA.Num() != SetB.Num())
+	{
+		return false;
+	}
+
+	for (const int32& Element : SetA)
+	{
+		if (!SetB.Contains(Element))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool UXYZMapManager::AreSets2DEqual(const TSet<FVector2D>& SetA, const TSet<FVector2D>& SetB)
+{
+	if (SetA.Num() != SetB.Num())
+	{
+		return false;
+	}
+
+	for (const FVector2D& Element : SetA)
+	{
+		if (!SetB.Contains(Element))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void UXYZMapManager::SendVisibilityGrid()
+{
+	TArray<TSet<FVector2D>> VisibleCells = {{},{}};
+	TArray<TSet<FVector2D>> NonVisibleCells = {{},{}};
+
+	for (const TPair<FVector2D, FGridCell>& KVP : Grid)
+	{
+		FVector2D Coord = KVP.Key;
+		FGridCell Cell = KVP.Value;
+
+		for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
+		{
+			int32 TeamId = PlayerController->TeamId;
+			if(Cell.TeamVision[TeamId])
+			{
+				VisibleCells[TeamId].Add(Coord);
+			}else
+			{
+				NonVisibleCells[TeamId].Add(Coord);
+			}
+		}
+	}
+	
+	for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
+	{
+		int32 TeamId = PlayerController->TeamId;
+		TSet<FVector2D> VisibleCellsIntersection = VisibleCells[TeamId].Intersect(LastNonVisibleCellsSent[TeamId]);
+		TSet<FVector2D> NonVisibleCellsIntersection = NonVisibleCells[TeamId].Intersect(LastVisibleCellsSent[TeamId]);
+
+		if(!VisibleCellsIntersection.IsEmpty() || !NonVisibleCellsIntersection.IsEmpty())
+		{
+			PlayerController->SendVisibilityGridCoords(VisibleCellsIntersection.Array(), NonVisibleCellsIntersection.Array());
+		}
+
+	}
+
+	LastVisibleCellsSent = VisibleCells;
+	LastNonVisibleCellsSent = NonVisibleCells;
+	
 }
