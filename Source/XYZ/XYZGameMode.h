@@ -67,6 +67,7 @@ private:
 
 	void PostLogin(APlayerController* InPlayerController) override;
 
+	float TimeSinceStart;
 
 };
 

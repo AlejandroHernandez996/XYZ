@@ -49,9 +49,9 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 		AddActorToGrid(Actor);
 	}
 	GenerateVision();
+	SendVisibilityGrid();
 	SendVisibleActorsToClient();
 	bHasSentVison = true;
-
 }
 
 void UXYZMapManager::AddToUpdateSet(AXYZActor* Actor)
@@ -232,14 +232,21 @@ void UXYZMapManager::SendVisibilityGrid()
 	for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
 	{
 		int32 TeamId = PlayerController->TeamId;
-		TSet<FVector2D> VisibleCellsDifference = VisibleCells[TeamId].Difference(LastNonVisibleCellsSent[TeamId]);
-		TSet<FVector2D> NonVisibleCellsDifference= NonVisibleCells[TeamId].Difference(LastVisibleCellsSent[TeamId]);
+
+		TSet<FVector2D> VisibleCellsDifference = VisibleCells[TeamId].Difference(LastVisibleCellsSent[TeamId]);
+		TSet<FVector2D> NonVisibleCellsDifference = NonVisibleCells[TeamId].Difference(LastNonVisibleCellsSent[TeamId]);
 
 		if(!VisibleCellsDifference.IsEmpty() || !NonVisibleCellsDifference.IsEmpty())
 		{
-			PlayerController->SendVisibilityGridCoords(VisibleCellsDifference.Array(), {});
-		}
+			if(bHasSentVison)
+			{
+				PlayerController->SendVisibilityGridCoords(VisibleCellsDifference.Array(),  NonVisibleCellsDifference.Array());
 
+			}else
+			{
+				PlayerController->SendVisibilityGridCoords(VisibleCellsDifference.Array(),  {});
+			}
+		}
 	}
 
 	LastVisibleCellsSent = VisibleCells;

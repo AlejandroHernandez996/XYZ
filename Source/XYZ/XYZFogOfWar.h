@@ -29,7 +29,16 @@ public:
 	void RevealCell(FVector2D Coord);
 	UFUNCTION()
 	void ConcealCell(FVector2D Coord);
+	UFUNCTION()
+	void SetPlayerController(AXYZPlayerController* PlayerController);
+	UFUNCTION()
+	void Update(const TArray<FVector2D> Visible, const TArray<FVector2D> NonVisible);
 	UPROPERTY()
 	TSet<FVector2D> RevealCoords;
+	UPROPERTY()
+	float TimeSinceBegin;
+	UPROPERTY()
+	class AXYZPlayerController* OwningController;
+	TQueue<TArray<TArray<FVector2d>>> CellsToUpdate;
 
 };

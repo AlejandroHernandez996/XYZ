@@ -85,6 +85,7 @@ void AXYZGameMode::Tick(float DeltaSeconds)
             bRetrivedUsersInfo = UserRetriever->bRetrievedAllUsers;
         }
     }
+    
     if(bRetrivedUsersInfo && !bHasGameStarted)
     {
         TArray<AXYZPlayerController*> FoundControllers;
@@ -113,8 +114,11 @@ void AXYZGameMode::Tick(float DeltaSeconds)
             }
         }
     }
-
-    if(bHasGameStarted && !bHasGameEnded)
+    if(bHasGameStarted)
+    {
+        TimeSinceStart += DeltaSeconds;
+    }
+    if(bHasGameStarted && !bHasGameEnded && TimeSinceStart >= 10.0f)
     {
         
         TArray<AXYZActor*> Actors;

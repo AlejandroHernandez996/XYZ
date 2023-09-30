@@ -51,23 +51,17 @@ void AXYZPlayerController::BeginPlay()
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
-	if (GetLocalRole() != ROLE_Authority) {
-		for (TActorIterator<AXYZCameraController> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-		{
-			CameraController = *ActorItr;
-		}
-		for (TActorIterator<AXYZFogOfWar> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-		{
-			FogOfWar = *ActorItr;
-		}
+	for (TActorIterator<AXYZCameraController> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		CameraController = *ActorItr;
 	}
 
 }
 
 void AXYZPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-
-	if (GetLocalRole() !=  ROLE_Authority && GetWorld()->GetGameState<AXYZGameState>() && !bPingedGameLoaded) {
+	
+	if (GetLocalRole() != ROLE_Authority || GetWorld()->GetGameState<AXYZGameState>() && !bPingedGameLoaded) {
 		bPingedGameLoaded = true;
 		PingServerGameIsLoaded();
 	}
@@ -104,7 +98,13 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 	{
 		LastControlGroupInputTime[i] += DeltaTime;
 	}
-	
+	if(!FogOfWar)
+	{
+		for (TActorIterator<AXYZFogOfWar> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		{
+			FogOfWar = *ActorItr;
+		}
+	}
 }
 
 void AXYZPlayerController::SetupInputComponent()
@@ -579,14 +579,7 @@ void AXYZPlayerController::SendVisibilityGridCoords_Implementation(const TArray<
 {
 	if(FogOfWar)
 	{
-		for(FVector2D Coord : DeltaVisible)
-		{
-			FogOfWar->RevealCell(Coord);
-		}
-		for(FVector2D Coord : DeltaNonVisible)
-		{
-			FogOfWar->ConcealCell(Coord);
-		}
+		FogOfWar->Update(DeltaVisible, DeltaNonVisible);
 	}
 	
 }

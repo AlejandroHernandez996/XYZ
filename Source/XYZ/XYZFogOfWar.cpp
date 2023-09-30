@@ -2,64 +2,53 @@
 
 #include "XYZGameState.h"
 #include "XYZPlayerController.h"
+#include "EngineUtils.h"
+#include "Kismet/GameplayStatics.h"
 
 AXYZFogOfWar::AXYZFogOfWar()
 {
+	//PrimaryActorTick.TickInterval = .5f;
 	PrimaryActorTick.bCanEverTick = true;
-	PrimaryActorTick.TickInterval = .5f;
 }
 
 void AXYZFogOfWar::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 void AXYZFogOfWar::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	if(GetLocalRole() != ROLE_Authority) return;
-	TArray<AXYZActor*> Actors;
-	TSet<FVector2D> NonRevealedCoords;
-	if(GetWorld())
+	if(CellsToUpdate.IsEmpty()) return;
+
+	TArray<TArray<FVector2D>> UpdateCells;
+	CellsToUpdate.Dequeue(UpdateCells);
+
+	for(FVector2D Coord : UpdateCells[0])
 	{
-		if(GetWorld()->GetGameState())
-		{
-			GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.GenerateValueArray(Actors);
-		}
+		OnRevealCell.Broadcast(Coord);
 	}
-	for (AXYZActor* Actor : Actors) {
-		if (!Actor || Actor->TeamId != GetWorld()->GetFirstPlayerController<AXYZPlayerController>()->TeamId) continue;
-
-		FVector2D ActorGridCoord = FVector2D(FMath::FloorToInt(Actor->GetActorLocation().X / 200), FMath::FloorToInt(Actor->GetActorLocation().Y / 200));
-		
-		int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / 200);
-
-		for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
-			for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
-				FVector2D AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
-				if(!RevealCoords.Contains(AdjacentCoord))
-				{
-					NonRevealedCoords.Add(AdjacentCoord);
-					RevealCoords.Add(AdjacentCoord);
-				}
-			}
-		}
-	}
-
-	for(FVector2D RevealCoord : NonRevealedCoords)
+	for(FVector2D Coord : UpdateCells[1])
 	{
-		RevealCell(RevealCoord);
+		OnConcealCell.Broadcast(Coord);
 	}
-	
+
 }
 
 void AXYZFogOfWar::RevealCell(FVector2D Coord)
 {
-	OnRevealCell.Broadcast(Coord);
 }
 
 void AXYZFogOfWar::ConcealCell(FVector2D Coord)
 {
-	OnConcealCell.Broadcast(Coord);
+}
+
+void AXYZFogOfWar::SetPlayerController(AXYZPlayerController* PlayerController)
+{
+	OwningController = PlayerController;
+}
+
+void AXYZFogOfWar::Update(const TArray<FVector2D> Visible, const TArray<FVector2D> NonVisible)
+{
+	CellsToUpdate.Enqueue({Visible, NonVisible});
 }
