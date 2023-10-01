@@ -126,7 +126,7 @@ bool UXYZMapManager::IsGridCoordValid(const FVector2D& Coord) const
 
 void UXYZMapManager::SendVisibleActorsToClient()
 {
-	TArray<FGridCell> GridCells;
+	/*TArray<FGridCell> GridCells;
 	Grid.GenerateValueArray(GridCells);
 	
 	for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
@@ -167,43 +167,43 @@ void UXYZMapManager::SendVisibleActorsToClient()
 		}
 		LastNonVisibleSent[PlayerController->TeamId] = NonVisibleActors;
 		LastVisibleSent[PlayerController->TeamId] = VisibleActors;
-	}
-}
+	}*/
 
-bool UXYZMapManager::AreSetsEqual(const TSet<int32>& SetA, const TSet<int32>& SetB)
-{
-	if (SetA.Num() != SetB.Num())
-	{
-		return false;
-	}
+	TArray<TSet<AXYZActor*>> VisibleActors = {{},{}};
+	TArray<TSet<AXYZActor*>> NonVisibleActors = {{},{}};
 
-	for (const int32& Element : SetA)
+	for (const TPair<FVector2D, FGridCell>& KVP : Grid)
 	{
-		if (!SetB.Contains(Element))
+		FGridCell Cell = KVP.Value;
+
+		for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
 		{
-			return false;
+			int32 TeamId = PlayerController->TeamId;
+			if(Cell.TeamVision[TeamId])
+			{
+				VisibleActors[TeamId] = Cell.ActorsInCell.Union(VisibleActors[TeamId]);
+			}else
+			{
+				NonVisibleActors[TeamId] = Cell.ActorsInCell.Union(NonVisibleActors[TeamId]);
+			}
+		}
+	}
+	
+	for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
+	{
+		int32 TeamId = PlayerController->TeamId;
+
+		TSet<AXYZActor*> VisibleActorsDifference= VisibleActors[TeamId].Difference(LastVisibleActorsSent[TeamId]);
+		TSet<AXYZActor*> NonVisibleActorsDifference = NonVisibleActors[TeamId].Difference(LastNonVisibleActorsSent[TeamId]);
+
+		if(!VisibleActorsDifference.IsEmpty() || !NonVisibleActorsDifference.IsEmpty())
+		{
+			PlayerController->SetVisibleEnemyActors(ConvertSetToActorIds(VisibleActorsDifference),  ConvertSetToActorIds(NonVisibleActorsDifference));
 		}
 	}
 
-	return true;
-}
-
-bool UXYZMapManager::AreSets2DEqual(const TSet<FVector2D>& SetA, const TSet<FVector2D>& SetB)
-{
-	if (SetA.Num() != SetB.Num())
-	{
-		return false;
-	}
-
-	for (const FVector2D& Element : SetA)
-	{
-		if (!SetB.Contains(Element))
-		{
-			return false;
-		}
-	}
-
-	return true;
+	LastVisibleActorsSent = VisibleActors;
+	LastNonVisibleActorsSent = NonVisibleActors;
 }
 
 void UXYZMapManager::SendVisibilityGrid()
@@ -252,4 +252,55 @@ void UXYZMapManager::SendVisibilityGrid()
 	LastVisibleCellsSent = VisibleCells;
 	LastNonVisibleCellsSent = NonVisibleCells;
 	
+}
+
+TArray<int32> UXYZMapManager::ConvertSetToActorIds(const TSet<AXYZActor*>& ActorSet)
+{
+	TArray<int32> ActorIds;
+	
+	for (AXYZActor* Actor : ActorSet)
+	{
+		if (Actor)
+			{
+			ActorIds.Add(Actor->UActorId); 
+			}
+	}
+	
+	return ActorIds;
+}
+
+bool UXYZMapManager::AreSetsEqual(const TSet<int32>& SetA, const TSet<int32>& SetB)
+{
+	if (SetA.Num() != SetB.Num())
+	{
+		return false;
+	}
+
+	for (const int32& Element : SetA)
+	{
+		if (!SetB.Contains(Element))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool UXYZMapManager::AreSets2DEqual(const TSet<FVector2D>& SetA, const TSet<FVector2D>& SetB)
+{
+	if (SetA.Num() != SetB.Num())
+	{
+		return false;
+	}
+
+	for (const FVector2D& Element : SetA)
+	{
+		if (!SetB.Contains(Element))
+		{
+			return false;
+		}
+	}
+
+	return true;
 }

@@ -224,6 +224,8 @@ public:
 
 	UPROPERTY()
 	class AXYZFogOfWar* FogOfWar;
+	UPROPERTY()
+	class AXYZMinimapManager* MinimapManager;
 
 	UFUNCTION()
 	void UpdateVisibleActors();

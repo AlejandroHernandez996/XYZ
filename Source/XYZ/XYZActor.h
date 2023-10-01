@@ -153,4 +153,7 @@ public:
 
     virtual void Process(float DeltaSeconds);
 
+    UPROPERTY()
+    bool bIsVisible = true;
+
 };

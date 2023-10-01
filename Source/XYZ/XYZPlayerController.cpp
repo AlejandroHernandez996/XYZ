@@ -19,6 +19,7 @@
 #include "EngineUtils.h"
 #include "XYZBuilding.h"
 #include "XYZFogOfWar.h"
+#include "XYZMinimapManager.h"
 #include "Net/UnrealNetwork.h"
 
 AXYZPlayerController::AXYZPlayerController()
@@ -103,6 +104,13 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		for (TActorIterator<AXYZFogOfWar> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 		{
 			FogOfWar = *ActorItr;
+		}
+	}
+	if(!MinimapManager)
+	{
+		for (TActorIterator<AXYZMinimapManager> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		{
+			MinimapManager = *ActorItr;
 		}
 	}
 }
@@ -569,10 +577,33 @@ void AXYZPlayerController::UpdateMatchStatus_Implementation(int32 Status)
 	MatchStatus = Status;
 }
 
-void AXYZPlayerController::SetVisibleEnemyActors_Implementation(const TArray<int32>& VisibleActors, const TArray<int32>& NonVisibleActors)
+void AXYZPlayerController::SetVisibleEnemyActors_Implementation(const TArray<int32>& DeltaVisibleActors, const TArray<int32>& DeltaNonVisibleActors)
 {
-	NonVisibleEnemyActors = NonVisibleActors;
-	VisibleEnemyActors = VisibleActors;
+	NonVisibleEnemyActors = DeltaNonVisibleActors;
+	VisibleEnemyActors = DeltaVisibleActors;
+
+	TSet<AXYZActor*> VisibleActors;
+	TSet<AXYZActor*> NonVisibleActors;
+
+	TMap<int32, AXYZActor*> ActorsByUID = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID;
+
+	for(int32 UActorId : DeltaVisibleActors)
+	{
+		if(ActorsByUID.Contains(UActorId))
+		{
+				VisibleActors.Add(ActorsByUID[UActorId]);
+		}
+	}
+
+	for(int32 UActorId : DeltaNonVisibleActors)
+	{
+		if(ActorsByUID.Contains(UActorId))
+		{
+			NonVisibleActors.Add(ActorsByUID[UActorId]);
+		}
+	}
+
+	MinimapManager->UpdateVisibleActors(VisibleActors, NonVisibleActors, TeamId);
 }
 
 void AXYZPlayerController::SendVisibilityGridCoords_Implementation(const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaNonVisible)
@@ -595,11 +626,13 @@ void AXYZPlayerController::UpdateVisibleActors()
 			if(XYZGameState)
 			{
 				TArray<int32> ActorsNotFound;
+				
 				for(int32 VisibleActor : VisibleEnemyActors)
 				{
 					if(XYZGameState->ActorsByUID.Contains(VisibleActor))
 					{
-						XYZGameState->ActorsByUID[VisibleActor]->SetActorHiddenInGame(false);
+						AXYZActor* Actor = XYZGameState->ActorsByUID[VisibleActor];
+						Actor->SetActorHiddenInGame(false);
 					}else
 					{
 						ActorsNotFound.Add(VisibleActor);
@@ -612,6 +645,7 @@ void AXYZPlayerController::UpdateVisibleActors()
 					if(XYZGameState->ActorsByUID.Contains(NonVisibleActor))
 					{
 						XYZGameState->ActorsByUID[NonVisibleActor]->SetActorHiddenInGame(true);
+						XYZGameState->ActorsByUID[NonVisibleActor]->bIsVisible = true;
 					}
 					else
 					{

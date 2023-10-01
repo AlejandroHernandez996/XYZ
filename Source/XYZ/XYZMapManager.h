@@ -57,7 +57,8 @@ public:
 
 	TArray<TSet<int32>> LastVisibleSent = {{},{}};
 	TArray<TSet<int32>> LastNonVisibleSent = {{},{}};
-
+	TArray<TSet<AXYZActor*>> LastVisibleActorsSent = {{},{}};
+	TArray<TSet<AXYZActor*>> LastNonVisibleActorsSent = {{},{}};
 	TArray<TSet<FVector2D>> LastVisibleCellsSent = {{},{}};
 	TArray<TSet<FVector2D>> LastNonVisibleCellsSent = {{},{}};
 
@@ -65,6 +66,8 @@ public:
 	bool AreSetsEqual(const TSet<int32>& SetA, const TSet<int32>& SetB);
 	UFUNCTION()
 	bool AreSets2DEqual(const TSet<FVector2D>& SetA, const TSet<FVector2D>& SetB);
+	UFUNCTION()
+	TArray<int32> ConvertSetToActorIds(const TSet<AXYZActor*>& ActorSet);
 
 	bool bHasSentVison;
 
@@ -74,3 +77,4 @@ public:
 	float TimeToSendGrid = 1.0f;
 	float TimeSinceSent = 0.0f;
 };
+
