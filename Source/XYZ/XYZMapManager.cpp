@@ -1,4 +1,6 @@
 ﻿#include "XYZMapManager.h"
+
+#include "EngineUtils.h"
 #include "GridCell.h"
 #include "XYZActor.h"
 #include "XYZGameMode.h"
@@ -12,6 +14,11 @@ void UXYZMapManager::InitializeGrid() {
 	Grid.Empty();
 	GridCellSize = MAP_SIZE / GRID_SIZE; 
 
+	TArray<AActor*> ActorsToIgnore;
+	for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr) {
+		ActorsToIgnore.Add(*ActorItr);
+	}
+	
 	for (int32 X = 0; X < GRID_SIZE; X++) {
 		for (int32 Y = 0; Y < GRID_SIZE; Y++) {
 			FVector2D GridCoord(X, Y);
@@ -23,7 +30,9 @@ void UXYZMapManager::InitializeGrid() {
 			FVector End = WorldCoord;
 
 			FHitResult HitResult;
-			bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic);
+			FCollisionQueryParams CollisionParams;
+			CollisionParams.AddIgnoredActors(ActorsToIgnore);
+			bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, CollisionParams);
 
 			if (bHit) {
 				NewCell.Height = HitResult.ImpactPoint.Z;
