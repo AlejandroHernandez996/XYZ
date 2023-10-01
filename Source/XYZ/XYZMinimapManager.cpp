@@ -19,7 +19,6 @@ void AXYZMinimapManager::BeginPlay()
 	
 }
 
-// Called every frame
 void AXYZMinimapManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -29,12 +28,18 @@ void AXYZMinimapManager::Tick(float DeltaTime)
 
 	for(AXYZActor* VisibleActor : VisibleActors)
 	{
+		if(!VisibleActor) continue;
 		UnitCoords.Add(FVector2D(MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().X / MinimapSize),
 							MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().Y / MinimapSize)));
 		if(VisibleActor->TeamId == TeamId)
 		{
 			UnitColors.Add(FColor::Green);
-		}else
+		}
+		else if(VisibleActor->TeamId == 2)
+		{
+			UnitColors.Add(FColor::Yellow);
+		}
+		else
 		{
 			UnitColors.Add(FColor::Red);
 		}

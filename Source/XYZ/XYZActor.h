@@ -151,6 +151,9 @@ public:
     UFUNCTION()
         void PlayAnimationMontage(EXYZAnimMontageType AnimMontageType);
 
+    UPROPERTY()
+    FVector2D GridCoord;
+
     virtual void Process(float DeltaSeconds);
 
     UPROPERTY()

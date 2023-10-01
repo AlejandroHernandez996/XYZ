@@ -399,7 +399,7 @@ void AXYZActor::Process(float DeltaTime)
 	if (Health <= 0.0f)
 	{
 		GetWorld()->GetAuthGameMode<AXYZGameMode>()->DeathManager->QueueDeath(this);
-	}else
+	}else if(GetXYZAIController() && GetXYZAIController()->bIsMoving)
 	{
 		GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(this);
 		LastLocation = GetActorLocation();

@@ -5,18 +5,33 @@
 #include "XYZGameState.h"
 #include "XYZPlayerController.h"
 #include "Misc/FileHelper.h"
+#include "Engine/World.h"
+#include "GameFramework/Actor.h"
 
 void UXYZMapManager::InitializeGrid() {
 	Grid.Empty();
+	GridCellSize = MAP_SIZE / GRID_SIZE; 
+
 	for (int32 X = 0; X < GRID_SIZE; X++) {
 		for (int32 Y = 0; Y < GRID_SIZE; Y++) {
 			FVector2D GridCoord(X, Y);
 			FGridCell NewCell;
-			
+
+			FVector WorldCoord((GridCoord.X + 0.5f) * GridCellSize, (GridCoord.Y + 0.5f) * GridCellSize, 0);
+
+			FVector Start = WorldCoord + FVector(0, 0, 1000);
+			FVector End = WorldCoord;
+
+			FHitResult HitResult;
+			bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic);
+
+			if (bHit) {
+				NewCell.Height = HitResult.ImpactPoint.Z;
+			}
+
 			Grid.Add(GridCoord, NewCell);
 		}
 	}
-	GridCellSize = MAP_SIZE/GRID_SIZE;
 }
 
 FVector2D UXYZMapManager::GetGridCoordinate(const FVector& WorldLocation) {
@@ -24,33 +39,42 @@ FVector2D UXYZMapManager::GetGridCoordinate(const FVector& WorldLocation) {
 }
 
 void UXYZMapManager::AddActorToGrid(AXYZActor* Actor) {
+	if(!Actor) return;
 	FVector2D GridCoord = GetGridCoordinate(Actor->GetActorLocation());
 	if(IsGridCoordValid(GridCoord))
 	{
 		Grid[GridCoord].ActorsInCell.Add(Actor);
+		Actor->GridCoord = GridCoord;
 	}
 }
 
 void UXYZMapManager::RemoveActorFromGrid(AXYZActor* Actor) {
-	FVector2D GridCoord = GetGridCoordinate(Actor->LastLocation);
-	if(IsGridCoordValid(GridCoord))
+	if(Actor && IsGridCoordValid(Actor->GridCoord) && Grid[Actor->GridCoord].ActorsInCell.Contains(Actor))
 	{
-		Grid[GridCoord].ActorsInCell.Remove(Actor);
+		Grid[Actor->GridCoord].ActorsInCell.Remove(Actor);
 	}
 }
 
 void UXYZMapManager::Process(float DeltaSeconds) {
-
-	TArray<AXYZActor*> Actors;
-	GameState->ActorsByUID.GenerateValueArray(Actors);
-	InitializeGrid();
-	for(AXYZActor* Actor : Actors)
+	if(bHasSentVison)
 	{
-		AddActorToGrid(Actor);
+		ClearVision();
+		for(AXYZActor* Actor : ActorsToUpdate)
+		{
+			RemoveActorFromGrid(Actor);
+			AddActorToGrid(Actor);
+		}
+	}else
+	{
+		TArray<AXYZActor*> Actors;
+		GameState->ActorsByUID.GenerateValueArray(Actors);
+		for(AXYZActor* Actor : Actors)
+		{
+			AddActorToGrid(Actor);
+		}
 	}
 	GenerateVision();
-	SendVisibilityGrid();
-	SendVisibleActorsToClient();
+	SendDeltaVisibilityToClients();
 	bHasSentVison = true;
 }
 
@@ -61,6 +85,7 @@ void UXYZMapManager::AddToUpdateSet(AXYZActor* Actor)
 
 TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
 {
+	if(!Actor) return {};
 	FVector2D GridCoord = GetGridCoordinate(Actor->GetActorLocation());
 	int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize)+1;
 	
@@ -72,7 +97,7 @@ TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
 		{
 			FVector2D AdjacentCoord(GridCoord.X + X, GridCoord.Y + Y);
             
-			if(IsGridCoordValid(GridCoord) && IsGridCoordValid(AdjacentCoord))
+			if(IsGridCoordValid(GridCoord) && IsGridCoordValid(AdjacentCoord) && Grid[Actor->GridCoord].Height >= Grid[AdjacentCoord].Height)
 			{
 				ActorsInRange = ActorsInRange.Union(Grid[AdjacentCoord].ActorsInCell);
 			}
@@ -124,106 +149,28 @@ bool UXYZMapManager::IsGridCoordValid(const FVector2D& Coord) const
 	return Grid.Contains(Coord);
 }
 
-void UXYZMapManager::SendVisibleActorsToClient()
+void UXYZMapManager::SendDeltaVisibilityToClients()
 {
-	/*TArray<FGridCell> GridCells;
-	Grid.GenerateValueArray(GridCells);
+	TArray<TSet<FVector2D>> VisibleCells = {{},{}};
+	TArray<TSet<FVector2D>> NonVisibleCells = {{},{}};
 	
-	for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
-	{
-		TSet<int32> VisibleActors;
-		TSet<int32> NonVisibleActors;
-
-		for(FGridCell Cell : GridCells)
-		{
-			if(Cell.ActorsInCell.IsEmpty()) continue;
-			
-			if(Cell.TeamVision[PlayerController->TeamId])
-			{
-				for(AXYZActor* Actor : Cell.ActorsInCell)
-				{
-					if(Actor && Actor->TeamId != PlayerController->TeamId && Actor->TeamId != 2)
-					{
-						VisibleActors.Add(Actor->UActorId);
-					}
-				}
-			}else
-			{
-				for(AXYZActor* Actor : Cell.ActorsInCell)
-				{
-					if(Actor && Actor->TeamId != PlayerController->TeamId && Actor->TeamId != 2)
-					{
-						NonVisibleActors.Add(Actor->UActorId);
-					}
-				}
-			}
-		}
-		bool bAreLastVisionSetsEqual = AreSetsEqual(LastVisibleSent[PlayerController->TeamId], VisibleActors);
-		bool bAreLastNonVisionSetsEqual = AreSetsEqual(LastNonVisibleSent[PlayerController->TeamId], NonVisibleActors);
-		bool bHasVisionChanged = !bAreLastVisionSetsEqual || !bAreLastNonVisionSetsEqual;
-		if(!bHasSentVison || bHasVisionChanged)
-		{
-			PlayerController->SetVisibleEnemyActors(VisibleActors.Array(), NonVisibleActors.Array());
-		}
-		LastNonVisibleSent[PlayerController->TeamId] = NonVisibleActors;
-		LastVisibleSent[PlayerController->TeamId] = VisibleActors;
-	}*/
-
 	TArray<TSet<AXYZActor*>> VisibleActors = {{},{}};
 	TArray<TSet<AXYZActor*>> NonVisibleActors = {{},{}};
 
 	for (const TPair<FVector2D, FGridCell>& KVP : Grid)
 	{
 		FGridCell Cell = KVP.Value;
-
+		FVector2d Coord = KVP.Key;
 		for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
 		{
 			int32 TeamId = PlayerController->TeamId;
 			if(Cell.TeamVision[TeamId])
 			{
 				VisibleActors[TeamId] = Cell.ActorsInCell.Union(VisibleActors[TeamId]);
-			}else
-			{
-				NonVisibleActors[TeamId] = Cell.ActorsInCell.Union(NonVisibleActors[TeamId]);
-			}
-		}
-	}
-	
-	for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
-	{
-		int32 TeamId = PlayerController->TeamId;
-
-		TSet<AXYZActor*> VisibleActorsDifference= VisibleActors[TeamId].Difference(LastVisibleActorsSent[TeamId]);
-		TSet<AXYZActor*> NonVisibleActorsDifference = NonVisibleActors[TeamId].Difference(LastNonVisibleActorsSent[TeamId]);
-
-		if(!VisibleActorsDifference.IsEmpty() || !NonVisibleActorsDifference.IsEmpty())
-		{
-			PlayerController->SetVisibleEnemyActors(ConvertSetToActorIds(VisibleActorsDifference),  ConvertSetToActorIds(NonVisibleActorsDifference));
-		}
-	}
-
-	LastVisibleActorsSent = VisibleActors;
-	LastNonVisibleActorsSent = NonVisibleActors;
-}
-
-void UXYZMapManager::SendVisibilityGrid()
-{
-	TArray<TSet<FVector2D>> VisibleCells = {{},{}};
-	TArray<TSet<FVector2D>> NonVisibleCells = {{},{}};
-
-	for (const TPair<FVector2D, FGridCell>& KVP : Grid)
-	{
-		FVector2D Coord = KVP.Key;
-		FGridCell Cell = KVP.Value;
-
-		for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
-		{
-			int32 TeamId = PlayerController->TeamId;
-			if(Cell.TeamVision[TeamId])
-			{
 				VisibleCells[TeamId].Add(Coord);
 			}else
 			{
+				NonVisibleActors[TeamId] = Cell.ActorsInCell.Union(NonVisibleActors[TeamId]);
 				NonVisibleCells[TeamId].Add(Coord);
 			}
 		}
@@ -233,25 +180,31 @@ void UXYZMapManager::SendVisibilityGrid()
 	{
 		int32 TeamId = PlayerController->TeamId;
 
+		TSet<AXYZActor*> VisibleActorsDifference = VisibleActors[TeamId].Difference(LastVisibleActorsSent[TeamId]);
+		TSet<AXYZActor*> NonVisibleActorsDifference = NonVisibleActors[TeamId].Difference(LastNonVisibleActorsSent[TeamId]);
+
 		TSet<FVector2D> VisibleCellsDifference = VisibleCells[TeamId].Difference(LastVisibleCellsSent[TeamId]);
 		TSet<FVector2D> NonVisibleCellsDifference = NonVisibleCells[TeamId].Difference(LastNonVisibleCellsSent[TeamId]);
 
-		if(!VisibleCellsDifference.IsEmpty() || !NonVisibleCellsDifference.IsEmpty())
+		bool bIsDifferent = !VisibleCellsDifference.IsEmpty() || !NonVisibleCellsDifference.IsEmpty() || !NonVisibleActorsDifference.IsEmpty() || !VisibleActorsDifference.IsEmpty();
+		if(bIsDifferent)
 		{
 			if(bHasSentVison)
 			{
-				PlayerController->SendVisibilityGridCoords(VisibleCellsDifference.Array(),  NonVisibleCellsDifference.Array());
+				PlayerController->UpdateClientVisibility(ConvertSetToActorIds(VisibleActorsDifference),  ConvertSetToActorIds(NonVisibleActorsDifference), VisibleCellsDifference.Array(),  NonVisibleCellsDifference.Array());
 
 			}else
 			{
-				PlayerController->SendVisibilityGridCoords(VisibleCellsDifference.Array(),  {});
+				PlayerController->UpdateClientVisibility(ConvertSetToActorIds(VisibleActorsDifference),  ConvertSetToActorIds(NonVisibleActorsDifference), VisibleCellsDifference.Array(),  {});
 			}
 		}
+		
 	}
 
+	LastVisibleActorsSent = VisibleActors;
+	LastNonVisibleActorsSent = NonVisibleActors;
 	LastVisibleCellsSent = VisibleCells;
 	LastNonVisibleCellsSent = NonVisibleCells;
-	
 }
 
 TArray<int32> UXYZMapManager::ConvertSetToActorIds(const TSet<AXYZActor*>& ActorSet)

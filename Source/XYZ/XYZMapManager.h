@@ -52,8 +52,9 @@ public:
 	void GenerateVision();
 	UFUNCTION()
 	bool IsGridCoordValid(const FVector2D& Coord) const;
+
 	UFUNCTION()
-	void SendVisibleActorsToClient();
+	void SendDeltaVisibilityToClients();
 
 	TArray<TSet<int32>> LastVisibleSent = {{},{}};
 	TArray<TSet<int32>> LastNonVisibleSent = {{},{}};
@@ -70,9 +71,6 @@ public:
 	TArray<int32> ConvertSetToActorIds(const TSet<AXYZActor*>& ActorSet);
 
 	bool bHasSentVison;
-
-	UFUNCTION()
-	void SendVisibilityGrid();
 
 	float TimeToSendGrid = 1.0f;
 	float TimeSinceSent = 0.0f;

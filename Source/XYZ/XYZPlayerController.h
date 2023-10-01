@@ -217,6 +217,10 @@ public:
 	void SendVisibilityGridCoords(const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaDNonVisible);
 	void SendVisibilityGridCoords_Implementation(const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaNonVisible);
 
+	UFUNCTION(Reliable, Client)
+	void UpdateClientVisibility(const TArray<int32>& VisibleActors, const TArray<int32>& NonVisibleActors,const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaNonVisible);
+	void UpdateClientVisibility_Implementation(const TArray<int32>& VisibleActors, const TArray<int32>& NonVisibleActors,const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaNonVisible);
+
 	UPROPERTY()
 	TArray<int32> VisibleEnemyActors;
 	UPROPERTY()

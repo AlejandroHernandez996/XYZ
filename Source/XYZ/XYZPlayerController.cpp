@@ -615,6 +615,44 @@ void AXYZPlayerController::SendVisibilityGridCoords_Implementation(const TArray<
 	
 }
 
+void AXYZPlayerController::UpdateClientVisibility_Implementation(
+	const TArray<int32>& DeltaVisibleActors,
+	const TArray<int32>& DeltaNonVisibleActors,
+	const TArray<FVector2D>& DeltaVisible,
+	const TArray<FVector2D>& DeltaNonVisible)
+{
+	if(FogOfWar)
+	{
+		FogOfWar->Update(DeltaVisible, DeltaNonVisible);
+	}
+
+	NonVisibleEnemyActors = DeltaNonVisibleActors;
+	VisibleEnemyActors = DeltaVisibleActors;
+
+	TSet<AXYZActor*> VisibleActors;
+	TSet<AXYZActor*> NonVisibleActors;
+
+	TMap<int32, AXYZActor*> ActorsByUID = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID;
+
+	for(int32 UActorId : DeltaVisibleActors)
+	{
+		if(ActorsByUID.Contains(UActorId))
+		{
+			VisibleActors.Add(ActorsByUID[UActorId]);
+		}
+	}
+
+	for(int32 UActorId : DeltaNonVisibleActors)
+	{
+		if(ActorsByUID.Contains(UActorId))
+		{
+			NonVisibleActors.Add(ActorsByUID[UActorId]);
+		}
+	}
+
+	MinimapManager->UpdateVisibleActors(VisibleActors, NonVisibleActors, TeamId);
+}
+
 void AXYZPlayerController::UpdateVisibleActors()
 {
 	if(GetLocalRole() != ROLE_Authority)
