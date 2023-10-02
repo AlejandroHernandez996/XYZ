@@ -68,6 +68,8 @@ public:
 	UFUNCTION()
 	bool AreSets2DEqual(const TSet<FVector2D>& SetA, const TSet<FVector2D>& SetB);
 	UFUNCTION()
+	bool DoesActorHasVisionOfActor(AXYZActor* Actor, AXYZActor* OtherActor);
+	UFUNCTION()
 	TArray<int32> ConvertSetToActorIds(const TSet<AXYZActor*>& ActorSet);
 
 	bool bHasSentVison;

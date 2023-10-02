@@ -24,6 +24,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Retrieve Stats")
 		bool bRetrievedStats;
-private:
+	
 	TSharedPtr<const FUniqueNetId> GetControllerUniqueNetId(APlayerController* InPlayerController);
 };

@@ -56,44 +56,98 @@ void AXYZGameMode::BeginPlay() {
 	bUseSeamlessTravel = true;
 
 	SessionHandler->CreateSession();
+    XYZGameState = GetGameState<AXYZGameState>();
 }
 
 void AXYZGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-    if (SessionHandler && SessionHandler->bHasCreatedSession && NumOfPlayers == 2 && !bStartedSesion && bHasGameStarted) {
+    if(!XYZGameState)
+    {
+        XYZGameState = GetGameState<AXYZGameState>();
+        return;
+    }
+
+    switch(XYZGameState->MatchState)
+    {
+    case EXYZMatchState::WAITING_FOR_PLAYERS:
+        ProcessWaitingForPlayers();
+        break;
+    case EXYZMatchState::MATCH_STARTING:
+        ProcessMatchStarting();
+        TimeSinceStart += DeltaSeconds;
+        break;
+    case EXYZMatchState::IN_PROGRESS:
+        Process(DeltaSeconds);
+        TimeSinceStart += DeltaSeconds;
+        XYZGameState->GameTime += DeltaSeconds;
+        break;
+    case EXYZMatchState::CLEANING_UP:
+        ProcessCleanUp();
+        break;
+    case EXYZMatchState::SHUTTING_DOWN:
+        ProcessShutdown();
+        break;
+    case EXYZMatchState::GAME_OVER:
+        break;
+    default: ;
+    }
+	
+}
+
+void AXYZGameMode::QueueInput(const FXYZInputMessage& InputMessage) {
+    if (GetLocalRole() != ROLE_Authority) return;
+    int32 TickCountCopy = TickCount;
+    FXYZInputMessage TickInput = FXYZInputMessage(InputMessage, TickCountCopy);
+    TickInput.AbilityIndex = InputMessage.AbilityIndex;
+    TickInput.ActiveActorId = InputMessage.ActiveActorId;
+    InputManager->QueueInput(TickInput);
+    bHandleInputQueue = true;
+}
+
+void AXYZGameMode::ProcessWaitingForPlayers()
+{
+    if (SessionHandler && SessionHandler->bHasCreatedSession && NumOfPlayers == MAX_PLAYERS) {
         IOnlineSubsystem* Subsystem = Online::GetSubsystem(this->GetWorld());
         IOnlineSessionPtr Session = Subsystem->GetSessionInterface();
         Session->StartSession("MyLocalSessionName");
-        bStartedSesion = true;
+        XYZGameState->ProgressMatchState();
     }
-    
-    if (NumOfPlayers == 2 && !bRetrivedUsersInfo && !bHasGameStarted) {
+}
+
+void AXYZGameMode::ProcessMatchStarting()
+{
+     if (!bRetrivedUsersInfo) {
         TArray<TSharedRef<const FUniqueNetId>> UniqueNetIds;
+        TSet<AXYZPlayerController*> FoundControllers;
         int i = 0;
         for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
         {
             TSharedRef<const FUniqueNetId> UniqueNetId = It->Get()->PlayerState->UniqueId.GetUniqueNetId().ToSharedRef();
             Cast<AXYZPlayerController>(It->Get())->TeamId = i;
-            PlayerControllers.Add(Cast<AXYZPlayerController>(It->Get()));
+            FoundControllers.Add(Cast<AXYZPlayerController>(It->Get()));
             UniqueNetIds.Add(UniqueNetId);
             i++;
         }
-        if(UniqueNetIds.Num() == 2)
+        if(UniqueNetIds.Num() == MAX_PLAYERS)
         {
             UserRetriever->GetAllUserNetIdsToDisplayNames(UniqueNetIds);
             bRetrivedUsersInfo = UserRetriever->bRetrievedAllUsers;
+            PlayerControllers = FoundControllers;
+            TeamIdToPlayerController.Empty();
+            for(AXYZPlayerController* PlayerController : PlayerControllers)
+            {
+                TeamIdToPlayerController.Add(PlayerController->TeamId, PlayerController);
+            }
         }
-    }
-    
-    if(bRetrivedUsersInfo && !bHasGameStarted)
+    }else
     {
         TArray<AXYZPlayerController*> FoundControllers;
         for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
         {
             FoundControllers.Add(Cast<AXYZPlayerController>(It->Get()));
         }
-        if(FoundControllers.Num() == 2)
+        if(FoundControllers.Num() == MAX_PLAYERS)
         {
             for(int i = 0;i < FoundControllers.Num();i++)
             {
@@ -109,87 +163,120 @@ void AXYZGameMode::Tick(float DeltaSeconds)
             {
                 if(Actor->IsA(AXYZBaseBuilding::StaticClass()))
                 {
-                    PlayerControllers[Actor->TeamId]->FocusCameraOnLocation(Actor->GetActorLocation());
+                    TeamIdToPlayerController[Actor->TeamId]->FocusCameraOnLocation(Actor->GetActorLocation());
                 }
             }
         }
     }
-    if(bHasGameStarted)
+    
+    if(TimeSinceStart <= LOADING_TIME)
     {
-        TimeSinceStart += DeltaSeconds;
-    }
-    if(bHasGameStarted && !bHasGameEnded && TimeSinceStart >= 10.0f)
-    {
-        
-        TArray<AXYZActor*> Actors;
-        Cast<AXYZGameState>(GetWorld()->GetGameState())->ActorsByUID.GenerateValueArray(Actors);
-        
-        for(AXYZActor* Actor : Actors)
-        {
-            if(Actor)
-            {
-                Actor->Process(DeltaSeconds);
-            }
-        }
-        
-        InputManager->Process(DeltaSeconds);
-        
-        BlobManager->Process(DeltaSeconds);
-        
-        MapManager->Process(DeltaSeconds);
-        
-        DeathManager->Process(DeltaSeconds);
-
-        MatchManager->Process(DeltaSeconds);
-
-        TickCount++;
-        bHasGameEnded = bHasGameEnded || NumOfPlayers < 2;
-        if (bHasGameEnded && bHasCleanedUp)
-        {
-            FTimerHandle TimerHandle;
-
+        TArray<TSharedRef<const FUniqueNetId>> UserNetIds;
+        TArray<FString> UserNames;
+        TArray<int32> Ratings;
+        if (UserRetriever && UserStatRetriever) {
             for(AXYZPlayerController* PlayerController : PlayerControllers)
             {
-                bool bHasWon = MatchManager->WinnerIndex == PlayerController->TeamId;
-                int32 MatchStatus = bHasWon ? 1 : -1;
-                FString WinsOrLossesStat = bHasWon ? "wins" : "losses";
-                FString GamesStat = "games";
-                FString RatingStat = "rating";
-                int32 Rating = bHasWon ? 25 : -25;
-                
-                TSharedPtr<const FUniqueNetId> UniqueNetId = UserRetriever->GetControllerUniqueNetId(PlayerController);
-                UserStatUpdater->UpdateInt32Stat(UniqueNetId.ToSharedRef(), WinsOrLossesStat, 1);
-                UserStatUpdater->UpdateInt32Stat(UniqueNetId.ToSharedRef(), GamesStat, 1);
-                UserStatUpdater->UpdateInt32Stat(UniqueNetId.ToSharedRef(), RatingStat, Rating);
-
-                PlayerControllers[MatchManager->WinnerIndex]->UpdateMatchStatus(MatchStatus);
+                UserNetIds.Add(UserStatRetriever->GetControllerUniqueNetId(PlayerController).ToSharedRef());
             }
-
-            GetWorld()->GetTimerManager().SetTimer(
-                TimerHandle,
-                [this]() 
+            if(!UserNetIds.IsEmpty())
+            {
+                UserStatRetriever->RetrieveStats(UserNetIds, {"rating"});
+            }
+            for(AXYZPlayerController* PlayerController : PlayerControllers)
+            {
+                TSharedPtr<const FUniqueNetId> PlayerNetId = UserRetriever->GetControllerUniqueNetId(PlayerController);
+                if (PlayerNetId) {
+                    FString UserNetId = PlayerNetId->ToString();
+                    if (UserRetriever->UserDisplayNameMap.Contains(UserNetId)) {
+                        UserNames.Add(UserRetriever->UserDisplayNameMap[UserNetId]);
+                        Ratings.Add(UserStatRetriever->GetControllerStatInt32(PlayerController, "rating"));
+                    }else
+                    {
+                        UserNames.Add("||||||||||");
+                        Ratings.Add(-69);
+                    }
+                }else
                 {
-                    SessionHandler->DestroySession();
-                },
-                3.0f, 
-                false 
-            );
-            bHasCleanedUp = true;
+                    UserNames.Add("||||||||||");
+                }
+            }
+        }
+        for(AXYZPlayerController* PlayerController : PlayerControllers)
+        {
+            PlayerController->UpdateLoadingScreen(UserNames, Ratings, TimeSinceStart/LOADING_TIME);
+        }
+    }else
+    {
+        XYZGameState->ProgressMatchState();
+    }
+}
+
+void AXYZGameMode::Process(float DeltaSeconds)
+{
+    TArray<AXYZActor*> Actors;
+    Cast<AXYZGameState>(GetWorld()->GetGameState())->ActorsByUID.GenerateValueArray(Actors);
+        
+    for(AXYZActor* Actor : Actors)
+    {
+        if(Actor)
+        {
+            Actor->Process(DeltaSeconds);
         }
     }
-	
+        
+    InputManager->Process(DeltaSeconds);
+    BlobManager->Process(DeltaSeconds);
+    MapManager->Process(DeltaSeconds);
+    DeathManager->Process(DeltaSeconds);
+    MatchManager->Process(DeltaSeconds);
+
+    TickCount++;
+    bHasGameEnded = bHasGameEnded || NumOfPlayers < MAX_PLAYERS;
+
+    if(bHasGameEnded)
+    {
+        XYZGameState->ProgressMatchState();
+    }
 }
 
-void AXYZGameMode::QueueInput(const FXYZInputMessage& InputMessage) {
-    if (GetLocalRole() != ROLE_Authority) return;
-    int32 TickCountCopy = TickCount;
-    FXYZInputMessage TickInput = FXYZInputMessage(InputMessage, TickCountCopy);
-    TickInput.AbilityIndex = InputMessage.AbilityIndex;
-    TickInput.ActiveActorId = InputMessage.ActiveActorId;
-    InputManager->QueueInput(TickInput);
-    bHandleInputQueue = true;
+void AXYZGameMode::ProcessCleanUp()
+{
+    for(AXYZPlayerController* PlayerController : PlayerControllers)
+    {
+        bool bHasWon = MatchManager->WinnerIndex == PlayerController->TeamId;
+        int32 MatchStatus = bHasWon ? 1 : -1;
+        FString WinsOrLossesStat = bHasWon ? "wins" : "losses";
+        FString GamesStat = "games";
+        FString RatingStat = "rating";
+        int32 Rating = bHasWon ? RATING_GAIN : -1*RATING_GAIN;
+        
+        TSharedPtr<const FUniqueNetId> UniqueNetId = UserRetriever->GetControllerUniqueNetId(PlayerController);
+        UserStatUpdater->UpdateInt32Stat(UniqueNetId.ToSharedRef(), WinsOrLossesStat, 1);
+        UserStatUpdater->UpdateInt32Stat(UniqueNetId.ToSharedRef(), GamesStat, 1);
+        UserStatUpdater->UpdateInt32Stat(UniqueNetId.ToSharedRef(), RatingStat, Rating);
+
+        PlayerController->UpdateMatchStatus(MatchStatus);
+    }
+
+    XYZGameState->ProgressMatchState();
+    
 }
 
+void AXYZGameMode::ProcessShutdown()
+{
+    FTimerHandle TimerHandle;
+    GetWorld()->GetTimerManager().SetTimer(
+        TimerHandle,
+        [this]() 
+        {
+            SessionHandler->DestroySession();
+        },
+        TIME_TO_DESTROY_SESSION, 
+        false 
+    );
+    XYZGameState->ProgressMatchState();
+}
 
 void AXYZGameMode::RegisterExistingPlayers()
 {
@@ -334,7 +421,15 @@ void AXYZGameMode::PreLogout(APlayerController* InPlayerController)
 
     AXYZPlayerController* DisconnectedController = Cast<AXYZPlayerController>(InPlayerController);
     int32 OtherPlayedTeamId = DisconnectedController->TeamId == 1 ? 0 : 1;
-    AXYZPlayerController* OtherPlayer = PlayerControllers[OtherPlayedTeamId];
+    AXYZPlayerController* OtherPlayer = nullptr;
+
+    for(AXYZPlayerController* PlayerController : PlayerControllers)
+    {
+        if(PlayerController != DisconnectedController)
+        {
+            OtherPlayer = PlayerController;
+        }
+    }
 
     bHasGameEnded = true;
     Cast<AXYZGameState>(GameState)->bHasGameEnded = true;

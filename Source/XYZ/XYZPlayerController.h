@@ -19,6 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxTriggeredEvent, float,
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxReleasedEvent, float, x, float, y);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSelectionIdsEvent, const TArray<int32>&, SelectionActorIds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FControlGroupEvent, const TArray<int32>&, ControlGroups);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FLoadingScreenEvent, const TArray<FString>&, PlayerNames, const TArray<int32>&, Ratings, float, LoadPercentage);
 
 UCLASS()
 class AXYZPlayerController : public APlayerController
@@ -77,27 +78,27 @@ public:
 	class UInputAction* StopInputAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputAction* HoldInputAction;
+	class UInputAction* HoldInputAction;
 
 	/** ADD TO SELECTION - QUEUE INPUT **/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputAction* PrimaryModifierInputAction;
+	class UInputAction* PrimaryModifierInputAction;
 
 	/** SELECT ALL OF TYPE **/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputAction* SecondaryModifierInputAction;
+	class UInputAction* SecondaryModifierInputAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputAction* ClearSelectionInputAction;
+	class UInputAction* ClearSelectionInputAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputAction* CycleSelectionInputAction;
+	class UInputAction* CycleSelectionInputAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		TArray<UInputAction*> ControlGroupInputActions;
+	TArray<UInputAction*> ControlGroupInputActions;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		TArray<UInputAction*> AbilityInputActions;
+	TArray<UInputAction*> AbilityInputActions;
 
 	bool bPrimaryModifier;
 	bool bSecondaryModifier;
@@ -112,19 +113,22 @@ public:
 	FVector2D BoxSelectEnd;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-		FSelectionBoxEvent OnSelectionBox;
+	FSelectionBoxEvent OnSelectionBox;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-		FSelectionBoxTriggeredEvent OnSelectionBoxTriggered;
+	FSelectionBoxTriggeredEvent OnSelectionBoxTriggered;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-		FSelectionBoxReleasedEvent OnSelectionBoxReleased;
+	FSelectionBoxReleasedEvent OnSelectionBoxReleased;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-		FSelectionIdsEvent OnSelectionIdsEvent;
+	FSelectionIdsEvent OnSelectionIdsEvent;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-		FControlGroupEvent OnControlGroupEvent;
+	FControlGroupEvent OnControlGroupEvent;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FLoadingScreenEvent OnLoadingScreenEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool bAllowMouseInput = true;
@@ -145,17 +149,17 @@ protected:
 	UFUNCTION()
 	void OnControlGroupInputStarted(int32 ControlGroupIndex);
 	UFUNCTION()
-		void OnAbilityInputStarted(int32 AbilityIndex);
+	void OnAbilityInputStarted(int32 AbilityIndex);
 	UFUNCTION()
-		void OnCycleSelectionInputStarted();
+	void OnCycleSelectionInputStarted();
 
 	UFUNCTION()
 	void SelectActors(TArray<AXYZActor*> Actors);
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
-		void SelectActorFromPanel(int32 UActorId);
+	void SelectActorFromPanel(int32 UActorId);
 	UFUNCTION(BlueprintCallable, Category = "UI")
-		class AXYZActor* GetActiveSelectedActor();
+	class AXYZActor* GetActiveSelectedActor();
 	void CreateAndQueueInput(TArray<int32> _SelectedActors, int32 _XYZTargetActor, FVector _TargetLocation, EXYZInputType _InputType, bool _bQueueInput);
 	UFUNCTION(Server, Reliable)
 	void QueueInput(const FXYZInputMessage& InputMessage);
@@ -182,29 +186,29 @@ private:
 	bool bBoxSelectFlag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class AXYZCameraController* CameraController;
+	class AXYZCameraController* CameraController;
 
 public:
 	UPROPERTY(BlueprintReadOnly)
-		class UXYZSelectionStructure* SelectionStructure;
+	class UXYZSelectionStructure* SelectionStructure;
 
 	UFUNCTION(Client, Reliable)
-		void XYZActorDestroyed(int32 ActorUId);
+	void XYZActorDestroyed(int32 ActorUId);
 	void XYZActorDestroyed_Implementation(int32 ActorUId);
 
 	UFUNCTION(Server, Reliable)
-		void PingServerGameIsLoaded();
+	void PingServerGameIsLoaded();
 	void PingServerGameIsLoaded_Implementation();
 	bool bPingedGameLoaded;
 
 	UFUNCTION(Client, Reliable)
-		void PlayAnimationMontage(EXYZAnimMontageType AnimationType, AXYZActor* Actor);
+	void PlayAnimationMontage(EXYZAnimMontageType AnimationType, AXYZActor* Actor);
 	void PlayAnimationMontage_Implementation(EXYZAnimMontageType AnimationType, AXYZActor* Actor);
 
 	void OnNetCleanup(UNetConnection* Connection) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Match")
-		int32 MatchStatus;
+	int32 MatchStatus;
 	UFUNCTION(Reliable, Client)
 	void UpdateMatchStatus(int32 Status);
 	void UpdateMatchStatus_Implementation(int32 Status);
@@ -236,7 +240,7 @@ public:
 	UFUNCTION()
 	void UpdateMouseCursor();
 
-	
+	UFUNCTION(Reliable, Client)
+	void UpdateLoadingScreen(const TArray<FString>& PlayerNames,const TArray<int32>& Ratings, const float LoadingPercentage);
+	void UpdateLoadingScreen_Implementation(const TArray<FString>& PlayerNames,const TArray<int32>& Ratings, const float LoadingPercentage);
 };
-
-

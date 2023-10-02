@@ -34,6 +34,8 @@ void AXYZGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutL
 	DOREPLIFETIME(AXYZGameState, MineralsByTeamId);
 	DOREPLIFETIME(AXYZGameState, SupplyByTeamId);
 	DOREPLIFETIME(AXYZGameState, bHasGameEnded);
+	DOREPLIFETIME(AXYZGameState, GameTime);
+	DOREPLIFETIME(AXYZGameState, MatchState);
 }
 
 void AXYZGameState::AddActorServer(AXYZActor* Actor)

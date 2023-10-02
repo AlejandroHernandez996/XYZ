@@ -266,3 +266,14 @@ bool UXYZMapManager::AreSets2DEqual(const TSet<FVector2D>& SetA, const TSet<FVec
 
 	return true;
 }
+
+bool UXYZMapManager::DoesActorHasVisionOfActor(AXYZActor* Actor, AXYZActor* OtherActor)
+{
+
+	if(!Actor || !OtherActor || !Grid.Contains(Actor->GridCoord) || !Grid.Contains(OtherActor->GridCoord) || !(Actor->TeamId >= 0 && Actor->TeamId <= 1))
+	{
+		return false;
+	}
+
+	return Grid[OtherActor->GridCoord].TeamVision[Actor->TeamId];
+}

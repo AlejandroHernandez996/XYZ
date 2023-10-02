@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "XYZMatchState.h"
 #include "GameFramework/GameStateBase.h"
 #include "XYZResourceType.h"
 #include "XYZGameState.generated.h"
@@ -51,4 +52,36 @@ public:
 
 	bool bLinkedActors = false;
 	bool bClientLoaded;
+
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	EXYZMatchState MatchState = EXYZMatchState::WAITING_FOR_PLAYERS;
+
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	float GameTime;
+	
+	UFUNCTION()
+	void ProgressMatchState()
+	{
+		switch(MatchState)
+		{
+		case EXYZMatchState::WAITING_FOR_PLAYERS:
+			MatchState = EXYZMatchState::MATCH_STARTING;
+			break;
+		case EXYZMatchState::MATCH_STARTING:
+			MatchState = EXYZMatchState::IN_PROGRESS;
+			break;
+		case EXYZMatchState::IN_PROGRESS:
+			MatchState = EXYZMatchState::CLEANING_UP;
+			break;
+		case EXYZMatchState::CLEANING_UP:
+			MatchState = EXYZMatchState::SHUTTING_DOWN;
+			break;
+		case EXYZMatchState::SHUTTING_DOWN:
+			MatchState = EXYZMatchState::GAME_OVER;
+			break;
+		case EXYZMatchState::GAME_OVER:
+			break;
+		default: ;
+		}
+	}
 };

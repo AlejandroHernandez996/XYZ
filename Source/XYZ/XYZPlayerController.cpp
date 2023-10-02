@@ -61,11 +61,8 @@ void AXYZPlayerController::BeginPlay()
 
 void AXYZPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+	if(GetLocalRole() == ROLE_Authority) return;
 	
-	if (GetLocalRole() != ROLE_Authority || GetWorld()->GetGameState<AXYZGameState>() && !bPingedGameLoaded) {
-		bPingedGameLoaded = true;
-		PingServerGameIsLoaded();
-	}
 	UpdateVisibleActors();
 	UpdateMouseCursor();
 	
@@ -77,7 +74,7 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 	bWorldHitSuccessful = GetHitResultAtScreenPosition(GetMousePositionOnViewport(), ECollisionChannel::ECC_WorldStatic, true, WorldHit);
 	bXYZActorHitSuccessful = GetHitResultAtScreenPosition(GetMousePositionOnViewport(), ECollisionChannel::ECC_WorldStatic, true, XYZActorHit);
 
-	if(CameraController && bMoveCameraFlag && !HasAuthority())
+	if(CameraController && bMoveCameraFlag)
 	{
 		FVector LocationWithOffset = FVector(CameraLocation.X, CameraLocation.Y, CameraController->GetActorLocation().Z) + FVector(-250, 50,0.0f);
 		CameraController->SetActorLocation(LocationWithOffset);
@@ -424,7 +421,6 @@ void AXYZPlayerController::SelectActors(TArray<AXYZActor*> _XYZActors){
 		else {
 			SelectionStructure->Add(OwnedXYZActors);
 		}
-		return;
 	} 
 	else {
 		SelectionStructure->Empty();
@@ -667,7 +663,7 @@ void AXYZPlayerController::UpdateVisibleActors()
 				
 				for(int32 VisibleActor : VisibleEnemyActors)
 				{
-					if(XYZGameState->ActorsByUID.Contains(VisibleActor))
+					if(XYZGameState->ActorsByUID.Contains(VisibleActor) && XYZGameState->ActorsByUID[VisibleActor])
 					{
 						AXYZActor* Actor = XYZGameState->ActorsByUID[VisibleActor];
 						Actor->SetActorHiddenInGame(false);
@@ -680,7 +676,7 @@ void AXYZPlayerController::UpdateVisibleActors()
 				ActorsNotFound.Empty();
 				for(int32 NonVisibleActor : NonVisibleEnemyActors)
 				{
-					if(XYZGameState->ActorsByUID.Contains(NonVisibleActor))
+					if(XYZGameState->ActorsByUID.Contains(NonVisibleActor) && XYZGameState->ActorsByUID[NonVisibleActor])
 					{
 						XYZGameState->ActorsByUID[NonVisibleActor]->SetActorHiddenInGame(true);
 						XYZGameState->ActorsByUID[NonVisibleActor]->bIsVisible = true;
@@ -743,4 +739,10 @@ void AXYZPlayerController::UpdateMouseCursor()
 			}
 		}
 	}
+}
+
+void AXYZPlayerController::UpdateLoadingScreen_Implementation(const TArray<FString>& PlayerNames, const TArray<int32>& Ratings,
+	const float LoadingPercentage)
+{
+	OnLoadingScreenEvent.Broadcast(PlayerNames,Ratings, LoadingPercentage);
 }
