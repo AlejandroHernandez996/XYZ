@@ -13,5 +13,20 @@ UCLASS()
 class XYZ_API UXYZWorkerAbility : public UXYZAbility
 {
 	GENERATED_BODY()
-	
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TSubclassOf<class AXYZBuilding> PlacementTemplate;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TSubclassOf<class AXYZBuilding> BuildingTemplate;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float BuildTime;
+	UPROPERTY()
+	class AXYZWorker* OwningWorker;
+	UPROPERTY()
+	bool bCanCancel = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MineralCost = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 SupplyCost = 0;
+	virtual void Activate() override;
 };

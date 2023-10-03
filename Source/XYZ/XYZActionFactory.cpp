@@ -12,8 +12,11 @@
 #include "XYZGameState.h"
 #include "XYZActor.h"
 #include "XYZBuilding.h"
+#include "XYZBuildingAbility.h"
+#include "XYZPlaceBuildingAction.h"
 #include "XYZResourceActor.h"
 #include "XYZTrainingAbilityAction.h"
+#include "XYZWorkerAbility.h"
 
 UXYZAction* UXYZActionFactory::CreateAction(TArray<int32> _SelectedActors, AXYZActor* _TargetActor, FVector _TargetLocation, bool _bQueueInput, EXYZInputType InputType, int32 ActionCount, AXYZGameState* GameState, int32 ActiveActorId, int32 AbilityIndex)
 {
@@ -80,11 +83,16 @@ UXYZAction* UXYZActionFactory::CreateAction(TArray<int32> _SelectedActors, AXYZA
         }
         if(ActiveActor)
         {
-            if(ActiveActor->IsA(AXYZBuilding::StaticClass()))
+            if(ActiveActor->Abilities[AbilityIndex]->IsA(UXYZBuildingAbility::StaticClass()))
             {
                 f = "Training_Ability_Action_" + FString::FromInt(ActionCount);
                 ActionName = FName(*f);
                 ActionClass = UXYZTrainingAbilityAction::StaticClass();
+            }else if (ActiveActor->Abilities[AbilityIndex]->IsA(UXYZWorkerAbility::StaticClass()))
+            {
+                f = "Place_Building_Ability_Action_" + FString::FromInt(ActionCount);
+                ActionName = FName(*f);
+                ActionClass = UXYZPlaceBuildingAction::StaticClass();
             }
             CreatedAction = MakeAction(_SelectedActors, _TargetActor, _TargetLocation, _bQueueInput, InputType, ActionCount, ActionClass, ActionName, GameState);
             Cast<UXYZAbilityAction>(CreatedAction)->AbilityIndex = AbilityIndex;

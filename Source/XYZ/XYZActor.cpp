@@ -145,35 +145,6 @@ void AXYZActor::Attack()
 	}
 }
 
-/*
-AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors)
-{
-	AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
-
-	AXYZActor* ClosestActor = nullptr;
-	float ClosestDistanceSqr = FLT_MAX;
-	for (AXYZActor* OtherActor : GameState->GetAllActors())
-	{
-		bool bTargetIsFriendlyAndShouldIgnore = OtherActor && OtherActor->TeamId == TeamId && bIgnoreFriendlyActors;
-		if (!OtherActor || OtherActor == this || bTargetIsFriendlyAndShouldIgnore || OtherActor->Health <= 0.0f ||
-			OtherActor->IsA(AXYZResourceActor::StaticClass()))
-		{
-			continue;
-		}
-
-		float DistanceSqr = FVector::DistSquaredXY(this->GetActorLocation(), OtherActor->GetActorLocation());
-
-		if (DistanceSqr < ClosestDistanceSqr && DistanceSqr <= FMath::Square(VisionRange))
-		{
-			ClosestDistanceSqr = DistanceSqr;
-			ClosestActor = OtherActor;
-		}
-	}
-
-	return ClosestActor;
-}
-*/
-
 AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors)
 {
 	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;

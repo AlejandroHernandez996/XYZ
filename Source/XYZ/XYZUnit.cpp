@@ -10,12 +10,11 @@
 void AXYZUnit::Process(float DeltaTime)
 {
 	Super::Process(DeltaTime);
-	if (State == EXYZUnitState::DEAD) return;
 	GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
 	GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 1.25f;
 	GetCharacterMovement()->bUseRVOAvoidance = bHasAvoidance;
 	GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
-
+	if (State == EXYZUnitState::DEAD) return;
 	
 	if (State == EXYZUnitState::MOVING && !GetCharacterMovement()->IsMovingOnGround())
 	{

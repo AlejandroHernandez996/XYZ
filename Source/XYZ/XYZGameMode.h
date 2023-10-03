@@ -36,9 +36,9 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	int32 TickCount = 0;
 	int32 MAX_PLAYERS = 2;
-	float LOADING_TIME = 5.0f;
+	float LOADING_TIME = 3.0f;
 	int32 RATING_GAIN = 25;
-	float TIME_TO_DESTROY_SESSION = 3.0f;
+	float TIME_TO_DESTROY_SESSION = 2.0f;
 	
 	void QueueInput(const FXYZInputMessage& InputMessage);
 

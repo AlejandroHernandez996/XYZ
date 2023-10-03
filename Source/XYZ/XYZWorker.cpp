@@ -33,7 +33,7 @@ void AXYZWorker::Process(float DeltaTime)
 {
     Super::Process(DeltaTime);
     if (State == EXYZUnitState::GATHERING) {
-        GetCharacterMovement()->bUseRVOAvoidance = false;
+        bHasAvoidance = false;
         if (!TargetActor) {
             FindClosestResource();
         }
@@ -45,7 +45,7 @@ void AXYZWorker::Process(float DeltaTime)
         }
     }
     else if (State == EXYZUnitState::RETURNING) {
-        GetCharacterMovement()->bUseRVOAvoidance = false;
+        bHasAvoidance = false;
         FindClosestBase();
         if (ClosestBase) {
             Return();
@@ -56,6 +56,7 @@ void AXYZWorker::Process(float DeltaTime)
     }
     else if (State == EXYZUnitState::MINING)
     {
+        bHasAvoidance = false;
         AXYZResourceActor* Resource = Cast<AXYZResourceActor>(TargetActor);
         if(!Resource || !Resource->Workers.Contains(this))
         {

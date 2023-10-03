@@ -34,6 +34,9 @@ public:
 	FVector CameraLocation;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
+	UPROPERTY()
+	class AXYZGameState* XYZGameState;
+	
 	UFUNCTION(BlueprintCallable, Client, Reliable)
 	void Disconnect();
 	void Disconnect_Implementation();
@@ -243,4 +246,19 @@ public:
 	UFUNCTION(Reliable, Client)
 	void UpdateLoadingScreen(const TArray<FString>& PlayerNames,const TArray<int32>& Ratings, const float LoadingPercentage);
 	void UpdateLoadingScreen_Implementation(const TArray<FString>& PlayerNames,const TArray<int32>& Ratings, const float LoadingPercentage);
+
+	UPROPERTY()
+	bool bIsPlacingBuilding = false;
+	UPROPERTY()
+	class AXYZBuilding* PlacementBuilding;
+	UPROPERTY()
+	int32 WorkerAbilityIndex = -1;
+	UPROPERTY()
+	int32 WorkerActorId = -1;
+
+	UFUNCTION()
+	void ClearBuildingPlacement();
+
+	UFUNCTION()
+	FVector GetMouseToWorldPosition(APlayerController* PlayerController);
 };

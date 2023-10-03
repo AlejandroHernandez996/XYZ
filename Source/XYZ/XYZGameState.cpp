@@ -38,6 +38,20 @@ void AXYZGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutL
 	DOREPLIFETIME(AXYZGameState, MatchState);
 }
 
+AXYZActor* AXYZGameState::GetActorById(int32 ActorId)
+{
+	TArray<AXYZActor*> Actors;
+	ActorsByUID.GenerateValueArray(Actors);
+	for(AXYZActor* Actor : Actors)
+	{
+		if(Actor->ActorId == ActorId)
+		{
+			return Actor;
+		}
+	}
+	return nullptr;
+}
+
 void AXYZGameState::AddActorServer(AXYZActor* Actor)
 {
 	if(!ActorsByUID.Contains(Actor->UActorId))

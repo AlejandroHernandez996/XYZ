@@ -42,6 +42,7 @@ void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 	}
 	
 	Actor->GetCapsuleComponent()->SetCollisionProfileName("Ragdoll");
+	Actor->bHasAvoidance = false;
 	Actor->CurrentCapsuleRadius = 0.0f;
 	Actor->CollisionName = "Ragdoll";
 	Actor->SetState(EXYZUnitState::DEAD);

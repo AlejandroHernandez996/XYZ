@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "XYZPlayerController.h"
+
 #include "GameFramework/Pawn.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Engine/World.h"
@@ -20,6 +21,8 @@
 #include "XYZBuilding.h"
 #include "XYZFogOfWar.h"
 #include "XYZMinimapManager.h"
+#include "XYZWorkerAbility.h"
+#include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
 
 AXYZPlayerController::AXYZPlayerController()
@@ -61,6 +64,10 @@ void AXYZPlayerController::BeginPlay()
 
 void AXYZPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+	if(!XYZGameState)
+	{
+		XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
+	}
 	if(GetLocalRole() == ROLE_Authority) return;
 	
 	UpdateVisibleActors();
@@ -109,6 +116,25 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		{
 			MinimapManager = *ActorItr;
 		}
+	}
+	
+	bool bNotPlacingBuildingAndTemplate = !bIsPlacingBuilding && PlacementBuilding;
+	bool bActiveActorDoesNotMatchWorkerId = !SelectionStructure ? false : SelectionStructure->IsEmpty() || SelectionStructure->ActiveActor != WorkerActorId;
+	if(bNotPlacingBuildingAndTemplate || bActiveActorDoesNotMatchWorkerId)
+	{
+		ClearBuildingPlacement();
+	}
+	if(PlacementBuilding)
+	{
+		FVector NewLocation = GetMouseToWorldPosition(this);
+
+		UCapsuleComponent* Capsule = Cast<UCapsuleComponent>(PlacementBuilding->GetComponentByClass(UCapsuleComponent::StaticClass()));
+		if(Capsule)
+		{
+			NewLocation.Z += Capsule->GetScaledCapsuleHalfHeight(); // Adjust Z position by half the height of the capsule
+		}
+
+		PlacementBuilding->SetActorLocation(NewLocation);
 	}
 }
 
@@ -159,6 +185,10 @@ void AXYZPlayerController::SetupInputComponent()
 }
 
 void AXYZPlayerController::OnControlGroupInputStarted(int32 ControlGroupIndex) {
+	if(PlacementBuilding)
+	{
+		ClearBuildingPlacement();
+	}
 	bool bDoubleInput = LastControlGroupInputTime[ControlGroupIndex] <= DoubleInputThreshold;
 	LastControlGroupInputTime[ControlGroupIndex] = 0.0f;
 	if (bPrimaryModifier) {
@@ -184,9 +214,41 @@ void AXYZPlayerController::OnControlGroupInputStarted(int32 ControlGroupIndex) {
 }
 
 void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {
+	if(PlacementBuilding)
+	{
+		ClearBuildingPlacement();
+	}
 	if (SelectionStructure->IsEmpty()) return;
 
+	AXYZWorker* ActiveWorker = Cast<AXYZWorker>(XYZGameState->GetActorById(SelectionStructure->ActiveActor));
+	UXYZWorkerAbility* WorkerAbility = nullptr;
+	if(ActiveWorker && AbilityIndex < ActiveWorker->Abilities.Num())
+	{
+		WorkerAbility = Cast<UXYZWorkerAbility>(ActiveWorker->Abilities[AbilityIndex]);
+	}
+	
+	if(ActiveWorker &&  WorkerAbility)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.bNoFail = true;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		PlacementBuilding = GetWorld()->SpawnActor<AXYZBuilding>(
+			WorkerAbility->PlacementTemplate,
+			FVector(GetMouseToWorldPosition(this)),
+				FRotator(0, 0, 0),
+				SpawnParams);
+		bIsPlacingBuilding = true;
+		WorkerAbilityIndex = AbilityIndex;
+		WorkerActorId = SelectionStructure->ActiveActor;
+		return;
+	}
+	
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
+	if(HitActor && !HitActor->bIsVisible)
+	{
+		HitActor = nullptr;
+	}
 	int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
 	FXYZInputMessage AbilityInput = FXYZInputMessage(PlayerState->GetUniqueId().ToString(), SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, EXYZInputType::ABILITY, bPrimaryModifier);
 	AbilityInput.AbilityIndex = AbilityIndex;
@@ -200,8 +262,16 @@ void AXYZPlayerController::OnCycleSelectionInputStarted() {
 
 void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 {
+	if(PlacementBuilding && InputType != EXYZInputType::PRIMARY_INPUT && InputType != EXYZInputType::PRIMARY_MOD)
+	{
+		ClearBuildingPlacement();
+	}
 	FXYZInputMessage InputMessage;
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
+	if(HitActor && !HitActor->bIsVisible)
+	{
+		HitActor = nullptr;
+	}
 	int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
 	switch (InputType) {
 		case EXYZInputType::PRIMARY_INPUT:
@@ -215,6 +285,15 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 				if (!HitActor || (SelectionStructure->Num == 1 && SelectionStructure->ToActorIdArray()[0] == XYZActorHitId)) {
 					UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, AttackCursor, WorldHit.Location, FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, true, ENCPoolMethod::None, true);
 				}
+				break;
+			}
+			if(bIsPlacingBuilding && PlacementBuilding && WorkerAbilityIndex != -1 && WorkerActorId != -1)
+			{
+				FXYZInputMessage AbilityInput = FXYZInputMessage(PlayerState->GetUniqueId().ToString(), SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, EXYZInputType::ABILITY, bPrimaryModifier);
+				AbilityInput.AbilityIndex = WorkerAbilityIndex;
+				AbilityInput.ActiveActorId = WorkerActorId;
+				QueueInput(AbilityInput);
+				PlacementBuilding->Destroy();
 				break;
 			}
 			BoxSelectStart = GetMousePositionOnViewport();
@@ -265,6 +344,10 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 {
 	if (InputType == EXYZInputType::PRIMARY_INPUT) {
+		if(bIsPlacingBuilding)
+		{
+			return;
+		}
 		BoxSelectEnd = GetMousePositionOnViewport();
 		GetHUD<AXYZHUD>()->BoxEnd = BoxSelectEnd;
 	}
@@ -293,7 +376,10 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 {
 	FHitResult BoxHitStart, BoxHitEnd;
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
-	int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
+	if(HitActor && !HitActor->bIsVisible)
+	{
+		HitActor = nullptr;
+	}
 	InputTriggeredTime[InputType] = 0.0f;
 	bool bDoubleInput = LastInputTime[InputType] <= DoubleInputThreshold;
 	LastInputTime[InputType] = 0.0f;
@@ -307,6 +393,10 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		break;
 	case EXYZInputType::PRIMARY_INPUT:
 		UE_LOG(LogTemp, Warning, TEXT("Primary Input Released"));
+		if(bIsPlacingBuilding)
+		{
+			return;
+		}
 		if(bBlockPrimaryInputFlagForAttack)
 		{
 			bBlockPrimaryInputFlagForAttack = false;
@@ -451,7 +541,7 @@ void AXYZPlayerController::QueueInput_Implementation(const FXYZInputMessage& Inp
 		{
 			AXYZGameMode* GameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
 			if (GameMode) {
-				TMap<int32, AXYZActor*> ActorsByUId = GameMode->GetGameState<AXYZGameState>()->ActorsByUID;
+				TMap<int32, AXYZActor*> ActorsByUId = XYZGameState->ActorsByUID;
 				for (int32 UActorId : InputMessage.SelectedActors) {
 					if (!ActorsByUId.Contains(UActorId)) {
 						return;
@@ -468,16 +558,16 @@ void AXYZPlayerController::QueueInput_Implementation(const FXYZInputMessage& Inp
 }
 
 void AXYZPlayerController::SelectActorFromPanel(int32 UActorId) {
-	if (GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Contains(UActorId)) {
-		SelectActors({ GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[UActorId]});
+	if (XYZGameState->ActorsByUID.Contains(UActorId)) {
+		SelectActors({ XYZGameState->ActorsByUID[UActorId]});
 		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 	}
 }
 
 void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
-	if(!GetWorld() || !GetWorld()->GetGameState<AXYZGameState>()) return;
-	if (GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Contains(ActorUId)) {
-		AXYZActor* Actor = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[ActorUId];
+	if(!XYZGameState) return;
+	if (XYZGameState->ActorsByUID.Contains(ActorUId)) {
+		AXYZActor* Actor = XYZGameState->ActorsByUID[ActorUId];
 		if (!Actor) return;
 		USkeletalMeshComponent* Ragdoll = Actor->GetMesh();
 		Ragdoll->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
@@ -497,7 +587,7 @@ void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
 			ControlGroups.Add(ControlGroup.Num());
 		}
 		OnControlGroupEvent.Broadcast(ControlGroups);
-		GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Remove(ActorUId);
+		XYZGameState->ActorsByUID.Remove(ActorUId);
 
 		TArray<UActorComponent*> Components;
 		Actor->GetComponents(Components);
@@ -535,15 +625,14 @@ void AXYZPlayerController::FocusCameraOnLocation_Implementation(FVector Location
 }
 
 void AXYZPlayerController::PingServerGameIsLoaded_Implementation() {
-	AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
-	GameState->bClientLoaded = true;
+	XYZGameState->bClientLoaded = true;
 }
 
 AXYZActor* AXYZPlayerController::GetActiveSelectedActor() {
 	AXYZActor* Result = nullptr;
 	TArray<int32> ActiveActorIds = SelectionStructure->GetActiveActorIds();
-	if (!ActiveActorIds.IsEmpty() && GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID.Contains(ActiveActorIds[0])) {
-		Result = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID[ActiveActorIds[0]];
+	if (!ActiveActorIds.IsEmpty() && XYZGameState->ActorsByUID.Contains(ActiveActorIds[0])) {
+		Result = XYZGameState->ActorsByUID[ActiveActorIds[0]];
 	}
 	return Result;
 }
@@ -581,7 +670,7 @@ void AXYZPlayerController::SetVisibleEnemyActors_Implementation(const TArray<int
 	TSet<AXYZActor*> VisibleActors;
 	TSet<AXYZActor*> NonVisibleActors;
 
-	TMap<int32, AXYZActor*> ActorsByUID = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID;
+	TMap<int32, AXYZActor*> ActorsByUID = XYZGameState->ActorsByUID;
 
 	for(int32 UActorId : DeltaVisibleActors)
 	{
@@ -628,7 +717,7 @@ void AXYZPlayerController::UpdateClientVisibility_Implementation(
 	TSet<AXYZActor*> VisibleActors;
 	TSet<AXYZActor*> NonVisibleActors;
 
-	TMap<int32, AXYZActor*> ActorsByUID = GetWorld()->GetGameState<AXYZGameState>()->ActorsByUID;
+	TMap<int32, AXYZActor*> ActorsByUID = XYZGameState->ActorsByUID;
 
 	for(int32 UActorId : DeltaVisibleActors)
 	{
@@ -655,8 +744,6 @@ void AXYZPlayerController::UpdateVisibleActors()
 	{
 		if(GetWorld())
 		{
-			AXYZGameState* XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
-
 			if(XYZGameState)
 			{
 				TArray<int32> ActorsNotFound;
@@ -667,6 +754,7 @@ void AXYZPlayerController::UpdateVisibleActors()
 					{
 						AXYZActor* Actor = XYZGameState->ActorsByUID[VisibleActor];
 						Actor->SetActorHiddenInGame(false);
+						Actor->bIsVisible = true;
 					}else
 					{
 						ActorsNotFound.Add(VisibleActor);
@@ -679,7 +767,7 @@ void AXYZPlayerController::UpdateVisibleActors()
 					if(XYZGameState->ActorsByUID.Contains(NonVisibleActor) && XYZGameState->ActorsByUID[NonVisibleActor])
 					{
 						XYZGameState->ActorsByUID[NonVisibleActor]->SetActorHiddenInGame(true);
-						XYZGameState->ActorsByUID[NonVisibleActor]->bIsVisible = true;
+						XYZGameState->ActorsByUID[NonVisibleActor]->bIsVisible = false;
 					}
 					else
 					{
@@ -695,6 +783,10 @@ void AXYZPlayerController::UpdateVisibleActors()
 void AXYZPlayerController::UpdateMouseCursor()
 {
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
+	if(HitActor && !HitActor->bIsVisible)
+	{
+		HitActor = nullptr;
+	}
 	bool bHoveringEnemy = HitActor && HitActor->TeamId != TeamId;
 
 	if (bAttackModifier && SelectionStructure && !SelectionStructure->IsEmpty()) {
@@ -745,4 +837,42 @@ void AXYZPlayerController::UpdateLoadingScreen_Implementation(const TArray<FStri
 	const float LoadingPercentage)
 {
 	OnLoadingScreenEvent.Broadcast(PlayerNames,Ratings, LoadingPercentage);
+}
+
+void AXYZPlayerController::ClearBuildingPlacement()
+{
+	if(PlacementBuilding)
+	{
+		PlacementBuilding->Destroy();
+	}
+	bIsPlacingBuilding = false;
+	WorkerAbilityIndex = -1;
+	WorkerActorId = -1;
+}
+
+FVector AXYZPlayerController::GetMouseToWorldPosition(APlayerController* PlayerController)
+{
+	if(!PlayerController)
+		return FVector::ZeroVector;
+
+	FVector2D MousePosition;
+	PlayerController->GetMousePosition(MousePosition.X, MousePosition.Y);
+
+	FVector WorldLocation, WorldDirection;
+	PlayerController->DeprojectScreenPositionToWorld(MousePosition.X, MousePosition.Y, WorldLocation, WorldDirection);
+
+	FHitResult HitResult;
+	const FVector Start = WorldLocation;
+	const FVector End = Start + WorldDirection * 10000; 
+
+	FCollisionQueryParams TraceParams(FName(TEXT("MouseToWorldTrace")), true, PlayerController->GetPawn());
+	TraceParams.bTraceComplex = true;  // Trace against complex collision meshes
+	TraceParams.bReturnPhysicalMaterial = false;
+
+	if(GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, TraceParams))
+	{
+		return HitResult.Location;
+	}
+
+	return FVector::ZeroVector;
 }

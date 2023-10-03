@@ -14,6 +14,7 @@ enum class EXYZUnitState : uint8
 	RETURNING,
 	MINING,
 	GATHERING,
+	BUILDING,
 	HOLD,
 	DEAD
 };

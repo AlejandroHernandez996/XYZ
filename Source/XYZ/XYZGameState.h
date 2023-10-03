@@ -58,6 +58,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	float GameTime;
+
+	UFUNCTION()
+	class AXYZActor* GetActorById(int32 ActorId);
 	
 	UFUNCTION()
 	void ProgressMatchState()

@@ -11,6 +11,7 @@ void UXYZTrainingAbilityAction::ProcessAction(TSet<AXYZActor*> Agents)
 	int32 SmallestQueue =  TNumericLimits<int32>::Max();
 	
 	for (AXYZActor* Actor : Agents) {
+		if(!Actor || Actor->State == EXYZUnitState::DEAD) continue;
 		AXYZBuilding* Building = Cast<AXYZBuilding>(Actor);
 		if (Building && Actor->ActorId == ActiveActorId && Building->BuildQueueNum < SmallestQueue) {
 			SmallestQueue = Building->BuildQueueNum;

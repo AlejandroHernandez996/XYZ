@@ -3,3 +3,7 @@
 
 #include "XYZWorkerAbility.h"
 
+void UXYZWorkerAbility::Activate()
+{
+	Super::Activate();
+}

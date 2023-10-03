@@ -218,6 +218,7 @@ void AXYZAIController::XYZHold() {
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius;
     GetXYZActor()->CollisionName = "Pawn";
     bIsMoving = false;
+    GetXYZActor()->TargetActor = nullptr;
     CurrentTargetLocation = GetXYZActor()->GetActorLocation();
 
 }
