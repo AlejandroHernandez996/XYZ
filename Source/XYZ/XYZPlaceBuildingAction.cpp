@@ -4,6 +4,7 @@
 #include "XYZPlaceBuildingAction.h"
 
 #include "XYZWorker.h"
+#include "XYZWorkerAbility.h"
 
 void UXYZPlaceBuildingAction::ProcessAction(TSet<AXYZActor*> Agents)
 {
@@ -20,6 +21,14 @@ void UXYZPlaceBuildingAction::ProcessAction(TSet<AXYZActor*> Agents)
 	
 	if(AvailableWorker)
 	{
+		Cast<UXYZWorkerAbility>(AvailableWorker->Abilities[AbilityIndex])->BuildingLocation = TargetLocation;
 		AvailableWorker->UseAbility(AbilityIndex);
 	}
+}
+
+bool UXYZPlaceBuildingAction::HasAgentComplete(AXYZActor* Agent)
+{
+	if(!Agent) return true;
+	
+	return Agent->State != EXYZUnitState::PLACING && Agent->State != EXYZUnitState::BUILDING;
 }

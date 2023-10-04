@@ -8,13 +8,25 @@
 #include "XYZResourceActor.h"
 #include "XYZAIController.h"
 #include "Engine.h"
+#include "XYZAbilityAction.h"
 #include "XYZGameMode.h"
 #include "XYZGameState.h"
+#include "XYZWorkerAbility.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 void AXYZWorker::BeginPlay() {
     Super::BeginPlay();
     State = EXYZUnitState::GATHERING;
+
+    for(UXYZAbility* Ability : Abilities)
+    {
+        UXYZWorkerAbility* WorkerAbility = Cast<UXYZWorkerAbility>(Ability);
+        if(WorkerAbility)
+        {
+            WorkerAbility->OwningWorker = this;
+        }
+    }
 }
 
 void AXYZWorker::Tick(float DeltaTime) {
@@ -32,6 +44,41 @@ void AXYZWorker::Tick(float DeltaTime) {
 void AXYZWorker::Process(float DeltaTime)
 {
     Super::Process(DeltaTime);
+    if(State == EXYZUnitState::PLACING)
+    {
+        if(ActivePlacementAbility)
+        {
+            FVector WorkerCurrentLocation = GetActorLocation();
+            FVector DirectionToWorker = WorkerCurrentLocation - ActivePlacementAbility->BuildingLocation;
+
+            FVector NormalizedDirection = DirectionToWorker.GetSafeNormal();
+            FVector PlacingLocation = ActivePlacementAbility->BuildingLocation + NormalizedDirection * 100.0f;
+
+            float DistanceThreshold = 1.0f;
+            FVector2D WorkerCurrentLocation2D(WorkerCurrentLocation.X, WorkerCurrentLocation.Y);
+            FVector2D PlacingLocation2D(PlacingLocation.X, PlacingLocation.Y);
+
+            float Distance2D = FVector2D::Distance(WorkerCurrentLocation2D, PlacingLocation2D);
+            UE_LOG(LogTemp, Warning, TEXT("Distance2D: %f"), Distance2D);
+
+            if(Distance2D <= GetCapsuleComponent()->GetScaledCapsuleRadius())
+            {
+                PlaceBuilding();
+            }
+            else
+            {
+                XYZAIController->MoveToLocation(PlacingLocation);
+            }
+        }else
+        {
+            SetState(EXYZUnitState::IDLE);
+        }
+    }
+    if(State == EXYZUnitState::BUILDING)
+    {
+        ActivePlacementAbility = nullptr;
+        SetState(EXYZUnitState::IDLE);
+    }
     if (State == EXYZUnitState::GATHERING) {
         bHasAvoidance = false;
         if (!TargetActor) {
@@ -245,6 +292,15 @@ void AXYZWorker::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLife
 
 void AXYZWorker::SetState(EXYZUnitState NewState)
 {
+    if(State == EXYZUnitState::PLACING)
+    {
+        XYZAIController->StopMovement();
+    }
+    if(State == EXYZUnitState::PLACING && NewState != EXYZUnitState::BUILDING && ActivePlacementAbility)
+    {
+        GetWorld()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += ActivePlacementAbility->MineralCost;
+        ActivePlacementAbility = nullptr;
+    }
     if(State == EXYZUnitState::MINING && NewState != EXYZUnitState::RETURNING && EXYZUnitState::GATHERING != NewState)
     {
         if(AXYZResourceActor* Resource = Cast<AXYZResourceActor>(TargetActor))
@@ -259,7 +315,9 @@ void AXYZWorker::SetState(EXYZUnitState NewState)
         NewState == EXYZUnitState::FOLLOWING ||
         NewState == EXYZUnitState::IDLE ||
         NewState == EXYZUnitState::ATTACK_MOVING ||
-        NewState == EXYZUnitState::ATTACKING)
+        NewState == EXYZUnitState::ATTACKING ||
+        NewState == EXYZUnitState::BUILDING ||
+        NewState == EXYZUnitState::PLACING)
     {
         if(AXYZResourceActor* Resource = Cast<AXYZResourceActor>(TargetActor))
         {
@@ -268,4 +326,47 @@ void AXYZWorker::SetState(EXYZUnitState NewState)
         TargetActor = nullptr;
     }
     Super::SetState(NewState);
+}
+
+void AXYZWorker::PlaceBuilding()
+{
+    if(ActivePlacementAbility)
+    {
+        FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), ActivePlacementAbility->BuildingLocation);
+        FRotator CurrentRotation = GetActorRotation();
+        CurrentRotation.Pitch = LookAtRotation.Pitch;
+        CurrentRotation.Yaw = LookAtRotation.Yaw;
+        SetActorRotation(CurrentRotation);
+    
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+        FVector SpawnLocation = ActivePlacementAbility->BuildingLocation;
+    
+        FVector Start = SpawnLocation + FVector(0, 0, 1000); // Start 1000 units above
+        FVector End = SpawnLocation - FVector(0, 0, 10000);   // End 1000 units below
+
+        FHitResult HitResult;
+
+        bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic);
+
+        if (bHit)
+        {
+            SpawnLocation.Z = HitResult.Location.Z;
+        }
+
+        AXYZActor* SpawnActor = GetWorld()->SpawnActor<AXYZActor>(ActivePlacementAbility->BuildingTemplate, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+        SpawnActor->TeamId = TeamId;
+        GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[SpawnActor->TeamId + 2] += SpawnActor->SupplyGain;
+        GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->AddActorServer(SpawnActor);
+        FVector OffsetLocation = SpawnActor->GetActorLocation();
+        OffsetLocation.Z += SpawnActor->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+        SpawnActor->SetActorLocation(OffsetLocation);
+        ActivePlacementAbility = nullptr;
+        SetState(EXYZUnitState::BUILDING);
+    }else
+    {
+        SetState(EXYZUnitState::IDLE);
+    }
+    
 }

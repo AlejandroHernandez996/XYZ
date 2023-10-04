@@ -395,6 +395,7 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		UE_LOG(LogTemp, Warning, TEXT("Primary Input Released"));
 		if(bIsPlacingBuilding)
 		{
+			ClearBuildingPlacement();
 			return;
 		}
 		if(bBlockPrimaryInputFlagForAttack)

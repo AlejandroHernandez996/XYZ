@@ -47,7 +47,11 @@ public:
 		float FloatSpeed;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 	virtual void SetState(EXYZUnitState State) override;
+	UFUNCTION()
+	void PlaceBuilding();
 	void Process(float DeltaTime) override;
 
 	bool bFirstMineralGathered;
+
+	class UXYZWorkerAbility* ActivePlacementAbility;
 };

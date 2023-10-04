@@ -15,4 +15,5 @@ class XYZ_API UXYZPlaceBuildingAction : public UXYZAbilityAction
 {
 	GENERATED_BODY()
 	void ProcessAction(TSet<AXYZActor*> Agents) override;
+	virtual bool HasAgentComplete(class AXYZActor* Agent) override;
 };

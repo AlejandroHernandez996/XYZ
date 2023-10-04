@@ -29,4 +29,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 SupplyCost = 0;
 	virtual void Activate() override;
+
+	UPROPERTY()
+	FVector BuildingLocation;
 };

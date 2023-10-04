@@ -18,6 +18,7 @@
 #include "XYZAbility.h"
 #include "XYZDeathManager.h"
 #include "XYZMapManager.h"
+#include "XYZWorkerAbility.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 
