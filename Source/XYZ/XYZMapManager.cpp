@@ -6,6 +6,7 @@
 #include "XYZGameMode.h"
 #include "XYZGameState.h"
 #include "XYZPlayerController.h"
+#include "XYZResourceActor.h"
 #include "Misc/FileHelper.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
@@ -70,6 +71,10 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 		ClearVision();
 		for(AXYZActor* Actor : ActorsToUpdate)
 		{
+			if(Actor->IsA(AXYZResourceActor::StaticClass()))
+			{
+				continue;
+			}
 			RemoveActorFromGrid(Actor);
 			AddActorToGrid(Actor);
 		}
@@ -79,6 +84,10 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 		GameState->ActorsByUID.GenerateValueArray(Actors);
 		for(AXYZActor* Actor : Actors)
 		{
+			if(Actor->IsA(AXYZResourceActor::StaticClass()))
+			{
+				continue;
+			}
 			AddActorToGrid(Actor);
 		}
 	}

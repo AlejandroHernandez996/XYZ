@@ -14,7 +14,7 @@ void UXYZPlaceBuildingAction::ProcessAction(TSet<AXYZActor*> Agents)
 		if(!Actor || Actor->State == EXYZUnitState::DEAD) continue;
 		
 		AXYZWorker* Worker = Cast<AXYZWorker>(Actor);
-		if (Worker && Worker->ActorId == ActiveActorId && Worker->State != EXYZUnitState::BUILDING) {
+		if (Worker && Worker->ActorId == ActiveActorId && Worker->State != EXYZUnitState::PLACING && Worker->State != EXYZUnitState::BUILDING) {
 			AvailableWorker = Worker;
 		}
 	}

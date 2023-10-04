@@ -7,8 +7,6 @@
 #include "Engine.h"
 #include "Net/UnrealNetwork.h"
 #include "UObject/ConstructorHelpers.h"
-#include "XYZGameMode.h"
-#include "XYZPlayerController.h"
 
 AXYZGameState::AXYZGameState() {
 	PrimaryActorTick.bCanEverTick = true;

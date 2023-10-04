@@ -49,25 +49,49 @@ void AXYZWorker::Process(float DeltaTime)
         if(ActivePlacementAbility)
         {
             FVector WorkerCurrentLocation = GetActorLocation();
-            FVector DirectionToWorker = WorkerCurrentLocation - ActivePlacementAbility->BuildingLocation;
+            FVector PlacingLocation = ActivePlacementAbility->BuildingLocation;
 
-            FVector NormalizedDirection = DirectionToWorker.GetSafeNormal();
-            FVector PlacingLocation = ActivePlacementAbility->BuildingLocation + NormalizedDirection * 100.0f;
-
-            float DistanceThreshold = 1.0f;
             FVector2D WorkerCurrentLocation2D(WorkerCurrentLocation.X, WorkerCurrentLocation.Y);
             FVector2D PlacingLocation2D(PlacingLocation.X, PlacingLocation.Y);
 
             float Distance2D = FVector2D::Distance(WorkerCurrentLocation2D, PlacingLocation2D);
             UE_LOG(LogTemp, Warning, TEXT("Distance2D: %f"), Distance2D);
 
-            if(Distance2D <= GetCapsuleComponent()->GetScaledCapsuleRadius())
+            if(Distance2D <= GetCapsuleComponent()->GetScaledCapsuleRadius()*2.5f)
             {
                 PlaceBuilding();
             }
-            else
+            else if(XYZAIController)
             {
-                XYZAIController->MoveToLocation(PlacingLocation);
+                FVector Start = PlacingLocation;
+                Start.Z = 10000.0f;
+                FVector End = PlacingLocation;
+                End.Z = -10000.0f;
+                FHitResult HitResult;
+
+                FCollisionQueryParams CollisionParams;
+
+                FCollisionObjectQueryParams ObjectQueryParams;
+                ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
+
+                bool bHit = GetWorld()->LineTraceSingleByObjectType(
+                    HitResult,
+                    Start,
+                    End,
+                    ObjectQueryParams,
+                    CollisionParams
+                );
+                if (bHit)
+                {
+                    float HitZValue = HitResult.Location.Z;
+                    XYZAIController->MoveToLocation(FVector(PlacingLocation.X, PlacingLocation.Y, HitZValue));
+                }else
+                {
+                    SetState(EXYZUnitState::IDLE);
+                }
+            }else
+            {
+                SetState(EXYZUnitState::IDLE);
             }
         }else
         {
@@ -343,8 +367,8 @@ void AXYZWorker::PlaceBuilding()
 
         FVector SpawnLocation = ActivePlacementAbility->BuildingLocation;
     
-        FVector Start = SpawnLocation + FVector(0, 0, 1000); // Start 1000 units above
-        FVector End = SpawnLocation - FVector(0, 0, 10000);   // End 1000 units below
+        FVector Start = SpawnLocation + FVector(0, 0, 1000); 
+        FVector End = SpawnLocation - FVector(0, 0, 10000);  
 
         FHitResult HitResult;
 

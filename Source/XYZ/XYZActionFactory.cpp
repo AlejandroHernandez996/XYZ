@@ -83,6 +83,8 @@ UXYZAction* UXYZActionFactory::CreateAction(TArray<int32> _SelectedActors, AXYZA
         }
         if(ActiveActor)
         {
+            if(AbilityIndex >= ActiveActor->Abilities.Num()) return nullptr;
+            
             if(ActiveActor->Abilities[AbilityIndex]->IsA(UXYZBuildingAbility::StaticClass()))
             {
                 f = "Training_Ability_Action_" + FString::FromInt(ActionCount);

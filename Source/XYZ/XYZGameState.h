@@ -42,7 +42,7 @@ public:
 		TArray<int32> SupplyByTeamId = { 0,0,0,0 };
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	bool bHasGameEnded;
-	
+
 	TMap<int32,TMap<int32, int32>> ReservedSupplyByBuilding;
 	UFUNCTION()
 	TArray<class AXYZActor*> GetAllActors();
@@ -59,6 +59,22 @@ public:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	float GameTime;
 
+	UFUNCTION(BlueprintCallable)
+	FString GetFormattedGameTime()
+	{
+		int32 TotalSeconds = FMath::RoundToInt(GameTime);
+
+		int32 Hours = TotalSeconds / 3600;
+		TotalSeconds %= 3600;
+
+		int32 Minutes = TotalSeconds / 60;
+		TotalSeconds %= 60;
+
+		int32 Seconds = TotalSeconds;
+
+		return FString::Printf(TEXT("%02d:%02d:%02d"), Hours, Minutes, Seconds);
+	}
+	
 	UFUNCTION()
 	class AXYZActor* GetActorById(int32 ActorId);
 	
