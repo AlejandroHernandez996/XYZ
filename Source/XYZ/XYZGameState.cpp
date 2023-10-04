@@ -44,7 +44,7 @@ AXYZActor* AXYZGameState::GetActorById(int32 ActorId)
 	ActorsByUID.GenerateValueArray(Actors);
 	for(AXYZActor* Actor : Actors)
 	{
-		if(Actor->ActorId == ActorId)
+		if(Actor && Actor->ActorId == ActorId)
 		{
 			return Actor;
 		}

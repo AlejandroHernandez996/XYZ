@@ -127,7 +127,8 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 	if(PlacementBuilding)
 	{
 		FVector NewLocation = GetMouseToWorldPosition(this);
-
+		NewLocation.X = FMath::RoundToInt(NewLocation.X / 100.0f) * 100;
+		NewLocation.Y = FMath::RoundToInt(NewLocation.Y / 100.0f) * 100;
 		UCapsuleComponent* Capsule = Cast<UCapsuleComponent>(PlacementBuilding->GetComponentByClass(UCapsuleComponent::StaticClass()));
 		if(Capsule)
 		{
@@ -289,7 +290,7 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			}
 			if(bIsPlacingBuilding && PlacementBuilding && WorkerAbilityIndex != -1 && WorkerActorId != -1)
 			{
-				FXYZInputMessage AbilityInput = FXYZInputMessage(PlayerState->GetUniqueId().ToString(), SelectionStructure->ToActorIdArray(), -1, WorldHit.Location, EXYZInputType::ABILITY, bPrimaryModifier);
+				FXYZInputMessage AbilityInput = FXYZInputMessage(PlayerState->GetUniqueId().ToString(), SelectionStructure->ToActorIdArray(), -1, PlacementBuilding->GetActorLocation(), EXYZInputType::ABILITY, bPrimaryModifier);
 				AbilityInput.AbilityIndex = WorkerAbilityIndex;
 				AbilityInput.ActiveActorId = WorkerActorId;
 				QueueInput(AbilityInput);
