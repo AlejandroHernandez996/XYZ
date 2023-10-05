@@ -96,6 +96,8 @@ void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
 }
 
 void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
+    if(BuildingState != EXYZBuildingState::BUILT) return;
+    
     AXYZGameState* GameState = GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>();
     if (BuildQueueNum < MAX_BUILD_QUEUE_SIZE && 
         GameState->MineralsByTeamId[TeamId] - BuildingAbility->MineralCost >= 0) {
@@ -190,5 +192,31 @@ void AXYZBuilding::CancelProduction() {
 void AXYZBuilding::Process(float DeltaTime)
 {
     Super::Process(DeltaTime);
-    ProcessBuildQueue(GetWorld()->DeltaTimeSeconds);
+    switch (BuildingState) {
+    case EXYZBuildingState::PLACED:
+        BuildingState = EXYZBuildingState::BUILDING;
+        break;
+    case EXYZBuildingState::BUILDING:
+        if(TimeToBuild >= TotalBuildTime)
+        {
+            BuildingState = EXYZBuildingState::BUILT;
+        }else
+        {
+            Build(DeltaTime);
+        }
+        break;
+    case EXYZBuildingState::BUILT:
+        ProcessBuildQueue(GetWorld()->DeltaTimeSeconds);
+        break;
+    default: ;
+    }
 }
+
+void AXYZBuilding::Build(float DeltaTime)
+{
+    TimeToBuild += DeltaTime;
+    float TickPercentageBuilt = DeltaTime/TotalBuildTime;
+    float TickBuildHealth = MaxHealth * TickPercentageBuilt;
+    Health = FMath::Clamp(Health+TickBuildHealth,0.0f, MaxHealth);
+}
+

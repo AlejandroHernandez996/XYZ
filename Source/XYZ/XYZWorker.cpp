@@ -387,6 +387,12 @@ void AXYZWorker::PlaceBuilding()
         OffsetLocation.Z += SpawnActor->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
         SpawnActor->SetActorLocation(OffsetLocation);
         ActivePlacementAbility = nullptr;
+        AXYZBuilding* SpawnedBuilding = Cast<AXYZBuilding>(SpawnActor);
+        if(Cast<AXYZBuilding>(SpawnActor))
+        {
+            SpawnedBuilding->BuildingState = EXYZBuildingState::PLACED;
+            SpawnedBuilding->Health = 5.0f;
+        }
         SetState(EXYZUnitState::BUILDING);
     }else
     {

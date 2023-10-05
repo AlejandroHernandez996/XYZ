@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "XYZActor.h"
+#include "XYZBuildingState.h"
 #include "XYZBuilding.generated.h"
 
 /**
@@ -15,12 +16,13 @@ class XYZ_API AXYZBuilding : public AXYZActor
 	GENERATED_BODY()
 public:
 	virtual void Tick(float DeltaTime);
-	UPROPERTY(BlueprintReadOnly)
-	int32 MAX_BUILD_QUEUE_SIZE = 6;
-	UPROPERTY(BlueprintReadOnly, Replicated)
-		int32 BuildQueueNum = 0;
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+
+	UPROPERTY(BlueprintReadOnly)
+		int32 MAX_BUILD_QUEUE_SIZE = 6;
+	UPROPERTY(BlueprintReadOnly, Replicated)
+		int32 BuildQueueNum = 0;
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		FVector RallyPoint;
 	UPROPERTY(BlueprintReadOnly, Replicated)
@@ -29,14 +31,17 @@ public:
 		class AXYZActor* RallyTarget;
 	UPROPERTY()
 		bool bCanRally;
-
 	TQueue<class UXYZBuildingAbility*> BuildQueue;
+
+	UPROPERTY()
+	EXYZBuildingState BuildingState = EXYZBuildingState::BUILT;
+	
 	UFUNCTION()
 		void EnqueueAbility(class UXYZBuildingAbility* BuildingAbility);
-	UPROPERTY(BlueprintReadOnly, Replicated)
-		float TimeToBuild = -1.0f;
-	UPROPERTY(BlueprintReadOnly, Replicated)
-		float TotalBuildTime = -1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
+		float TimeToBuild;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
+		float TotalBuildTime;
 	UFUNCTION()
 		void TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate);
 	UFUNCTION()
@@ -45,5 +50,8 @@ public:
 		void CancelProduction();
 	bool bIsTraining;
 
+	UFUNCTION()
+	void Build(float DeltaTime);
+	
 	void Process(float DeltaTime) override;
 };

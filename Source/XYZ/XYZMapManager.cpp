@@ -71,7 +71,7 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 		ClearVision();
 		for(AXYZActor* Actor : ActorsToUpdate)
 		{
-			if(Actor->IsA(AXYZResourceActor::StaticClass()))
+			if(!Actor || Actor->IsA(AXYZResourceActor::StaticClass()))
 			{
 				continue;
 			}
@@ -84,7 +84,7 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 		GameState->ActorsByUID.GenerateValueArray(Actors);
 		for(AXYZActor* Actor : Actors)
 		{
-			if(Actor->IsA(AXYZResourceActor::StaticClass()))
+			if(!Actor ||Actor->IsA(AXYZResourceActor::StaticClass()))
 			{
 				continue;
 			}
