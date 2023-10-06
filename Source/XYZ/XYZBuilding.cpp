@@ -200,6 +200,7 @@ void AXYZBuilding::Process(float DeltaTime)
         if(TimeToBuild >= TotalBuildTime)
         {
             BuildingState = EXYZBuildingState::BUILT;
+            GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId + 2] += SupplyGain;
         }else
         {
             Build(DeltaTime);

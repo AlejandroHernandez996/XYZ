@@ -11,6 +11,7 @@
 #include "XYZAbilityAction.h"
 #include "XYZGameMode.h"
 #include "XYZGameState.h"
+#include "XYZMapManager.h"
 #include "XYZWorkerAbility.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -265,6 +266,9 @@ void AXYZWorker::FindClosestBase()
 
     for (AActor* Base : FoundBases)
     {
+        AXYZBaseBuilding* BaseBuilding = Cast<AXYZBaseBuilding>(Base);
+        if(!BaseBuilding || BaseBuilding->BuildingState != EXYZBuildingState::BUILT) continue;
+        
         float Distance = FVector::Dist(Base->GetActorLocation(), GetActorLocation());
         if (Distance < ClosestDistance && Base->IsA(AXYZBaseBuilding::StaticClass()) && Cast<AXYZBaseBuilding>(Base)->TeamId == TeamId)
         {
@@ -381,7 +385,6 @@ void AXYZWorker::PlaceBuilding()
 
         AXYZActor* SpawnActor = GetWorld()->SpawnActor<AXYZActor>(ActivePlacementAbility->BuildingTemplate, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
         SpawnActor->TeamId = TeamId;
-        GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[SpawnActor->TeamId + 2] += SpawnActor->SupplyGain;
         GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->AddActorServer(SpawnActor);
         FVector OffsetLocation = SpawnActor->GetActorLocation();
         OffsetLocation.Z += SpawnActor->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
@@ -393,6 +396,7 @@ void AXYZWorker::PlaceBuilding()
             SpawnedBuilding->BuildingState = EXYZBuildingState::PLACED;
             SpawnedBuilding->Health = 5.0f;
         }
+        GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(SpawnActor);
         SetState(EXYZUnitState::BUILDING);
     }else
     {
