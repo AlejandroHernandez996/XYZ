@@ -185,7 +185,7 @@ void AXYZWorker::Gather() {
         FVector2D TargetLocation2D = FVector2D(ClosestPoint.X, ClosestPoint.Y);
         float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
 
-        if (DistanceToTarget <= CurrentCapsuleRadius * 3.0f)
+        if (DistanceToTarget <= CurrentCapsuleRadius * 1.5f)
         {
             SetState(EXYZUnitState::MINING);
             ResourceActor->AddWorker(this);
