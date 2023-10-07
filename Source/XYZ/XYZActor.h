@@ -159,4 +159,13 @@ public:
     UPROPERTY()
     bool bIsVisible = true;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
+    TArray<UMaterialInstance*> TeamColors;
+    UPROPERTY()
+    bool bSetTeamColor = false;
+    UFUNCTION()
+    void SetTeamColor();
+
+    UFUNCTION()
+    int GetActorPriority(const AXYZActor* Actor);
 };

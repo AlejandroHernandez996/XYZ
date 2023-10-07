@@ -19,6 +19,16 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
         FString Name;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Image")
+    UTexture2D* AbilityImage;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    int32 MineralCost;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    int32 SupplyCost;
+
+    
     UFUNCTION()
         virtual void Activate() {};
 };

@@ -81,6 +81,11 @@ void AXYZActor::Tick(float DeltaTime)
 	{
 		GameState->AddActorClient(this, UActorId);
 	}
+	if (!HasAuthority() && !bSetTeamColor && (TeamId == 0 || TeamId == 1))
+	{
+		SetTeamColor();
+		bSetTeamColor = true; 
+	}
 }
 
 void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -151,25 +156,34 @@ AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors)
 	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
 	TSet<AXYZActor*> ActorsInVision = MapManager->FindActorsInVisionRange(this);
 	FVector CurrentLocation = this->GetActorLocation();
+	
 	AXYZActor* ClosestActor = nullptr;
 	float ClosestDistanceSqr = FLT_MAX;
+	int ClosestActorPriority = INT_MAX;
+
 	for (AXYZActor* OtherActor : ActorsInVision)
 	{
 		bool bTargetIsFriendlyAndShouldIgnore = OtherActor && OtherActor->TeamId == TeamId && bIgnoreFriendlyActors;
 		if (!OtherActor ||
 			OtherActor == this ||
 			bTargetIsFriendlyAndShouldIgnore ||
-			OtherActor->Health <= 0.0f ||
+			OtherActor->State == EXYZUnitState::DEAD ||
 			OtherActor->IsA(AXYZResourceActor::StaticClass()))
 		{
 			continue;
 		}
 
 		float DistanceSqr = FVector::DistSquaredXY(CurrentLocation, OtherActor->GetActorLocation());
-		if (DistanceSqr < ClosestDistanceSqr && DistanceSqr <= FMath::Square(VisionRange))
+		int ActorPriority = GetActorPriority(OtherActor);
+
+		bool bIsCloser = DistanceSqr < ClosestDistanceSqr && DistanceSqr <= FMath::Square(VisionRange);
+		bool bHasHigherPriority = (DistanceSqr == ClosestDistanceSqr) && (ActorPriority < ClosestActorPriority);
+
+		if (bIsCloser || bHasHigherPriority)
 		{
 			ClosestDistanceSqr = DistanceSqr;
 			ClosestActor = OtherActor;
+			ClosestActorPriority = ActorPriority;
 		}
 	}
 	
@@ -378,4 +392,35 @@ void AXYZActor::Process(float DeltaTime)
 		GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(this);
 		LastLocation = GetActorLocation();
 	}
+}
+
+void AXYZActor::SetTeamColor()
+{
+	if (TeamColors.IsValidIndex(TeamId))
+	{
+		UMaterialInstance* DesiredMaterial = TeamColors[TeamId];
+
+		TArray<UActorComponent*> StaticMeshComponents = GetComponentsByTag(UStaticMeshComponent::StaticClass(), FName("TeamColor"));
+		TArray<UActorComponent*> SkeletalMeshComponents = GetComponentsByTag(USkeletalMeshComponent::StaticClass(), FName("TeamColor"));
+		StaticMeshComponents.Append(SkeletalMeshComponents);
+
+		for (UActorComponent* Component : StaticMeshComponents)
+		{
+			if (UStaticMeshComponent* MeshComp = Cast<UStaticMeshComponent>(Component))
+			{
+				MeshComp->SetMaterial(0, DesiredMaterial);
+			}
+			else if (USkeletalMeshComponent* SkelMeshComp = Cast<USkeletalMeshComponent>(Component))
+			{
+				SkelMeshComp->SetMaterial(0, DesiredMaterial);
+			}
+		}
+	}
+}
+
+int AXYZActor::GetActorPriority(const AXYZActor* Actor)
+{
+	if (Actor->IsA(AXYZUnit::StaticClass())) return 1;
+	if (Actor->IsA(AXYZBuilding::StaticClass())) return 2;
+	return 3;
 }

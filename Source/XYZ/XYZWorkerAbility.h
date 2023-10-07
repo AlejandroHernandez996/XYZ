@@ -24,10 +24,6 @@ public:
 	class AXYZWorker* OwningWorker;
 	UPROPERTY()
 	bool bCanCancel = true;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 MineralCost = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 SupplyCost = 0;
 	virtual void Activate() override;
 
 	UPROPERTY()
