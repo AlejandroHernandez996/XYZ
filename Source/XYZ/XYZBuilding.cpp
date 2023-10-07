@@ -3,12 +3,14 @@
 
 #include "XYZBuilding.h"
 #include "Engine.h"
+#include "SoundTypes.h"
 #include "Net/UnrealNetwork.h"
 #include "XYZBuildingAbility.h"
 #include "XYZGameState.h"
 #include "XYZGameMode.h"
 #include "XYZPlayerController.h"
 #include "XYZAIController.h"
+#include "XYZActorCache.h"
 
 void AXYZBuilding::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
@@ -99,11 +101,17 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
     if(BuildingState != EXYZBuildingState::BUILT) return;
     
     AXYZGameState* GameState = GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>();
+    AXYZGameMode* GameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
+
     if (BuildQueueNum < MAX_BUILD_QUEUE_SIZE && 
         GameState->MineralsByTeamId[TeamId] - BuildingAbility->MineralCost >= 0) {
         GameState->MineralsByTeamId[TeamId] -= BuildingAbility->MineralCost;
         BuildQueue.Enqueue(BuildingAbility);
         BuildQueueNum++;
+        if(GameState->SupplyByTeamId[TeamId] + BuildingAbility->SupplyCost > GameState->SupplyByTeamId[TeamId+2])
+        {
+            GameMode->TeamIdToPlayerController[TeamId]->PlaySound(ESoundTypes::SUPPLY);
+        }
     }
 }
 
@@ -201,6 +209,11 @@ void AXYZBuilding::Process(float DeltaTime)
         {
             BuildingState = EXYZBuildingState::BUILT;
             GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId + 2] += SupplyGain;
+            UXYZActorCache* ActorCache = GetWorld()->GetAuthGameMode<AXYZGameMode>()->ActorCache;
+            if(ActorCache)
+            {
+                ActorCache->AddActorCount(TeamId, ActorId);
+            }
         }else
         {
             Build(DeltaTime);

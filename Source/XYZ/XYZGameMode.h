@@ -56,6 +56,10 @@ public:
 	class UXYZMatchManager* MatchManager;
 	UPROPERTY()
 	class UXYZMapManager* MapManager;
+	
+	UPROPERTY()
+	class UXYZActorCache* ActorCache;
+	
 	UPROPERTY()
 		TSet<class AXYZPlayerController*> PlayerControllers;
 	TMap<int32, AXYZPlayerController*> TeamIdToPlayerController;

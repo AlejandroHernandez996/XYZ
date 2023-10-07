@@ -7,7 +7,6 @@
 
 AXYZFogOfWar::AXYZFogOfWar()
 {
-	//PrimaryActorTick.TickInterval = .5f;
 	PrimaryActorTick.bCanEverTick = true;
 }
 

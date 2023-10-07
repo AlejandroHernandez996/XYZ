@@ -63,10 +63,11 @@ void AXYZActor::BeginPlay()
 	for (TSubclassOf<class UXYZAbility> AbilityTemplate : AbilityTemplates)
 	{
 		UXYZAbility* Ability = NewObject<UXYZAbility>(this, AbilityTemplate,
-		                                              FName(GetName() + "Ability_" + FString::FromInt(AbilityIndex)));
+		                                              FName(GetName() + "_Ability_" + FString::FromInt(AbilityIndex)));
 		if (Ability)
 		{
 			Abilities.Add(Ability);
+			Ability->OwningActor = this;
 		}
 		AbilityIndex++;
 	}

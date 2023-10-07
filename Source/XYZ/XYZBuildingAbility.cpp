@@ -4,6 +4,11 @@
 #include "XYZBuildingAbility.h"
 #include "XYZBuilding.h"
 
-void UXYZBuildingAbility::Activate() {
-	OwningBuilding->EnqueueAbility(this);
+bool UXYZBuildingAbility::Activate() {
+	if(Super::Activate())
+	{
+		OwningBuilding->EnqueueAbility(this);
+		return true;
+	}
+	return false;
 }

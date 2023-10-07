@@ -21,6 +21,7 @@
 #include "XYZBuilding.h"
 #include "XYZFogOfWar.h"
 #include "XYZMinimapManager.h"
+#include "XYZSoundManager.h"
 #include "XYZWorkerAbility.h"
 #include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -877,4 +878,11 @@ FVector AXYZPlayerController::GetMouseToWorldPosition(APlayerController* PlayerC
 	}
 
 	return FVector::ZeroVector;
+}
+
+void AXYZPlayerController::PlaySound_Implementation(ESoundTypes SoundType)
+{
+	if(XYZGameState && XYZGameState->SoundManager){
+		XYZGameState->SoundManager->PlaySound(SoundType);
+	}
 }

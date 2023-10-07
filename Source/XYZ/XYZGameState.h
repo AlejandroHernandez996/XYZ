@@ -5,12 +5,8 @@
 #include "CoreMinimal.h"
 #include "XYZMatchState.h"
 #include "GameFramework/GameStateBase.h"
-#include "XYZResourceType.h"
 #include "XYZGameState.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class XYZ_API AXYZGameState : public AGameStateBase
 {
@@ -20,7 +16,7 @@ public:
 	AXYZGameState();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	
+
 	UFUNCTION()
 	void AddActorServer(class AXYZActor* Actor);
 	UFUNCTION()
@@ -103,4 +99,7 @@ public:
 		default: ;
 		}
 	}
+
+	UPROPERTY()
+	class AXYZSoundManager* SoundManager;
 };

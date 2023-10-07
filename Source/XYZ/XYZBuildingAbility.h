@@ -20,5 +20,5 @@ public:
 		class AXYZBuilding* OwningBuilding;
 	UPROPERTY()
 		bool bCanCancel = true;
-	virtual void Activate() override;
+	virtual bool Activate() override;
 };

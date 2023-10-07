@@ -1,6 +1,7 @@
 ﻿#include "XYZDeathManager.h"
 #include "DeathStruct.h"
 #include "XYZActor.h"
+#include "XYZActorCache.h"
 #include "XYZGameMode.h"
 #include "XYZGameState.h"
 #include "XYZPlayerController.h"
@@ -13,11 +14,18 @@
 
 void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 {
+	if(!Actor) return;
 	
 	FDeathStruct DeathStruct(Actor, CurrentTime + 2.0f);
 	AXYZGameState* XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
 	AXYZGameMode* XYZGameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
 
+	UXYZActorCache* ActorCache = GetWorld()->GetAuthGameMode<AXYZGameMode>()->ActorCache;
+	if(ActorCache)
+	{
+		ActorCache->RemoveActorCount(Actor->TeamId, Actor->ActorId);
+	}
+	
 	XYZGameMode->MapManager->RemoveActorFromGrid(Actor);
 	for (AXYZPlayerController* XYZController : XYZGameMode->PlayerControllers)
 	{

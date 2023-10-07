@@ -1,10 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "XYZGameState.h"
 #include "EngineUtils.h"
 #include "XYZActor.h"
 #include "Engine.h"
+#include "XYZActorCache.h"
+#include "XYZBuilding.h"
+#include "XYZGameMode.h"
+#include "XYZSoundManager.h"
 #include "Net/UnrealNetwork.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -16,7 +18,14 @@ void AXYZGameState::BeginPlay() {
 }
 void AXYZGameState::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	
+
+	if(!SoundManager)
+	{
+		for (TActorIterator<AXYZSoundManager> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		{
+			SoundManager = *ActorItr;
+		}
+	}
 }
 
 TArray<class AXYZActor*> AXYZGameState::GetAllActors() {
@@ -54,6 +63,11 @@ void AXYZGameState::AddActorServer(AXYZActor* Actor)
 {
 	if(!ActorsByUID.Contains(Actor->UActorId))
 	{
+		UXYZActorCache* ActorCache = GetWorld()->GetAuthGameMode<AXYZGameMode>()->ActorCache;
+		if(ActorCache && !Actor->IsA(AXYZBuilding::StaticClass()))
+		{
+			ActorCache->AddActorCount(Actor->TeamId, Actor->ActorId);
+		}
 		Actor->UActorId = ActorIndex;
 		ActorsByUID.Add(ActorIndex, Actor);
 		ActorIndex++;

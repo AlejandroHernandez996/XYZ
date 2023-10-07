@@ -28,7 +28,25 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     int32 SupplyCost;
 
+    UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Requirements")
+    TMap<int32, FString> ActorRequirements;
+
+    UPROPERTY()
+    class AXYZActor* OwningActor;
     
     UFUNCTION()
-        virtual void Activate() {};
+        virtual bool Activate();
+
+    UFUNCTION(BlueprintCallable)
+    FString GetRequirementsToString()
+    {
+        FString RequirementsString = "";
+    
+        for (const auto& Elem : ActorRequirements)
+        {
+            RequirementsString += FString::Printf(TEXT("%s\n"), *Elem.Value);
+        }
+    
+        return RequirementsString;
+    }
 };

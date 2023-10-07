@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AudioDeviceManager.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
@@ -261,4 +262,8 @@ public:
 
 	UFUNCTION()
 	FVector GetMouseToWorldPosition(APlayerController* PlayerController);
+
+	UFUNCTION(Reliable, Client)
+	void PlaySound(ESoundTypes SoundType);
+	void PlaySound_Implementation(ESoundTypes SoundType);
 };

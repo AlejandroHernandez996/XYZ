@@ -24,7 +24,7 @@ public:
 	class AXYZWorker* OwningWorker;
 	UPROPERTY()
 	bool bCanCancel = true;
-	virtual void Activate() override;
+	virtual bool Activate() override;
 
 	UPROPERTY()
 	FVector BuildingLocation;

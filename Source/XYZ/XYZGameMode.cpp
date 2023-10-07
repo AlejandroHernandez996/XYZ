@@ -12,6 +12,7 @@
 #include "SessionHandler.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
+#include "XYZActorCache.h"
 #include "XYZBaseBuilding.h"
 #include "XYZDeathManager.h"
 #include "XYZMapManager.h"
@@ -47,11 +48,15 @@ void AXYZGameMode::BeginPlay() {
     MapManager->GameMode = this;
     MapManager->InitializeGrid();
 
+    ActorCache = NewObject<UXYZActorCache>(this, UXYZActorCache::StaticClass(), "ActorCache");
+    ActorCache->ActorCountsByTeamId.Add(FActorCount());
+    ActorCache->ActorCountsByTeamId.Add(FActorCount());
+
     SessionHandler = NewObject<USessionHandler>(this);
     UserRetriever = NewObject<UUserInfoRetriver>(this);
     UserStatRetriever = NewObject<UUserStatRetriever>(this);
     UserStatUpdater = NewObject<UUserStatUpdater>(this);
-
+    
     bAllExistingPlayersRegistered = false;
 	bUseSeamlessTravel = true;
 

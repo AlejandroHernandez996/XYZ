@@ -4,6 +4,7 @@
 #include "XYZUnit.h"
 
 #include "XYZAIController.h"
+#include "XYZWorker.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -24,7 +25,7 @@ void AXYZUnit::Process(float DeltaTime)
 	{
 		ScanXYZActorsAhead();
 	}
-	if (State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::IDLE || State == EXYZUnitState::ATTACKING ||
+	if (State == EXYZUnitState::ATTACK_MOVING || (State == EXYZUnitState::IDLE && !this->IsA(AXYZWorker::StaticClass())) || State == EXYZUnitState::ATTACKING ||
 		State == EXYZUnitState::HOLD)
 	{
 		if (!TargetActor || TargetActor->Health <= 0.0f)
