@@ -74,7 +74,6 @@ void UXYZBlobManager::QueueAction(UXYZAction* Action) {
         for (UXYZBlob* Blob : ActiveBlobs) {
             bIsBlobEqual = true;
             if (Blob->AgentsInBlob.Num() != Action->ActorSet.Num()) {
-                bIsBlobEqual = false;
                 continue;
             }
             for (AXYZActor* Agent : Blob->AgentsInBlob) {

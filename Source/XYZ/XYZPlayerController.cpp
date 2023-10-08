@@ -883,6 +883,6 @@ FVector AXYZPlayerController::GetMouseToWorldPosition(APlayerController* PlayerC
 void AXYZPlayerController::PlaySound_Implementation(ESoundTypes SoundType)
 {
 	if(XYZGameState && XYZGameState->SoundManager){
-		XYZGameState->SoundManager->PlaySound(SoundType);
+		XYZGameState->SoundManager->PlayNotification(SoundType);
 	}
 }

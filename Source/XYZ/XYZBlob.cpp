@@ -69,9 +69,6 @@ void UXYZBlob::Process(float DeltaSeconds)
                         }
                     }
                 }
-                //if (Agent && CurrentAction && CurrentAction->HasAgentComplete(Agent)) {
-                //    AgentsToBeCompleted.Add(Agent);
-                //}
             }
             for (AXYZActor* Agent : AgentsToBeCompleted) {
                 CurrentNode->ProcessingAgents.Remove(Agent);
@@ -125,12 +122,14 @@ void UXYZBlob::AddAction(UXYZAction* Action) {
 }
 
 void UXYZBlob::RemoveAgent(AXYZActor* Agent) {
-    if (Agent && AgentsInBlob.Contains(Agent)) {
+    if (Agent) {
         AgentsInBlob.Remove(Agent);
-        if (AgentToNodeCache.Contains(Agent)) {
+        if(AgentToNodeCache.Contains(Agent) && AgentToNodeCache[Agent].Get())
+        {
             AgentToNodeCache[Agent].Get()->RemoveAgent(Agent);
             AgentToNodeCache.Remove(Agent);
         }
+        
     }
 }
 

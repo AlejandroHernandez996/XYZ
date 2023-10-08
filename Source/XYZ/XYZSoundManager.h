@@ -17,10 +17,21 @@ protected:
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	TMap<ESoundTypes, class USoundBase*> SoundTypeToSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundBase* BackgroundSound;
+	
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void PlayNotification(ESoundTypes SoundType);
 
 	UFUNCTION(BlueprintCallable, Category = "Sound")
-	void PlaySound(ESoundTypes SoundType);
-
+	void PlayBackgroundMusic();
+	
 	UPROPERTY(VisibleAnywhere, Category = "Sound")
-	class UAudioComponent* AudioComponent;
+	class UAudioComponent* NotificationAudioComponent;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	class UAudioComponent* BackgroundAudioComponent;
+	
+	UPROPERTY()
+	bool bIsPlayingBGMusic;
 };

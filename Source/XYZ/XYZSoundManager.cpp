@@ -4,7 +4,9 @@
 AXYZSoundManager::AXYZSoundManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	NotificationAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("NotificationAudioComponent"));
+	BackgroundAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("BackgroundAudioComponent"));
+
 }
 
 void AXYZSoundManager::BeginPlay()
@@ -15,17 +17,28 @@ void AXYZSoundManager::BeginPlay()
 void AXYZSoundManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
 }
 
-void AXYZSoundManager::PlaySound(ESoundTypes SoundType)
+void AXYZSoundManager::PlayNotification(ESoundTypes SoundType)
 {
 	if (SoundTypeToSound.Contains(SoundType))
 	{
 		USoundBase* SoundToPlay = SoundTypeToSound[SoundType];
 		if (SoundToPlay)
 		{
-			AudioComponent->SetSound(SoundToPlay);
-			AudioComponent->Play();
+			NotificationAudioComponent->SetSound(SoundToPlay);
+			NotificationAudioComponent->Play();
 		}
+	}
+}
+
+void AXYZSoundManager::PlayBackgroundMusic()
+{
+	if(!bIsPlayingBGMusic && BackgroundAudioComponent && BackgroundSound)
+	{
+		BackgroundAudioComponent->SetSound(BackgroundSound);
+		BackgroundAudioComponent->Play();
+		bIsPlayingBGMusic = true;
 	}
 }

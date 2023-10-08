@@ -26,6 +26,11 @@ void AXYZGameState::Tick(float DeltaTime) {
 			SoundManager = *ActorItr;
 		}
 	}
+
+	if(!HasAuthority() && SoundManager && MatchState == EXYZMatchState::IN_PROGRESS)
+	{
+		SoundManager->PlayBackgroundMusic();
+	}
 }
 
 TArray<class AXYZActor*> AXYZGameState::GetAllActors() {
