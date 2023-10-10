@@ -25,9 +25,17 @@ void AXYZMinimapManager::Tick(float DeltaTime)
 	TArray<FVector2D> UnitCoords;
 	TArray<FColor> UnitColors;
 
+	for (auto It = VisibleActors.CreateIterator(); It; ++It)
+	{
+		AXYZActor* Actor = *It;
+		if (Actor && Actor->State == EXYZUnitState::DEAD)
+		{
+			It.RemoveCurrent();
+		}
+	}
+	
 	for(AXYZActor* VisibleActor : VisibleActors)
 	{
-		if(!VisibleActor) continue;
 		UnitCoords.Add(FVector2D(MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().X / MinimapSize),
 							MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().Y / MinimapSize)));
 		if(VisibleActor->TeamId == TeamId)
