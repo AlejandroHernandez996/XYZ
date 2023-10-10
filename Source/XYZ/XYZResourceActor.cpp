@@ -9,6 +9,17 @@ void AXYZResourceActor::Process(float DeltaSeconds)
 {
 	Super::Process(DeltaSeconds);
 	CurrentWorkers = Workers.Num();
+
+	TArray<AXYZWorker*> WorkerArray;
+	Workers.GenerateKeyArray(WorkerArray);
+
+	for(AXYZWorker* Worker : WorkerArray)
+	{
+		if(!Worker || (Worker->State != EXYZUnitState::GATHERING && Worker->State != EXYZUnitState::MINING && Worker->State != EXYZUnitState::RETURNING))
+		{
+			RemoveWorker(Worker);
+		}
+	}
 }
 
 void AXYZResourceActor::AddWorker(AXYZWorker* Worker)
@@ -20,6 +31,10 @@ void AXYZResourceActor::AddWorker(AXYZWorker* Worker)
 void AXYZResourceActor::RemoveWorker(const AXYZWorker* Worker)
 {
 	if(Workers.Contains(Worker)){
+		if(Worker && Worker->TargetActor == this)
+		{
+			Worker->TargetActor = nullptr;
+		}
 		Workers.Remove(Worker);
 	}
 }

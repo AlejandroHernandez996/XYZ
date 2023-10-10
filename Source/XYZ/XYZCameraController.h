@@ -58,5 +58,5 @@ private:
 	FVector2D InitialDragMousePosition;
 	FVector InitialDragCameraPosition;
 	bool bIsDragging = false;
-	const float DragSpeed = 10.0f;
+	const float DragSpeed = 3000.0f;
 };

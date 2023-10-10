@@ -26,7 +26,7 @@ public:
 	UPROPERTY()
 	int32 RESOURCE_CAPACITY = 2;
 	UPROPERTY()
-	TMap<AXYZActor*, bool> Workers;
+	TMap<AXYZWorker*, bool> Workers;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)
 	int32 CurrentWorkers = 0;
 	

@@ -339,30 +339,6 @@ void AXYZWorker::SetState(EXYZUnitState NewState)
         GetWorld()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += ActivePlacementAbility->MineralCost;
         ActivePlacementAbility = nullptr;
     }
-    if(State == EXYZUnitState::MINING && NewState != EXYZUnitState::RETURNING && EXYZUnitState::GATHERING != NewState)
-    {
-        if(AXYZResourceActor* Resource = Cast<AXYZResourceActor>(TargetActor))
-        {
-            Resource->RemoveWorker(this);
-        }
-        TargetActor = nullptr;
-    }
-    else if(NewState == EXYZUnitState::DEAD ||
-        NewState == EXYZUnitState::MOVING ||
-        NewState == EXYZUnitState::HOLD ||
-        NewState == EXYZUnitState::FOLLOWING ||
-        NewState == EXYZUnitState::IDLE ||
-        NewState == EXYZUnitState::ATTACK_MOVING ||
-        NewState == EXYZUnitState::ATTACKING ||
-        NewState == EXYZUnitState::BUILDING ||
-        NewState == EXYZUnitState::PLACING)
-    {
-        if(AXYZResourceActor* Resource = Cast<AXYZResourceActor>(TargetActor))
-        {
-            Resource->RemoveWorker(this);
-        }
-        TargetActor = nullptr;
-    }
     Super::SetState(NewState);
 }
 

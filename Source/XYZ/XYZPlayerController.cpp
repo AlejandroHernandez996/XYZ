@@ -919,7 +919,8 @@ void AXYZPlayerController::MoveFromMinimap(FVector2D TargetLocation)
 	{
 		FVector WorldCoord(TargetLocation.X, TargetLocation.Y, -1000);
 
-		FVector Start = WorldCoord + FVector(0, 0, 1000);
+		FVector Start = WorldCoord;
+		Start.Z = 1000.0f;
 		FVector End = WorldCoord;
 
 		FHitResult HitResult;
@@ -938,7 +939,8 @@ void AXYZPlayerController::AttackMoveFromMinimap(FVector2D TargetLocation)
 	{
 		FVector WorldCoord(TargetLocation.X, TargetLocation.Y, -1000);
 
-		FVector Start = WorldCoord + FVector(0, 0, 1000);
+		FVector Start = WorldCoord;
+		Start.Z = 1000.0f;
 		FVector End = WorldCoord;
 
 		FHitResult HitResult;
@@ -948,5 +950,6 @@ void AXYZPlayerController::AttackMoveFromMinimap(FVector2D TargetLocation)
 		if (bHit) {
 			CreateAndQueueInput(SelectionStructure->ToActorIdArray(), -1, HitResult.Location, EXYZInputType::ATTACK_MOVE, bPrimaryModifier);
 		}
+		bAttackModifier = false;
 	}
 }

@@ -131,7 +131,7 @@ public:
     UPROPERTY()
         FVector TargetLocation;
     UPROPERTY()
-        AXYZActor* TargetActor;
+    mutable AXYZActor* TargetActor;
     UPROPERTY()
         bool bIsAggresive = true;
     UFUNCTION()

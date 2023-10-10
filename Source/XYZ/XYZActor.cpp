@@ -18,7 +18,6 @@
 #include "XYZAbility.h"
 #include "XYZDeathManager.h"
 #include "XYZMapManager.h"
-#include "XYZWorkerAbility.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 
@@ -215,10 +214,10 @@ void AXYZActor::ScanXYZActorsAhead()
 	FVector EndRight = ((RightVector * Distance) + Start);
 
 	FVector Left22Vector = ForwardVector.RotateAngleAxis(-22, FVector(0, 0, 1));
-	FVector End22Left = ((LeftVector * Distance) + Start);
+	FVector End22Left = ((Left22Vector * Distance) + Start);
 
 	FVector Right22Vector = ForwardVector.RotateAngleAxis(22, FVector(0, 0, 1));
-	FVector End22Right = ((RightVector * Distance) + Start);
+	FVector End22Right = ((Right22Vector * Distance) + Start);
 
 	TSet<AXYZActor*> ActorsFound;
 	AXYZActor* ScannedActor = ScanAndPush(Start, EndLeft, ActorsFound);
@@ -293,8 +292,7 @@ void AXYZActor::AttackMoveTarget()
 		GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->DoesActorHasVisionOfActor(this, TargetActor))
 	{
 		FVector TargetActorLocation = TargetActor->GetActorLocation();
-
-		// Assuming TargetActor has a CapsuleComponent named CapsuleComponent.
+		
 		float TargetActorRadius = TargetActor->GetCapsuleComponent()->GetScaledCapsuleRadius();
 
 		FVector Direction = TargetActorLocation - ActorLocation;
@@ -303,8 +301,7 @@ void AXYZActor::AttackMoveTarget()
 
 		FVector2D TargetLocation2D = FVector2D(TargetActorLocation.X, TargetActorLocation.Y);
 		float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
-
-		// Subtract the capsule's radius from the calculated distance.
+		
 		DistanceToTarget -= TargetActorRadius;
 		if (DistanceToTarget <= AttackRange)
 		{
