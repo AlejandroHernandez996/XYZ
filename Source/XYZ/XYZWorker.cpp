@@ -32,6 +32,15 @@ void AXYZWorker::BeginPlay() {
 
 void AXYZWorker::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
+    USkeletalMeshComponent* SkeletalMeshComp = GetMesh();
+    if (SkeletalMeshComp)
+    {
+        SkeletalMeshComp->SetCollisionProfileName(CollisionName);
+    }
+    if (GetCapsuleComponent())
+    {
+        GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
+    }
     if (FloatingMesh && !HasAuthority()) {
         float Time = GetWorld()->GetTimeSeconds();
         FVector NewLocation = FloatingMesh->GetRelativeLocation();
@@ -118,11 +127,13 @@ void AXYZWorker::Process(float DeltaTime)
     }
     else if (State == EXYZUnitState::RETURNING) {
         bHasAvoidance = false;
-        FindClosestBase();
         if (ClosestBase) {
             Return();
+        }else
+        {
+            FindClosestBase();
         }
-        else {
+        if(!ClosestBase) {
             GetXYZAIController()->XYZStopMovement();
         }
     }

@@ -17,23 +17,18 @@ struct FXYZInputMessage
 {
     GENERATED_BODY();
 
-    // Player ID
     UPROPERTY(BlueprintReadWrite, Category = "Input")
         FString PlayerId;
 
-    // Array of selected units
     UPROPERTY()
         TArray<int32> SelectedActors;
 
-    // Target actor
     UPROPERTY(BlueprintReadWrite, Category = "Input")
         int32 XYZTargetActor;
 
-    // Target location
     UPROPERTY(BlueprintReadWrite, Category = "Input")
         FVector TargetLocation;
 
-    // Type of input
     UPROPERTY(BlueprintReadWrite, Category = "Input")
         EXYZInputType InputType;
 
