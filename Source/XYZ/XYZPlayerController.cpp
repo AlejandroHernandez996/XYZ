@@ -59,6 +59,10 @@ void AXYZPlayerController::BeginPlay()
 	for (TActorIterator<AXYZCameraController> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		CameraController = *ActorItr;
+		if(CameraController)
+		{
+			CameraController->XYZPlayerController = this;
+		}
 	}
 
 }
@@ -183,6 +187,10 @@ void AXYZPlayerController::SetupInputComponent()
 		for (int32 i = 0; i < AbilityInputActions.Num(); i++) {
 			EnhancedInputComponent->BindAction(AbilityInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnAbilityInputStarted, i);
 		}
+
+		EnhancedInputComponent->BindAction(CameraMovementAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnInputStarted, EXYZInputType::CAMERA);
+		EnhancedInputComponent->BindAction(CameraMovementAction, ETriggerEvent::Triggered, this, &AXYZPlayerController::OnInputTriggered, EXYZInputType::CAMERA);
+		EnhancedInputComponent->BindAction(CameraMovementAction, ETriggerEvent::Completed, this, &AXYZPlayerController::OnInputReleased, EXYZInputType::CAMERA);
 	}
 }
 
@@ -340,6 +348,12 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			SelectionStructure->Empty();
 			OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 			break;
+		case EXYZInputType::CAMERA:
+			if(CameraController)
+			{
+				CameraController->StartDragMovement();
+			}
+		break;
 	}
 }
 
@@ -370,6 +384,12 @@ void AXYZPlayerController::OnInputTriggered(EXYZInputType InputType)
 		break;
 	case EXYZInputType::ATTACK_MOVE:
 		bAttackModifier = !SelectionStructure->IsEmpty();
+		break;
+	case EXYZInputType::CAMERA:
+		if(CameraController)
+		{
+			//CameraController->DragMove();
+		}
 		break;
 	}
 }
@@ -456,6 +476,12 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
 		break;
 	case EXYZInputType::ATTACK_MOVE:
+		break;
+	case EXYZInputType::CAMERA:
+		if(CameraController)
+		{
+			CameraController->EndDragMovement();
+		}
 		break;
 	}
 }

@@ -104,6 +104,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TArray<UInputAction*> AbilityInputActions;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	class UInputAction* CameraMovementAction;
+	
 	bool bPrimaryModifier;
 	bool bSecondaryModifier;
 

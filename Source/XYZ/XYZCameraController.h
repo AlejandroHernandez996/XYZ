@@ -12,28 +12,27 @@ class XYZ_API AXYZCameraController : public APawn
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
 	AXYZCameraController();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	FVector2D GetMousePositionOnViewport() const;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void StartDragMovement();
+	void DragMove();
+	void EndDragMovement();
 	bool bBlockMovementFlag = false;
 
-public:
-	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
-	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	UPROPERTY()
+	class AXYZPlayerController* XYZPlayerController;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -47,13 +46,17 @@ private:
 
 	FVector LastDirection;
 
-	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* TopDownCameraComponent;
 
-	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 
-	void MoveCamera(const FVector& Direction);
+	void MoveCamera(const FVector& Direction, float Speed);
+
+	FTimerHandle DragMoveTimerHandle;
+	FVector2D InitialDragMousePosition;
+	FVector InitialDragCameraPosition;
+	bool bIsDragging = false;
+	const float DragSpeed = 10.0f;
 };

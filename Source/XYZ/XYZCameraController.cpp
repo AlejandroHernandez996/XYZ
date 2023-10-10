@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "XYZCameraController.h"
+
+#include "XYZPlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -47,6 +49,11 @@ void AXYZCameraController::Tick(float DeltaTime)
 	if (GetLocalRole() == ROLE_Authority || !GetWorld()->GetFirstPlayerController()->GetMousePosition(x, y) || bBlockMovementFlag) {
 		return;
 	}
+	if(bIsDragging)
+	{
+		DragMove();
+		return;
+	}
 	FVector2D MousePosition = GetMousePositionOnViewport();
 	FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
 	FVector2D NormalizedMousePosition = MousePosition / ViewportSize;
@@ -57,21 +64,23 @@ void AXYZCameraController::Tick(float DeltaTime)
 
 	if (NormalizedMousePosition.X <= EdgePanThreshold)
 	{
-		MoveCamera(DOWN);
+		MoveCamera(DOWN, EdgePanSpeed);
 	}
 	else if (NormalizedMousePosition.X >= 1.0f - EdgePanThreshold)
 	{
-		MoveCamera(UP);
+		MoveCamera(UP, EdgePanSpeed);
 	}
 
 	if (NormalizedMousePosition.Y <= EdgePanThreshold)
 	{
-		MoveCamera(RIGHT);
+		MoveCamera(RIGHT, EdgePanSpeed);
 	}
 	else if (NormalizedMousePosition.Y >= 1.0f - EdgePanThreshold)
 	{
-		MoveCamera(LEFT);
+		MoveCamera(LEFT, EdgePanSpeed);
 	}
+
+	
 }
 
 FVector2D AXYZCameraController::GetMousePositionOnViewport() const
@@ -87,11 +96,46 @@ void AXYZCameraController::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AXYZCameraController::MoveCamera(const FVector& Direction)
+void AXYZCameraController::StartDragMovement()
+{
+	if(XYZPlayerController)
+	{
+		FVector2D CurrentMousePosition;
+		XYZPlayerController->GetMousePosition(CurrentMousePosition.Y, CurrentMousePosition.X);
+		InitialDragMousePosition = CurrentMousePosition;
+		bIsDragging = true;
+	}
+}
+
+void AXYZCameraController::DragMove()
+{
+	if (!bIsDragging)
+		return;
+
+	if (XYZPlayerController)
+	{
+		FVector2D CurrentMousePosition;
+		XYZPlayerController->GetMousePosition(CurrentMousePosition.Y, CurrentMousePosition.X);
+		FVector2D MouseDelta = CurrentMousePosition - InitialDragMousePosition;
+
+		FVector CameraDelta(MouseDelta.X, -MouseDelta.Y, 0);
+		CameraDelta.Normalize();
+		MoveCamera(CameraDelta, DragSpeed);
+
+		InitialDragMousePosition = CurrentMousePosition;
+	}
+}
+
+void AXYZCameraController::EndDragMovement()
+{
+	bIsDragging = false;
+}
+
+void AXYZCameraController::MoveCamera(const FVector& Direction, float Speed)
 {
 	FVector WorldDirection = CameraBoom->GetComponentRotation().RotateVector(Direction);
 	WorldDirection.Z = 0;
-	FVector NewCameraLocation = GetActorLocation() + WorldDirection * EdgePanSpeed * GetWorld()->DeltaTimeSeconds;
+	FVector NewCameraLocation = GetActorLocation() + WorldDirection * Speed * GetWorld()->DeltaTimeSeconds;
 
 	SetActorLocation(NewCameraLocation);
 }
