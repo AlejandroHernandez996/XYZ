@@ -106,6 +106,8 @@ public:
 
 	bool bPrimaryModifier;
 	bool bSecondaryModifier;
+
+	UPROPERTY(BlueprintReadOnly)
 	bool bAttackModifier;
 	bool bBlockPrimaryInputFlagForAttack;
 
@@ -266,4 +268,10 @@ public:
 	UFUNCTION(Reliable, Client)
 	void PlaySound(ESoundTypes SoundType);
 	void PlaySound_Implementation(ESoundTypes SoundType);
+
+	UFUNCTION(BlueprintCallable)
+	void AttackMoveFromMinimap(FVector2D TargetLocation);
+
+	UFUNCTION(BlueprintCallable)
+	void MoveFromMinimap(FVector2D TargetLocation);
 };

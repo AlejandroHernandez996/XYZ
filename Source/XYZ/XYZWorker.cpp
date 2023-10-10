@@ -8,7 +8,6 @@
 #include "XYZResourceActor.h"
 #include "XYZAIController.h"
 #include "Engine.h"
-#include "XYZAbilityAction.h"
 #include "XYZGameMode.h"
 #include "XYZGameState.h"
 #include "XYZMapManager.h"

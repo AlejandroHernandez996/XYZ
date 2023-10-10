@@ -886,3 +886,41 @@ void AXYZPlayerController::PlaySound_Implementation(ESoundTypes SoundType)
 		XYZGameState->SoundManager->PlayNotification(SoundType);
 	}
 }
+
+void AXYZPlayerController::MoveFromMinimap(FVector2D TargetLocation)
+{
+	if(!SelectionStructure->IsEmpty())
+	{
+		FVector WorldCoord(TargetLocation.X, TargetLocation.Y, -1000);
+
+		FVector Start = WorldCoord + FVector(0, 0, 1000);
+		FVector End = WorldCoord;
+
+		FHitResult HitResult;
+		FCollisionQueryParams CollisionParams;
+		bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, CollisionParams);
+
+		if (bHit) {
+			CreateAndQueueInput(SelectionStructure->ToActorIdArray(), -1, HitResult.Location, EXYZInputType::SECONDARY_INPUT, bPrimaryModifier);
+		}
+	}
+}
+
+void AXYZPlayerController::AttackMoveFromMinimap(FVector2D TargetLocation)
+{
+	if(!SelectionStructure->IsEmpty())
+	{
+		FVector WorldCoord(TargetLocation.X, TargetLocation.Y, -1000);
+
+		FVector Start = WorldCoord + FVector(0, 0, 1000);
+		FVector End = WorldCoord;
+
+		FHitResult HitResult;
+		FCollisionQueryParams CollisionParams;
+		bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, CollisionParams);
+
+		if (bHit) {
+			CreateAndQueueInput(SelectionStructure->ToActorIdArray(), -1, HitResult.Location, EXYZInputType::ATTACK_MOVE, bPrimaryModifier);
+		}
+	}
+}
