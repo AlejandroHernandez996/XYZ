@@ -17,8 +17,16 @@ AXYZGameState::AXYZGameState() {
 }
 void AXYZGameState::BeginPlay() {
 	Super::BeginPlay();
-	ChatManager = NewObject<UXYZChatManager>(this, UXYZChatManager::StaticClass(), "ChatManager");
-	ChatManager->GameState = this;
+	if(HasAuthority())
+	{
+		ChatLobbyId = FGuid::NewGuid().ToString();
+	}
+	else
+	{
+		ChatManager = NewObject<UXYZChatManager>(this, UXYZChatManager::StaticClass(), "ChatManager");
+		ChatManager->GameState = this;
+		ChatManager->ConnectToChatServer();
+	}
 }
 void AXYZGameState::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
@@ -34,28 +42,6 @@ void AXYZGameState::Tick(float DeltaTime) {
 	if(!HasAuthority() && SoundManager && MatchState == EXYZMatchState::IN_PROGRESS)
 	{
 		SoundManager->PlayBackgroundMusic();
-	}
-	if(!HasAuthority() && MatchState == EXYZMatchState::IN_PROGRESS && !bStartGettingMessages)
-	{
-		bStartGettingMessages = true;
-		if (GetWorld())
-		{
-			FTimerHandle GetMessagesTimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(
-				GetMessagesTimerHandle, 
-				[this]()
-				{
-					this->GetMessages();
-				}, 
-				0.5f,
-				true 
-			);
-		}
-	}
-	if(HasAuthority() && MatchState == EXYZMatchState::IN_PROGRESS && ChatManager && !ChatManager->bCreatedLobby)
-	{
-		ChatLobbyId = FGuid::NewGuid().ToString();
-		ChatManager->CreateLobby(ChatLobbyId);
 	}
 }
 
@@ -100,14 +86,6 @@ void AXYZGameState::SendMessage(FString Message, AXYZPlayerController* PlayerCon
 	{
 		FString SentString = FString::Printf(TEXT("%s: %s"), *UsernamesByTeamId[PlayerController->TeamId], *Message);
 		ChatManager->SendMessage(ChatLobbyId, SentString);
-	}
-}
-
-void AXYZGameState::GetMessages()
-{
-	if(ChatManager)
-	{
-		ChatManager->GetMessages(ChatLobbyId);
 	}
 }
 

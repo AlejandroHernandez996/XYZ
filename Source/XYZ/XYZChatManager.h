@@ -2,8 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Runtime/Online/HTTP/Public/Http.h"
 #include "XYZChatManager.generated.h"
+
+class IWebSocket;
 
 UCLASS()
 class XYZ_API UXYZChatManager : public UObject
@@ -14,20 +15,16 @@ public:
 	UXYZChatManager();
 	UPROPERTY()
 	class AXYZGameState* GameState;
-
-	void CreateLobby(FString LobbyId);
+	FString CHAT_WSS = "wss://xyz-ue5.uc.r.appspot.com/";
 	void SendMessage(FString LobbyId, FString Message);
-	void GetMessages(FString LobbyId);
+	void HandleWebSocketConnected();
+	void HandleWebSocketConnectionError(const FString& Error);
+	void HandleWebSocketClosed(int32 StatusCode, const FString& Reason, bool bWasClean);
+	void HandleWebSocketMessageReceived(const FString& Message);
+	void ConnectToChatServer();
+	
 	bool bCreatedLobby;
 private:
-	FHttpModule* Http;
-	FString CHAT_URL = "https://xyz-ue5.uc.r.appspot.com/";
-	FString CREATED_LOBBY_URL = "create-lobby";
-	FString SEND_MESSAGE_URL = "send-message";
-	FString GET_MESSAGES_URL = "get-messages";
-	
-	void OnCreateLobbyResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	void OnSendMessageResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	void OnGetMessagesResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	FString FormatMessages(const FString& JsonResponse);
+	TSharedPtr<IWebSocket> WebSocket;
+	FString FormatMessage(const FString& JsonResponse);
 };

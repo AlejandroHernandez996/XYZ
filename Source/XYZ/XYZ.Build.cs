@@ -7,7 +7,6 @@ public class XYZ : ModuleRules
 	public XYZ(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-
         PublicDependencyModuleNames.AddRange(new string[] { 
 			"Core", 
 			"CoreUObject", 
@@ -18,6 +17,7 @@ public class XYZ : ModuleRules
 			"AIModule", 
 			"HTTP",
 			"Json",
+			"WebSockets",
 			"Niagara", 
 			"EnhancedInput", 
 			"UMG", 

@@ -24,8 +24,6 @@ public:
 	FString ChatLobbyId;
 	UFUNCTION(BlueprintCallable)
 	void SendMessage(FString Message, AXYZPlayerController* PlayerController);
-	UFUNCTION(BlueprintCallable)
-	void GetMessages();
 	UPROPERTY(BlueprintReadOnly)
 	FString LobbyMessages;
 	bool bStartGettingMessages = false;

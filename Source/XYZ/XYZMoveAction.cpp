@@ -1,8 +1,8 @@
 #include "XYZMoveAction.h"
 #include "XYZActor.h"
 #include "XYZAIController.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "XYZGameMode.h"
+#include "XYZMapManager.h"
 
 void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> Agents)
 {
@@ -75,18 +75,40 @@ void UXYZMoveAction::FillPack(TSharedPtr<FAgentPack> AgentPack, TArray<AXYZActor
 }
 void UXYZMoveAction::MovePack(TSharedPtr<FAgentPack> AgentPack, int32 Level, bool bIsAttackMove) {
     if (!AgentPack)return;
+    
     if (AgentPack->Agents.Num() == 0) {
         return;
     }
     for (int i = 0; i < AgentPack->Agents.Num(); i++) {
         AXYZActor* Agent = AgentPack->Agents[i];
         if (Agent) {
-            Agent->TargetLocation = TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i];
+            FVector PackTargetLocation = TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i];
+            UXYZMapManager* MapManager = Agent->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
+
+            FGridCell TargetCell = MapManager->Grid[MapManager->GetGridCoordinate(TargetLocation)];
+            FGridCell PackTargetCell = MapManager->Grid[MapManager->GetGridCoordinate(PackTargetLocation)];
+            
             if (bIsAttackMove) {
-                Agent->GetController<AXYZAIController>()->XYZAttackMoveToLocation(TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i]);
+                if(TargetCell.Height == PackTargetCell.Height)
+                {
+                    Agent->GetController<AXYZAIController>()->XYZAttackMoveToLocation(PackTargetLocation);
+                    Agent->TargetLocation = TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i];
+                }else
+                {
+                    Agent->GetController<AXYZAIController>()->XYZAttackMoveToLocation(TargetLocation);
+                    Agent->TargetLocation = TargetLocation;
+                }
             }
             else {
-                Agent->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i]);
+                if(TargetCell.Height == PackTargetCell.Height)
+                {
+                    Agent->GetController<AXYZAIController>()->XYZMoveToLocation(PackTargetLocation);
+                    Agent->TargetLocation = TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i];
+                }else
+                {
+                    Agent->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation);
+                    Agent->TargetLocation = TargetLocation;
+                }
             }
         }
     }
