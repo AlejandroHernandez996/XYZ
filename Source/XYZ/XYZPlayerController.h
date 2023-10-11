@@ -107,6 +107,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputAction* CameraMovementAction;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TArray<UInputAction*> CameraGroupInputActions;
+	
 	bool bPrimaryModifier;
 	bool bSecondaryModifier;
 
@@ -157,6 +160,8 @@ protected:
 
 	UFUNCTION()
 	void OnControlGroupInputStarted(int32 ControlGroupIndex);
+	UFUNCTION()
+	void OnCameraGroupInputStarted(int32 CameraGroupIndex);
 	UFUNCTION()
 	void OnAbilityInputStarted(int32 AbilityIndex);
 	UFUNCTION()

@@ -131,6 +131,19 @@ void AXYZCameraController::EndDragMovement()
 	bIsDragging = false;
 }
 
+void AXYZCameraController::SaveCameraLocation(int32 CameraGroupIndex)
+{
+	CameraLocations.Add(CameraGroupIndex, FVector2D(GetActorLocation().X, GetActorLocation().Y));
+}
+
+void AXYZCameraController::JumpToCameraLocation(int32 CameraGroupIndex)
+{
+	if(CameraLocations.Contains(CameraGroupIndex))
+	{
+		SetActorLocation(FVector(CameraLocations[CameraGroupIndex].X, CameraLocations[CameraGroupIndex].Y, GetActorLocation().Z));
+	}
+}
+
 void AXYZCameraController::MoveCamera(const FVector& Direction, float Speed)
 {
 	FVector WorldDirection = CameraBoom->GetComponentRotation().RotateVector(Direction);

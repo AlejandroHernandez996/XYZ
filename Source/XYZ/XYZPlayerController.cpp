@@ -184,6 +184,11 @@ void AXYZPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(ControlGroupInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnControlGroupInputStarted, i);
 			LastControlGroupInputTime.Add(i,0.0f);
 		}
+
+		for (int32 i = 0; i < CameraGroupInputActions.Num(); i++) {
+			EnhancedInputComponent->BindAction(CameraGroupInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnCameraGroupInputStarted, i);
+		}
+
 		for (int32 i = 0; i < AbilityInputActions.Num(); i++) {
 			EnhancedInputComponent->BindAction(AbilityInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnAbilityInputStarted, i);
 		}
@@ -221,6 +226,19 @@ void AXYZPlayerController::OnControlGroupInputStarted(int32 ControlGroupIndex) {
 		ControlGroups.Add(ControlGroup.Num());
 	}
 	OnControlGroupEvent.Broadcast(ControlGroups);
+}
+
+void AXYZPlayerController::OnCameraGroupInputStarted(int32 CameraGroupIndex) {
+	if(CameraController)
+	{
+		if(bSecondaryModifier)
+		{
+			CameraController->SaveCameraLocation(CameraGroupIndex);
+		}else
+		{
+			CameraController->JumpToCameraLocation(CameraGroupIndex);
+		}
+	}
 }
 
 void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {

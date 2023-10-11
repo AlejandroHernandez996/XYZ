@@ -26,6 +26,13 @@ public:
 	void StartDragMovement();
 	void DragMove();
 	void EndDragMovement();
+
+	UPROPERTY()
+	TMap<int32, FVector2D> CameraLocations;
+	
+	void SaveCameraLocation(int32 CameraGroupIndex);
+	void JumpToCameraLocation(int32 CameraGroupIndex);
+
 	bool bBlockMovementFlag = false;
 
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
