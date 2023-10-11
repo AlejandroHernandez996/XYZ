@@ -5,7 +5,9 @@
 #include "Engine.h"
 #include "XYZActorCache.h"
 #include "XYZBuilding.h"
+#include "XYZChatManager.h"
 #include "XYZGameMode.h"
+#include "XYZPlayerController.h"
 #include "XYZSoundManager.h"
 #include "Net/UnrealNetwork.h"
 #include "UObject/ConstructorHelpers.h"
@@ -15,6 +17,8 @@ AXYZGameState::AXYZGameState() {
 }
 void AXYZGameState::BeginPlay() {
 	Super::BeginPlay();
+	ChatManager = NewObject<UXYZChatManager>(this, UXYZChatManager::StaticClass(), "ChatManager");
+	ChatManager->GameState = this;
 }
 void AXYZGameState::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
@@ -30,6 +34,28 @@ void AXYZGameState::Tick(float DeltaTime) {
 	if(!HasAuthority() && SoundManager && MatchState == EXYZMatchState::IN_PROGRESS)
 	{
 		SoundManager->PlayBackgroundMusic();
+	}
+	if(!HasAuthority() && MatchState == EXYZMatchState::IN_PROGRESS && !bStartGettingMessages)
+	{
+		bStartGettingMessages = true;
+		if (GetWorld())
+		{
+			FTimerHandle GetMessagesTimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(
+				GetMessagesTimerHandle, 
+				[this]()
+				{
+					this->GetMessages();
+				}, 
+				0.5f,
+				true 
+			);
+		}
+	}
+	if(HasAuthority() && MatchState == EXYZMatchState::IN_PROGRESS && ChatManager && !ChatManager->bCreatedLobby)
+	{
+		ChatLobbyId = FGuid::NewGuid().ToString();
+		ChatManager->CreateLobby(ChatLobbyId);
 	}
 }
 
@@ -48,6 +74,8 @@ void AXYZGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutL
 	DOREPLIFETIME(AXYZGameState, bHasGameEnded);
 	DOREPLIFETIME(AXYZGameState, GameTime);
 	DOREPLIFETIME(AXYZGameState, MatchState);
+	DOREPLIFETIME(AXYZGameState, ChatLobbyId);
+	DOREPLIFETIME(AXYZGameState, UsernamesByTeamId);
 }
 
 AXYZActor* AXYZGameState::GetActorById(int32 ActorId)
@@ -62,6 +90,25 @@ AXYZActor* AXYZGameState::GetActorById(int32 ActorId)
 		}
 	}
 	return nullptr;
+}
+
+void AXYZGameState::SendMessage(FString Message, AXYZPlayerController* PlayerController)
+{
+	if(Message.IsEmpty()) return;
+	
+	if(ChatManager && PlayerController && UsernamesByTeamId.IsValidIndex(PlayerController->TeamId))
+	{
+		FString SentString = FString::Printf(TEXT("%s: %s"), *UsernamesByTeamId[PlayerController->TeamId], *Message);
+		ChatManager->SendMessage(ChatLobbyId, SentString);
+	}
+}
+
+void AXYZGameState::GetMessages()
+{
+	if(ChatManager)
+	{
+		ChatManager->GetMessages(ChatLobbyId);
+	}
 }
 
 void AXYZGameState::AddActorServer(AXYZActor* Actor)

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "XYZMatchState.h"
+#include "XYZPlayerController.h"
 #include "GameFramework/GameStateBase.h"
 #include "XYZGameState.generated.h"
 
@@ -17,6 +18,21 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(BlueprintReadOnly)
+	class UXYZChatManager* ChatManager;
+	UPROPERTY(Replicated)
+	FString ChatLobbyId;
+	UFUNCTION(BlueprintCallable)
+	void SendMessage(FString Message, AXYZPlayerController* PlayerController);
+	UFUNCTION(BlueprintCallable)
+	void GetMessages();
+	UPROPERTY(BlueprintReadOnly)
+	FString LobbyMessages;
+	bool bStartGettingMessages = false;
+	
+	UPROPERTY(Replicated)
+	TArray<FString> UsernamesByTeamId = {"", ""};
+	
 	UFUNCTION()
 	void AddActorServer(class AXYZActor* Actor);
 	UFUNCTION()

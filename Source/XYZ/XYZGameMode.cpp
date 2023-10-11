@@ -207,6 +207,10 @@ void AXYZGameMode::ProcessMatchStarting()
                 }
             }
         }
+        if(XYZGameState)
+        {
+            XYZGameState->UsernamesByTeamId = UserNames;
+        }
         for(AXYZPlayerController* PlayerController : PlayerControllers)
         {
             PlayerController->UpdateLoadingScreen(UserNames, Ratings, TimeSinceStart/LOADING_TIME);
