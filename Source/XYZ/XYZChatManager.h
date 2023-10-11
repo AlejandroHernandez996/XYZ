@@ -20,11 +20,11 @@ public:
 	void HandleWebSocketConnected();
 	void HandleWebSocketConnectionError(const FString& Error);
 	void HandleWebSocketClosed(int32 StatusCode, const FString& Reason, bool bWasClean);
+	FString GetRichChatMessage(FString String);
 	void HandleWebSocketMessageReceived(const FString& Message);
 	void ConnectToChatServer();
 	
 	bool bCreatedLobby;
 private:
 	TSharedPtr<IWebSocket> WebSocket;
-	FString FormatMessage(const FString& JsonResponse);
 };

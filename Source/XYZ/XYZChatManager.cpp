@@ -56,22 +56,37 @@ void UXYZChatManager::HandleWebSocketMessageReceived(const FString& Message)
 	UE_LOG(LogTemp, Warning, TEXT("Received WebSocket Message: %s"), *Message);
 	if(!Message.IsEmpty())
 	{
-		GameState->LobbyMessages += "\n" + Message;
+		GameState->LobbyMessages += "\n" + GetRichChatMessage(Message);
 	}
 }
 
-FString UXYZChatManager::FormatMessage(const FString& JsonResponse)
+FString UXYZChatManager::GetRichChatMessage(FString Message)
 {
-	TSharedPtr<FJsonObject> JsonObject;
-	TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonResponse);
+	TArray<FString> ParsedMessage;
+	Message.ParseIntoArray(ParsedMessage, TEXT(":"));
 
-	if (FJsonSerializer::Deserialize(JsonReader, JsonObject) && JsonObject.IsValid())
+	if (ParsedMessage.Num() < 2) return Message;
+
+	FString PlayerName = ParsedMessage[0].TrimEnd();
+	FString ChatContent = ParsedMessage[1].TrimStart();
+
+	for (int i = 0; i < GameState->UsernamesByTeamId.Num(); i++)
 	{
-		FString Message;
-		if (JsonObject->TryGetStringField(TEXT("message"), Message))
+		if (GameState->UsernamesByTeamId[i].Equals(PlayerName))
 		{
-			return Message;
+			switch (i)
+			{
+			case 0: 
+				PlayerName = FString::Printf(TEXT("<Team_1>%s</>"), *PlayerName);
+				break;
+			case 1:
+				PlayerName = FString::Printf(TEXT("<Team_2>%s</>"), *PlayerName);
+				break;
+			}
+			break;
 		}
 	}
-	return TEXT("Failed to format message.");
+
+	FString RichMessage = FString::Printf(TEXT("%s: %s"), *PlayerName, *ChatContent);
+	return RichMessage;
 }
