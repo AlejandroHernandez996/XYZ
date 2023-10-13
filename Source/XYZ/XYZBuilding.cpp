@@ -14,6 +14,10 @@
 
 void AXYZBuilding::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
+    if(bIsSpawned && BuildingSpawnLocation != GetActorLocation())
+    {
+        SetActorLocation(BuildingSpawnLocation);
+    }
 }
 
 void AXYZBuilding::BeginPlay() {
@@ -42,6 +46,8 @@ void AXYZBuilding::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLi
     DOREPLIFETIME(AXYZBuilding, TotalBuildTime);
     DOREPLIFETIME(AXYZBuilding, TimeToBuild);
     DOREPLIFETIME(AXYZBuilding, BuildQueueNum);
+    DOREPLIFETIME(AXYZBuilding, bIsSpawned);
+    DOREPLIFETIME(AXYZBuilding, BuildingSpawnLocation);
 }
 
 void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
@@ -200,10 +206,6 @@ void AXYZBuilding::CancelProduction() {
 void AXYZBuilding::Process(float DeltaTime)
 {
     Super::Process(DeltaTime);
-    if(bIsSpawned && BuildingSpawnLocation != GetActorLocation())
-    {
-        SetActorLocation(BuildingSpawnLocation);
-    }
     switch (BuildingState) {
     case EXYZBuildingState::PLACED:
         BuildingState = EXYZBuildingState::BUILDING;

@@ -167,7 +167,15 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		PlacementBuilding->SetActorLocation(NewLocation);
 
 		bIsBuildingPlaceable = CanPlaceBuilding(NewLocation, PlacementBuilding->GridSize.X, PlacementBuilding->GridSize.Y);
-		PlacementBuilding->SetActorHiddenInGame(!bIsBuildingPlaceable);
+
+		TArray<UStaticMeshComponent*> ChildMeshes;
+		PlacementBuilding->GetComponents<UStaticMeshComponent>(ChildMeshes);
+
+		int32 MaterialIndex = bIsBuildingPlaceable ? 0 : 1;
+		for(UStaticMeshComponent* MeshComp : ChildMeshes)
+		{
+			MeshComp->SetMaterial(0, PlacementBuilding->PlacementMaterials[MaterialIndex]);
+		}
 	}
 }
 
@@ -942,8 +950,10 @@ FVector AXYZPlayerController::GetMouseToWorldPosition(APlayerController* PlayerC
 	FCollisionQueryParams TraceParams(FName(TEXT("MouseToWorldTrace")), true, PlayerController->GetPawn());
 	TraceParams.bTraceComplex = true;
 	TraceParams.bReturnPhysicalMaterial = false;
-	TraceParams.AddIgnoredActor(PlacementBuilding);
-
+	for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		TraceParams.AddIgnoredActor(*ActorItr);
+	}
 	if(GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, TraceParams))
 	{
 		return HitResult.Location;
@@ -1002,51 +1012,102 @@ void AXYZPlayerController::AttackMoveFromMinimap(FVector2D TargetLocation)
 
 bool AXYZPlayerController::CanPlaceBuilding(FVector CenterLocation, int32 GridSizeX, int32 GridSizeY)
 {
-	float gridSize = 100.0f;
-	float rayLength = 5000.0f;
-	float maxAcceptableHeightDifference = 20.0f;
+	float GridSize = 100.0f;
+	float RayLength = 5000.0f;
+	float MaxAcceptableHeightDifference = 1.0f;
 
-	TArray<FVector> rayStartPoints;
+	TArray<FVector> RayStartPoints;
+
+	float HalfGridX = (GridSizeX % 2 == 0) ? (GridSizeX / 2) : (GridSizeX - 1) / 2;
+	float HalfGridY = (GridSizeY % 2 == 0) ? (GridSizeY / 2) : (GridSizeY - 1) / 2;
+
+	FVector BottomLeftWorld = CenterLocation - FVector(HalfGridX * GridSize, HalfGridY * GridSize, 0);
+
 	for(int32 i = 0; i < GridSizeX; i++)
 	{
 		for(int32 j = 0; j < GridSizeY; j++)
 		{
-			FVector startPoint = CenterLocation + FVector(i * gridSize, j * gridSize, 0);
-			rayStartPoints.Add(startPoint);
+			FVector StartPoint = BottomLeftWorld + FVector(i * GridSize, j * GridSize, 0);
+			RayStartPoints.Add(StartPoint);
 		}
 	}
 
-	TArray<float> hitHeights;
-	for(FVector startPoint : rayStartPoints)
+	TArray<float> HitHeights;
+	bool bCanPlace = true;
+	for(FVector StartPoint : RayStartPoints)
 	{
 		FHitResult HitResult;
-		FVector start = startPoint + FVector(0, 0, 50);
-		FVector end = startPoint - FVector(0, 0, rayLength);
-
+		FVector Start = StartPoint + FVector(0, 0, 50);
+		FVector End = StartPoint - FVector(0, 0, RayLength);
 		FCollisionQueryParams CollisionParams;
-		CollisionParams.AddIgnoredActor(PlacementBuilding);
 		CollisionParams.bTraceComplex = true;
-
-		if(GetWorld()->LineTraceSingleByChannel(HitResult, start, end, ECC_WorldStatic, CollisionParams))
+		for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 		{
-			if(!HitResult.GetActor()->IsA(AXYZBuilding::StaticClass())) 
+			if(!(*ActorItr)->IsA(AXYZResourceActor::StaticClass()))
 			{
-				hitHeights.Add(HitResult.ImpactPoint.Z);
+				CollisionParams.AddIgnoredActor(*ActorItr);
 			}
-			else 
+		}
+		
+		if(GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, CollisionParams))
+		{
+			if(HitResult.GetActor()->IsA(AXYZResourceActor::StaticClass()))
+			{
+				return false;
+			}
+			HitHeights.Add(HitResult.ImpactPoint.Z);
+		}
+	}
+
+	if(HitHeights.Num() == 0 || !bCanPlace)
+		return false;
+
+	float MaxZ = FMath::Max(HitHeights);
+	float MinZ = FMath::Min(HitHeights);
+	if(MaxZ - MinZ > MaxAcceptableHeightDifference)
+		return false;
+
+	TArray<AXYZBuilding*> Buildings;
+	TArray<FVector2D> GridPoints;
+
+	for(FVector RayPoints : RayStartPoints)
+	{
+		GridPoints.Add(FVector2D(FMath::FloorToInt(RayPoints.X / 100.0f), FMath::FloorToInt(RayPoints.Y / 100.0f)));
+	}
+	for (TActorIterator<AXYZBuilding> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if(*ActorItr != PlacementBuilding)
+		{
+			Buildings.Add(*ActorItr);
+		}
+	}
+
+
+	for(FVector2D Point : GridPoints)
+	{
+		for(AXYZBuilding* Building : Buildings)
+		{
+			if(IsPointInBuildingGridArea(Point, Building))
 			{
 				return false;
 			}
 		}
 	}
-
-	if(hitHeights.Num() == 0)
-		return false;
-
-	float maxZ = FMath::Max(hitHeights);
-	float minZ = FMath::Min(hitHeights);
-	if(maxZ - minZ > maxAcceptableHeightDifference)
-		return false;
-
 	return true;
+}
+
+bool AXYZPlayerController::IsPointInBuildingGridArea(const FVector2D& Point, AXYZBuilding* Building)
+{
+	FIntVector2 BuildingGridPosition = FIntVector2(FMath::FloorToInt(Building->GetActorLocation().X / 100.0f), FMath::FloorToInt(Building->GetActorLocation().Y / 100.0f));
+	FIntVector2 BuildingGridSize = FIntVector2(Building->GridSize.X, Building->GridSize.Y);
+
+	float HalfGridX = (BuildingGridSize.X % 2 == 0) ? (BuildingGridSize.X / 2) : (BuildingGridSize.X - 1) / 2;
+	float HalfGridY = (BuildingGridSize.Y % 2 == 0) ? (BuildingGridSize.Y / 2) : (BuildingGridSize.Y - 1) / 2;
+
+	FIntVector2 BottomLeft = BuildingGridPosition - FIntVector2(HalfGridX, HalfGridY);
+    
+	FIntVector2 TopRight = BuildingGridPosition + FIntVector2(HalfGridX, HalfGridY);
+
+	return Point.X >= BottomLeft.X && Point.X <= TopRight.X &&
+		   Point.Y >= BottomLeft.Y && Point.Y <= TopRight.Y;
 }

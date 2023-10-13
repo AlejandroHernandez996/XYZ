@@ -17,6 +17,10 @@ public:
 
 	UFUNCTION()
 	void AddToUpdateSet(AXYZActor* Actor);
+	TArray<FIntVector2> GetPerimeterCoords(FIntVector2 CenterGridCoord, FIntVector2 GridArea);
+	bool AreGridCoordsSameHeight(FIntVector2 Coord, FIntVector2 OtherCoord);
+	bool IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfCoordsToSearch = 10);
+	FVector GridCoordToWorldCoord(FIntVector2 Coord);
 
 	UPROPERTY()
 	TMap<FIntVector2, FGridCell> Grid;

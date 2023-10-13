@@ -285,6 +285,7 @@ public:
 
 	UFUNCTION()
 	bool CanPlaceBuilding(FVector CenterLocation, int32 GridSizeX, int32 GridSizeY);
+	bool IsPointInBuildingGridArea(const FVector2D& Point, AXYZBuilding* Building);
 	UPROPERTY()
 	bool bIsBuildingPlaceable;
 	

@@ -33,9 +33,10 @@ public:
 		bool bCanRally;
 	TQueue<class UXYZBuildingAbility*> BuildQueue;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	FVector BuildingSpawnLocation;
 
+	UPROPERTY(Replicated)
 	bool bIsSpawned;
 
 	UPROPERTY()
@@ -60,6 +61,9 @@ public:
 	
 	UFUNCTION()
 	void Build(float DeltaTime);
-	
+
 	void Process(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Placement")
+	TArray<UMaterialInterface*> PlacementMaterials;
 };

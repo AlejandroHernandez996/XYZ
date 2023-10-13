@@ -58,54 +58,30 @@ void AXYZWorker::Process(float DeltaTime)
         if(ActivePlacementAbility)
         {
             UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
-            
-            FVector WorkerCurrentLocation = GetActorLocation();
             FVector PlacingLocation = ActivePlacementAbility->BuildingLocation;
             
-            FVector2D WorkerCurrentLocation2D(WorkerCurrentLocation.X, WorkerCurrentLocation.Y);
-            FVector2D PlacingLocation2D(PlacingLocation.X, PlacingLocation.Y);
-
-            float Distance2D = FVector2D::Distance(WorkerCurrentLocation2D, PlacingLocation2D);
-            UE_LOG(LogTemp, Warning, TEXT("Distance2D: %f"), Distance2D);
-
             FIntVector2 CurrentGridPosition = GridCoord;
             FIntVector2 PlacementCenterGridPosition = MapManager->GetGridCoordinate(PlacingLocation);
             FIntVector2 PlacementGridSize = FIntVector2(ActivePlacementAbility->GridSize.X, ActivePlacementAbility->GridSize.Y);
             bool bHasSameHeightAsBuildingLocation = MapManager->Grid.Contains(CurrentGridPosition) &&
                 MapManager->Grid.Contains(PlacementCenterGridPosition) &&
                 MapManager->Grid[CurrentGridPosition].Height == MapManager->Grid[PlacementCenterGridPosition].Height;
-            
             if(IsWorkerInDistanceToPlace(CurrentGridPosition, PlacementCenterGridPosition, PlacementGridSize) && bHasSameHeightAsBuildingLocation)
             {
                 PlaceBuilding();
             }
             else if(XYZAIController)
             {
-                FVector Start = PlacingLocation;
-                Start.Z = 10000.0f;
-                FVector End = PlacingLocation;
-                End.Z = -10000.0f;
-                FHitResult HitResult;
+                TArray<FIntVector2> PerimeterTiles = MapManager->GetPerimeterCoords(PlacementCenterGridPosition, PlacementGridSize);
 
-                FCollisionQueryParams CollisionParams;
-
-                FCollisionObjectQueryParams ObjectQueryParams;
-                ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldStatic);
-
-                bool bHit = GetWorld()->LineTraceSingleByObjectType(
-                    HitResult,
-                    Start,
-                    End,
-                    ObjectQueryParams,
-                    CollisionParams
-                );
-                if (bHit)
+                for (const FIntVector2& Tile : PerimeterTiles) 
                 {
-                    float HitZValue = HitResult.Location.Z;
-                    XYZAIController->MoveToLocation(FVector(PlacingLocation.X, PlacingLocation.Y, HitZValue));
-                }else
-                {
-                    SetState(EXYZUnitState::IDLE);
+                    if (MapManager->AreGridCoordsSameHeight(Tile, PlacementCenterGridPosition) && !MapManager->IsCoordOccupiedByBuilding(Tile)) 
+                    {
+                        FVector DestinationLocation = MapManager->GridCoordToWorldCoord(Tile);
+                        XYZAIController->MoveToLocation(DestinationLocation,.001f);
+                        break;
+                    }
                 }
             }else
             {
@@ -191,7 +167,6 @@ void AXYZWorker::Process(float DeltaTime)
 }
 
 void AXYZWorker::Gather() {
-    AXYZAIController* ActorController = GetXYZAIController();
     FVector ActorLocation = GetActorLocation() + GetActorForwardVector() * CurrentCapsuleRadius;
     FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
     AXYZResourceActor* ResourceActor = Cast<AXYZResourceActor>(TargetActor);
@@ -362,21 +337,11 @@ void AXYZWorker::PlaceBuilding()
         SetActorRotation(CurrentRotation);
     
         FActorSpawnParameters SpawnParams;
-        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
+        UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
         FVector SpawnLocation = ActivePlacementAbility->BuildingLocation;
-    
-        FVector Start = SpawnLocation + FVector(0, 0, 1000); 
-        FVector End = SpawnLocation - FVector(0, 0, 10000);  
-
-        FHitResult HitResult;
-
-        bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic);
-
-        if (bHit)
-        {
-            SpawnLocation.Z = HitResult.Location.Z;
-        }
+        SpawnLocation.Z = MapManager->Grid[MapManager->GetGridCoordinate(SpawnLocation)].Height;
 
         AXYZBuilding* SpawnActor = GetWorld()->SpawnActor<AXYZBuilding>(ActivePlacementAbility->BuildingTemplate, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
         SpawnActor->TeamId = TeamId;
@@ -419,12 +384,9 @@ bool AXYZWorker::IsWorkerInDistanceToPlace(const FIntVector2& CurrentGridPositio
         MaxY -= 1;
     }
 
-    bool bIsOutsideX = CurrentGridPosition.X < MinX || CurrentGridPosition.X > MaxX;
-    bool bIsOutsideY = CurrentGridPosition.Y < MinY || CurrentGridPosition.Y > MaxY;
-
     bool bIsAdjacentX = CurrentGridPosition.X == MinX - 1 || CurrentGridPosition.X == MaxX + 1;
     bool bIsAdjacentY = CurrentGridPosition.Y == MinY - 1 || CurrentGridPosition.Y == MaxY + 1;
 
-    return ((bIsAdjacentX && bIsOutsideX) && (CurrentGridPosition.Y >= MinY && CurrentGridPosition.Y <= MaxY)) || 
-           ((bIsAdjacentY && bIsOutsideY) && (CurrentGridPosition.X >= MinX && CurrentGridPosition.X <= MaxX));
+    return ((bIsAdjacentX && (CurrentGridPosition.Y >= MinY && CurrentGridPosition.Y <= MaxY)) || 
+           (bIsAdjacentY && (CurrentGridPosition.X >= MinX && CurrentGridPosition.X <= MaxX)));
 }

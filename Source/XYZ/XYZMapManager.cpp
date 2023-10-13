@@ -3,6 +3,7 @@
 #include "EngineUtils.h"
 #include "GridCell.h"
 #include "XYZActor.h"
+#include "XYZBuilding.h"
 #include "XYZGameMode.h"
 #include "XYZGameState.h"
 #include "XYZPlayerController.h"
@@ -45,7 +46,13 @@ void UXYZMapManager::InitializeGrid() {
 }
 
 FIntVector2 UXYZMapManager::GetGridCoordinate(const FVector& WorldLocation) {
-	return FIntVector2(FMath::FloorToInt(WorldLocation.X / GridCellSize), FMath::FloorToInt(WorldLocation.Y / GridCellSize));
+	int32 x = FMath::FloorToInt(WorldLocation.X / GridCellSize);
+	int32 y = FMath::FloorToInt(WorldLocation.Y / GridCellSize);
+
+	x = FMath::Clamp(x, 0, GRID_SIZE - 1);
+	y = FMath::Clamp(y, 0, GRID_SIZE - 1);
+
+	return FIntVector2(x, y);
 }
 
 void UXYZMapManager::AddActorToGrid(AXYZActor* Actor) {
@@ -99,6 +106,108 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 void UXYZMapManager::AddToUpdateSet(AXYZActor* Actor)
 {
 	ActorsToUpdate.Add(Actor);
+}
+
+TArray<FIntVector2> UXYZMapManager::GetPerimeterCoords(FIntVector2 CenterGridCoord, FIntVector2 GridArea)
+{
+	TArray<FIntVector2> PerimeterCoords;
+    
+	int32 HalfSizeX = GridArea.X / 2;
+	int32 HalfSizeY = GridArea.Y / 2;
+	int32 MinX = CenterGridCoord.X - HalfSizeX;
+	int32 MaxX = CenterGridCoord.X + HalfSizeX;
+	int32 MinY = CenterGridCoord.Y - HalfSizeY;
+	int32 MaxY = CenterGridCoord.Y + HalfSizeY;
+
+	if(GridArea.X % 2 == 0) 
+	{
+		MaxX -= 1;
+	}
+	if(GridArea.Y % 2 == 0) 
+	{
+		MaxY -= 1;
+	}
+
+	for (int32 X = MinX; X <= MaxX; ++X)
+	{
+		PerimeterCoords.Add(FIntVector2(X, MinY - 1)); // Top edge
+		PerimeterCoords.Add(FIntVector2(X, MaxY + 1)); // Bottom edge
+	}
+
+	for (int32 Y = MinY; Y <= MaxY; ++Y)
+	{
+		PerimeterCoords.Add(FIntVector2(MinX - 1, Y)); // Left edge
+		PerimeterCoords.Add(FIntVector2(MaxX + 1, Y)); // Right edge
+	}
+
+	return PerimeterCoords;
+}
+
+bool UXYZMapManager::AreGridCoordsSameHeight(FIntVector2 Coord, FIntVector2 OtherCoord)
+{
+	return Grid.Contains(Coord) && Grid.Contains(OtherCoord) && Grid[Coord].Height == Grid[OtherCoord].Height;
+}
+
+bool UXYZMapManager::IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfCoordsToSearch)
+{
+	if (!Grid.Contains(Coord))
+	{
+		return false;
+	}
+
+	int32 MinX = Coord.X - RangeOfCoordsToSearch;
+	int32 MaxX = Coord.X + RangeOfCoordsToSearch;
+	int32 MinY = Coord.Y - RangeOfCoordsToSearch;
+	int32 MaxY = Coord.Y + RangeOfCoordsToSearch;
+
+	for (int32 X = MinX; X <= MaxX; ++X)
+	{
+		for (int32 Y = MinY; Y <= MaxY; ++Y)
+		{
+			FIntVector2 CurrentCoord(X, Y);
+
+			if (Grid.Contains(CurrentCoord))
+			{
+				FGridCell& Cell = Grid[CurrentCoord];
+				for (AXYZActor* Actor : Cell.ActorsInCell)
+				{
+					AXYZBuilding* Building = Cast<AXYZBuilding>(Actor);
+					if(Building)
+					{
+						FIntVector2 ActorCenterGridCoord = Building->GridCoord; 
+						FIntVector2 ActorGridArea = FIntVector2(Building->GridSize.X, Building->GridSize.Y);
+
+						int32 ActorHalfSizeX = ActorGridArea.X / 2;
+						int32 ActorHalfSizeY = ActorGridArea.Y / 2;
+						int32 ActorMinX = ActorCenterGridCoord.X - ActorHalfSizeX;
+						int32 ActorMaxX = ActorCenterGridCoord.X + ActorHalfSizeX;
+						int32 ActorMinY = ActorCenterGridCoord.Y - ActorHalfSizeY;
+						int32 ActorMaxY = ActorCenterGridCoord.Y + ActorHalfSizeY;
+
+						if (Coord.X >= ActorMinX && Coord.X <= ActorMaxX && Coord.Y >= ActorMinY && Coord.Y <= ActorMaxY)
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+FVector UXYZMapManager::GridCoordToWorldCoord(FIntVector2 Coord)
+{
+	if(Grid.Contains(Coord))
+	{
+		return FVector(
+			(Coord.X * GRID_SIZE) + (GRID_SIZE * 0.5f), 
+			(Coord.Y * GRID_SIZE) + (GRID_SIZE * 0.5f), 
+			Grid[Coord].Height
+		);
+	}
+	return FVector::ZeroVector;
 }
 
 TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)

@@ -74,7 +74,7 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Decal")
         TMap<EXYZDecalType, UMaterialInterface*> DecalMaterials;
-
+    
     virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")

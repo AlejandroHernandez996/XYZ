@@ -24,7 +24,7 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> Agents)
     float Area = (MaxBounds.X - MinBounds.X) * (MaxBounds.Y - MinBounds.Y);
     float Density = (float)Agents.Num() / Area;
 
-    if (Density < 0.000040f)
+    if (Density < 0.000080f)
     {
         TArray<AXYZActor*> SortedAgents = Agents.Array();
         Algo::Sort(SortedAgents, [this, CenterLocation](AXYZActor* A, AXYZActor* B) {
