@@ -26,19 +26,15 @@ public:
 	FConcealCell OnConcealCell;
 	
 	UFUNCTION()
-	void RevealCell(FVector2D Coord);
-	UFUNCTION()
-	void ConcealCell(FVector2D Coord);
-	UFUNCTION()
 	void SetPlayerController(AXYZPlayerController* PlayerController);
 	UFUNCTION()
-	void Update(const TArray<FVector2D> Visible, const TArray<FVector2D> NonVisible);
+	void Update(const TArray<FIntVector2> Visible, const TArray<FIntVector2> NonVisible);
 	UPROPERTY()
-	TSet<FVector2D> RevealCoords;
+	TSet<FIntVector2> RevealCoords;
 	UPROPERTY()
 	float TimeSinceBegin;
 	UPROPERTY()
 	class AXYZPlayerController* OwningController;
-	TQueue<TArray<TArray<FVector2d>>> CellsToUpdate;
+	TQueue<TArray<TArray<FIntVector2>>> CellsToUpdate;
 
 };

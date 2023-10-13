@@ -286,11 +286,11 @@ void AXYZActor::AttackMoveTarget()
 {
 	AXYZAIController* ActorController = GetXYZAIController();
 	FVector ActorLocation = GetActorLocation();
+
 	FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
 	if (TargetActor &&
 		TargetActor != this &&
-		TargetActor->State != EXYZUnitState::DEAD &&
-		GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->DoesActorHasVisionOfActor(this, TargetActor))
+		TargetActor->State != EXYZUnitState::DEAD)
 	{
 		FVector TargetActorLocation = TargetActor->GetActorLocation();
 		

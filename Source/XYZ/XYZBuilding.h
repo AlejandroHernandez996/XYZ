@@ -34,6 +34,11 @@ public:
 	TQueue<class UXYZBuildingAbility*> BuildQueue;
 
 	UPROPERTY()
+	FVector BuildingSpawnLocation;
+
+	bool bIsSpawned;
+
+	UPROPERTY()
 	EXYZBuildingState BuildingState = EXYZBuildingState::BUILT;
 	
 	UFUNCTION()
@@ -50,6 +55,9 @@ public:
 		void CancelProduction();
 	bool bIsTraining;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FVector2D GridSize = FVector2D(1,1);
+	
 	UFUNCTION()
 	void Build(float DeltaTime);
 	

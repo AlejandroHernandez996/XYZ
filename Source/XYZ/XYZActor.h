@@ -152,7 +152,7 @@ public:
         void PlayAnimationMontage(EXYZAnimMontageType AnimMontageType);
 
     UPROPERTY()
-    FVector2D GridCoord;
+    FIntVector2 GridCoord;
 
     virtual void Process(float DeltaSeconds);
 

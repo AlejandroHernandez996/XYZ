@@ -25,6 +25,8 @@ public:
 	UPROPERTY()
 	bool bCanCancel = true;
 	virtual bool Activate() override;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Size")
+	FVector2D GridSize;
 
 	UPROPERTY()
 	FVector BuildingLocation;

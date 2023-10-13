@@ -202,7 +202,7 @@ void AXYZAIController::XYZStopMovement() {
     bIsMoving = false;
     CurrentTargetLocation = GetXYZActor()->GetActorLocation();
 
-    if (GetXYZActor()->State != EXYZUnitState::ATTACKING) {
+    if (GetXYZActor()->State != EXYZUnitState::ATTACKING && GetXYZActor()->State != EXYZUnitState::HOLD) {
         GetXYZActor()->SetState(EXYZUnitState::IDLE);
     }
 }

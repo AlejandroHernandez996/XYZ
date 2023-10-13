@@ -20,26 +20,18 @@ void AXYZFogOfWar::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	if(CellsToUpdate.IsEmpty()) return;
 
-	TArray<TArray<FVector2D>> UpdateCells;
+	TArray<TArray<FIntVector2>> UpdateCells;
 	CellsToUpdate.Dequeue(UpdateCells);
 
-	for(FVector2D Coord : UpdateCells[0])
+	for(FIntVector2 Coord : UpdateCells[0])
 	{
-		OnRevealCell.Broadcast(Coord);
+		OnRevealCell.Broadcast(FVector2D(Coord.X, Coord.Y));
 	}
-	for(FVector2D Coord : UpdateCells[1])
+	for(FIntVector2 Coord : UpdateCells[1])
 	{
-		OnConcealCell.Broadcast(Coord);
+		OnConcealCell.Broadcast(FVector2D(Coord.X, Coord.Y));
 	}
 
-}
-
-void AXYZFogOfWar::RevealCell(FVector2D Coord)
-{
-}
-
-void AXYZFogOfWar::ConcealCell(FVector2D Coord)
-{
 }
 
 void AXYZFogOfWar::SetPlayerController(AXYZPlayerController* PlayerController)
@@ -47,7 +39,7 @@ void AXYZFogOfWar::SetPlayerController(AXYZPlayerController* PlayerController)
 	OwningController = PlayerController;
 }
 
-void AXYZFogOfWar::Update(const TArray<FVector2D> Visible, const TArray<FVector2D> NonVisible)
+void AXYZFogOfWar::Update(const TArray<FIntVector2> Visible, const TArray<FIntVector2> NonVisible)
 {
 	CellsToUpdate.Enqueue({Visible, NonVisible});
 }

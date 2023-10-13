@@ -18,7 +18,7 @@ bool UXYZAbility::Activate()
 		if(GameMode && GameMode->ActorCache->ActorCountsByTeamId.IsValidIndex(OwningActor->TeamId))
 		{
 			bool bHasRequirement = true;
-			for(const auto RequiredActorIds : ActorRequirements)
+			for(const auto& RequiredActorIds : ActorRequirements)
 			{
 				bHasRequirement = bHasRequirement && GameMode->ActorCache->DoesTeamHaveActor(OwningActor->TeamId, RequiredActorIds.Key);
 			}

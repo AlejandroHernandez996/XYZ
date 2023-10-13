@@ -1,6 +1,6 @@
 #include "XYZChatManager.h"
 
-#include "ChatMessage.h"
+#include "ChatPayload.h"
 #include "IWebSocket.h"
 #include "WebSocketsModule.h"
 #include "XYZGameState.h"
@@ -28,7 +28,7 @@ void UXYZChatManager::SendMessage(FString LobbyId, FString PlayerMessage)
 {
 	if (WebSocket.IsValid() && WebSocket->IsConnected())
 	{
-		FChatMessage ChatMessage;
+		FChatPayload ChatMessage;
 		ChatMessage.LobbyId = LobbyId;
 		ChatMessage.MessageContent = PlayerMessage;
 		WebSocket->Send(ChatMessage.ToJson());

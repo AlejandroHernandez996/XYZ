@@ -49,6 +49,10 @@ public:
 	virtual void SetState(EXYZUnitState State) override;
 	UFUNCTION()
 	void PlaceBuilding();
+	UFUNCTION()
+	bool IsWorkerInDistanceToPlace(const FIntVector2& CurrentGridPosition,
+	                               const FIntVector2& PlacementCenterGridPosition,
+	                               const FIntVector2& PlacementGridSize);
 	void Process(float DeltaTime) override;
 
 	bool bFirstMineralGathered;

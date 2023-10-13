@@ -147,6 +147,9 @@ public:
 
 protected:
 	virtual void BeginPlay();
+
+	UFUNCTION()
+	FVector SnapToGridCenter(const FVector& Location);
 	virtual void Tick(float DeltaSeconds);
 
 	virtual void SetupInputComponent() override;
@@ -232,12 +235,12 @@ public:
 	void SetVisibleEnemyActors_Implementation(const TArray<int32>& VisibleActors, const TArray<int32>& NonVisibleActors);
 	
 	UFUNCTION(Reliable, Client)
-	void SendVisibilityGridCoords(const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaDNonVisible);
-	void SendVisibilityGridCoords_Implementation(const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaNonVisible);
+	void SendVisibilityGridCoords(const TArray<FIntVector2>& DeltaVisible, const TArray<FIntVector2>& DeltaDNonVisible);
+	void SendVisibilityGridCoords_Implementation(const TArray<FIntVector2>& DeltaVisible, const TArray<FIntVector2>& DeltaNonVisible);
 
 	UFUNCTION(Reliable, Client)
-	void UpdateClientVisibility(const TArray<int32>& VisibleActors, const TArray<int32>& NonVisibleActors,const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaNonVisible);
-	void UpdateClientVisibility_Implementation(const TArray<int32>& VisibleActors, const TArray<int32>& NonVisibleActors,const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaNonVisible);
+	void UpdateClientVisibility(const TArray<int32>& VisibleActors, const TArray<int32>& NonVisibleActors,const TArray<FIntVector2>& DeltaVisible, const TArray<FIntVector2>& DeltaNonVisible);
+	void UpdateClientVisibility_Implementation(const TArray<int32>& VisibleActors, const TArray<int32>& NonVisibleActors,const TArray<FIntVector2>& DeltaVisible, const TArray<FIntVector2>& DeltaNonVisible);
 
 	UPROPERTY()
 	TArray<int32> VisibleEnemyActors;
@@ -280,6 +283,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttackMoveFromMinimap(FVector2D TargetLocation);
 
+	UFUNCTION()
+	bool CanPlaceBuilding(FVector CenterLocation, int32 GridSizeX, int32 GridSizeY);
+	UPROPERTY()
+	bool bIsBuildingPlaceable;
+	
 	UFUNCTION(BlueprintCallable)
 	void MoveFromMinimap(FVector2D TargetLocation);
 };

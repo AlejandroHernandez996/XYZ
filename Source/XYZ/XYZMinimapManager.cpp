@@ -36,6 +36,8 @@ void AXYZMinimapManager::Tick(float DeltaTime)
 	
 	for(AXYZActor* VisibleActor : VisibleActors)
 	{
+		if(!VisibleActor) continue;
+		
 		UnitCoords.Add(FVector2D(MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().X / MinimapSize),
 							MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().Y / MinimapSize)));
 		if(VisibleActor->TeamId == TeamId)
@@ -61,11 +63,13 @@ void AXYZMinimapManager::UpdateVisibleActors(TSet<AXYZActor*> DeltaVisible, TSet
 	TeamId = _TeamId;
 	for(AXYZActor* VisibleActor : DeltaVisible)
 	{
+		if(!VisibleActor) continue;
 		VisibleActors.Add(VisibleActor);
 	}
 
 	for(AXYZActor* NonVisibleActor : DeltaNonVisible)
 	{
+		if(!NonVisibleActor) continue;
 		if(VisibleActors.Contains(NonVisibleActor))
 		{
 			VisibleActors.Remove(NonVisibleActor);

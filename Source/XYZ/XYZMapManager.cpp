@@ -22,7 +22,7 @@ void UXYZMapManager::InitializeGrid() {
 	
 	for (int32 X = 0; X < GRID_SIZE; X++) {
 		for (int32 Y = 0; Y < GRID_SIZE; Y++) {
-			FVector2D GridCoord(X, Y);
+			FIntVector2 GridCoord(X, Y);
 			FGridCell NewCell;
 
 			FVector WorldCoord((GridCoord.X + 0.5f) * GridCellSize, (GridCoord.Y + 0.5f) * GridCellSize, 0);
@@ -44,13 +44,13 @@ void UXYZMapManager::InitializeGrid() {
 	}
 }
 
-FVector2D UXYZMapManager::GetGridCoordinate(const FVector& WorldLocation) {
-	return FVector2D(FMath::FloorToInt(WorldLocation.X / GridCellSize), FMath::FloorToInt(WorldLocation.Y / GridCellSize));
+FIntVector2 UXYZMapManager::GetGridCoordinate(const FVector& WorldLocation) {
+	return FIntVector2(FMath::FloorToInt(WorldLocation.X / GridCellSize), FMath::FloorToInt(WorldLocation.Y / GridCellSize));
 }
 
 void UXYZMapManager::AddActorToGrid(AXYZActor* Actor) {
 	if(!Actor) return;
-	FVector2D GridCoord = GetGridCoordinate(Actor->GetActorLocation());
+	FIntVector2 GridCoord = GetGridCoordinate(Actor->GetActorLocation());
 	if(IsGridCoordValid(GridCoord))
 	{
 		Grid[GridCoord].ActorsInCell.Add(Actor);
@@ -104,7 +104,7 @@ void UXYZMapManager::AddToUpdateSet(AXYZActor* Actor)
 TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
 {
 	if(!Actor) return {};
-	FVector2D GridCoord = GetGridCoordinate(Actor->GetActorLocation());
+	FIntVector2 GridCoord = GetGridCoordinate(Actor->GetActorLocation());
 	int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize)+1;
 	
 	TSet<AXYZActor*> ActorsInRange;
@@ -113,7 +113,7 @@ TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
 	{
 		for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) 
 		{
-			FVector2D AdjacentCoord(GridCoord.X + X, GridCoord.Y + Y);
+			FIntVector2 AdjacentCoord(GridCoord.X + X, GridCoord.Y + Y);
             
 			if(IsGridCoordValid(GridCoord) && IsGridCoordValid(AdjacentCoord) && Grid[Actor->GridCoord].Height >= Grid[AdjacentCoord].Height)
 			{
@@ -128,7 +128,7 @@ void UXYZMapManager::ClearVision()
 {
 	for (int32 X = 0; X < GRID_SIZE; X++) {
 		for (int32 Y = 0; Y < GRID_SIZE; Y++) {
-			FVector2D GridCoord(X, Y);
+			FIntVector2 GridCoord(X, Y);
 			Grid[GridCoord].TeamVision = {false, false};
 		}
 	}
@@ -142,7 +142,7 @@ void UXYZMapManager::GenerateVision() {
 	for (AXYZActor* Actor : Actors) {
 		if (!Actor) continue;
 
-		FVector2D ActorGridCoord = GetGridCoordinate(Actor->GetActorLocation());
+		FIntVector2 ActorGridCoord = GetGridCoordinate(Actor->GetActorLocation());
 		if (!IsGridCoordValid(ActorGridCoord))
 		{
 			continue;
@@ -151,7 +151,7 @@ void UXYZMapManager::GenerateVision() {
 
 		for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
 			for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
-				FVector2D AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
+				FIntVector2 AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
 				if (IsGridCoordValid(AdjacentCoord) &&
 					Actor->TeamId != 2 &&
 					Grid[ActorGridCoord].Height >= Grid[AdjacentCoord].Height) {
@@ -162,23 +162,23 @@ void UXYZMapManager::GenerateVision() {
 	}
 }
 
-bool UXYZMapManager::IsGridCoordValid(const FVector2D& Coord) const
+bool UXYZMapManager::IsGridCoordValid(const FIntVector2& Coord) const
 {
 	return Grid.Contains(Coord);
 }
 
 void UXYZMapManager::SendDeltaVisibilityToClients()
 {
-	TArray<TSet<FVector2D>> VisibleCells = {{},{}};
-	TArray<TSet<FVector2D>> NonVisibleCells = {{},{}};
+	TArray<TSet<FIntVector2>> VisibleCells = {{},{}};
+	TArray<TSet<FIntVector2>> NonVisibleCells = {{},{}};
 	
 	TArray<TSet<AXYZActor*>> VisibleActors = {{},{}};
 	TArray<TSet<AXYZActor*>> NonVisibleActors = {{},{}};
 
-	for (const TPair<FVector2D, FGridCell>& KVP : Grid)
+	for (const TPair<FIntVector2, FGridCell>& KVP : Grid)
 	{
 		FGridCell Cell = KVP.Value;
-		FVector2d Coord = KVP.Key;
+		FIntVector2 Coord = KVP.Key;
 		for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
 		{
 			int32 TeamId = PlayerController->TeamId;
@@ -201,8 +201,8 @@ void UXYZMapManager::SendDeltaVisibilityToClients()
 		TSet<AXYZActor*> VisibleActorsDifference = VisibleActors[TeamId].Difference(LastVisibleActorsSent[TeamId]);
 		TSet<AXYZActor*> NonVisibleActorsDifference = NonVisibleActors[TeamId].Difference(LastNonVisibleActorsSent[TeamId]);
 
-		TSet<FVector2D> VisibleCellsDifference = VisibleCells[TeamId].Difference(LastVisibleCellsSent[TeamId]);
-		TSet<FVector2D> NonVisibleCellsDifference = NonVisibleCells[TeamId].Difference(LastNonVisibleCellsSent[TeamId]);
+		TSet<FIntVector2> VisibleCellsDifference = VisibleCells[TeamId].Difference(LastVisibleCellsSent[TeamId]);
+		TSet<FIntVector2> NonVisibleCellsDifference = NonVisibleCells[TeamId].Difference(LastNonVisibleCellsSent[TeamId]);
 
 		bool bIsDifferent = !VisibleCellsDifference.IsEmpty() || !NonVisibleCellsDifference.IsEmpty() || !NonVisibleActorsDifference.IsEmpty() || !VisibleActorsDifference.IsEmpty();
 		if(bIsDifferent)
@@ -258,14 +258,14 @@ bool UXYZMapManager::AreSetsEqual(const TSet<int32>& SetA, const TSet<int32>& Se
 	return true;
 }
 
-bool UXYZMapManager::AreSets2DEqual(const TSet<FVector2D>& SetA, const TSet<FVector2D>& SetB)
+bool UXYZMapManager::AreSets2DEqual(const TSet<FIntVector2>& SetA, const TSet<FIntVector2>& SetB)
 {
 	if (SetA.Num() != SetB.Num())
 	{
 		return false;
 	}
 
-	for (const FVector2D& Element : SetA)
+	for (const FIntVector2& Element : SetA)
 	{
 		if (!SetB.Contains(Element))
 		{

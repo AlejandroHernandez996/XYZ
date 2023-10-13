@@ -57,16 +57,25 @@ void AXYZWorker::Process(float DeltaTime)
     {
         if(ActivePlacementAbility)
         {
+            UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
+            
             FVector WorkerCurrentLocation = GetActorLocation();
             FVector PlacingLocation = ActivePlacementAbility->BuildingLocation;
-
+            
             FVector2D WorkerCurrentLocation2D(WorkerCurrentLocation.X, WorkerCurrentLocation.Y);
             FVector2D PlacingLocation2D(PlacingLocation.X, PlacingLocation.Y);
 
             float Distance2D = FVector2D::Distance(WorkerCurrentLocation2D, PlacingLocation2D);
             UE_LOG(LogTemp, Warning, TEXT("Distance2D: %f"), Distance2D);
 
-            if(Distance2D <= GetCapsuleComponent()->GetScaledCapsuleRadius()*2.5f)
+            FIntVector2 CurrentGridPosition = GridCoord;
+            FIntVector2 PlacementCenterGridPosition = MapManager->GetGridCoordinate(PlacingLocation);
+            FIntVector2 PlacementGridSize = FIntVector2(ActivePlacementAbility->GridSize.X, ActivePlacementAbility->GridSize.Y);
+            bool bHasSameHeightAsBuildingLocation = MapManager->Grid.Contains(CurrentGridPosition) &&
+                MapManager->Grid.Contains(PlacementCenterGridPosition) &&
+                MapManager->Grid[CurrentGridPosition].Height == MapManager->Grid[PlacementCenterGridPosition].Height;
+            
+            if(IsWorkerInDistanceToPlace(CurrentGridPosition, PlacementCenterGridPosition, PlacementGridSize) && bHasSameHeightAsBuildingLocation)
             {
                 PlaceBuilding();
             }
@@ -369,24 +378,53 @@ void AXYZWorker::PlaceBuilding()
             SpawnLocation.Z = HitResult.Location.Z;
         }
 
-        AXYZActor* SpawnActor = GetWorld()->SpawnActor<AXYZActor>(ActivePlacementAbility->BuildingTemplate, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+        AXYZBuilding* SpawnActor = GetWorld()->SpawnActor<AXYZBuilding>(ActivePlacementAbility->BuildingTemplate, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
         SpawnActor->TeamId = TeamId;
         GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->AddActorServer(SpawnActor);
-        FVector OffsetLocation = SpawnActor->GetActorLocation();
+        FVector OffsetLocation = SpawnLocation;
         OffsetLocation.Z += SpawnActor->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+        
         SpawnActor->SetActorLocation(OffsetLocation);
-        ActivePlacementAbility = nullptr;
-        AXYZBuilding* SpawnedBuilding = Cast<AXYZBuilding>(SpawnActor);
-        if(Cast<AXYZBuilding>(SpawnActor))
-        {
-            SpawnedBuilding->BuildingState = EXYZBuildingState::PLACED;
-            SpawnedBuilding->Health = 5.0f;
-        }
+        SpawnActor->BuildingSpawnLocation = OffsetLocation;
+        SpawnActor->bIsSpawned = true;
+        SpawnActor->BuildingState = EXYZBuildingState::PLACED;
+        SpawnActor->Health = 5.0f;
+        
         GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(SpawnActor);
+        
+        ActivePlacementAbility = nullptr;
         SetState(EXYZUnitState::BUILDING);
     }else
     {
         SetState(EXYZUnitState::IDLE);
     }
     
+}
+
+bool AXYZWorker::IsWorkerInDistanceToPlace(const FIntVector2& CurrentGridPosition, const FIntVector2& PlacementCenterGridPosition, const FIntVector2& PlacementGridSize)
+{
+    int32 HalfSizeX = PlacementGridSize.X / 2;
+    int32 HalfSizeY = PlacementGridSize.Y / 2;
+    int32 MinX = PlacementCenterGridPosition.X - HalfSizeX;
+    int32 MaxX = PlacementCenterGridPosition.X + HalfSizeX;
+    int32 MinY = PlacementCenterGridPosition.Y - HalfSizeY;
+    int32 MaxY = PlacementCenterGridPosition.Y + HalfSizeY;
+
+    if(PlacementGridSize.X % 2 == 0) 
+    {
+        MaxX -= 1;
+    }
+    if(PlacementGridSize.Y % 2 == 0) 
+    {
+        MaxY -= 1;
+    }
+
+    bool bIsOutsideX = CurrentGridPosition.X < MinX || CurrentGridPosition.X > MaxX;
+    bool bIsOutsideY = CurrentGridPosition.Y < MinY || CurrentGridPosition.Y > MaxY;
+
+    bool bIsAdjacentX = CurrentGridPosition.X == MinX - 1 || CurrentGridPosition.X == MaxX + 1;
+    bool bIsAdjacentY = CurrentGridPosition.Y == MinY - 1 || CurrentGridPosition.Y == MaxY + 1;
+
+    return ((bIsAdjacentX && bIsOutsideX) && (CurrentGridPosition.Y >= MinY && CurrentGridPosition.Y <= MaxY)) || 
+           ((bIsAdjacentY && bIsOutsideY) && (CurrentGridPosition.X >= MinX && CurrentGridPosition.X <= MaxX));
 }

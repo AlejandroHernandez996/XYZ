@@ -200,6 +200,10 @@ void AXYZBuilding::CancelProduction() {
 void AXYZBuilding::Process(float DeltaTime)
 {
     Super::Process(DeltaTime);
+    if(bIsSpawned && BuildingSpawnLocation != GetActorLocation())
+    {
+        SetActorLocation(BuildingSpawnLocation);
+    }
     switch (BuildingState) {
     case EXYZBuildingState::PLACED:
         BuildingState = EXYZBuildingState::BUILDING;

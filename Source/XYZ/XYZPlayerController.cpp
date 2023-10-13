@@ -67,6 +67,29 @@ void AXYZPlayerController::BeginPlay()
 
 }
 
+FVector AXYZPlayerController::SnapToGridCenter(const FVector& Location)
+{
+	float gridSize = 100.0f;
+	FVector adjustedLocation = Location;
+
+	int32 GridSizeX = PlacementBuilding->GridSize.X;
+	int32 GridSizeY = PlacementBuilding->GridSize.Y;
+	
+	if(GridSizeX % 2 == 0)
+		adjustedLocation.X -= gridSize / 2;
+
+	if(GridSizeY % 2 == 0)
+		adjustedLocation.Y -= gridSize / 2;
+    
+	int32 gridIndexX = FMath::FloorToInt(adjustedLocation.X / gridSize);
+	int32 gridIndexY = FMath::FloorToInt(adjustedLocation.Y / gridSize);
+    
+	float centerX = (gridIndexX * gridSize) + ((GridSizeX % 2 == 0) ? 0 : gridSize / 2);
+	float centerY = (gridIndexY * gridSize) + ((GridSizeY % 2 == 0) ? 0 : gridSize / 2);
+
+	return FVector(centerX, centerY, Location.Z);
+}
+
 void AXYZPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	if(!XYZGameState)
@@ -132,8 +155,9 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 	if(PlacementBuilding)
 	{
 		FVector NewLocation = GetMouseToWorldPosition(this);
-		NewLocation.X = FMath::RoundToInt(NewLocation.X / 100.0f) * 100;
-		NewLocation.Y = FMath::RoundToInt(NewLocation.Y / 100.0f) * 100;
+
+		NewLocation = SnapToGridCenter(NewLocation);
+
 		UCapsuleComponent* Capsule = Cast<UCapsuleComponent>(PlacementBuilding->GetComponentByClass(UCapsuleComponent::StaticClass()));
 		if(Capsule)
 		{
@@ -141,6 +165,9 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		}
 
 		PlacementBuilding->SetActorLocation(NewLocation);
+
+		bIsBuildingPlaceable = CanPlaceBuilding(NewLocation, PlacementBuilding->GridSize.X, PlacementBuilding->GridSize.Y);
+		PlacementBuilding->SetActorHiddenInGame(!bIsBuildingPlaceable);
 	}
 }
 
@@ -315,7 +342,7 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 				}
 				break;
 			}
-			if(bIsPlacingBuilding && PlacementBuilding && WorkerAbilityIndex != -1 && WorkerActorId != -1)
+			if(bIsBuildingPlaceable && bIsPlacingBuilding && PlacementBuilding && WorkerAbilityIndex != -1 && WorkerActorId != -1)
 			{
 				FXYZInputMessage AbilityInput = FXYZInputMessage(PlayerState->GetUniqueId().ToString(), SelectionStructure->ToActorIdArray(), -1, PlacementBuilding->GetActorLocation(), EXYZInputType::ABILITY, bPrimaryModifier);
 				AbilityInput.AbilityIndex = WorkerAbilityIndex;
@@ -738,7 +765,7 @@ void AXYZPlayerController::SetVisibleEnemyActors_Implementation(const TArray<int
 	MinimapManager->UpdateVisibleActors(VisibleActors, NonVisibleActors, TeamId);
 }
 
-void AXYZPlayerController::SendVisibilityGridCoords_Implementation(const TArray<FVector2D>& DeltaVisible, const TArray<FVector2D>& DeltaNonVisible)
+void AXYZPlayerController::SendVisibilityGridCoords_Implementation(const TArray<FIntVector2>& DeltaVisible, const TArray<FIntVector2>& DeltaNonVisible)
 {
 	if(FogOfWar)
 	{
@@ -750,8 +777,8 @@ void AXYZPlayerController::SendVisibilityGridCoords_Implementation(const TArray<
 void AXYZPlayerController::UpdateClientVisibility_Implementation(
 	const TArray<int32>& DeltaVisibleActors,
 	const TArray<int32>& DeltaNonVisibleActors,
-	const TArray<FVector2D>& DeltaVisible,
-	const TArray<FVector2D>& DeltaNonVisible)
+	const TArray<FIntVector2>& DeltaVisible,
+	const TArray<FIntVector2>& DeltaNonVisible)
 {
 	if(FogOfWar)
 	{
@@ -913,8 +940,9 @@ FVector AXYZPlayerController::GetMouseToWorldPosition(APlayerController* PlayerC
 	const FVector End = Start + WorldDirection * 10000; 
 
 	FCollisionQueryParams TraceParams(FName(TEXT("MouseToWorldTrace")), true, PlayerController->GetPawn());
-	TraceParams.bTraceComplex = true;  // Trace against complex collision meshes
+	TraceParams.bTraceComplex = true;
 	TraceParams.bReturnPhysicalMaterial = false;
+	TraceParams.AddIgnoredActor(PlacementBuilding);
 
 	if(GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, TraceParams))
 	{
@@ -970,4 +998,55 @@ void AXYZPlayerController::AttackMoveFromMinimap(FVector2D TargetLocation)
 		}
 		bAttackModifier = false;
 	}
+}
+
+bool AXYZPlayerController::CanPlaceBuilding(FVector CenterLocation, int32 GridSizeX, int32 GridSizeY)
+{
+	float gridSize = 100.0f;
+	float rayLength = 5000.0f;
+	float maxAcceptableHeightDifference = 20.0f;
+
+	TArray<FVector> rayStartPoints;
+	for(int32 i = 0; i < GridSizeX; i++)
+	{
+		for(int32 j = 0; j < GridSizeY; j++)
+		{
+			FVector startPoint = CenterLocation + FVector(i * gridSize, j * gridSize, 0);
+			rayStartPoints.Add(startPoint);
+		}
+	}
+
+	TArray<float> hitHeights;
+	for(FVector startPoint : rayStartPoints)
+	{
+		FHitResult HitResult;
+		FVector start = startPoint + FVector(0, 0, 50);
+		FVector end = startPoint - FVector(0, 0, rayLength);
+
+		FCollisionQueryParams CollisionParams;
+		CollisionParams.AddIgnoredActor(PlacementBuilding);
+		CollisionParams.bTraceComplex = true;
+
+		if(GetWorld()->LineTraceSingleByChannel(HitResult, start, end, ECC_WorldStatic, CollisionParams))
+		{
+			if(!HitResult.GetActor()->IsA(AXYZBuilding::StaticClass())) 
+			{
+				hitHeights.Add(HitResult.ImpactPoint.Z);
+			}
+			else 
+			{
+				return false;
+			}
+		}
+	}
+
+	if(hitHeights.Num() == 0)
+		return false;
+
+	float maxZ = FMath::Max(hitHeights);
+	float minZ = FMath::Min(hitHeights);
+	if(maxZ - minZ > maxAcceptableHeightDifference)
+		return false;
+
+	return true;
 }

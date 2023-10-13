@@ -19,7 +19,7 @@ public:
 	void AddToUpdateSet(AXYZActor* Actor);
 
 	UPROPERTY()
-	TMap<FVector2D, FGridCell> Grid;
+	TMap<FIntVector2, FGridCell> Grid;
 	
 	UPROPERTY()
 	int32 GRID_SIZE = 100;
@@ -39,7 +39,7 @@ public:
 	
 	void InitializeGrid();
 	UFUNCTION()
-	FVector2D GetGridCoordinate(const FVector& WorldLocation);
+	FIntVector2 GetGridCoordinate(const FVector& WorldLocation);
 	UFUNCTION()
 	void AddActorToGrid(class AXYZActor* Actor);
 	UFUNCTION()
@@ -51,7 +51,7 @@ public:
 	UFUNCTION()
 	void GenerateVision();
 	UFUNCTION()
-	bool IsGridCoordValid(const FVector2D& Coord) const;
+	bool IsGridCoordValid(const FIntVector2& Coord) const;
 
 	UFUNCTION()
 	void SendDeltaVisibilityToClients();
@@ -60,13 +60,13 @@ public:
 	TArray<TSet<int32>> LastNonVisibleSent = {{},{}};
 	TArray<TSet<AXYZActor*>> LastVisibleActorsSent = {{},{}};
 	TArray<TSet<AXYZActor*>> LastNonVisibleActorsSent = {{},{}};
-	TArray<TSet<FVector2D>> LastVisibleCellsSent = {{},{}};
-	TArray<TSet<FVector2D>> LastNonVisibleCellsSent = {{},{}};
+	TArray<TSet<FIntVector2>> LastVisibleCellsSent = {{},{}};
+	TArray<TSet<FIntVector2>> LastNonVisibleCellsSent = {{},{}};
 
 	UFUNCTION()
 	bool AreSetsEqual(const TSet<int32>& SetA, const TSet<int32>& SetB);
 	UFUNCTION()
-	bool AreSets2DEqual(const TSet<FVector2D>& SetA, const TSet<FVector2D>& SetB);
+	bool AreSets2DEqual(const TSet<FIntVector2>& SetA, const TSet<FIntVector2>& SetB);
 	UFUNCTION()
 	bool DoesActorHasVisionOfActor(AXYZActor* Actor, AXYZActor* OtherActor);
 	UFUNCTION()
