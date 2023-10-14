@@ -168,4 +168,7 @@ public:
 
     UFUNCTION()
     int GetActorPriority(const AXYZActor* Actor);
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
+    FVector TargetActorLocationReplicated;
 };

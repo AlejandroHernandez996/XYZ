@@ -198,12 +198,12 @@ void AXYZGameMode::ProcessMatchStarting()
                         Ratings.Add(UserStatRetriever->GetControllerStatInt32(PlayerController, "rating"));
                     }else
                     {
-                        UserNames.Add("||||||||||");
-                        Ratings.Add(-69);
+                        UserNames.Add("");
+                        Ratings.Add(0);
                     }
                 }else
                 {
-                    UserNames.Add("||||||||||");
+                    UserNames.Add("");
                 }
             }
         }

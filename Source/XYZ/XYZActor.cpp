@@ -86,6 +86,16 @@ void AXYZActor::Tick(float DeltaTime)
 		SetTeamColor();
 		bSetTeamColor = true; 
 	}
+	if(HasAuthority())
+	{
+		if(TargetActor)
+		{
+			TargetActorLocationReplicated = TargetActor->GetActorLocation();
+		}else
+		{
+			TargetActorLocationReplicated = FVector::ZeroVector;
+		}
+	}
 }
 
 void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -104,6 +114,7 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AXYZActor, CollisionName);
 	DOREPLIFETIME(AXYZActor, TeamId);
 	DOREPLIFETIME(AXYZActor, ActorId);
+	DOREPLIFETIME(AXYZActor, TargetActorLocationReplicated);
 }
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)

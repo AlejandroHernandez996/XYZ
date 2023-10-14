@@ -350,12 +350,15 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 				}
 				break;
 			}
-			if(bIsBuildingPlaceable && bIsPlacingBuilding && PlacementBuilding && WorkerAbilityIndex != -1 && WorkerActorId != -1)
+			if(bIsPlacingBuilding && PlacementBuilding && WorkerAbilityIndex != -1 && WorkerActorId != -1)
 			{
-				FXYZInputMessage AbilityInput = FXYZInputMessage(PlayerState->GetUniqueId().ToString(), SelectionStructure->ToActorIdArray(), -1, PlacementBuilding->GetActorLocation(), EXYZInputType::ABILITY, bPrimaryModifier);
-				AbilityInput.AbilityIndex = WorkerAbilityIndex;
-				AbilityInput.ActiveActorId = WorkerActorId;
-				QueueInput(AbilityInput);
+				if(bIsBuildingPlaceable)
+				{
+					FXYZInputMessage AbilityInput = FXYZInputMessage(PlayerState->GetUniqueId().ToString(), SelectionStructure->ToActorIdArray(), -1, PlacementBuilding->GetActorLocation(), EXYZInputType::ABILITY, bPrimaryModifier);
+					AbilityInput.AbilityIndex = WorkerAbilityIndex;
+					AbilityInput.ActiveActorId = WorkerActorId;
+					QueueInput(AbilityInput);
+				}
 				PlacementBuilding->Destroy();
 				break;
 			}
@@ -918,7 +921,10 @@ void AXYZPlayerController::UpdateMouseCursor()
 void AXYZPlayerController::UpdateLoadingScreen_Implementation(const TArray<FString>& PlayerNames, const TArray<int32>& Ratings,
 	const float LoadingPercentage)
 {
-	OnLoadingScreenEvent.Broadcast(PlayerNames,Ratings, LoadingPercentage);
+	if(Ratings[0] > -10000 && Ratings[1] > -10000)
+	{
+		OnLoadingScreenEvent.Broadcast(PlayerNames,Ratings, LoadingPercentage);
+	}
 }
 
 void AXYZPlayerController::ClearBuildingPlacement()
