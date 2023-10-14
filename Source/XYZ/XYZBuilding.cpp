@@ -12,6 +12,7 @@
 #include "XYZAIController.h"
 #include "XYZActorCache.h"
 #include "CableComponent.h"
+#include "XYZMapManager.h"
 
 AXYZBuilding::AXYZBuilding() : Super()
 {
@@ -27,18 +28,22 @@ void AXYZBuilding::Tick(float DeltaTime) {
     {
         SetActorLocation(BuildingSpawnLocation);
     }
-    RallyCable->EndLocation = RallyPoint - RallyCable->GetComponentLocation();
-    if(RallyTarget)
+    if(bCanRally)
     {
-        RallyPoint = RallyTarget->GetActorLocation();
+        RallyCable->EndLocation = RallyPoint - RallyCable->GetComponentLocation();
+        if(RallyTarget)
+        {
+            RallyPoint = RallyTarget->GetActorLocation();
+        }
+        RallyCable->CableLength = FVector::Dist(RallyPoint, RallyCable->GetComponentLocation());
     }
-    RallyCable->CableLength = FVector::Dist(RallyPoint, RallyCable->GetComponentLocation());
 }
 
 void AXYZBuilding::BeginPlay() {
     Super::BeginPlay();
     UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
     RallyCable->SetHiddenInGame(true);
+
     if (CapsuleComp)
     {
         float CapsuleRadius = CapsuleComp->GetScaledCapsuleRadius();
@@ -50,8 +55,10 @@ void AXYZBuilding::BeginPlay() {
         UXYZBuildingAbility* BuildingAbility = Cast<UXYZBuildingAbility>(Ability);
         if (BuildingAbility) {
             BuildingAbility->OwningBuilding = this;
+            bCanRally = true;
         }
     }
+    RallyCable->SetHiddenInGame(true);
 }
 
 void AXYZBuilding::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -123,6 +130,37 @@ void AXYZBuilding::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
 {
     Super::ShowDecal(bShowDecal, DecalType);
     RallyCable->SetHiddenInGame(!bShowDecal && RallyPoint != SpawnPoint);
+}
+
+void AXYZBuilding::BuildingAttack()
+{
+    FVector ActorLocation = GetActorLocation();
+    FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
+    if (TargetActor &&
+        TargetActor != this &&
+        TargetActor->State != EXYZUnitState::DEAD)
+    {
+        FVector TargetActorLocation = TargetActor->GetActorLocation();
+        float TargetActorRadius = TargetActor->GetCapsuleComponent()->GetScaledCapsuleRadius();
+
+        FVector Direction = TargetActorLocation - ActorLocation;
+        Direction.Z = 0;
+        Direction.Normalize();
+
+        FVector2D TargetLocation2D = FVector2D(TargetActorLocation.X, TargetActorLocation.Y);
+        float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
+    
+        DistanceToTarget -= TargetActorRadius;
+        if (DistanceToTarget <= AttackRange)
+        {
+            Attack();
+        }
+    }
+    else
+    {
+        TargetActor = nullptr;
+    }
+
 }
 
 void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
@@ -228,6 +266,22 @@ void AXYZBuilding::CancelProduction() {
 void AXYZBuilding::Process(float DeltaTime)
 {
     Super::Process(DeltaTime);
+
+    if(bCanAttack && BuildingState == EXYZBuildingState::BUILT)
+    {
+        if(TargetActor && !GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->DoesActorHasVisionOfActor(this, TargetActor))
+        {
+            TargetActor = nullptr;
+        }
+        if (!TargetActor || TargetActor->Health <= 0.0f)
+        {
+            TargetActor = FindClosestActor(true);
+        }
+        if (TargetActor)
+        {
+            BuildingAttack();
+        }
+    }
     switch (BuildingState) {
     case EXYZBuildingState::PLACED:
         BuildingState = EXYZBuildingState::BUILDING;

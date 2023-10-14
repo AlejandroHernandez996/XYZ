@@ -35,8 +35,14 @@ public:
 	class UCableComponent* RallyCable;
 	virtual void ShowDecal(bool bShowDecal, EXYZDecalType DecalType) override;
 	
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool bCanRally;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCanAttack;
+	UFUNCTION()
+	void BuildingAttack();
+	
 	TQueue<class UXYZBuildingAbility*> BuildQueue;
 
 	UPROPERTY(Replicated)

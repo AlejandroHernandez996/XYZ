@@ -225,7 +225,7 @@ TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
 		{
 			FIntVector2 AdjacentCoord(GridCoord.X + X, GridCoord.Y + Y);
             
-			if(IsGridCoordValid(GridCoord) && IsGridCoordValid(AdjacentCoord) && Grid[Actor->GridCoord].Height >= Grid[AdjacentCoord].Height)
+			if(IsGridCoordValid(AdjacentCoord) && Grid[AdjacentCoord].TeamVision[Actor->TeamId])
 			{
 				ActorsInRange = ActorsInRange.Union(Grid[AdjacentCoord].ActorsInCell);
 			}
