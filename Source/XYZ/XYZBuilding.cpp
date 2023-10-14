@@ -11,6 +11,15 @@
 #include "XYZPlayerController.h"
 #include "XYZAIController.h"
 #include "XYZActorCache.h"
+#include "CableComponent.h"
+
+AXYZBuilding::AXYZBuilding() : Super()
+{
+    RallyCable = CreateDefaultSubobject<UCableComponent>(TEXT("RallyCable"));
+    RallyCable->SetupAttachment(RootComponent);
+    RallyCable->NumSegments = 1;
+    RallyCable->CableGravityScale = 0;
+}
 
 void AXYZBuilding::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
@@ -18,11 +27,18 @@ void AXYZBuilding::Tick(float DeltaTime) {
     {
         SetActorLocation(BuildingSpawnLocation);
     }
+    RallyCable->EndLocation = RallyPoint - RallyCable->GetComponentLocation();
+    if(RallyTarget)
+    {
+        RallyPoint = RallyTarget->GetActorLocation();
+    }
+    RallyCable->CableLength = FVector::Dist(RallyPoint, RallyCable->GetComponentLocation());
 }
 
 void AXYZBuilding::BeginPlay() {
     Super::BeginPlay();
     UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+    RallyCable->SetHiddenInGame(true);
     if (CapsuleComp)
     {
         float CapsuleRadius = CapsuleComp->GetScaledCapsuleRadius();
@@ -101,6 +117,12 @@ void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
     if (bIsSupplyReserved) {
         TimeToBuild += DeltaTime;
     }
+}
+
+void AXYZBuilding::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
+{
+    Super::ShowDecal(bShowDecal, DecalType);
+    RallyCable->SetHiddenInGame(!bShowDecal && RallyPoint != SpawnPoint);
 }
 
 void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {

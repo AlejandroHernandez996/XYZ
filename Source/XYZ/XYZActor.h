@@ -102,7 +102,7 @@ public:
         UDecalComponent* SelectionDecal;
 
     UFUNCTION()
-    void ShowDecal(bool bShowDecal, EXYZDecalType DecalType);
+    virtual void ShowDecal(bool bShowDecal, EXYZDecalType DecalType);
 
     UFUNCTION()
         AXYZActor* FindClosestActor(bool bIgnoreFriendlyActors);

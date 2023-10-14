@@ -66,6 +66,12 @@ void AXYZWorker::Process(float DeltaTime)
             bool bHasSameHeightAsBuildingLocation = MapManager->Grid.Contains(CurrentGridPosition) &&
                 MapManager->Grid.Contains(PlacementCenterGridPosition) &&
                 MapManager->Grid[CurrentGridPosition].Height == MapManager->Grid[PlacementCenterGridPosition].Height;
+
+            if(MapManager->DoesBuildingAreaOverlap(PlacementCenterGridPosition, PlacementGridSize))
+            {
+                SetState(EXYZUnitState::IDLE);
+                return;
+            }
             if(IsWorkerInDistanceToPlace(CurrentGridPosition, PlacementCenterGridPosition, PlacementGridSize) && bHasSameHeightAsBuildingLocation)
             {
                 PlaceBuilding();
@@ -73,15 +79,20 @@ void AXYZWorker::Process(float DeltaTime)
             else if(XYZAIController)
             {
                 TArray<FIntVector2> PerimeterTiles = MapManager->GetPerimeterCoords(PlacementCenterGridPosition, PlacementGridSize);
-
+                bool bHasValidTileToPlace = false;
                 for (const FIntVector2& Tile : PerimeterTiles) 
                 {
                     if (MapManager->AreGridCoordsSameHeight(Tile, PlacementCenterGridPosition) && !MapManager->IsCoordOccupiedByBuilding(Tile)) 
                     {
                         FVector DestinationLocation = MapManager->GridCoordToWorldCoord(Tile);
                         XYZAIController->MoveToLocation(DestinationLocation,.001f);
+                        bHasValidTileToPlace = true;
                         break;
                     }
+                }
+                if(!bHasValidTileToPlace)
+                {
+                    SetState(EXYZUnitState::IDLE);
                 }
             }else
             {

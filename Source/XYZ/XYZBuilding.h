@@ -15,6 +15,8 @@ class XYZ_API AXYZBuilding : public AXYZActor
 {
 	GENERATED_BODY()
 public:
+	AXYZBuilding();
+
 	virtual void Tick(float DeltaTime);
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
@@ -29,6 +31,10 @@ public:
 		FVector SpawnPoint;
 	UPROPERTY()
 		class AXYZActor* RallyTarget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UCableComponent* RallyCable;
+	virtual void ShowDecal(bool bShowDecal, EXYZDecalType DecalType) override;
+	
 	UPROPERTY()
 		bool bCanRally;
 	TQueue<class UXYZBuildingAbility*> BuildQueue;

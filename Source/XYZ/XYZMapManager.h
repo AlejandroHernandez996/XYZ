@@ -73,6 +73,7 @@ public:
 	bool AreSets2DEqual(const TSet<FIntVector2>& SetA, const TSet<FIntVector2>& SetB);
 	UFUNCTION()
 	bool DoesActorHasVisionOfActor(AXYZActor* Actor, AXYZActor* OtherActor);
+	bool DoesBuildingAreaOverlap(FIntVector2 CenterGridCoord, FIntVector2 GridAreaSize);
 	UFUNCTION()
 	TArray<int32> ConvertSetToActorIds(const TSet<AXYZActor*>& ActorSet);
 

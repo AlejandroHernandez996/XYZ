@@ -150,11 +150,6 @@ bool UXYZMapManager::AreGridCoordsSameHeight(FIntVector2 Coord, FIntVector2 Othe
 
 bool UXYZMapManager::IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfCoordsToSearch)
 {
-	if (!Grid.Contains(Coord))
-	{
-		return false;
-	}
-
 	int32 MinX = Coord.X - RangeOfCoordsToSearch;
 	int32 MaxX = Coord.X + RangeOfCoordsToSearch;
 	int32 MinY = Coord.Y - RangeOfCoordsToSearch;
@@ -169,22 +164,27 @@ bool UXYZMapManager::IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfC
 			if (Grid.Contains(CurrentCoord))
 			{
 				FGridCell& Cell = Grid[CurrentCoord];
+
 				for (AXYZActor* Actor : Cell.ActorsInCell)
 				{
 					AXYZBuilding* Building = Cast<AXYZBuilding>(Actor);
+
 					if(Building)
 					{
-						FIntVector2 ActorCenterGridCoord = Building->GridCoord; 
-						FIntVector2 ActorGridArea = FIntVector2(Building->GridSize.X, Building->GridSize.Y);
+						FIntVector2 BuildingGridCoord = Building->GridCoord; 
+						FIntVector2 BuildingGridSize = FIntVector2(Building->GridSize.X, Building->GridSize.Y);
 
-						int32 ActorHalfSizeX = ActorGridArea.X / 2;
-						int32 ActorHalfSizeY = ActorGridArea.Y / 2;
-						int32 ActorMinX = ActorCenterGridCoord.X - ActorHalfSizeX;
-						int32 ActorMaxX = ActorCenterGridCoord.X + ActorHalfSizeX;
-						int32 ActorMinY = ActorCenterGridCoord.Y - ActorHalfSizeY;
-						int32 ActorMaxY = ActorCenterGridCoord.Y + ActorHalfSizeY;
+						int32 HalfSizeX = BuildingGridSize.X / 2;
+						int32 HalfSizeY = BuildingGridSize.Y / 2;
+						int32 BuildingMinX = BuildingGridCoord.X - HalfSizeX;
+						int32 BuildingMaxX = BuildingGridCoord.X + HalfSizeX;
+						int32 BuildingMinY = BuildingGridCoord.Y - HalfSizeY;
+						int32 BuildingMaxY = BuildingGridCoord.Y + HalfSizeY;
 
-						if (Coord.X >= ActorMinX && Coord.X <= ActorMaxX && Coord.Y >= ActorMinY && Coord.Y <= ActorMaxY)
+						if(BuildingGridSize.X % 2 == 0) --BuildingMaxX;
+						if(BuildingGridSize.Y % 2 == 0) --BuildingMaxY;
+
+						if (Coord.X >= BuildingMinX && Coord.X <= BuildingMaxX && Coord.Y >= BuildingMinY && Coord.Y <= BuildingMaxY)
 						{
 							return true;
 						}
@@ -196,6 +196,7 @@ bool UXYZMapManager::IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfC
 
 	return false;
 }
+
 
 FVector UXYZMapManager::GridCoordToWorldCoord(FIntVector2 Coord)
 {
@@ -397,4 +398,32 @@ bool UXYZMapManager::DoesActorHasVisionOfActor(AXYZActor* Actor, AXYZActor* Othe
 	}
 
 	return Grid[OtherActor->GridCoord].TeamVision[Actor->TeamId];
+}
+
+bool UXYZMapManager::DoesBuildingAreaOverlap(FIntVector2 CenterGridCoord, FIntVector2 GridAreaSize)
+{
+	int32 HalfSizeX = GridAreaSize.X / 2;
+	int32 HalfSizeY = GridAreaSize.Y / 2;
+
+	int32 MinX = CenterGridCoord.X - HalfSizeX;
+	int32 MaxX = CenterGridCoord.X + HalfSizeX;
+	int32 MinY = CenterGridCoord.Y - HalfSizeY;
+	int32 MaxY = CenterGridCoord.Y + HalfSizeY;
+
+	if(GridAreaSize.X % 2 == 0) --MaxX;
+	if(GridAreaSize.Y % 2 == 0) --MaxY;
+
+	for (int32 X = MinX; X <= MaxX; ++X)
+	{
+		for (int32 Y = MinY; Y <= MaxY; ++Y)
+		{
+			FIntVector2 CurrentCoord(X, Y);
+			if (IsCoordOccupiedByBuilding(CurrentCoord))
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }

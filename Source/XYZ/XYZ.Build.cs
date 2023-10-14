@@ -21,6 +21,7 @@ public class XYZ : ModuleRules
 			"Niagara", 
 			"EnhancedInput", 
 			"UMG", 
+			"CableComponent",
 			"OnlineSubsystem", 
 			"OnlineSubsystemUtils" });
     }
