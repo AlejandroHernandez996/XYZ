@@ -1018,6 +1018,9 @@ void AXYZPlayerController::AttackMoveFromMinimap(FVector2D TargetLocation)
 
 bool AXYZPlayerController::CanPlaceBuilding(FVector CenterLocation, int32 GridSizeX, int32 GridSizeY)
 {
+	if(CenterLocation.X < 0.0f || CenterLocation.X > 10000.0f) return false;
+	if(CenterLocation.Y < 0.0f || CenterLocation.Y > 10000.0f) return false;
+
 	float GridSize = 100.0f;
 	float RayLength = 5000.0f;
 	float MaxAcceptableHeightDifference = 1.0f;

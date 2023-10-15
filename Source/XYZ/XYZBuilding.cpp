@@ -13,6 +13,8 @@
 #include "XYZActorCache.h"
 #include "CableComponent.h"
 #include "XYZMapManager.h"
+#include "XYZUpgradeAbility.h"
+#include "XYZUpgradeManager.h"
 
 AXYZBuilding::AXYZBuilding() : Super()
 {
@@ -116,7 +118,15 @@ void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
     }
 
     if (TimeToBuild >= TotalBuildTime) {
-        TrainUnit(CurrentAbility->UnitTemplate);
+        UXYZUpgradeAbility* UpgradeAbility = Cast<UXYZUpgradeAbility>(CurrentAbility);
+        if(UpgradeAbility)
+        {
+            ResearchUpgrade(UpgradeAbility);
+        }else
+        {
+            TrainUnit(CurrentAbility->UnitTemplate);
+        }
+        bIsTraining = false;
         CancelProduction();
         return;
     }
@@ -169,6 +179,19 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
     AXYZGameState* GameState = GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>();
     AXYZGameMode* GameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
 
+    UXYZUpgradeAbility* UpgradeAbility = Cast<UXYZUpgradeAbility>(BuildingAbility);
+    if(UpgradeAbility)
+    {
+        UpgradeAbility->TeamId = TeamId;
+    }
+    if(UpgradeAbility && (GameMode->UpgradeManager->ContainsUpgrade(UpgradeAbility) || GameMode->UpgradeManager->IsUpgradeBeingResearched(UpgradeAbility)))
+    {
+        return;
+    }
+    if(UpgradeAbility)
+    {
+        GameMode->UpgradeManager->AddUpgradeToResearch(UpgradeAbility);
+    }
     if (BuildQueueNum < MAX_BUILD_QUEUE_SIZE && 
         GameState->MineralsByTeamId[TeamId] - BuildingAbility->MineralCost >= 0) {
         GameState->MineralsByTeamId[TeamId] -= BuildingAbility->MineralCost;
@@ -235,7 +258,13 @@ void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     else if (SpawnPoint != RallyPoint) {
         SpawnActor->GetXYZAIController()->XYZMoveToLocation(RallyPoint);
     }
-    bIsTraining = false;
+}
+
+void AXYZBuilding::ResearchUpgrade(UXYZUpgradeAbility* UpgradeAbility)
+{
+    UXYZUpgradeManager* UpgradeManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->UpgradeManager;
+    UpgradeManager->AddUpgradeAbility(UpgradeAbility);
+    UpgradeAbility->bCanCancel = false;
 }
 
 void AXYZBuilding::CancelProduction() {
@@ -261,6 +290,13 @@ void AXYZBuilding::CancelProduction() {
     }
 
     CurrentAbility->bCanCancel = true;
+
+    UXYZUpgradeAbility* UpgradeAbility = Cast<UXYZUpgradeAbility>(CurrentAbility);
+    if(UpgradeAbility)
+    {
+        UXYZUpgradeManager* UpgradeManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->UpgradeManager;
+        UpgradeManager->RemoveUpgradeFromResearch(UpgradeAbility);
+    }
 }
 
 void AXYZBuilding::Process(float DeltaTime)
@@ -305,6 +341,18 @@ void AXYZBuilding::Process(float DeltaTime)
         ProcessBuildQueue(GetWorld()->DeltaTimeSeconds);
         break;
     default: ;
+    }
+}
+
+void AXYZBuilding::ClearProduction()
+{
+    while(!BuildQueue.IsEmpty())
+    {
+        if(*BuildQueue.Peek())
+        {
+            (*BuildQueue.Peek())->bCanCancel = true;
+        }
+        CancelProduction();
     }
 }
 

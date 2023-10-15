@@ -8,6 +8,7 @@
 #include "XYZBlobManager.h"
 #include "XYZBlob.h"
 #include "XYZAIController.h"
+#include "XYZBuilding.h"
 #include "XYZMapManager.h"
 #include "XYZResourceActor.h"
 #include "Components/CapsuleComponent.h"
@@ -47,6 +48,11 @@ void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 		}
 		Actor->GetXYZAIController()->UnPossess();
 		Actor->GetXYZAIController()->XYZStopMovement();
+	}
+
+	if(Actor->IsA(AXYZBuilding::StaticClass()))
+	{
+		Cast<AXYZBuilding>(Actor)->ClearProduction();
 	}
 	
 	Actor->GetCapsuleComponent()->SetCollisionProfileName("Ragdoll");

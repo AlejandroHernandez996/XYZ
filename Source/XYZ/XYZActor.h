@@ -54,6 +54,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", Replicated)
         float MaxHealth;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", Replicated)
+        float Armor;
+
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats", Replicated)
         float MoveSpeed;
 
@@ -74,7 +77,7 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Decal")
         TMap<EXYZDecalType, UMaterialInterface*> DecalMaterials;
-    
+
     virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
@@ -171,4 +174,7 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
     FVector TargetActorLocationReplicated;
+
+    UPROPERTY()
+    TSet<int32> ActiveUpgradeIds;
 };

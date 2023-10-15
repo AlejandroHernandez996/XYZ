@@ -56,6 +56,8 @@ public:
 	class UXYZMatchManager* MatchManager;
 	UPROPERTY()
 	class UXYZMapManager* MapManager;
+	UPROPERTY()
+	class UXYZUpgradeManager* UpgradeManager;
 	
 	UPROPERTY()
 	class UXYZActorCache* ActorCache;

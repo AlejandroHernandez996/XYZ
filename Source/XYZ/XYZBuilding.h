@@ -63,6 +63,8 @@ public:
 	UFUNCTION()
 		void TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate);
 	UFUNCTION()
+		void ResearchUpgrade(UXYZUpgradeAbility* UpgradeAbility);
+	UFUNCTION()
 		void ProcessBuildQueue(float DeltaTime);
 	UFUNCTION()
 		void CancelProduction();
@@ -78,4 +80,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Placement")
 	TArray<UMaterialInterface*> PlacementMaterials;
+
+	UFUNCTION()
+	void ClearProduction();
 };

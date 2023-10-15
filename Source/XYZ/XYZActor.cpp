@@ -103,6 +103,7 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AXYZActor, Health);
 	DOREPLIFETIME(AXYZActor, MaxHealth);
+	DOREPLIFETIME(AXYZActor, Armor);
 	DOREPLIFETIME(AXYZActor, MoveSpeed);
 	DOREPLIFETIME(AXYZActor, BaseArmor);
 	DOREPLIFETIME(AXYZActor, AttackDamage);
@@ -152,7 +153,7 @@ void AXYZActor::Attack()
 				XYZController->PlayAnimationMontage(EXYZAnimMontageType::ATTACK, this);
 			}
 		}
-		TargetActor->Health = FMath::Clamp(TargetActor->Health - AttackDamage, 0.0f, TargetActor->MaxHealth);
+		TargetActor->Health = FMath::Clamp(TargetActor->Health + TargetActor->Armor - AttackDamage, 0.0f, TargetActor->MaxHealth);
 		FVector Direction = TargetActor->GetActorLocation() - GetActorLocation();
 		Direction.Z = 0;
 		Direction.Normalize();

@@ -17,6 +17,7 @@
 #include "XYZDeathManager.h"
 #include "XYZMapManager.h"
 #include "XYZMatchManager.h"
+#include "XYZUpgradeManager.h"
 #include "Interfaces/OnlineIdentityInterface.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -47,7 +48,10 @@ void AXYZGameMode::BeginPlay() {
     MapManager->GameState = GetGameState<AXYZGameState>();
     MapManager->GameMode = this;
     MapManager->InitializeGrid();
-
+    
+    UpgradeManager = NewObject<UXYZUpgradeManager>(this, UXYZUpgradeManager::StaticClass(), "UpgradeManager");
+    UpgradeManager->GameState = GetGameState<AXYZGameState>();
+        
     ActorCache = NewObject<UXYZActorCache>(this, UXYZActorCache::StaticClass(), "ActorCache");
     ActorCache->ActorCountsByTeamId.Add(FActorCount());
     ActorCache->ActorCountsByTeamId.Add(FActorCount());
@@ -236,8 +240,9 @@ void AXYZGameMode::Process(float DeltaSeconds)
         
     InputManager->Process(DeltaSeconds);
     BlobManager->Process(DeltaSeconds);
-    MapManager->Process(DeltaSeconds);
+    UpgradeManager->Process(DeltaSeconds);
     DeathManager->Process(DeltaSeconds);
+    MapManager->Process(DeltaSeconds);
     MatchManager->Process(DeltaSeconds);
 
     TickCount++;
