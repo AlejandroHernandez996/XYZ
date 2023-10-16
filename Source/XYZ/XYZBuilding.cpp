@@ -146,7 +146,13 @@ void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
             ResearchUpgrade(UpgradeAbility);
         }else
         {
-            TrainUnit(CurrentAbility->UnitTemplate);
+            if(HasValidSpawnPoint())
+            {
+                TrainUnit(CurrentAbility->UnitTemplate);
+            }else
+            {
+                return;
+            }
         }
         bIsTraining = false;
         CancelProduction();
@@ -236,28 +242,13 @@ void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     FActorSpawnParameters SpawnParams;
     SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-    float CapsuleRadius = GetCapsuleComponent()->GetScaledCapsuleRadius();
-    FVector MyActorLocation = GetActorLocation(); 
-    
-    if(RallyPoint != SpawnPoint)
-    {
-        FVector DirectionToRallyPoint = RallyPoint - MyActorLocation; 
-        DirectionToRallyPoint.Normalize();
-        SpawnPoint = GetActorLocation() + (DirectionToRallyPoint * CapsuleRadius* 2.0f);
-    }
-    if(RallyTarget)
-    {
-        FVector DirectionToRallyTarget = RallyTarget->GetActorLocation() - MyActorLocation;
-        DirectionToRallyTarget.Normalize();
-        SpawnPoint = GetActorLocation() + (DirectionToRallyTarget * CapsuleRadius* 2.0f);
-    }
-    FVector SpawnLocation = SpawnPoint;
-    FVector Start = SpawnLocation + FVector(0, 0, 1000); // Start 1000 units above
-    FVector End = SpawnLocation - FVector(0, 0, 10000);   // End 1000 units below
+    FVector SpawnLocation = ValidSpawnPoint;
+    FVector Start = SpawnLocation + FVector(0, 0, 1000);
+    FVector End = SpawnLocation - FVector(0, 0, 10000); 
 
     FHitResult HitResult;
 
-    bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic); // You can change the collision channel as per your requirement
+    bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic);
 
     if (bHit)
     {
@@ -293,6 +284,38 @@ void AXYZBuilding::ResearchUpgrade(UXYZUpgradeAbility* UpgradeAbility)
     UXYZUpgradeManager* UpgradeManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->UpgradeManager;
     UpgradeManager->AddUpgradeAbility(UpgradeAbility);
     UpgradeAbility->bCanCancel = false;
+}
+
+bool AXYZBuilding::HasValidSpawnPoint()
+{
+    UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
+    TArray<FIntVector2> PerimeterCoords = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(GridSize.X, GridSize.Y));
+
+    FIntVector2 ClosestValidPerimeterCoord;
+    FIntVector2 SpawnPointToGridCoord = MapManager->GetGridCoordinate(SpawnPoint);
+    FIntVector2 RallyPointToGridCoord = MapManager->GetGridCoordinate(RallyPoint);
+
+    int32 ClosestDistance = INT_MAX;
+    for(FIntVector2 PerimeterCoord : PerimeterCoords)
+    {
+        if(!MapManager->IsCoordOccupiedByBuilding(PerimeterCoord))
+        {
+            int32 DistanceToSpawnPoint = FVector2D::Distance(FVector2D(PerimeterCoord.X, PerimeterCoord.Y), FVector2D(SpawnPointToGridCoord.X, SpawnPointToGridCoord.Y));
+            int32 DistanceToRallyPoint = FVector2D::Distance(FVector2D(PerimeterCoord.X, PerimeterCoord.Y), FVector2D(RallyPointToGridCoord.X, RallyPointToGridCoord.Y));
+            int32 Distance = RallyPoint == SpawnPoint ? DistanceToSpawnPoint : DistanceToRallyPoint;
+            if(Distance < ClosestDistance && MapManager->AreGridCoordsSameHeight(PerimeterCoord, GridCoord))
+            {
+                ClosestDistance = Distance;
+                ClosestValidPerimeterCoord = PerimeterCoord;
+            }
+        }
+    }
+    if(ClosestDistance != INT_MAX)
+    {
+        ValidSpawnPoint = MapManager->GridCoordToWorldCoord(ClosestValidPerimeterCoord);
+        return true;
+    }
+    return false;
 }
 
 void AXYZBuilding::CancelProduction() {

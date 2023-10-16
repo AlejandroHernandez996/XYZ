@@ -29,6 +29,8 @@ public:
 		FVector RallyPoint;
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		FVector SpawnPoint;
+	UPROPERTY(BlueprintReadOnly)
+		FVector ValidSpawnPoint;
 	UPROPERTY()
 		class AXYZActor* RallyTarget;
 	virtual void ShowDecal(bool bShowDecal, EXYZDecalType DecalType) override;
@@ -64,6 +66,8 @@ public:
 		void TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate);
 	UFUNCTION()
 		void ResearchUpgrade(UXYZUpgradeAbility* UpgradeAbility);
+	UFUNCTION()
+	bool HasValidSpawnPoint();
 	UFUNCTION()
 		void ProcessBuildQueue(float DeltaTime);
 	UFUNCTION()
