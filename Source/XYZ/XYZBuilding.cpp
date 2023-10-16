@@ -371,8 +371,12 @@ void AXYZBuilding::CancelProductionAtIndex()
         CancelProduction();
     }else
     {
-        
         GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += BuildQueue[CancelProductionIndex]->MineralCost;
+        UXYZUpgradeAbility* UpgradeAbility = Cast<UXYZUpgradeAbility>(BuildQueue[CancelProductionIndex]);
+        if(UpgradeAbility)
+        {
+            GetWorld()->GetAuthGameMode<AXYZGameMode>()->UpgradeManager->RemoveUpgradeFromResearch(UpgradeAbility);
+        }
         BuildQueue.RemoveAt(CancelProductionIndex);
         BuildQueueId.RemoveAt(CancelProductionIndex);
         BuildQueueNum--;
