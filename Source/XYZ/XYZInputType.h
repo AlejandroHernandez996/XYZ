@@ -18,5 +18,6 @@ enum class EXYZInputType : uint8
 	HOLD,
 	CYCLE,
 	CAMERA,
+	CHAT,
 	STOP,
 };

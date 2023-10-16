@@ -57,6 +57,7 @@ void UXYZChatManager::HandleWebSocketMessageReceived(const FString& Message)
 	if(!Message.IsEmpty())
 	{
 		GameState->LobbyMessages += "\n" + GetRichChatMessage(Message);
+		GameState->OnChatMessageReceivedEvent.Broadcast(GameState->LobbyMessages);
 	}
 }
 

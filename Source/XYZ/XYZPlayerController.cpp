@@ -239,6 +239,9 @@ void AXYZPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(CameraMovementAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnInputStarted, EXYZInputType::CAMERA);
 		EnhancedInputComponent->BindAction(CameraMovementAction, ETriggerEvent::Triggered, this, &AXYZPlayerController::OnInputTriggered, EXYZInputType::CAMERA);
 		EnhancedInputComponent->BindAction(CameraMovementAction, ETriggerEvent::Completed, this, &AXYZPlayerController::OnInputReleased, EXYZInputType::CAMERA);
+
+		EnhancedInputComponent->BindAction(OpenChatInputAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnInputStarted, EXYZInputType::CHAT);
+		EnhancedInputComponent->BindAction(OpenChatInputAction, ETriggerEvent::Completed, this, &AXYZPlayerController::OnInputReleased, EXYZInputType::CHAT);
 	}
 }
 
@@ -417,7 +420,11 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			{
 				CameraController->StartDragMovement();
 			}
-		break;
+			break;
+		case EXYZInputType::CHAT:
+			bIsChatting = !bIsChatting;
+			OnChatEvent.Broadcast();
+			break;
 	}
 }
 

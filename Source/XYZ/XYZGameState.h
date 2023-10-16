@@ -9,6 +9,8 @@
 #include "GameFramework/GameStateBase.h"
 #include "XYZGameState.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChatMessageReceived, const FString&, ChatMessage);
+
 UCLASS()
 class XYZ_API AXYZGameState : public AGameStateBase
 {
@@ -119,4 +121,7 @@ public:
 
 	UPROPERTY()
 	class AXYZSoundManager* SoundManager;
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnChatMessageReceived OnChatMessageReceivedEvent;
 };

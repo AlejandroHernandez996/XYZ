@@ -19,6 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxReleasedEvent, float, 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSelectionIdsEvent, const TArray<int32>&, SelectionActorIds);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FControlGroupEvent, const TArray<int32>&, ControlGroups);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FLoadingScreenEvent, const TArray<FString>&, PlayerNames, const TArray<int32>&, Ratings, float, LoadPercentage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FChatEvent);
 
 UCLASS()
 class AXYZPlayerController : public APlayerController
@@ -107,6 +108,14 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TArray<UInputAction*> CameraGroupInputActions;
+
+	/** ADD TO SELECTION - QUEUE INPUT **/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* OpenChatInputAction;
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsChatting;
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FChatEvent OnChatEvent;
 	
 	bool bPrimaryModifier;
 	bool bSecondaryModifier;
