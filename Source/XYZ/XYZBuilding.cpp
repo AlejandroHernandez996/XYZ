@@ -170,10 +170,7 @@ void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
 void AXYZBuilding::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
 {
     Super::ShowDecal(bShowDecal, DecalType);
-    if(bCanRally)
-    {
-        bShowRallyPoint = bShowDecal && RallyPoint != SpawnPoint;
-    }
+    bShowRallyPoint = bShowDecal && bCanRally;
 }
 
 void AXYZBuilding::BuildingAttack()
