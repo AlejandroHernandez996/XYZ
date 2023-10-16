@@ -31,13 +31,13 @@ public:
 		FVector SpawnPoint;
 	UPROPERTY()
 		class AXYZActor* RallyTarget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UCableComponent* RallyCable;
 	virtual void ShowDecal(bool bShowDecal, EXYZDecalType DecalType) override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		bool bCanRally;
-
+	UPROPERTY()
+	bool bShowRallyPoint;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanAttack;
 	UFUNCTION()

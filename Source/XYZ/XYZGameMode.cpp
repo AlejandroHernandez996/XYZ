@@ -229,12 +229,16 @@ void AXYZGameMode::Process(float DeltaSeconds)
 {
     TArray<AXYZActor*> Actors;
     Cast<AXYZGameState>(GetWorld()->GetGameState())->ActorsByUID.GenerateValueArray(Actors);
-        
+    
     for(AXYZActor* Actor : Actors)
     {
         if(Actor)
         {
             Actor->Process(DeltaSeconds);
+            if(TickCount == 0)
+            {
+                ActorCache->AddActorCount(Actor->TeamId, Actor->ActorId);
+            }
         }
     }
     InputManager->Process(DeltaSeconds);

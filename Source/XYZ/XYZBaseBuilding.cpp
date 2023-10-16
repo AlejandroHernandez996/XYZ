@@ -3,3 +3,6 @@
 
 #include "XYZBaseBuilding.h"
 
+AXYZBaseBuilding::AXYZBaseBuilding() : Super()
+{
+}

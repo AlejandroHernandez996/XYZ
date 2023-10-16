@@ -2,7 +2,6 @@
 
 #include "XYZAIController.h"
 
-#include "CableComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "XYZActor.h"
 #include "XYZResourceActor.h"
@@ -42,7 +41,6 @@ void AXYZAIController::XYZMoveToActor(AXYZActor* Actor, float AcceptanceRadius) 
     AXYZBuilding* Building = Cast<AXYZBuilding>(GetXYZActor());
     if (Building) {
         Building->RallyTarget = Actor;
-        Building->RallyCable->SetAttachEndTo(Actor, "RootComponent");
         return;
     }
     if (GetXYZActor()->IsA(AXYZWorker::StaticClass()) && Actor->IsA(AXYZResourceActor::StaticClass())) {
@@ -67,7 +65,6 @@ void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float Acceptanc
         {
             Building->RallyTarget = nullptr;
         }
-        Building->RallyCable->EndLocation = TargetLocation;
         return;
     }
     GetXYZActor()->SetState(EXYZUnitState::MOVING);
@@ -101,7 +98,6 @@ void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceR
     }
     if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
         Cast<AXYZBuilding>(GetXYZActor())->RallyTarget = Actor;
-        Cast<AXYZBuilding>(GetXYZActor())->RallyCable->SetAttachEndTo(Actor, "RootComponent");
         return;
     }
     if (Actor->IsA(AXYZResourceActor::StaticClass())) {
@@ -125,7 +121,6 @@ void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius)
     }
     if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
         Cast<AXYZBuilding>(GetXYZActor())->RallyTarget = Actor;
-        Cast<AXYZBuilding>(GetXYZActor())->RallyCable->SetAttachEndTo(Actor, "RootComponent");
         return;
     }
     if (GetXYZActor()->IsA(AXYZWorker::StaticClass()) && Cast<AXYZWorker>(GetXYZActor())->HeldResource == EXYZResourceType::MINERAL && Actor->IsA(AXYZBaseBuilding::StaticClass())) {

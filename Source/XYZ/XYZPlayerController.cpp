@@ -174,7 +174,10 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		int32 MaterialIndex = bIsBuildingPlaceable ? 0 : 1;
 		for(UStaticMeshComponent* MeshComp : ChildMeshes)
 		{
-			MeshComp->SetMaterial(0, PlacementBuilding->PlacementMaterials[MaterialIndex]);
+			if(PlacementBuilding->PlacementMaterials.IsValidIndex(MaterialIndex))
+			{
+				MeshComp->SetMaterial(0, PlacementBuilding->PlacementMaterials[MaterialIndex]);
+			}
 		}
 	}
 }

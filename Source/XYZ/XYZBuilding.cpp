@@ -11,17 +11,12 @@
 #include "XYZPlayerController.h"
 #include "XYZAIController.h"
 #include "XYZActorCache.h"
-#include "CableComponent.h"
 #include "XYZMapManager.h"
 #include "XYZUpgradeAbility.h"
 #include "XYZUpgradeManager.h"
 
 AXYZBuilding::AXYZBuilding() : Super()
 {
-    RallyCable = CreateDefaultSubobject<UCableComponent>(TEXT("RallyCable"));
-    RallyCable->SetupAttachment(RootComponent);
-    RallyCable->NumSegments = 1;
-    RallyCable->CableGravityScale = 0;
 }
 
 void AXYZBuilding::Tick(float DeltaTime) {
@@ -29,15 +24,6 @@ void AXYZBuilding::Tick(float DeltaTime) {
     if(bIsSpawned && BuildingSpawnLocation != GetActorLocation())
     {
         SetActorLocation(BuildingSpawnLocation);
-    }
-    if(bCanRally)
-    {
-        RallyCable->EndLocation = RallyPoint - RallyCable->GetComponentLocation();
-        if(RallyTarget)
-        {
-            RallyPoint = RallyTarget->GetActorLocation();
-        }
-        RallyCable->CableLength = FVector::Dist(RallyPoint, RallyCable->GetComponentLocation());
     }
 
     if(GetWorld()->GetGameState<AXYZGameState>())
@@ -56,12 +42,32 @@ void AXYZBuilding::Tick(float DeltaTime) {
             
         }
     }
+
+    if(HasAuthority() && bCanRally)
+    {
+        if(RallyTarget)
+        {
+            RallyPoint = RallyTarget->GetActorLocation();
+        }
+    }
+
+    if(!HasAuthority() && bShowRallyPoint)
+    {
+        float LifeTime = .1f;
+        bool bPersistentLines = false;
+        bool bDepthIsForeground = (0 == SDPG_Foreground);
+
+        ULineBatchComponent* LineBatcher = (GetWorld() ? (bDepthIsForeground ? GetWorld() ->ForegroundLineBatcher : (( bPersistentLines || (LifeTime > 0.f) ) ? GetWorld() ->PersistentLineBatcher : GetWorld() ->LineBatcher)) : nullptr);
+
+        if (LineBatcher)
+            LineBatcher->DrawLine(GetActorLocation(), RallyPoint, FColor::Orange, 0, 1.0f, DeltaTime);
+    }
 }
 
 void AXYZBuilding::BeginPlay() {
     Super::BeginPlay();
     UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
-    RallyCable->SetHiddenInGame(true);
+    
 
     if (CapsuleComp)
     {
@@ -77,7 +83,6 @@ void AXYZBuilding::BeginPlay() {
             bCanRally = true;
         }
     }
-    RallyCable->SetHiddenInGame(true);
 }
 
 void AXYZBuilding::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
@@ -156,7 +161,10 @@ void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
 void AXYZBuilding::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
 {
     Super::ShowDecal(bShowDecal, DecalType);
-    RallyCable->SetHiddenInGame(!bShowDecal && RallyPoint != SpawnPoint);
+    if(bCanRally)
+    {
+        bShowRallyPoint = !bShowDecal && RallyPoint != SpawnPoint;
+    }
 }
 
 void AXYZBuilding::BuildingAttack()

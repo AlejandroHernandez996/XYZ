@@ -13,5 +13,6 @@ UCLASS()
 class XYZ_API AXYZBaseBuilding : public AXYZBuilding
 {
 	GENERATED_BODY()
-	
+
+	AXYZBaseBuilding();
 };
