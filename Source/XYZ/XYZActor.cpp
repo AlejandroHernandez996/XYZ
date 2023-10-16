@@ -116,6 +116,7 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AXYZActor, TeamId);
 	DOREPLIFETIME(AXYZActor, ActorId);
 	DOREPLIFETIME(AXYZActor, TargetActorLocationReplicated);
+	DOREPLIFETIME(AXYZActor, TotalKills);
 }
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
@@ -153,6 +154,11 @@ void AXYZActor::Attack()
 				XYZController->PlayAnimationMontage(EXYZAnimMontageType::ATTACK, this);
 			}
 		}
+		if(TargetActor->Health > 0.0f && TargetActor->Health + TargetActor->Armor - AttackDamage <= 0.0f)
+		{
+			TotalKills++;
+		}
+		
 		TargetActor->Health = FMath::Clamp(TargetActor->Health + TargetActor->Armor - AttackDamage, 0.0f, TargetActor->MaxHealth);
 		FVector Direction = TargetActor->GetActorLocation() - GetActorLocation();
 		Direction.Z = 0;

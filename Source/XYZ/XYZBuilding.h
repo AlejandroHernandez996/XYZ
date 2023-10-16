@@ -45,8 +45,9 @@ public:
 	UFUNCTION()
 	void BuildingAttack();
 	
-	TQueue<class UXYZBuildingAbility*> BuildQueue;
-
+	TArray<class UXYZBuildingAbility*> BuildQueue;
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	TArray<int32> BuildQueueId;
 	UPROPERTY(Replicated)
 	FVector BuildingSpawnLocation;
 
@@ -72,6 +73,11 @@ public:
 		void ProcessBuildQueue(float DeltaTime);
 	UFUNCTION()
 		void CancelProduction();
+	UFUNCTION()
+	void CancelProductionAtIndex();
+	UPROPERTY()
+	int32 CancelProductionIndex = -1;
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	bool bIsTraining;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

@@ -75,6 +75,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
         float VisionRange;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", Replicated)
+    int32 TotalKills;
+    
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Decal")
         TMap<EXYZDecalType, UMaterialInterface*> DecalMaterials;
 
@@ -177,4 +180,40 @@ public:
 
     UPROPERTY()
     TSet<int32> ActiveUpgradeIds;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UTexture2D* ActorIcon;
+    
+    UFUNCTION(BlueprintCallable)
+    FString GetStateAsString()
+    {
+        switch(State)
+        {
+        case EXYZUnitState::IDLE:
+            return "IDLE";
+        case EXYZUnitState::MOVING:
+            return "MOVING";
+        case EXYZUnitState::ATTACKING:
+            return "ATTACKING";
+        case EXYZUnitState::ATTACK_MOVING:
+            return "ATTACK_MOVING";
+        case EXYZUnitState::FOLLOWING:
+            return "FOLLOWING";
+        case EXYZUnitState::RETURNING:
+            return "RETURNING";
+        case EXYZUnitState::MINING:
+            return "MINING";
+        case EXYZUnitState::GATHERING:
+            return "GATHERING";
+        case EXYZUnitState::PLACING:
+            return "PLACING";
+        case EXYZUnitState::BUILDING:
+            return "BUILDING";
+        case EXYZUnitState::HOLD:
+            return "HOLD";
+        case EXYZUnitState::DEAD:
+            return "DEAD";
+        }
+        return "MISSING STATE?";
+    }
 };

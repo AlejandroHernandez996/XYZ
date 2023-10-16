@@ -56,7 +56,7 @@ void AXYZBuilding::Tick(float DeltaTime) {
         ULineBatchComponent* LineBatcher = GetWorld()->LineBatcher;
 
         FVector StartLocation = GetActorLocation();
-        StartLocation.Z = 350.0f;
+        StartLocation.Z = 500.0f;
         FVector EndLocation = RallyPoint;
         FColor DebugColor = FColor::Orange;
         
@@ -81,9 +81,12 @@ void AXYZBuilding::BeginPlay() {
     }
     for (UXYZAbility* Ability : Abilities) {
         UXYZBuildingAbility* BuildingAbility = Cast<UXYZBuildingAbility>(Ability);
-        if (BuildingAbility && !BuildingAbility->IsA(UXYZUpgradeAbility::StaticClass())) {
+        if (BuildingAbility) {
             BuildingAbility->OwningBuilding = this;
-            bCanRally = true;
+            if(!BuildingAbility->IsA(UXYZUpgradeAbility::StaticClass()))
+            {
+                bCanRally = true;
+            }
         }
     }
 }
@@ -98,12 +101,18 @@ void AXYZBuilding::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLi
     DOREPLIFETIME(AXYZBuilding, BuildQueueNum);
     DOREPLIFETIME(AXYZBuilding, bIsSpawned);
     DOREPLIFETIME(AXYZBuilding, BuildingSpawnLocation);
+    DOREPLIFETIME(AXYZBuilding, BuildQueueId);
+    DOREPLIFETIME(AXYZBuilding, bIsTraining);
 }
 
 void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
+    if(CancelProductionIndex != -1)
+    {
+        CancelProductionAtIndex();
+    }
     if (BuildQueue.IsEmpty()) return;
 
-    UXYZBuildingAbility* CurrentAbility = *BuildQueue.Peek();
+    UXYZBuildingAbility* CurrentAbility = BuildQueue[0];
     if (!CurrentAbility) {
         CancelProduction();
         return;
@@ -229,7 +238,8 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
     if (BuildQueueNum < MAX_BUILD_QUEUE_SIZE && 
         GameState->MineralsByTeamId[TeamId] - BuildingAbility->MineralCost >= 0) {
         GameState->MineralsByTeamId[TeamId] -= BuildingAbility->MineralCost;
-        BuildQueue.Enqueue(BuildingAbility);
+        BuildQueue.Add(BuildingAbility);
+        BuildQueueId.Add(BuildingAbility->ID);
         BuildQueueNum++;
         if(GameState->SupplyByTeamId[TeamId] + BuildingAbility->SupplyCost > GameState->SupplyByTeamId[TeamId+2])
         {
@@ -260,7 +270,7 @@ void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[SpawnActor->TeamId + 2] += SpawnActor->SupplyGain;
     GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->AddActorServer(SpawnActor);
 
-    UXYZBuildingAbility* CurrentAbility = *BuildQueue.Peek();
+    UXYZBuildingAbility* CurrentAbility = BuildQueue[0];
     CurrentAbility->bCanCancel = false;
 
     if (RallyTarget) {
@@ -320,11 +330,13 @@ bool AXYZBuilding::HasValidSpawnPoint()
 
 void AXYZBuilding::CancelProduction() {
     if (BuildQueue.IsEmpty()) return;
-    UXYZBuildingAbility* CurrentAbility = *BuildQueue.Peek();
-    BuildQueue.Pop();
+    UXYZBuildingAbility* CurrentAbility = BuildQueue[0];
+    BuildQueue.RemoveAt(0);
+    BuildQueueId.RemoveAt(0);
     TimeToBuild = -1.0f;
     TotalBuildTime = -1.0f;
     BuildQueueNum--;
+    bIsTraining = false;
 
     int32 CurrentSupply = GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId];
     int32 MaxSupply = GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId + 2];
@@ -350,10 +362,27 @@ void AXYZBuilding::CancelProduction() {
     }
 }
 
+void AXYZBuilding::CancelProductionAtIndex()
+{
+    if(CancelProductionIndex == -1 || BuildQueue.IsEmpty() || !BuildQueue.IsValidIndex(CancelProductionIndex)) return;
+    if(CancelProductionIndex == 0)
+    {
+        BuildQueue[0]->bCanCancel = true;
+        CancelProduction();
+    }else
+    {
+        
+        GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += BuildQueue[CancelProductionIndex]->MineralCost;
+        BuildQueue.RemoveAt(CancelProductionIndex);
+        BuildQueueId.RemoveAt(CancelProductionIndex);
+        BuildQueueNum--;
+    }
+    CancelProductionIndex = -1;
+}
 void AXYZBuilding::Process(float DeltaTime)
 {
     Super::Process(DeltaTime);
-
+    
     if(bCanAttack && BuildingState == EXYZBuildingState::BUILT)
     {
         if(TargetActor && !GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->DoesActorHasVisionOfActor(this, TargetActor))
@@ -399,9 +428,9 @@ void AXYZBuilding::ClearProduction()
 {
     while(!BuildQueue.IsEmpty())
     {
-        if(*BuildQueue.Peek())
+        if(BuildQueue[0])
         {
-            (*BuildQueue.Peek())->bCanCancel = true;
+            BuildQueue[0]->bCanCancel = true;
         }
         CancelProduction();
     }

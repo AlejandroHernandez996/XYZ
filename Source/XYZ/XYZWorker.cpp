@@ -359,7 +359,8 @@ void AXYZWorker::PlaceBuilding()
         GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->AddActorServer(SpawnActor);
         FVector OffsetLocation = SpawnLocation;
         OffsetLocation.Z += SpawnActor->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-        
+
+        SpawnActor->TotalBuildTime = ActivePlacementAbility->BuildTime;
         SpawnActor->SetActorLocation(OffsetLocation);
         SpawnActor->BuildingSpawnLocation = OffsetLocation;
         SpawnActor->bIsSpawned = true;

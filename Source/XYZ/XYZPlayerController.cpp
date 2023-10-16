@@ -321,7 +321,7 @@ void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {
 		HitActor = nullptr;
 	}
 	int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
-	FXYZInputMessage AbilityInput = FXYZInputMessage(PlayerState->GetUniqueId().ToString(), SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, EXYZInputType::ABILITY, bPrimaryModifier);
+	FXYZInputMessage AbilityInput = FXYZInputMessage(SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, EXYZInputType::ABILITY, bPrimaryModifier);
 	AbilityInput.AbilityIndex = AbilityIndex;
 	AbilityInput.ActiveActorId = SelectionStructure->ActiveActor;
 	QueueInput(AbilityInput);
@@ -362,7 +362,7 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			{
 				if(bIsBuildingPlaceable)
 				{
-					FXYZInputMessage AbilityInput = FXYZInputMessage(PlayerState->GetUniqueId().ToString(), SelectionStructure->ToActorIdArray(), -1, PlacementBuilding->GetActorLocation(), EXYZInputType::ABILITY, bPrimaryModifier);
+					FXYZInputMessage AbilityInput = FXYZInputMessage(SelectionStructure->ToActorIdArray(), -1, PlacementBuilding->GetActorLocation(), EXYZInputType::ABILITY, bPrimaryModifier);
 					AbilityInput.AbilityIndex = WorkerAbilityIndex;
 					AbilityInput.ActiveActorId = WorkerActorId;
 					QueueInput(AbilityInput);
@@ -620,34 +620,21 @@ FVector2D AXYZPlayerController::GetMousePositionOnViewport()
 }
 
 void AXYZPlayerController::CreateAndQueueInput(TArray<int32> _SelectedActors, int32 _XYZTargetActor, FVector _TargetLocation, EXYZInputType _InputType, bool _bQueueInput) {
-	QueueInput(FXYZInputMessage(PlayerState->GetUniqueId().ToString(), _SelectedActors, _XYZTargetActor, _TargetLocation, _InputType, _bQueueInput));
+	QueueInput(FXYZInputMessage(_SelectedActors, _XYZTargetActor, _TargetLocation, _InputType, _bQueueInput));
 }
 void AXYZPlayerController::QueueInput_Implementation(const FXYZInputMessage& InputMessage) {
 	if (GetLocalRole() != ROLE_Authority) return;
-	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
-	{
-		AXYZPlayerController* XYZController = Cast<AXYZPlayerController>(Iterator->Get());
-		if (!XYZController) return;
-
-		FString Id = Iterator->Get()->GetPlayerState<APlayerState>()->GetUniqueId().ToString();
-		if (Id == InputMessage.PlayerId)
-		{
-			AXYZGameMode* GameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
-			if (GameMode) {
-				TMap<int32, AXYZActor*> ActorsByUId = XYZGameState->ActorsByUID;
-				for (int32 UActorId : InputMessage.SelectedActors) {
-					if (!ActorsByUId.Contains(UActorId)) {
-						return;
-					}
-					if (ActorsByUId[UActorId]->TeamId != XYZController->TeamId) {
-						return;
-					}
-				}
-				GameMode->QueueInput(InputMessage);
-			}
-			break;
+	AXYZGameMode* GameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
+	TMap<int32, AXYZActor*> ActorsByUId = XYZGameState->ActorsByUID;
+	for (int32 UActorId : InputMessage.SelectedActors) {
+		if (!ActorsByUId.Contains(UActorId)) {
+			return;
+		}
+		if (ActorsByUId[UActorId]->TeamId != TeamId) {
+			return;
 		}
 	}
+	GameMode->QueueInput(InputMessage);
 }
 
 void AXYZPlayerController::SelectActorFromPanel(int32 UActorId) {
@@ -999,6 +986,24 @@ void AXYZPlayerController::MoveFromMinimap(FVector2D TargetLocation)
 
 		if (bHit) {
 			CreateAndQueueInput(SelectionStructure->ToActorIdArray(), -1, HitResult.Location, EXYZInputType::SECONDARY_INPUT, bPrimaryModifier);
+		}
+	}
+}
+
+void AXYZPlayerController::CancelProductionAtIndex_Implementation(int32 Index, int32 UActorId)
+{
+	if (GetLocalRole() != ROLE_Authority) return;
+	
+	AXYZGameMode* GameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
+	if (GameMode) {
+		TMap<int32, AXYZActor*> ActorsByUId = XYZGameState->ActorsByUID;
+		if(ActorsByUId.Contains(UActorId) && ActorsByUId[UActorId]->TeamId == TeamId)
+		{
+			AXYZBuilding* Building = Cast<AXYZBuilding>(ActorsByUId[UActorId]);
+			if(Building)
+			{
+				Building->CancelProductionIndex = Index;
+			}
 		}
 	}
 }

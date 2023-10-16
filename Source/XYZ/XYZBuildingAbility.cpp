@@ -7,6 +7,7 @@
 bool UXYZBuildingAbility::Activate() {
 	if(Super::Activate())
 	{
+		if(!OwningBuilding) return false;
 		OwningBuilding->EnqueueAbility(this);
 		return true;
 	}

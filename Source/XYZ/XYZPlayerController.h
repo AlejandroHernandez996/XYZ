@@ -3,10 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AudioDeviceManager.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
-#include "InputActionValue.h"
 #include "XYZInputType.h"
 #include "XYZInputMessage.h"
 #include "XYZAnimMontageType.h"
@@ -291,4 +289,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void MoveFromMinimap(FVector2D TargetLocation);
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void CancelProductionAtIndex(int32 Index, int32 UActorId);
+	void CancelProductionAtIndex_Implementation(int32 Index, int32 UActorId);
+
 };

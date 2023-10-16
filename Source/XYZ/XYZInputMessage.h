@@ -17,9 +17,6 @@ struct FXYZInputMessage
 {
     GENERATED_BODY();
 
-    UPROPERTY(BlueprintReadWrite, Category = "Input")
-        FString PlayerId;
-
     UPROPERTY()
         TArray<int32> SelectedActors;
 
@@ -45,8 +42,6 @@ struct FXYZInputMessage
 
     FXYZInputMessage()
     {
-        // Set default values
-        PlayerId = "";
         XYZTargetActor = -1;
         Tick = -1;
         TargetLocation = FVector::ZeroVector;
@@ -54,10 +49,9 @@ struct FXYZInputMessage
         bQueueInput = false;
     }
 
-    FXYZInputMessage(FString _PlayerId, TArray<int32> _SelectedActors, int32 _XYZTargetActor, FVector _TargetLocation, EXYZInputType _InputType, bool _bQueueInput)
+    FXYZInputMessage(TArray<int32> _SelectedActors, int32 _XYZTargetActor, FVector _TargetLocation, EXYZInputType _InputType, bool _bQueueInput)
     {
         SelectedActors = _SelectedActors;
-        PlayerId = _PlayerId;
         XYZTargetActor = _XYZTargetActor;
         TargetLocation = _TargetLocation;
         InputType = _InputType;
@@ -67,7 +61,6 @@ struct FXYZInputMessage
     FXYZInputMessage(FXYZInputMessage InputMessage, int32 _Tick)
     {
         SelectedActors = InputMessage.SelectedActors;
-        PlayerId = InputMessage.PlayerId;
         XYZTargetActor = InputMessage.XYZTargetActor;
         TargetLocation = InputMessage.TargetLocation;
         InputType = InputMessage.InputType;
@@ -79,7 +72,6 @@ struct FXYZInputMessage
     {
         FString result;
 
-        result += "Player ID: " + PlayerId + "\n";
         result += "XYZ Target Actor: " + FString::Printf(TEXT("%d"), XYZTargetActor) + "\n";
         result += "Target Location: " + TargetLocation.ToString() + "\n";
         result += "Input Type: " + FString::Printf(TEXT("%d"), static_cast<uint8>(InputType)) + "\n";
