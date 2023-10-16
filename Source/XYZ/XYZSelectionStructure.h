@@ -52,6 +52,8 @@ public:
     void RemoveFromControlGroups(int32 ActorUId, int32 ActorId);
     UFUNCTION(BlueprintCallable)
         TArray<int32> GetControlGroupAmounts();
+    UFUNCTION(BlueprintCallable)
+    TArray<int32> GetActiveUIDFromControlGroups();
     UFUNCTION()
         void CycleSelection();
     

@@ -301,3 +301,32 @@ TArray<int32> UXYZSelectionStructure::GetControlGroupAmounts() {
     return Amounts;
 }
 
+TArray<int32> UXYZSelectionStructure::GetActiveUIDFromControlGroups() {
+    TArray<int32> ActiveActorUIDs;
+    for (const TSortedMap<int32, TMap<int32, AXYZActor*>>& SortedMap : ControlGroups)
+    {
+        TArray<TMap<int32, AXYZActor*>> Actors;
+        SortedMap.GenerateValueArray(Actors);
+        int32 FoundActorUID = -1;
+        for (auto& InnerMap: Actors)
+        {
+            TArray<AXYZActor*> FoundActors;
+            InnerMap.GenerateValueArray(FoundActors);
+
+            for(AXYZActor* FoundActor : FoundActors)
+            {
+                if(FoundActor)
+                {
+                    FoundActorUID = FoundActor->UActorId;
+                    break;
+                }
+            }
+            if(FoundActorUID != -1)
+            {
+                break;
+            }
+        }
+        ActiveActorUIDs.Add(FoundActorUID);
+    }
+    return ActiveActorUIDs;
+}
