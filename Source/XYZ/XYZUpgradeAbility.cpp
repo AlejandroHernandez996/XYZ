@@ -83,4 +83,5 @@ void UXYZUpgradeAbility::UpdateStage(int32 Stage)
 	CurrentStage = Stage;
 	Name = NameByStage[Stage];
 	MineralCost = MineralCostByStage[Stage];
+	AbilityImage = ImagesByStage[Stage];
 }
