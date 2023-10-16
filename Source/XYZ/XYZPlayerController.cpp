@@ -228,7 +228,12 @@ void AXYZPlayerController::SetupInputComponent()
 		}
 
 		for (int32 i = 0; i < AbilityInputActions.Num(); i++) {
-			EnhancedInputComponent->BindAction(AbilityInputActions[i], ETriggerEvent::Started, this, &AXYZPlayerController::OnAbilityInputStarted, i);
+			EnhancedInputComponent->BindAction(
+				AbilityInputActions[i],
+				ETriggerEvent::Started,
+				this,
+				&AXYZPlayerController::OnAbilityInputStarted,
+				i);
 		}
 
 		EnhancedInputComponent->BindAction(CameraMovementAction, ETriggerEvent::Started, this, &AXYZPlayerController::OnInputStarted, EXYZInputType::CAMERA);

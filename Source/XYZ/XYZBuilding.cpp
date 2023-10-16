@@ -51,16 +51,19 @@ void AXYZBuilding::Tick(float DeltaTime) {
         }
     }
 
-    if(!HasAuthority() && bShowRallyPoint)
+    if(!HasAuthority() &&  bShowRallyPoint && bCanRally)
     {
-        float LifeTime = .1f;
-        bool bPersistentLines = false;
-        bool bDepthIsForeground = (0 == SDPG_Foreground);
+        ULineBatchComponent* LineBatcher = GetWorld()->LineBatcher;
 
-        ULineBatchComponent* LineBatcher = (GetWorld() ? (bDepthIsForeground ? GetWorld() ->ForegroundLineBatcher : (( bPersistentLines || (LifeTime > 0.f) ) ? GetWorld() ->PersistentLineBatcher : GetWorld() ->LineBatcher)) : nullptr);
-
+        FVector StartLocation = GetActorLocation();
+        StartLocation.Z = 350.0f;
+        FVector EndLocation = RallyPoint;
+        FColor DebugColor = FColor::Orange;
+        
         if (LineBatcher)
-            LineBatcher->DrawLine(GetActorLocation(), RallyPoint, FColor::Orange, 0, 1.0f, DeltaTime);
+        {
+            LineBatcher->DrawLine(StartLocation, EndLocation, DebugColor, 0, 3.0f, .1f);
+        }
     }
 }
 
@@ -78,7 +81,7 @@ void AXYZBuilding::BeginPlay() {
     }
     for (UXYZAbility* Ability : Abilities) {
         UXYZBuildingAbility* BuildingAbility = Cast<UXYZBuildingAbility>(Ability);
-        if (BuildingAbility) {
+        if (BuildingAbility && !BuildingAbility->IsA(UXYZUpgradeAbility::StaticClass())) {
             BuildingAbility->OwningBuilding = this;
             bCanRally = true;
         }
@@ -169,7 +172,7 @@ void AXYZBuilding::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
     Super::ShowDecal(bShowDecal, DecalType);
     if(bCanRally)
     {
-        bShowRallyPoint = !bShowDecal && RallyPoint != SpawnPoint;
+        bShowRallyPoint = bShowDecal && RallyPoint != SpawnPoint;
     }
 }
 
