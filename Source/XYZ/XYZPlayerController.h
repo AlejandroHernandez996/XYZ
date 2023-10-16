@@ -159,11 +159,11 @@ protected:
 	UFUNCTION()
 	void OnInputReleased(EXYZInputType InputType);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnControlGroupInputStarted(int32 ControlGroupIndex);
 	UFUNCTION()
 	void OnCameraGroupInputStarted(int32 CameraGroupIndex);
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnAbilityInputStarted(int32 AbilityIndex);
 	UFUNCTION()
 	void OnCycleSelectionInputStarted();
