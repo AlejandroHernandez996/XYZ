@@ -237,7 +237,6 @@ void AXYZGameMode::Process(float DeltaSeconds)
             Actor->Process(DeltaSeconds);
         }
     }
-        
     InputManager->Process(DeltaSeconds);
     BlobManager->Process(DeltaSeconds);
     UpgradeManager->Process(DeltaSeconds);

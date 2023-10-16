@@ -14,6 +14,12 @@
 
 AXYZGameState::AXYZGameState() {
 	PrimaryActorTick.bCanEverTick = true;
+
+	for(int i = 0;i< 100;i++)
+	{
+		UpgradeAbilitiesResearched.Team1ResearchedAbiltiesAtStage.Add(-1);
+		UpgradeAbilitiesResearched.Team2ResearchedAbiltiesAtStage.Add(-1);
+	}
 }
 void AXYZGameState::BeginPlay() {
 	Super::BeginPlay();
@@ -62,6 +68,7 @@ void AXYZGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutL
 	DOREPLIFETIME(AXYZGameState, MatchState);
 	DOREPLIFETIME(AXYZGameState, ChatLobbyId);
 	DOREPLIFETIME(AXYZGameState, UsernamesByTeamId);
+	DOREPLIFETIME(AXYZGameState, UpgradeAbilitiesResearched);
 }
 
 AXYZActor* AXYZGameState::GetActorById(int32 ActorId)

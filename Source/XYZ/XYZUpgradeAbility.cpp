@@ -44,9 +44,17 @@ void UXYZUpgradeAbility::UpgradeActorStat(EXYZStat Stat, int32 StatGain, AXYZAct
 	}
 }
 
+void UXYZUpgradeAbility::DowngradeActor(AXYZActor* Actor)
+{
+	for(auto& KVP : StatGainMap)
+	{
+		UpgradeActorStat(KVP.Key, -1*KVP.Value, Actor);
+	}
+}
+
 UXYZUpgradeAbility* UXYZUpgradeAbility::DeepCopy()
 {
-	FString NewObjectName = this->GetName() + "_CacheCopy";
+	FString NewObjectName = this->GetName() + "_CacheCopy_" + FString::FromInt(this->CurrentStage);
 	UXYZUpgradeAbility* UpgradeAbilityDeepCopy = NewObject<UXYZUpgradeAbility>(this, UXYZUpgradeAbility::StaticClass(), *NewObjectName);
 	
 	UpgradeAbilityDeepCopy->TeamId = TeamId;
@@ -67,4 +75,12 @@ UXYZUpgradeAbility* UXYZUpgradeAbility::DeepCopy()
 	UpgradeAbilityDeepCopy->OwningActor = OwningActor;
 
 	return UpgradeAbilityDeepCopy;
+}
+
+void UXYZUpgradeAbility::UpdateStage(int32 Stage)
+{
+	if(Stage > MaxStage || Stage == CurrentStage || Stage < 0) return;
+	CurrentStage = Stage;
+	Name = NameByStage[Stage];
+	MineralCost = MineralCostByStage[Stage];
 }

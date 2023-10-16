@@ -19,6 +19,10 @@ void AXYZResourceActor::Process(float DeltaSeconds)
 		{
 			RemoveWorker(Worker);
 		}
+		if(Worker && Worker->TargetActor != this)
+		{
+			RemoveWorker(Worker);
+		}
 	}
 }
 

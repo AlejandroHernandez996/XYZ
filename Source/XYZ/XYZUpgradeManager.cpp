@@ -11,11 +11,24 @@ void UXYZUpgradeManager::Process(float DeltaTime)
 	{
 		TArray<AXYZActor*> Actors;
 		GameState->ActorsByUID.GenerateValueArray(Actors);
+
+		for(UXYZUpgradeAbility* AbilityToRemove : UpgradeAbilitiesToRemove)
+		{
+			if(!AbilityToRemove) continue;
+			UpgradeAbilities.Remove(AbilityToRemove);
+		}
 		for(AXYZActor* Actor : Actors)
 		{
 			if(!Actor) continue;
 			if(UpgradesByTeam.IsValidIndex(Actor->TeamId))
 			{
+				for(UXYZUpgradeAbility* AbilityToRemove : UpgradeAbilitiesToRemove)
+				{
+					if(Actor->ActiveUpgradeIds.Contains(AbilityToRemove->ID) && Actor->TeamId == AbilityToRemove->TeamId)
+					{
+						Actor->ActiveUpgradeIds.Remove(AbilityToRemove->ID);
+					}
+				}
 				for(UXYZUpgradeAbility* Ability : UpgradeAbilities)
 				{
 					if(!Ability) continue;
@@ -29,6 +42,7 @@ void UXYZUpgradeManager::Process(float DeltaTime)
 				}
 			}
 		}
+		UpgradeAbilitiesToRemove.Empty();
 	}
 }
 
@@ -68,14 +82,19 @@ void UXYZUpgradeManager::AddUpgradeToResearch(UXYZUpgradeAbility* UpgradeAbility
 
 void UXYZUpgradeManager::AddUpgradeAbility(UXYZUpgradeAbility* UpgradeAbility)
 {
-	if(!UpgradeAbility) return;
+	if(!UpgradeAbility || !UpgradesByTeam.IsValidIndex(UpgradeAbility->TeamId)) return;
 
-	if(UpgradesByTeam.IsValidIndex(UpgradeAbility->TeamId))
+	if(UpgradesByTeam[UpgradeAbility->TeamId].Contains(UpgradeAbility->ID))
 	{
-		if(UpgradesByTeam[UpgradeAbility->TeamId].Contains(UpgradeAbility->ID)) return;
-		
-		UXYZUpgradeAbility* AbilityDeepCopy = UpgradeAbility->DeepCopy();
-		UpgradeAbilities.Add(AbilityDeepCopy);
-		UpgradesByTeam[UpgradeAbility->TeamId].Add(UpgradeAbility->ID, AbilityDeepCopy);
+		if(UXYZUpgradeAbility* PreviousStageAbility = UpgradesByTeam[UpgradeAbility->TeamId][UpgradeAbility->ID])
+		{
+			UpgradeAbilitiesToRemove.Add(PreviousStageAbility);
+			UpgradesByTeam[UpgradeAbility->TeamId].Remove(UpgradeAbility->ID);
+		}
 	}
+		
+	UXYZUpgradeAbility* AbilityDeepCopy = UpgradeAbility->DeepCopy();
+	UpgradeAbilities.Add(AbilityDeepCopy);
+	UpgradesByTeam[UpgradeAbility->TeamId].Add(UpgradeAbility->ID, AbilityDeepCopy);
+	GameState->UpgradeAbilitiesResearched.AddResearchedAbility(UpgradeAbility->ID, UpgradeAbility->CurrentStage, UpgradeAbility->TeamId);
 }

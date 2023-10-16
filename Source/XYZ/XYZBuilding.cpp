@@ -39,6 +39,23 @@ void AXYZBuilding::Tick(float DeltaTime) {
         }
         RallyCable->CableLength = FVector::Dist(RallyPoint, RallyCable->GetComponentLocation());
     }
+
+    if(GetWorld()->GetGameState<AXYZGameState>())
+    {
+        AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
+        for(UXYZAbility* Ability : Abilities)
+        {
+            UXYZUpgradeAbility* UpgradeAbility = Cast<UXYZUpgradeAbility>(Ability);
+            if(!UpgradeAbility) continue;
+
+            int32 CurrentStage = GameState->UpgradeAbilitiesResearched.GetCurrentUpgradeStage(UpgradeAbility->ID, TeamId);
+            if(CurrentStage == UpgradeAbility->CurrentStage)
+            {
+                UpgradeAbility->UpdateStage(CurrentStage+1);
+            }
+            
+        }
+    }
 }
 
 void AXYZBuilding::BeginPlay() {
@@ -184,9 +201,12 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
     {
         UpgradeAbility->TeamId = TeamId;
     }
-    if(UpgradeAbility && (GameMode->UpgradeManager->ContainsUpgrade(UpgradeAbility) || GameMode->UpgradeManager->IsUpgradeBeingResearched(UpgradeAbility)))
+    if(UpgradeAbility)
     {
-        return;
+        if(GameMode->UpgradeManager->IsUpgradeBeingResearched(UpgradeAbility)) return;
+        int32 CurrentUpgradedStage = GameState->UpgradeAbilitiesResearched.GetCurrentUpgradeStage(UpgradeAbility->ID, TeamId);
+        bool bIsAtMaxUpgrade = CurrentUpgradedStage == UpgradeAbility->MaxStage;
+        if(GameMode->UpgradeManager->ContainsUpgrade(UpgradeAbility) && bIsAtMaxUpgrade) return;
     }
     if(UpgradeAbility)
     {

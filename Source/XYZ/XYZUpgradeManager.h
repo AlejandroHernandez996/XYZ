@@ -24,6 +24,9 @@ public:
 
 	UPROPERTY()
 	TSet<UXYZUpgradeAbility*> UpgradeAbilities;
+
+	UPROPERTY()
+	TSet<UXYZUpgradeAbility*> UpgradeAbilitiesToRemove;
 	
 	UPROPERTY()
 	class AXYZGameState* GameState;

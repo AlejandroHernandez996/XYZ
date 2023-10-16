@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UpgradeAbilitiesResearched.h"
 #include "XYZMatchState.h"
 #include "XYZPlayerController.h"
 #include "GameFramework/GameStateBase.h"
@@ -45,7 +46,7 @@ public:
 	TMap<int32, class AXYZActor*> ActorsByUID;
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
-		TArray<int32> MineralsByTeamId = { 0,0 };
+		TArray<int32> MineralsByTeamId = { 1000,1000 };
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		TArray<int32> GasByTeamId = { 0,0 };
 	UPROPERTY(BlueprintReadOnly, Replicated)
@@ -53,6 +54,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	bool bHasGameEnded;
 
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	FUpgradeAbilitiesResearched UpgradeAbilitiesResearched;
 	TMap<int32,TMap<int32, int32>> ReservedSupplyByBuilding;
 	UFUNCTION()
 	TArray<class AXYZActor*> GetAllActors();
