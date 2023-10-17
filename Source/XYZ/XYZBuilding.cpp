@@ -53,16 +53,16 @@ void AXYZBuilding::Tick(float DeltaTime) {
 
     if(!HasAuthority() &&  bShowRallyPoint && bCanRally)
     {
-        ULineBatchComponent* LineBatcher = GetWorld()->LineBatcher;
+        ULineBatchComponent* LineBatcher = GetWorld()->ForegroundLineBatcher;
 
         FVector StartLocation = GetActorLocation();
-        StartLocation.Z = 500.0f;
+        StartLocation.Z += GetCapsuleComponent()->GetScaledCapsuleHalfHeight()/2.0f;
         FVector EndLocation = RallyPoint;
         FColor DebugColor = FColor::Orange;
         
         if (LineBatcher)
         {
-            LineBatcher->DrawLine(StartLocation, EndLocation, DebugColor, 0, 3.0f, .1f);
+            LineBatcher->DrawLine(EndLocation, StartLocation, DebugColor, 0, 3.0f, .1f);
         }
     }
 }
@@ -70,7 +70,6 @@ void AXYZBuilding::Tick(float DeltaTime) {
 void AXYZBuilding::BeginPlay() {
     Super::BeginPlay();
     UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
-    
 
     if (CapsuleComp)
     {

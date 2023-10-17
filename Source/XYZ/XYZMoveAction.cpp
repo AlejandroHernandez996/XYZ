@@ -1,16 +1,32 @@
 #include "XYZMoveAction.h"
 #include "XYZActor.h"
 #include "XYZAIController.h"
+#include "XYZBuilding.h"
 #include "XYZGameMode.h"
 #include "XYZMapManager.h"
 
-void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> Agents)
+void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
 {
+    TSet<AXYZActor*> Agents;
+
+    for(AXYZActor* Actor : UnfilteredAgents)
+    {
+        AXYZBuilding* Building = Cast<AXYZBuilding>(Actor);
+        if(Building)
+        {
+            Building->GetXYZAIController()->XYZMoveToLocation(TargetLocation);
+        }else
+        {
+            Agents.Add(Actor);
+        }
+    }
+    
     FVector CenterLocation = FindInitialCenterLocation(Agents);
     AXYZActor* CenterAgent = FindCenterAgent(Agents, CenterLocation);
 
     FVector MinBounds = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
     FVector MaxBounds = FVector(FLT_MIN, FLT_MIN, FLT_MIN);
+
     for (AXYZActor* Actor : Agents)
     {
         if(Actor)
