@@ -264,7 +264,7 @@ void UXYZMapManager::GenerateVision() {
 				FIntVector2 AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
 				if (IsGridCoordValid(AdjacentCoord) &&
 					Actor->TeamId != 2 &&
-					Grid[ActorGridCoord].Height >= Grid[AdjacentCoord].Height) {
+					(Actor->bIsFlying || Grid[ActorGridCoord].Height >= Grid[AdjacentCoord].Height)) {
 					Grid[AdjacentCoord].TeamVision[Actor->TeamId] = true;
 				}
 			}

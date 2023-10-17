@@ -21,6 +21,7 @@
 #include "XYZUnitBuff.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 AXYZActor::AXYZActor()
@@ -39,7 +40,8 @@ AXYZActor::AXYZActor()
 		AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 		AIControllerClass = AXYZAIController::StaticClass();
 	}
-
+	FName AudioComponentName = FName(*(GetName() + "_AudioComponent"));
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(AudioComponentName);
 	Health = 100.0f;
 	MaxHealth = 100.0f;
 }
@@ -119,6 +121,7 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AXYZActor, TargetActorLocationReplicated);
 	DOREPLIFETIME(AXYZActor, TotalKills);
 	DOREPLIFETIME(AXYZActor, ActiveBuffIds);
+	DOREPLIFETIME(AXYZActor, FlyingSpeed);
 }
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
@@ -188,7 +191,8 @@ AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors)
 			OtherActor == this ||
 			bTargetIsFriendlyAndShouldIgnore ||
 			OtherActor->State == EXYZUnitState::DEAD ||
-			OtherActor->IsA(AXYZResourceActor::StaticClass()))
+			OtherActor->IsA(AXYZResourceActor::StaticClass()) ||
+			!OtherActor->CanAttack(this))
 		{
 			continue;
 		}
@@ -310,7 +314,8 @@ void AXYZActor::AttackMoveTarget()
 	FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
 	if (TargetActor &&
 		TargetActor != this &&
-		TargetActor->State != EXYZUnitState::DEAD)
+		TargetActor->State != EXYZUnitState::DEAD &&
+		TargetActor->CanAttack(this))
 	{
 		FVector TargetActorLocation = TargetActor->GetActorLocation();
 		
@@ -374,7 +379,14 @@ void AXYZActor::UseAbility(int32 Index)
 {
 	if (Index >= 0 && Index < Abilities.Num() && Abilities[Index] && !Abilities.IsEmpty())
 	{
-		Abilities[Index]->Activate();
+		bool bIsActivated = Abilities[Index]->Activate();
+		if(bIsActivated && Abilities[Index]->AbilitySoundEffect)
+		{
+			for(AXYZPlayerController* PlayerController : GetWorld()->GetAuthGameMode<AXYZGameMode>()->PlayerControllers)
+			{
+				PlayerController->PlayAbilitySound(UActorId, Index);
+			}
+		}
 	}
 }
 
@@ -487,4 +499,23 @@ void AXYZActor::AddBuff(UXYZUnitBuff* Buff)
 	ActiveBuffIds.Add(Buff->BuffId);
 	
 	
+}
+
+void AXYZActor::PlaySound(USoundBase* Sound)
+{
+	if(AudioComponent)
+	{
+		AudioComponent->Stop();
+		AudioComponent->SetSound(Sound);
+		AudioComponent->Play();
+	}
+}
+
+bool AXYZActor::CanAttack(AXYZActor* AttackingActor)
+{
+	if(AttackingActor)
+	{
+		return bIsFlying ? AttackingActor->bCanAttackAir : AttackingActor->bCanAttackGround;
+	}
+	return false;
 }

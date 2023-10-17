@@ -303,4 +303,8 @@ public:
 	void CancelProductionAtIndex(int32 Index, int32 UActorId);
 	void CancelProductionAtIndex_Implementation(int32 Index, int32 UActorId);
 
+	UFUNCTION(Client, Reliable)
+	void PlayAbilitySound(int32 ActorUID, int32 AbilityIndex);
+	void PlayAbilitySound_Implementation(int32 ActorUID, int32 AbilityIndex);
+
 };

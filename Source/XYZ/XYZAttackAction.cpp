@@ -2,11 +2,12 @@
 #include "XYZActor.h"
 #include "XYZUnitState.h"
 #include "XYZAIController.h"
+#include "XYZBuilding.h"
 
-void UXYZAttackAction::ProcessAction(TSet<AXYZActor*> Agents) {
+void UXYZAttackAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents) {
 
     if (TargetActor) {
-        for (AXYZActor* Actor : Agents)
+        for (AXYZActor* Actor : UnfilteredAgents)
         {
             if (Actor && Actor->GetXYZAIController()) {
 
@@ -16,6 +17,21 @@ void UXYZAttackAction::ProcessAction(TSet<AXYZActor*> Agents) {
         }
         return;
     }
+    TSet<AXYZActor*> Agents;
+
+    for(AXYZActor* Actor : UnfilteredAgents)
+    {
+        AXYZBuilding* Building = Cast<AXYZBuilding>(Actor);
+        if(Building || Actor->bIsFlying)
+        {
+            Actor->GetXYZAIController()->XYZAttackMoveToLocation(TargetLocation);
+        }
+        else
+        {
+            Agents.Add(Actor);
+        }
+    }
+    
     FVector CenterLocation = FindInitialCenterLocation(Agents);
     AXYZActor* CenterAgent = FindCenterAgent(Agents, CenterLocation);
 

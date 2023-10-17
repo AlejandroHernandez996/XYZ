@@ -15,4 +15,11 @@ class XYZ_API AXYZUnit : public AXYZActor
 	GENERATED_BODY()
 public:
 	void Process(float DeltaSeconds) override;
+	UFUNCTION()
+	void FlyingAttackMoveTarget();
+	bool IsInAttackRangeOfUnit();
+	UFUNCTION()
+	void ProcessFlyingUnit(float DeltaSeconds);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TrailingDistance = 100.0f;
 };

@@ -13,7 +13,6 @@
 #include "XYZSelectionStructure.h"
 #include "Kismet/GameplayStatics.h" 
 #include "XYZHUD.h"
-#include "GameFramework/PlayerState.h"
 #include "EnhancedInputSubsystems.h"
 #include "XYZCameraController.h"
 #include "XYZResourceActor.h"
@@ -24,6 +23,7 @@
 #include "XYZSoundManager.h"
 #include "XYZWorkerAbility.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/LineBatchComponent.h"
 #include "Net/UnrealNetwork.h"
 
 AXYZPlayerController::AXYZPlayerController()
@@ -106,9 +106,42 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		OnSelectionBoxReleased.Broadcast(0, 0);
 	}
 
-	bWorldHitSuccessful = GetHitResultAtScreenPosition(GetMousePositionOnViewport(), ECollisionChannel::ECC_WorldStatic, true, WorldHit);
-	bXYZActorHitSuccessful = GetHitResultAtScreenPosition(GetMousePositionOnViewport(), ECollisionChannel::ECC_WorldStatic, true, XYZActorHit);
+	bWorldHitSuccessful = GetHitResultAtScreenPosition(GetMousePositionOnViewport(), ECC_WorldStatic, true, WorldHit);
+	bXYZActorHitSuccessful = GetHitResultAtScreenPosition(GetMousePositionOnViewport(), ECC_WorldStatic, true, XYZActorHit);
+	if(!Cast<AXYZActor>(XYZActorHit.GetActor()))
+	{
+		FVector MouseWorldLocation, MouseWorldDirection;
+		DeprojectMousePositionToWorld(MouseWorldLocation, MouseWorldDirection);
 
+		TArray<FHitResult> HitResults;
+		FCollisionQueryParams CollisionParams;
+		CollisionParams.AddIgnoredActor(this);
+		CollisionParams.AddIgnoredActor(CameraController);
+
+		FVector StartLocation = MouseWorldLocation;
+		FVector EndLocation = StartLocation + MouseWorldDirection * 10000.0f;
+
+		ECollisionChannel TraceChannel = ECC_Pawn;
+
+		if (GetWorld()->LineTraceMultiByChannel(HitResults, StartLocation, EndLocation, TraceChannel, CollisionParams))
+		{
+			for (const FHitResult& HitResult : HitResults)
+			{
+				AActor* HitActor = HitResult.GetActor();
+				if (HitActor && HitActor->IsA(AXYZActor::StaticClass()))
+				{
+					AXYZActor* XYZActor = Cast<AXYZActor>(HitActor);
+					if (XYZActor)
+					{
+						XYZActorHit = HitResult;
+						bXYZActorHitSuccessful = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+	
 	if(CameraController && bMoveCameraFlag)
 	{
 		FVector LocationWithOffset = FVector(CameraLocation.X, CameraLocation.Y, CameraController->GetActorLocation().Z) + FVector(-250, 50,0.0f);
@@ -179,6 +212,31 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 				MeshComp->SetMaterial(0, PlacementBuilding->PlacementMaterials[MaterialIndex]);
 			}
 		}
+	}
+
+	if(!HasAuthority() && XYZGameState)
+	{
+		TArray<AXYZActor*> Actors;
+		XYZGameState->ActorsByUID.GenerateValueArray(Actors);
+		ULineBatchComponent* LineBatcher = GetWorld()->ForegroundLineBatcher;
+		for(AXYZActor* Actor : Actors)
+		{
+			if(Actor && Actor->bIsFlying && Actor->bIsVisible)
+			{
+				FColor LineColor = TeamId == Actor->TeamId ? FColor::Green : FColor::Red;
+				LineColor = LineColor.WithAlpha(120);
+				FVector StartLocation = Actor->GetActorLocation();
+				FVector EndLocation = StartLocation;
+				EndLocation.Z = 0.0f;
+        
+				if (LineBatcher)
+				{
+					LineBatcher->DrawLine(EndLocation, StartLocation, LineColor, 0, 1.0f, .1f);
+				}
+			}
+		}
+
+		
 	}
 }
 
@@ -497,7 +555,7 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 			break;
 		}
 		if (!bAllowMouseInput || !bBoxSelectFlag) break;
-		if (FVector2D::Distance(BoxSelectStart, BoxSelectEnd) < 25.0f){
+		if (FVector2D::Distance(BoxSelectStart, BoxSelectEnd) < 25.0f && bXYZActorHitSuccessful){
 			if (HitActor) {
 				if (bSecondaryModifier || bDoubleInput) {
 					TArray<AXYZActor*> SelectedActors = GetHUD<AXYZHUD>()->SelectedActors;
@@ -533,7 +591,6 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 				}
 			}
 		}
-		
 		else {
 			SelectActors(GetHUD<AXYZHUD>()->SelectedActors);
 		}
@@ -1010,6 +1067,21 @@ void AXYZPlayerController::CancelProductionAtIndex_Implementation(int32 Index, i
 			if(Building)
 			{
 				Building->CancelProductionIndex = Index;
+			}
+		}
+	}
+}
+
+void AXYZPlayerController::PlayAbilitySound_Implementation(int32 ActorUID, int32 AbilityIndex)
+{
+	if(XYZGameState)
+	{
+		if(XYZGameState->ActorsByUID.Contains(ActorUID))
+		{
+			AXYZActor* Actor = XYZGameState->ActorsByUID[ActorUID];
+			if(Actor && Actor->bIsVisible && Actor->Abilities.IsValidIndex(AbilityIndex) && Actor->Abilities[AbilityIndex]->AbilitySoundEffect)
+			{
+				Actor->PlaySound(Actor->Abilities[AbilityIndex]->AbilitySoundEffect);
 			}
 		}
 	}

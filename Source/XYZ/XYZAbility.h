@@ -49,4 +49,7 @@ public:
     
         return RequirementsString;
     }
+
+    UPROPERTY(EditDefaultsOnly, Category = "Sound")
+    class USoundBase* AbilitySoundEffect;
 };

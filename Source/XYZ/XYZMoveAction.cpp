@@ -12,10 +12,11 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
     for(AXYZActor* Actor : UnfilteredAgents)
     {
         AXYZBuilding* Building = Cast<AXYZBuilding>(Actor);
-        if(Building)
+        if(Building || Actor->bIsFlying)
         {
-            Building->GetXYZAIController()->XYZMoveToLocation(TargetLocation);
-        }else
+            Actor->GetXYZAIController()->XYZMoveToLocation(TargetLocation);
+        }
+        else
         {
             Agents.Add(Actor);
         }

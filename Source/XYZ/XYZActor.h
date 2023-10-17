@@ -232,4 +232,26 @@ public:
         }
         return "MISSING STATE?";
     }
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    class UAudioComponent* AudioComponent;
+
+    UFUNCTION()
+    void PlaySound(class USoundBase* Sound);
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    bool bIsFlying = false;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    bool bCanAttackGround = true;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    bool bCanAttackAir = false;
+
+    UFUNCTION()
+    bool CanAttack(class AXYZActor* AttackingActor);
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flying")
+    float FlyingZOffset = 500.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats", Replicated)
+    float FlyingSpeed;
 };
