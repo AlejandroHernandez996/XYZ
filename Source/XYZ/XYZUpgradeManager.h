@@ -34,6 +34,8 @@ public:
 	UFUNCTION()
 	bool ContainsUpgrade(UXYZUpgradeAbility* UpgradeAbility);
 	UFUNCTION()
+	bool HasResearched(int32 AbilityId, int32 TeamId);
+	UFUNCTION()
 	bool IsUpgradeBeingResearched(UXYZUpgradeAbility* UpgradeAbility);
 	UFUNCTION()
 	void RemoveUpgradeFromResearch(UXYZUpgradeAbility* UpgradeAbility);

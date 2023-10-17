@@ -8,6 +8,7 @@ enum class EXYZStat : uint8
 {
 	ARMOR,
 	HEALTH,
+	MAX_HEALTH,
 	ATTACK,
 	ATTACK_RANGE,
 	VISION_RANGE,

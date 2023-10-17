@@ -47,7 +47,7 @@ public:
 	void UpgradeActor(class AXYZActor* Actor);
 
 	UFUNCTION()
-	void UpgradeActorStat(EXYZStat Stat, int32 StatGain, AXYZActor* Actor);
+	void UpgradeActorStat(EXYZStat Stat, float StatGain, AXYZActor* Actor);
 	
 	UFUNCTION()
 	void DowngradeActor(AXYZActor* Actor);

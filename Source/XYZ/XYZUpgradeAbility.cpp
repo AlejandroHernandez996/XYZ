@@ -14,7 +14,7 @@ void UXYZUpgradeAbility::UpgradeActor(AXYZActor* Actor)
 	}
 }
 
-void UXYZUpgradeAbility::UpgradeActorStat(EXYZStat Stat, int32 StatGain, AXYZActor* Actor)
+void UXYZUpgradeAbility::UpgradeActorStat(EXYZStat Stat, float StatGain, AXYZActor* Actor)
 {
 	switch(Stat)
 	{
@@ -22,8 +22,10 @@ void UXYZUpgradeAbility::UpgradeActorStat(EXYZStat Stat, int32 StatGain, AXYZAct
 		Actor->Armor += StatGain;
 		break;
 	case EXYZStat::HEALTH:
-		Actor->MaxHealth += StatGain;
 		Actor->Health += StatGain;
+		break;
+	case EXYZStat::MAX_HEALTH:
+		Actor->MaxHealth += StatGain;
 		break;
 	case EXYZStat::ATTACK:
 		Actor->AttackDamage += StatGain;

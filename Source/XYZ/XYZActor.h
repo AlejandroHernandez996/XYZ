@@ -24,6 +24,7 @@ public:
 public:	
 	virtual void Tick(float DeltaTime) override;
     virtual void BeginPlay() override;
+    
     UPROPERTY()
     FVector LastLocation;
 
@@ -183,6 +184,21 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UTexture2D* ActorIcon;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    TSet<class UXYZUnitBuff*> ActiveBuffs;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
+    TArray<int32> ActiveBuffIds;
+
+    UFUNCTION()
+    void RemoveBuff(class UXYZUnitBuff* Buff);
+
+    UPROPERTY()
+    TArray<UXYZUnitBuff*> BuffsToRemove;
+    
+    UFUNCTION()
+    void AddBuff(class UXYZUnitBuff* Buff);
     
     UFUNCTION(BlueprintCallable)
     FString GetStateAsString()

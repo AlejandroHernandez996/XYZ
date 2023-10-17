@@ -41,4 +41,20 @@ struct FUpgradeAbilitiesResearched
 		}
 		return -1;
 	}
+
+	bool HasUpgradeResearched(int32 TeamId, int32 AbilityId)
+	{
+		if(!Team1ResearchedAbiltiesAtStage.IsValidIndex(AbilityId) || !Team2ResearchedAbiltiesAtStage.IsValidIndex(AbilityId)) return false;
+		
+		if(TeamId == 0)
+		{
+			return Team1ResearchedAbiltiesAtStage[AbilityId] > -1;
+		}
+		if (TeamId == 1)
+		{
+			return Team2ResearchedAbiltiesAtStage[AbilityId] > -1;
+		}
+
+		return false;
+	}
 };

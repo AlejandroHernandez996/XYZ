@@ -18,6 +18,7 @@
 #include "XYZAbility.h"
 #include "XYZDeathManager.h"
 #include "XYZMapManager.h"
+#include "XYZUnitBuff.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 
@@ -117,6 +118,7 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AXYZActor, ActorId);
 	DOREPLIFETIME(AXYZActor, TargetActorLocationReplicated);
 	DOREPLIFETIME(AXYZActor, TotalKills);
+	DOREPLIFETIME(AXYZActor, ActiveBuffIds);
 }
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
@@ -404,7 +406,20 @@ void AXYZActor::Process(float DeltaTime)
 	if (Health <= 0.0f)
 	{
 		GetWorld()->GetAuthGameMode<AXYZGameMode>()->DeathManager->QueueDeath(this);
-	}else if(GetXYZAIController() && GetXYZAIController()->bIsMoving)
+		return;
+	}
+
+	for(UXYZUnitBuff* Buff : ActiveBuffs)
+	{
+		Buff->Process(DeltaTime);
+	}
+	for(UXYZUnitBuff* Buff : BuffsToRemove)
+	{
+		RemoveBuff(Buff);
+	}
+	BuffsToRemove.Empty();
+	
+	if(GetXYZAIController() && GetXYZAIController()->bIsMoving)
 	{
 		GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(this);
 		LastLocation = GetActorLocation();
@@ -440,4 +455,36 @@ int AXYZActor::GetActorPriority(const AXYZActor* Actor)
 	if (Actor->IsA(AXYZUnit::StaticClass())) return 1;
 	if (Actor->IsA(AXYZBuilding::StaticClass())) return 2;
 	return 3;
+}
+
+void AXYZActor::RemoveBuff(UXYZUnitBuff* Buff)
+{
+	if(!Buff) return;
+
+	Buff->DebuffActor(this);
+	ActiveBuffs.Remove(Buff);
+	ActiveBuffIds.Remove(Buff->BuffId);
+}
+
+void AXYZActor::AddBuff(UXYZUnitBuff* Buff)
+{
+	if(!Buff) return;
+
+	UXYZUnitBuff* FoundUnitBuff = nullptr;
+	for(UXYZUnitBuff* UnitBuff : ActiveBuffs)
+	{
+		if(UnitBuff->BuffId == Buff->BuffId)
+		{
+			FoundUnitBuff = UnitBuff;
+			break;
+		}
+	}
+	if(FoundUnitBuff)
+	{
+		RemoveBuff(FoundUnitBuff);
+	}
+	ActiveBuffs.Add(Buff);
+	ActiveBuffIds.Add(Buff->BuffId);
+	
+	
 }

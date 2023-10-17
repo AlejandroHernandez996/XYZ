@@ -54,6 +54,11 @@ bool UXYZUpgradeManager::ContainsUpgrade(UXYZUpgradeAbility* UpgradeAbility)
 	return UpgradesByTeam[UpgradeAbility->TeamId].Contains(UpgradeAbility->ID);
 }
 
+bool UXYZUpgradeManager::HasResearched(int32 AbilityId, int32 TeamId)
+{
+	return UpgradesByTeam.IsValidIndex(TeamId) && UpgradesByTeam[TeamId].Contains(AbilityId);
+}
+
 bool UXYZUpgradeManager::IsUpgradeBeingResearched(UXYZUpgradeAbility* UpgradeAbility)
 {
 	if(!UpgradeAbility || !UpgradesInResearch.IsValidIndex(UpgradeAbility->TeamId)) return true;

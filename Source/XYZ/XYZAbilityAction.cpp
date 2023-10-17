@@ -1,7 +1,5 @@
 #include "XYZAbilityAction.h"
 #include "XYZActor.h"
-#include "XYZUnitState.h"
-#include "XYZAIController.h"
 
 void UXYZAbilityAction::ProcessAction(TSet<AXYZActor*> Agents) {
     for (AXYZActor* Actor : Agents) {
