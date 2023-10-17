@@ -221,7 +221,7 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		ULineBatchComponent* LineBatcher = GetWorld()->ForegroundLineBatcher;
 		for(AXYZActor* Actor : Actors)
 		{
-			if(Actor && Actor->bIsFlying && Actor->bIsVisible)
+			if(Actor && Actor->bIsFlying && Actor->bIsVisible && Actor->State != EXYZUnitState::DEAD)
 			{
 				FColor LineColor = TeamId == Actor->TeamId ? FColor::Green : FColor::Red;
 				LineColor = LineColor.WithAlpha(120);
