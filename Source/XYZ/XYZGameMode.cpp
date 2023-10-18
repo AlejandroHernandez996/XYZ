@@ -17,6 +17,7 @@
 #include "XYZDeathManager.h"
 #include "XYZMapManager.h"
 #include "XYZMatchManager.h"
+#include "XYZProjectileManager.h"
 #include "XYZUpgradeManager.h"
 #include "Interfaces/OnlineIdentityInterface.h"
 #include "UObject/ConstructorHelpers.h"
@@ -60,6 +61,8 @@ void AXYZGameMode::BeginPlay() {
     UserRetriever = NewObject<UUserInfoRetriver>(this);
     UserStatRetriever = NewObject<UUserStatRetriever>(this);
     UserStatUpdater = NewObject<UUserStatUpdater>(this);
+
+    ProjectileManager = NewObject<UXYZProjectileManager>(this, UXYZProjectileManager::StaticClass(), "ProjectileManager");
     
     bAllExistingPlayersRegistered = false;
 	bUseSeamlessTravel = true;
@@ -247,7 +250,8 @@ void AXYZGameMode::Process(float DeltaSeconds)
     DeathManager->Process(DeltaSeconds);
     MapManager->Process(DeltaSeconds);
     MatchManager->Process(DeltaSeconds);
-
+    ProjectileManager->Process(DeltaSeconds);
+    
     TickCount++;
     bHasGameEnded = bHasGameEnded || NumOfPlayers < MAX_PLAYERS;
 

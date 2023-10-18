@@ -257,4 +257,7 @@ public:
 
     UPROPERTY()
     EXYZDecalType CurrentDecal = EXYZDecalType::NEUTRAL;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<class AXYZProjectile> ProjectileTemplate;
 };

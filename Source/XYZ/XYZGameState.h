@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "UpgradeAbilitiesResearched.h"
 #include "XYZMatchState.h"
-#include "XYZPlayerController.h"
 #include "GameFramework/GameStateBase.h"
 #include "XYZGameState.generated.h"
 
@@ -26,7 +25,7 @@ public:
 	UPROPERTY(Replicated)
 	FString ChatLobbyId;
 	UFUNCTION(BlueprintCallable)
-	void SendMessage(FString Message, AXYZPlayerController* PlayerController);
+	void SendMessage(FString Message, class AXYZPlayerController* PlayerController);
 	UPROPERTY(BlueprintReadOnly)
 	FString LobbyMessages;
 	bool bStartGettingMessages = false;
@@ -124,4 +123,10 @@ public:
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnChatMessageReceived OnChatMessageReceivedEvent;
+
+	UFUNCTION(BlueprintCallable)
+	bool HasTeamFullyResearchedAbility(int32 TeamId, int32 AbilityId, int32 MaxStage);
+
+	UFUNCTION(BlueprintCallable)
+	bool DoesAbilityHaveRequirements(UXYZAbility* Ability, int32 TeamId);
 };

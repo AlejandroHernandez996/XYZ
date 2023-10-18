@@ -4,6 +4,7 @@
 #include "XYZActor.h"
 #include "Engine.h"
 #include "XYZActorCache.h"
+#include "XYZBuffAbility.h"
 #include "XYZBuilding.h"
 #include "XYZChatManager.h"
 #include "XYZGameMode.h"
@@ -83,6 +84,51 @@ AXYZActor* AXYZGameState::GetActorById(int32 ActorId)
 		}
 	}
 	return nullptr;
+}
+
+bool AXYZGameState::HasTeamFullyResearchedAbility(int32 TeamId, int32 AbilityId, int32 MaxStage)
+{
+	return UpgradeAbilitiesResearched.HasUpgradeResearched(TeamId, AbilityId) && UpgradeAbilitiesResearched.UpgradeAbilityIsAtMaxStage(TeamId, AbilityId, MaxStage);
+}
+
+bool AXYZGameState::DoesAbilityHaveRequirements(UXYZAbility* Ability, int32 TeamId)
+{
+	if(!Ability) return false;
+
+	UXYZBuffAbility* BuffAbility = Cast<UXYZBuffAbility>(Ability);
+	if(BuffAbility)
+	{
+		for(int32 UpgradeId : BuffAbility->RequiredUpgradeIds)
+		{
+			if(UpgradeAbilitiesResearched.HasUpgradeResearched(TeamId,UpgradeId))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	TArray<AXYZActor*> Actors;
+	ActorsByUID.GenerateValueArray(Actors);
+	TSet<int32> UniqueTeamActors;
+	for(AXYZActor* Actor : Actors)
+	{
+		if(!Actor) continue;
+		if(Actor->TeamId == TeamId)
+		{
+			UniqueTeamActors.Add(Actor->ActorId);
+		}
+	}
+
+	TArray<int32> RequiredActors;
+	TSet<int32> RequiredActorsSet;
+	Ability->ActorRequirements.GenerateKeyArray(RequiredActors);
+	for(int32 RequiredActor : RequiredActors)
+	{
+		RequiredActorsSet.Add(RequiredActor);
+	}
+
+	return RequiredActorsSet.Difference(UniqueTeamActors).IsEmpty();
+		
 }
 
 void AXYZGameState::SendMessage(FString Message, AXYZPlayerController* PlayerController)

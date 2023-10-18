@@ -18,6 +18,8 @@
 #include "XYZAbility.h"
 #include "XYZDeathManager.h"
 #include "XYZMapManager.h"
+#include "XYZProjectile.h"
+#include "XYZProjectileManager.h"
 #include "XYZUnitBuff.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
@@ -173,6 +175,11 @@ void AXYZActor::Attack()
 
 		FRotator TargetRotation = Direction.Rotation();
 		SetActorRotation(TargetRotation);
+
+		if(ProjectileTemplate)
+		{
+			GetWorld()->GetAuthGameMode<AXYZGameMode>()->ProjectileManager->SpawnProjectile(ProjectileTemplate, TargetActor->GetActorLocation(), TargetActor,this);
+		}
 	}
 }
 

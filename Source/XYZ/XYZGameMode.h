@@ -58,6 +58,8 @@ public:
 	class UXYZMapManager* MapManager;
 	UPROPERTY()
 	class UXYZUpgradeManager* UpgradeManager;
+	UPROPERTY()
+	class UXYZProjectileManager* ProjectileManager;
 	
 	UPROPERTY()
 	class UXYZActorCache* ActorCache;

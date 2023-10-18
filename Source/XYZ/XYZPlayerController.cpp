@@ -371,6 +371,10 @@ void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {
 	}
 	if (SelectionStructure->IsEmpty()) return;
 
+	AXYZActor* Actor = XYZGameState->GetActorById(SelectionStructure->ActiveActor);
+	if(!Actor || !Actor->Abilities.IsValidIndex(AbilityIndex) || !Actor->Abilities[AbilityIndex]) return;
+	if(!XYZGameState->DoesAbilityHaveRequirements(Actor->Abilities[AbilityIndex], TeamId)) return;
+
 	AXYZWorker* ActiveWorker = Cast<AXYZWorker>(XYZGameState->GetActorById(SelectionStructure->ActiveActor));
 	UXYZWorkerAbility* WorkerAbility = nullptr;
 	if(ActiveWorker && AbilityIndex < ActiveWorker->Abilities.Num())
@@ -801,7 +805,7 @@ AXYZActor* AXYZPlayerController::GetActiveSelectedActor() {
 }
 
 void AXYZPlayerController::PlayAnimationMontage_Implementation(EXYZAnimMontageType AnimType, AXYZActor* Actor) {
-	if (Actor->AnimMontageMap.Contains(AnimType)) {
+	if (Actor && Actor->AnimMontageMap.Contains(AnimType)) {
 		Actor->PlayAnimationMontage(AnimType);
 	}
 }

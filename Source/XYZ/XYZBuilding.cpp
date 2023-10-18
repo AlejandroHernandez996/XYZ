@@ -227,7 +227,7 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
     {
         if(GameMode->UpgradeManager->IsUpgradeBeingResearched(UpgradeAbility)) return;
         int32 CurrentUpgradedStage = GameState->UpgradeAbilitiesResearched.GetCurrentUpgradeStage(UpgradeAbility->ID, TeamId);
-        bool bIsAtMaxUpgrade = CurrentUpgradedStage == UpgradeAbility->MaxStage;
+        bool bIsAtMaxUpgrade = CurrentUpgradedStage >= UpgradeAbility->MaxStage;
         if(GameMode->UpgradeManager->ContainsUpgrade(UpgradeAbility) && bIsAtMaxUpgrade) return;
     }
     if(UpgradeAbility)
@@ -391,7 +391,18 @@ void AXYZBuilding::CancelProductionAtIndex()
 void AXYZBuilding::Process(float DeltaTime)
 {
     Super::Process(DeltaTime);
-    
+
+    UXYZUpgradeManager* UpgradeManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->UpgradeManager;
+    for(UXYZAbility* Ability : Abilities)
+    {
+        if(!Ability) continue;;
+        UXYZUpgradeAbility* UpgradeAbility = Cast<UXYZUpgradeAbility>(Ability);
+        if(!UpgradeAbility) continue;
+        if(UpgradeManager->UpgradesByTeam[TeamId].Contains(UpgradeAbility->ID) && UpgradeAbility->CurrentStage < UpgradeManager->UpgradesByTeam[TeamId][UpgradeAbility->ID]->CurrentStage)
+        {
+            UpgradeAbility->CurrentStage = UpgradeManager->UpgradesByTeam[TeamId][UpgradeAbility->ID]->CurrentStage;
+        }
+    }
     if(bCanAttack && BuildingState == EXYZBuildingState::BUILT)
     {
         if(TargetActor && !GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->DoesActorHasVisionOfActor(this, TargetActor))
