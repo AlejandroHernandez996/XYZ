@@ -224,14 +224,19 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 			if(Actor && Actor->bIsFlying && Actor->bIsVisible && Actor->State != EXYZUnitState::DEAD)
 			{
 				FColor LineColor = TeamId == Actor->TeamId ? FColor::Green : FColor::Red;
-				LineColor = LineColor.WithAlpha(120);
 				FVector StartLocation = Actor->GetActorLocation();
 				FVector EndLocation = StartLocation;
 				EndLocation.Z = 0.0f;
         
 				if (LineBatcher)
 				{
+					float Radius = Actor->GetCapsuleComponent()->GetScaledCapsuleRadius();
 					LineBatcher->DrawLine(EndLocation, StartLocation, LineColor, 0, 1.0f, .1f);
+					FVector CircleCenter = Actor->GetActorLocation() + FVector::DownVector * Actor->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+					FVector XAxisDirection = FVector::RightVector;
+					FVector YAxisDirection = FVector::ForwardVector;
+					int NumSides = 32;
+					LineBatcher->DrawCircle(CircleCenter, XAxisDirection, YAxisDirection, LineColor, Radius, NumSides, 0);
 				}
 			}
 		}

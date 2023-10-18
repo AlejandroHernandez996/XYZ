@@ -265,6 +265,12 @@ void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     }
     
     AXYZActor* SpawnActor = GetWorld()->SpawnActor<AXYZActor>(UnitTemplate, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+    if(bIsFlying)
+    {
+        FVector FlyingSpawnLocation = GetActorLocation();
+        FlyingSpawnLocation.Z = SpawnActor->FlyingZOffset;
+        SpawnActor->SetActorLocation(FlyingSpawnLocation);
+    }
     SpawnActor->TeamId = TeamId;
     GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[SpawnActor->TeamId + 2] += SpawnActor->SupplyGain;
     GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->AddActorServer(SpawnActor);

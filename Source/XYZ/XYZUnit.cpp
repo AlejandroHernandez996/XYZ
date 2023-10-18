@@ -79,7 +79,11 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 	FVector TargetActorLocation;
 	FVector DirectionToAttackLocation;
 	FRotator NewRotation;
-
+	float DistanceToTargetActor = 0.0f;
+	if(TargetActor)
+	{
+		DistanceToTargetActor = FVector2D::Distance(FVector2D(TargetActor->GetActorLocation().X, TargetActor->GetActorLocation().Y), FVector2D(GetActorLocation().X, GetActorLocation().Y));
+	}
 	float DistanceToTargetLocation = FVector2D::Distance(FVector2D(TargetLocation.X, TargetLocation.Y), FVector2D(GetActorLocation().X, GetActorLocation().Y));
 	bool bHasReachedTargetLocation = DistanceToTargetLocation < 10.0f;
 	switch (State) {
@@ -132,16 +136,29 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 	case EXYZUnitState::FOLLOWING:
 		if(TargetActor)
 		{
-			if(DistanceToTargetLocation < 100.0f)
+			if(TargetActor->bIsFlying)
 			{
-				TargetActorLocation = TargetActor->GetActorLocation();
-				TargetActorLocation.Z = CurrentLocation.Z;
-				DirectionToAttackLocation = (TargetActorLocation - CurrentLocation).GetSafeNormal();
-				NewLocation = CurrentLocation + DirectionToAttackLocation * FlyingSpeed * DeltaSeconds;
-				NewRotation = (TargetActorLocation - NewLocation).Rotation();
-				bUpdateLocation = true;
+				if(DistanceToTargetActor > GetCapsuleComponent()->GetScaledCapsuleRadius()*2.0f)
+				{
+					TargetActorLocation = TargetActor->GetActorLocation();
+					TargetActorLocation.Z = CurrentLocation.Z;
+					DirectionToAttackLocation = (TargetActorLocation - CurrentLocation).GetSafeNormal();
+					NewLocation = CurrentLocation + DirectionToAttackLocation * FlyingSpeed * DeltaSeconds;
+					NewRotation = (TargetActorLocation - NewLocation).Rotation();
+					bUpdateLocation = true;
+				}
+			}else
+			{
+				if(DistanceToTargetActor > GetCapsuleComponent()->GetScaledCapsuleRadius())
+				{
+					TargetActorLocation = TargetActor->GetActorLocation();
+					TargetActorLocation.Z = CurrentLocation.Z;
+					DirectionToAttackLocation = (TargetActorLocation - CurrentLocation).GetSafeNormal();
+					NewLocation = CurrentLocation + DirectionToAttackLocation * FlyingSpeed * DeltaSeconds;
+					NewRotation = (TargetActorLocation - NewLocation).Rotation();
+					bUpdateLocation = true;
+				}
 			}
-			
 		}else
 		{
 			GetXYZAIController()->XYZStopMovement();
@@ -158,21 +175,30 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 
 			if (MapManager->Grid.Contains(GridCoord) && MapManager->Grid[GridCoord].ActorsInCell.Contains(this))
 			{
-				TSet<AXYZActor*> FlyingUnitsInCoord = MapManager->Grid[GridCoord].ActorsInCell;
 				TArray<FVector> OtherFlyingUnitLocations;
+				TArray<FIntVector2> UnitAreaCoords = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(1,1));
+				UnitAreaCoords.Add(GridCoord);
 
-				for (AXYZActor* FlyingUnit : FlyingUnitsInCoord)
+				for(FIntVector2 AreaCoord : UnitAreaCoords)
 				{
-					if (!FlyingUnit) continue;
-					if (FlyingUnit->bIsFlying && FlyingUnit->TeamId == TeamId && FlyingUnit != this)
+					if(!MapManager->Grid.Contains(AreaCoord)) continue;
+					TSet<AXYZActor*> FlyingUnitsInCoord = MapManager->Grid[AreaCoord].ActorsInCell;
+					for (AXYZActor* FlyingUnit : FlyingUnitsInCoord)
 					{
-						OtherFlyingUnitLocations.Add(FlyingUnit->GetActorLocation());
+						if (!FlyingUnit) continue;
+						if (FlyingUnit->bIsFlying &&
+							FlyingUnit->State == EXYZUnitState::IDLE &&
+							FlyingUnit->TeamId == TeamId &&
+							FlyingUnit != this &&
+							FVector::Distance(FlyingUnit->GetActorLocation(), GetActorLocation()) < GetCapsuleComponent()->GetScaledCapsuleRadius()*2.0f)
+						{
+							OtherFlyingUnitLocations.Add(FlyingUnit->GetActorLocation());
+						}
 					}
 				}
-
 				if (OtherFlyingUnitLocations.Num() > 0)
 				{
-					FVector WeightedAvgDirection = FVector(0, 0, 0);
+					FVector WeightedAvgDirection = FVector::ZeroVector;
 					float TotalWeight = 0.0f;
 
 					for (const FVector& Location : OtherFlyingUnitLocations)
