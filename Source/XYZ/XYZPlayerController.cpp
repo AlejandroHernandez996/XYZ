@@ -224,7 +224,8 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 			if(Actor && Actor->bIsFlying && Actor->bIsVisible && Actor->State != EXYZUnitState::DEAD)
 			{
 				FColor LineColor = TeamId == Actor->TeamId ? FColor::Green : FColor::Red;
-				FVector StartLocation = Actor->GetActorLocation();
+
+				FVector StartLocation = Actor->GetActorLocation() + FVector::DownVector * Actor->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 				FVector EndLocation = StartLocation;
 				EndLocation.Z = 0.0f;
         
@@ -236,6 +237,19 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 					FVector XAxisDirection = FVector::RightVector;
 					FVector YAxisDirection = FVector::ForwardVector;
 					int NumSides = 32;
+					switch(Actor->CurrentDecal)
+					{
+					case EXYZDecalType::FRIENDLY:
+						LineColor = FColor::Green;
+						break;
+					case EXYZDecalType::ENEMY:
+						LineColor = FColor::Red;
+						break;
+					case EXYZDecalType::NEUTRAL:
+					default:
+						LineColor = FColor::White;
+						break;
+					}
 					LineBatcher->DrawCircle(CircleCenter, XAxisDirection, YAxisDirection, LineColor, Radius, NumSides, 0);
 				}
 			}

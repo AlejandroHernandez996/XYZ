@@ -254,4 +254,7 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats", Replicated)
     float FlyingSpeed;
+
+    UPROPERTY()
+    EXYZDecalType CurrentDecal = EXYZDecalType::NEUTRAL;
 };

@@ -130,10 +130,12 @@ void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
 	if (!bShowDecal)
 	{
 		SelectionDecal->SetMaterial(0, DecalMaterials[EXYZDecalType::NEUTRAL]);
+		CurrentDecal = EXYZDecalType::NEUTRAL;
 	}
 	else
 	{
 		SelectionDecal->SetMaterial(0, DecalMaterials[DecalType]);
+		CurrentDecal = DecalType;
 	}
 }
 
