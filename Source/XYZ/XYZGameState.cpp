@@ -100,7 +100,7 @@ bool AXYZGameState::DoesAbilityHaveRequirements(UXYZAbility* Ability, int32 Team
 	{
 		for(int32 UpgradeId : BuffAbility->RequiredUpgradeIds)
 		{
-			if(UpgradeAbilitiesResearched.HasUpgradeResearched(TeamId,UpgradeId))
+			if(!UpgradeAbilitiesResearched.HasUpgradeResearched(TeamId,UpgradeId))
 			{
 				return false;
 			}
