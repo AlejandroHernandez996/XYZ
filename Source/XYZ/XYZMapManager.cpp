@@ -262,9 +262,12 @@ void UXYZMapManager::GenerateVision() {
 		for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
 			for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
 				FIntVector2 AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
+				bool bIsHighGround = Grid[ActorGridCoord].Height > Grid[AdjacentCoord].Height;
+				bool bIsCloseInHeight = FMath::Abs(Grid[ActorGridCoord].Height - Grid[AdjacentCoord].Height) < 10.0f;
+				bool bHasVision = bIsHighGround || bIsCloseInHeight;
 				if (IsGridCoordValid(AdjacentCoord) &&
 					Actor->TeamId != 2 &&
-					(Actor->bIsFlying || Grid[ActorGridCoord].Height >= Grid[AdjacentCoord].Height)) {
+					(Actor->bIsFlying || bHasVision)) {
 					Grid[AdjacentCoord].TeamVision[Actor->TeamId] = true;
 				}
 			}
