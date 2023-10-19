@@ -203,8 +203,8 @@ FVector UXYZMapManager::GridCoordToWorldCoord(FIntVector2 Coord)
 	if(Grid.Contains(Coord))
 	{
 		return FVector(
-			(Coord.X * GRID_SIZE) + (GRID_SIZE * 0.5f), 
-			(Coord.Y * GRID_SIZE) + (GRID_SIZE * 0.5f), 
+			(Coord.X * GridCellSize) + (GridCellSize * 0.5f), 
+			(Coord.Y * GridCellSize) + (GridCellSize * 0.5f), 
 			Grid[Coord].Height
 		);
 	}

@@ -24,11 +24,10 @@ public:
 
 	UPROPERTY()
 	TMap<FIntVector2, FGridCell> Grid;
-	
+
+	inline static int32 GRID_SIZE = 128;
 	UPROPERTY()
-	int32 GRID_SIZE = 100;
-	UPROPERTY()
-	float MAP_SIZE = 10000.0f;
+	float MAP_SIZE = 10000;
 	UPROPERTY()
 	float GridCellSize;
 	

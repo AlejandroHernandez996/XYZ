@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "XYZMapManager.h"
 #include "GameFramework/Actor.h"
 #include "XYZMinimapManager.generated.h"
 
@@ -32,10 +33,10 @@ public:
 	class AXYZGameState* GameState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 MinimapSize = 100;
+	int32 MinimapSize = 128;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float UnitSize = 1.0f;
-
+	float UnitSize = 1.5f;
+	int32 GridCellSize;
 	UPROPERTY(BlueprintAssignable)
 	FUpdateMinimap OnUpdateMinimap;
 	UPROPERTY(BlueprintAssignable)

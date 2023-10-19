@@ -1,9 +1,11 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "XYZMapManager.h"
 #include "GameFramework/Actor.h"
 #include "XYZFogOfWar.generated.h"
 
+class UXYZMapManager;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRevealCell, FVector2D, Coord);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FConcealCell, FVector2D, Coord);
 
@@ -36,5 +38,7 @@ public:
 	UPROPERTY()
 	class AXYZPlayerController* OwningController;
 	TQueue<TArray<TArray<FIntVector2>>> CellsToUpdate;
+	UPROPERTY(BlueprintReadWrite)
+	int32 GRID_SIZE = 128;
 
 };

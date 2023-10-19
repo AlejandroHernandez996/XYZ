@@ -15,7 +15,7 @@ AXYZMinimapManager::AXYZMinimapManager()
 void AXYZMinimapManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	GridCellSize = 10000/MinimapSize;
 }
 
 void AXYZMinimapManager::Tick(float DeltaTime)
@@ -38,8 +38,8 @@ void AXYZMinimapManager::Tick(float DeltaTime)
 	{
 		if(!VisibleActor) continue;
 		
-		UnitCoords.Add(FVector2D(MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().X / MinimapSize),
-							MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().Y / MinimapSize)));
+		UnitCoords.Add(FVector2D(MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().X / GridCellSize),
+							MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().Y / GridCellSize)));
 		if(VisibleActor->TeamId == TeamId)
 		{
 			UnitColors.Add(FColor::Green);
