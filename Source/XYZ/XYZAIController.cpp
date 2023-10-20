@@ -23,7 +23,11 @@ void AXYZAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollow
 {
     if (Result.Code == EPathFollowingResult::Success)
     {
-        if (GetXYZActor()->State != EXYZUnitState::ATTACKING && GetXYZActor()->State != EXYZUnitState::GATHERING && GetXYZActor()->State != EXYZUnitState::RETURNING && GetXYZActor()->State != EXYZUnitState::FOLLOWING) {
+        if (GetXYZActor()->State != EXYZUnitState::ATTACKING &&
+            GetXYZActor()->State != EXYZUnitState::GATHERING &&
+            GetXYZActor()->State != EXYZUnitState::RETURNING &&
+            GetXYZActor()->State != EXYZUnitState::FOLLOWING &&
+            GetXYZActor()->State != EXYZUnitState::PLACING) {
             GetXYZActor()->SetState(EXYZUnitState::IDLE);
             GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius;
             GetXYZActor()->CollisionName = "Pawn";
@@ -53,6 +57,7 @@ void AXYZAIController::XYZMoveToActor(AXYZActor* Actor, float AcceptanceRadius) 
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius* 0.75f;
     GetXYZActor()->CollisionName = "Pawn";
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
+    GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 2.0f;
     MoveToActor(Actor, AcceptanceRadius, true, true, false);
 }
 
@@ -74,6 +79,7 @@ void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float Acceptanc
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius * 0.75f;
     GetXYZActor()->CollisionName = "Pawn";
     GetXYZActor()->bHasAvoidance = true;
+    GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 2.0f;
     MoveToLocation(TargetLocation, AcceptanceRadius, true, true, false, false);
 }
 
@@ -88,6 +94,7 @@ void AXYZAIController::XYZAttackMoveToLocation(FVector TargetLocation, float Acc
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius * 0.75f;
     GetXYZActor()->CollisionName = "Pawn";
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
+    GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 3.0f;
     MoveToLocation(TargetLocation, AcceptanceRadius, true, true, false, false);
 }
 
@@ -111,6 +118,7 @@ void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceR
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius * 0.75f;
     GetXYZActor()->CollisionName = "Pawn";
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
+    GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 3.0f;
     MoveToActor(Actor, AcceptanceRadius, true, true, false);
 }
 
@@ -143,6 +151,7 @@ void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius)
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius * 0.75f;
     GetXYZActor()->CollisionName = "Pawn";
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
+    GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 2.0f;
     MoveToActor(Actor, 30.0f, true, true, false);
 }
 
@@ -205,6 +214,7 @@ void AXYZAIController::XYZStopMovement() {
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
     GetXYZActor()->CollisionName = "Pawn";
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius;
+    GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 1.0f;
     bIsMoving = false;
     CurrentTargetLocation = GetXYZActor()->GetActorLocation();
 
@@ -223,6 +233,7 @@ void AXYZAIController::XYZHold() {
     GetXYZActor()->SetState(EXYZUnitState::HOLD);
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius;
     GetXYZActor()->CollisionName = "Pawn";
+    GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 1.0f;
     bIsMoving = false;
     GetXYZActor()->TargetActor = nullptr;
     CurrentTargetLocation = GetXYZActor()->GetActorLocation();

@@ -169,7 +169,7 @@ bool UXYZMapManager::IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfC
 				{
 					AXYZBuilding* Building = Cast<AXYZBuilding>(Actor);
 
-					if(Building)
+					if(Building && Building->State != EXYZUnitState::DEAD)
 					{
 						FIntVector2 BuildingGridCoord = Building->GridCoord; 
 						FIntVector2 BuildingGridSize = FIntVector2(Building->GridSize.X, Building->GridSize.Y);

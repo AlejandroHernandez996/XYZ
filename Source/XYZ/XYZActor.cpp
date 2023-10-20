@@ -124,6 +124,10 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AXYZActor, TotalKills);
 	DOREPLIFETIME(AXYZActor, ActiveBuffIds);
 	DOREPLIFETIME(AXYZActor, FlyingSpeed);
+	DOREPLIFETIME(AXYZActor, CurrentAvoidanceWeight);
+	DOREPLIFETIME(AXYZActor, PathingPoints);
+	DOREPLIFETIME(AXYZActor, PathingPointsShowFlag);
+	DOREPLIFETIME(AXYZActor, PathingPointsColors);
 }
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)

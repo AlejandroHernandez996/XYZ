@@ -39,12 +39,6 @@ public:
 		float TimeToGather = 0.0f;
 	UPROPERTY()
 		bool bIsGatheringResource;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-		class UStaticMeshComponent* FloatingMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-		float FloatAmplitude;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-		float FloatSpeed;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 	virtual void SetState(EXYZUnitState State) override;
 	UFUNCTION()

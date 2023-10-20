@@ -55,6 +55,7 @@ void AXYZWorker::Process(float DeltaTime)
     Super::Process(DeltaTime);
     if(State == EXYZUnitState::PLACING)
     {
+        ScanXYZActorsAhead();
         if(ActivePlacementAbility)
         {
             UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;

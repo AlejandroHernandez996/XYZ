@@ -4,6 +4,7 @@
 #include "XYZUnit.h"
 
 #include "XYZAIController.h"
+#include "XYZBuilding.h"
 #include "XYZGameMode.h"
 #include "XYZWorker.h"
 #include "Components/CapsuleComponent.h"
@@ -18,8 +19,9 @@ void AXYZUnit::Process(float DeltaTime)
 		return;
 	}
 	GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
-	GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 1.25f;
+	GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 2.0f;
 	GetCharacterMovement()->bUseRVOAvoidance = bHasAvoidance;
+	GetCharacterMovement()->AvoidanceWeight = CurrentAvoidanceWeight;
 	GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
 	if (State == EXYZUnitState::DEAD) return;
 	
@@ -157,6 +159,9 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 					NewLocation = CurrentLocation + DirectionToAttackLocation * FlyingSpeed * DeltaSeconds;
 					NewRotation = (TargetActorLocation - NewLocation).Rotation();
 					bUpdateLocation = true;
+				}else if(TargetActor->IsA(AXYZBuilding::StaticClass()))
+				{
+					SetState(EXYZUnitState::IDLE);
 				}
 			}
 		}else

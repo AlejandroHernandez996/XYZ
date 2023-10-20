@@ -260,4 +260,24 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class AXYZProjectile> ProjectileTemplate;
+
+    UPROPERTY(Replicated)
+    TArray<FVector> PathingPoints;
+    UPROPERTY(Replicated)
+    TArray<bool> PathingPointsShowFlag;
+    UPROPERTY(Replicated)
+    TArray<FColor> PathingPointsColors;
+
+    UPROPERTY(EditAnywhere, Replicated)
+    float CurrentAvoidanceWeight = 10.0f;
+
+    UPROPERTY(EditAnywhere)
+    float DefaultAvoidanceWeight = 10.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+    class UStaticMeshComponent* FloatingMesh;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+    float FloatAmplitude = 10.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+    float FloatSpeed = 2.0f;
 };

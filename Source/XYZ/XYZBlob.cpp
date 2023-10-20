@@ -1,5 +1,7 @@
 #include "XYZBlob.h"
 #include "XYZAction.h"
+#include "XYZAttackAction.h"
+#include "XYZMoveAction.h"
 
 void UXYZBlob::InitializeBlob() {
     Head = MakeShared<FActionList>();
@@ -107,6 +109,50 @@ void UXYZBlob::Process(float DeltaSeconds)
         CurrentNodePtr = CurrentNodePtr.Get()->Next;
     }
 
+    TArray<FVector> PathingPoints;
+    TArray<bool> PathingPointsShowFlag;
+    TArray<FColor> PathingPointsColors;
+    for(AXYZActor* Actor : AgentsInBlob)
+    {
+        if(!AgentToNodeCache.Contains(Actor)) continue;
+        TSharedPtr<FActionList> CurrentAction = AgentToNodeCache[Actor];
+        while(CurrentAction != Tail)
+        {
+            UXYZAction* Action = CurrentAction->Action;
+            if(Action)
+            {
+                if(Action->TargetActor)
+                {
+                    PathingPoints.Add(Action->TargetActor->GetActorLocation());
+                }else
+                {
+                    PathingPoints.Add(Action->TargetLocation);
+                }
+                
+                PathingPointsShowFlag.Add(Action->IsA(UXYZMoveAction::StaticClass()) || Action->IsA(UXYZAttackAction::StaticClass()));
+
+                if(Action->IsA(UXYZAttackAction::StaticClass()))
+                {
+                    PathingPointsColors.Add(FColor::Red);
+                }
+                else if(Action->IsA(UXYZMoveAction::StaticClass()))
+                {
+                    PathingPointsColors.Add(FColor::Green);
+                }
+                else
+                {
+                    PathingPointsColors.Add(FColor::White);
+                }
+            }
+            CurrentAction = CurrentAction->Next;
+        }
+        Actor->PathingPoints = PathingPoints;
+        Actor->PathingPointsColors = PathingPointsColors;
+        Actor->PathingPointsShowFlag = PathingPointsShowFlag;
+        PathingPointsShowFlag.Empty();
+        PathingPointsColors.Empty();
+        PathingPoints.Empty();
+    }
 }
 
 void UXYZBlob::AddAction(UXYZAction* Action) {

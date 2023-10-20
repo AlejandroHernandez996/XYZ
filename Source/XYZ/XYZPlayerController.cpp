@@ -194,7 +194,7 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		UCapsuleComponent* Capsule = Cast<UCapsuleComponent>(PlacementBuilding->GetComponentByClass(UCapsuleComponent::StaticClass()));
 		if(Capsule)
 		{
-			NewLocation.Z += Capsule->GetScaledCapsuleHalfHeight(); // Adjust Z position by half the height of the capsule
+			NewLocation.Z += Capsule->GetScaledCapsuleHalfHeight();
 		}
 
 		PlacementBuilding->SetActorLocation(NewLocation);
@@ -232,7 +232,7 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 				if (LineBatcher)
 				{
 					float Radius = Actor->GetCapsuleComponent()->GetScaledCapsuleRadius();
-					LineBatcher->DrawLine(EndLocation, StartLocation, LineColor, 0, 1.0f, .1f);
+					LineBatcher->DrawLine(EndLocation, StartLocation, LineColor, SDPG_World, 1.0f, .1f);
 					FVector CircleCenter = Actor->GetActorLocation() + FVector::DownVector * Actor->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 					FVector XAxisDirection = FVector::RightVector;
 					FVector YAxisDirection = FVector::ForwardVector;
@@ -250,7 +250,31 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 						LineColor = FColor::White;
 						break;
 					}
-					LineBatcher->DrawCircle(CircleCenter, XAxisDirection, YAxisDirection, LineColor, Radius, NumSides, 0);
+					LineBatcher->DrawCircle(CircleCenter, XAxisDirection, YAxisDirection, LineColor, Radius, NumSides, SDPG_MAX);
+				}
+			}
+			if(Actor &&
+				Actor->bIsVisible &&
+				Actor->State != EXYZUnitState::DEAD &&
+				Actor->TeamId == TeamId &&
+				Actor->CurrentDecal != EXYZDecalType::NEUTRAL &&
+				Actor->IsA(AXYZUnit::StaticClass()) &&
+				!Actor->PathingPoints.IsEmpty() &&
+				Actor->PathingPoints.Num() == Actor->PathingPointsColors.Num() &&
+				Actor->PathingPointsColors.Num() == Actor->PathingPointsShowFlag.Num())
+			{
+				FVector LastPathingPoint = Actor->PathingPoints[0];
+				for(int i = 0;i < Actor->PathingPoints.Num();i++)
+				{
+					if(Actor->PathingPointsShowFlag[i])
+					{
+						FVector XAxisDirection = FVector::RightVector;
+						FVector YAxisDirection = FVector::ForwardVector;
+						int NumSides = 32;
+						LineBatcher->DrawLine(LastPathingPoint, Actor->PathingPoints[i], Actor->PathingPointsColors[i], SDPG_MAX, 2.0f, .1f);
+						LineBatcher->DrawCircle(Actor->PathingPoints[i], XAxisDirection, YAxisDirection, Actor->PathingPointsColors[i], 10.0f, NumSides, SDPG_MAX);
+						LastPathingPoint = Actor->PathingPoints[i];
+					}
 				}
 			}
 		}
@@ -393,6 +417,16 @@ void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {
 			FVector(GetMouseToWorldPosition(this)),
 				FRotator(0, 0, 0),
 				SpawnParams);
+		TArray<UStaticMeshComponent*> MeshComponents;
+		PlacementBuilding->GetComponents<UStaticMeshComponent*>(MeshComponents);
+		for(UStaticMeshComponent* MeshComponent : MeshComponents)
+		{
+			if(MeshComponent->GetName().Equals("Plane"))
+			{
+				MeshComponent->SetWorldScale3D(FVector(PlacementBuilding->GridSize.X * .781, PlacementBuilding->GridSize.Y * .781, .25f));
+				MeshComponent->SetRelativeLocation(FVector(0.f,0.f,-1.0f * PlacementBuilding->GetCapsuleComponent()->GetScaledCapsuleHalfHeight() + .5f));
+			}
+		}
 		bIsPlacingBuilding = true;
 		WorkerAbilityIndex = AbilityIndex;
 		WorkerActorId = SelectionStructure->ActiveActor;

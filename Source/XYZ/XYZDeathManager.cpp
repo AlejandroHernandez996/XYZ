@@ -17,7 +17,7 @@ void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 {
 	if(!Actor) return;
 	
-	FDeathStruct DeathStruct(Actor, CurrentTime + 2.0f);
+	FDeathStruct DeathStruct(Actor, CurrentTime + 0.5f);
 	AXYZGameState* XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
 	AXYZGameMode* XYZGameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
 
