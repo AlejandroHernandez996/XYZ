@@ -113,6 +113,8 @@ bool AXYZGameState::DoesAbilityHaveRequirements(UXYZAbility* Ability, int32 Team
 	for(AXYZActor* Actor : Actors)
 	{
 		if(!Actor) continue;
+		AXYZBuilding* Building = Cast<AXYZBuilding>(Actor);
+		if(Building && Building->BuildingState != EXYZBuildingState::BUILT) continue;
 		if(Actor->TeamId == TeamId)
 		{
 			UniqueTeamActors.Add(Actor->ActorId);

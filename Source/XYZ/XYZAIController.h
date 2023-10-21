@@ -35,9 +35,9 @@ public:
 	UFUNCTION()
 	virtual void XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceRadius = 1.0f);
 	UFUNCTION()
-		void XYZGatherResource(class AXYZResourceActor* Resource, float AcceptanceRadius = 1.0f);
+		virtual void XYZGatherResource(class AXYZResourceActor* Resource, float AcceptanceRadius = 1.0f);
 	UFUNCTION()
-		void XYZReturnResource(class AXYZBaseBuilding* Base, float AcceptanceRadius = 1.0f);
+		virtual void XYZReturnResource(class AXYZBaseBuilding* Base, float AcceptanceRadius = 1.0f);
 	UFUNCTION()
 	virtual void XYZStopMovement();
 	UFUNCTION()

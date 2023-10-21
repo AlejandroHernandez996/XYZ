@@ -109,6 +109,7 @@ void AXYZBuilding::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLi
     DOREPLIFETIME(AXYZBuilding, BuildingSpawnLocation);
     DOREPLIFETIME(AXYZBuilding, BuildQueueId);
     DOREPLIFETIME(AXYZBuilding, bIsTraining);
+    DOREPLIFETIME(AXYZBuilding, BuildingState);
 }
 
 void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
@@ -242,8 +243,9 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
         GameMode->UpgradeManager->AddUpgradeToResearch(UpgradeAbility);
     }
     if (BuildQueueNum < MAX_BUILD_QUEUE_SIZE && 
-        GameState->MineralsByTeamId[TeamId] - BuildingAbility->MineralCost >= 0) {
+        GameState->MineralsByTeamId[TeamId] - BuildingAbility->MineralCost >= 0 && GameState->GasByTeamId[TeamId] - BuildingAbility->GasCost >= 0) {
         GameState->MineralsByTeamId[TeamId] -= BuildingAbility->MineralCost;
+        GameState->GasByTeamId[TeamId] -= BuildingAbility->GasCost;
         BuildQueue.Add(BuildingAbility);
         BuildQueueId.Add(BuildingAbility->ID);
         BuildQueueNum++;
@@ -356,6 +358,7 @@ void AXYZBuilding::CancelProduction() {
 
     if (CurrentAbility->bCanCancel) {
         GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += CurrentAbility->MineralCost;
+        GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->GasByTeamId[TeamId] += CurrentAbility->GasCost;
         if (bIsSupplyReserved) {
             GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId] -= CurrentAbility->SupplyCost;
         }
@@ -384,6 +387,7 @@ void AXYZBuilding::CancelProductionAtIndex()
     }else
     {
         GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += BuildQueue[CancelProductionIndex]->MineralCost;
+        GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->GasByTeamId[TeamId] += BuildQueue[CancelProductionIndex]->GasCost;
         UXYZUpgradeAbility* UpgradeAbility = Cast<UXYZUpgradeAbility>(BuildQueue[CancelProductionIndex]);
         if(UpgradeAbility)
         {

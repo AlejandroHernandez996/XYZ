@@ -32,6 +32,9 @@ public:
 	TArray<int32> MineralCostByStage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<int32> GasCostByStage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<UTexture2D*> ImagesByStage;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

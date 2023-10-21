@@ -21,9 +21,9 @@ public:
 	void AddWorker(AXYZWorker* Worker);
 	UFUNCTION()
 	void RemoveWorker(const AXYZWorker* Worker);
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EXYZResourceType ResourceType = EXYZResourceType::MINERAL;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 RESOURCE_CAPACITY = 2;
 	UPROPERTY()
 	TMap<AXYZWorker*, bool> Workers;

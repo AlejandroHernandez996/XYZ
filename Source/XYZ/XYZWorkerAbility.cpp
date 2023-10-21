@@ -16,11 +16,12 @@ bool UXYZWorkerAbility::Activate()
 		AXYZGameState* XYZGameState = OwningWorker->GetWorld()->GetGameState<AXYZGameState>();
 		AXYZGameMode* XYZGameMode = OwningWorker->GetWorld()->GetAuthGameMode<AXYZGameMode>();
 
-		if(XYZGameState->MineralsByTeamId[OwningWorker->TeamId] >= MineralCost)
+		if(XYZGameState->MineralsByTeamId[OwningWorker->TeamId] >= MineralCost && XYZGameState->GasByTeamId[OwningWorker->TeamId] >= GasCost)
 		{
 			OwningWorker->TargetLocation = BuildingLocation;
 			OwningWorker->ActivePlacementAbility = this;
 			XYZGameState->MineralsByTeamId[OwningWorker->TeamId] -= MineralCost;
+			XYZGameState->GasByTeamId[OwningWorker->TeamId] -= GasCost;
 			OwningWorker->SetState(EXYZUnitState::PLACING);
 			return true;
 		}

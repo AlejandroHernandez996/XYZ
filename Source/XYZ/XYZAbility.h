@@ -26,6 +26,9 @@ public:
     int32 MineralCost;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    int32 GasCost;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     int32 SupplyCost;
 
     UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Requirements")

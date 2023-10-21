@@ -22,6 +22,10 @@ public:
 	UFUNCTION()
 		void Return();
 	UFUNCTION()
+	void FlyingGather(float DeltaSeconds);
+	UFUNCTION()
+	void FlyingReturn(float DeltaSeconds);
+	UFUNCTION()
 		void FindClosestBase();
 	UFUNCTION()
 		void FindClosestResource();
@@ -31,6 +35,8 @@ public:
 		class AXYZBaseBuilding* ClosestBase;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Resource", Replicated)
 		EXYZResourceType HeldResource = EXYZResourceType::NONE;
+	UPROPERTY()
+		EXYZResourceType ResourceToGather = EXYZResourceType::MINERAL;
 	UPROPERTY()
 		FTimerHandle GatherTimer;
 	UPROPERTY()
@@ -47,6 +53,8 @@ public:
 	bool IsWorkerInDistanceToPlace(const FIntVector2& CurrentGridPosition,
 	                               const FIntVector2& PlacementCenterGridPosition,
 	                               const FIntVector2& PlacementGridSize);
+	UFUNCTION()
+	void ProcessFlyingWorker(float DeltaTime);
 	void Process(float DeltaTime) override;
 
 	bool bFirstMineralGathered;

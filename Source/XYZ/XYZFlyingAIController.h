@@ -18,6 +18,8 @@ class XYZ_API AXYZFlyingAIController : public AXYZAIController
 	void XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius = 1.0f) override;
 	void XYZAttackMoveToLocation(FVector TargetLocation, float AcceptanceRadius = 1.0f) override;
 	void XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceRadius = 1.0f) override;
+	void XYZGatherResource(AXYZResourceActor* Resource, float AcceptanceRadius = 1.0f) override;
+	void XYZReturnResource(AXYZBaseBuilding* Base, float AcceptanceRadius = 1.0f) override;
 	void XYZStopMovement() override;
 	void XYZHold() override;
 

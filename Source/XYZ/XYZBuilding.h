@@ -54,7 +54,7 @@ public:
 	UPROPERTY(Replicated)
 	bool bIsSpawned;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	EXYZBuildingState BuildingState = EXYZBuildingState::BUILT;
 	
 	UFUNCTION()

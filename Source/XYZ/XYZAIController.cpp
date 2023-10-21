@@ -131,7 +131,7 @@ void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius)
         Cast<AXYZBuilding>(GetXYZActor())->RallyTarget = Actor;
         return;
     }
-    if (GetXYZActor()->IsA(AXYZWorker::StaticClass()) && Cast<AXYZWorker>(GetXYZActor())->HeldResource == EXYZResourceType::MINERAL && Actor->IsA(AXYZBaseBuilding::StaticClass())) {
+    if (GetXYZActor()->IsA(AXYZWorker::StaticClass()) && Cast<AXYZWorker>(GetXYZActor())->HeldResource != EXYZResourceType::NONE && Actor->IsA(AXYZBaseBuilding::StaticClass())) {
         Cast<AXYZWorker>(GetXYZActor())->StartReturningResource();
         Cast<AXYZWorker>(GetXYZActor())->FindClosestBase();
         if (Cast<AXYZWorker>(GetXYZActor())->ClosestBase) {
@@ -167,6 +167,7 @@ void AXYZAIController::XYZGatherResource(AXYZResourceActor* Resource, float Acce
     GetXYZActor()->CollisionName = "MineralWalk";
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius * 0.75f;
     GetXYZActor()->SetState(EXYZUnitState::GATHERING);
+    Cast<AXYZWorker>(GetXYZActor())->ResourceToGather = Resource->ResourceType;
     GetXYZActor()->TargetActor = Resource;
 
     UCapsuleComponent* CapsuleComp = Resource->GetCapsuleComponent();

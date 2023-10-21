@@ -72,6 +72,7 @@ UXYZUpgradeAbility* UXYZUpgradeAbility::DeepCopy()
 	UpgradeAbilityDeepCopy->Name = Name;
 	UpgradeAbilityDeepCopy->AbilityImage = AbilityImage;
 	UpgradeAbilityDeepCopy->MineralCost = MineralCost;
+	UpgradeAbilityDeepCopy->GasCost = GasCost;
 	UpgradeAbilityDeepCopy->SupplyCost = SupplyCost;
 	UpgradeAbilityDeepCopy->ActorRequirements = ActorRequirements;
 	UpgradeAbilityDeepCopy->OwningActor = OwningActor;
@@ -85,5 +86,6 @@ void UXYZUpgradeAbility::UpdateStage(int32 Stage)
 	CurrentStage = Stage;
 	Name = NameByStage[Stage];
 	MineralCost = MineralCostByStage[Stage];
+	GasCost = GasCostByStage[Stage];
 	AbilityImage = ImagesByStage[Stage];
 }
