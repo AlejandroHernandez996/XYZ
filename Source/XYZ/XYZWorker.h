@@ -53,6 +53,10 @@ public:
 	bool IsWorkerInDistanceToPlace(const FIntVector2& CurrentGridPosition,
 	                               const FIntVector2& PlacementCenterGridPosition,
 	                               const FIntVector2& PlacementGridSize);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TMap<EXYZResourceType, int32> MiningAmountByResourceType;;
+
 	UFUNCTION()
 	void ProcessFlyingWorker(float DeltaTime);
 	void Process(float DeltaTime) override;

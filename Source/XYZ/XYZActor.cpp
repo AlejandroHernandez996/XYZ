@@ -133,6 +133,17 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
 {
 	if (!SelectionDecal) return;
+
+	for(UStaticMeshComponent* LineComponent : LineMeshes)
+	{
+		if(!bShowDecal)
+		{
+			LineComponent->SetMaterial(0, LineMaterials[EXYZDecalType::NEUTRAL]);
+		}else
+		{
+			LineComponent->SetMaterial(0, LineMaterials[DecalType]);
+		}
+	}
 	if (!bShowDecal)
 	{
 		SelectionDecal->SetMaterial(0, DecalMaterials[EXYZDecalType::NEUTRAL]);

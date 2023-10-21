@@ -46,9 +46,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TMap<int32, class AXYZActor*> ActorsByUID;
 
-	UPROPERTY(BlueprintReadOnly, Replicated)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Replicated)
 		TArray<int32> MineralsByTeamId = { 0,0 };
-	UPROPERTY(BlueprintReadOnly, Replicated)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly, Replicated)
 		TArray<int32> GasByTeamId = { 0,0 };
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		TArray<int32> SupplyByTeamId = { 0,0,0,0 };

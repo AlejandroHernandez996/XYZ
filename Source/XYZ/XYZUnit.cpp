@@ -181,7 +181,7 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 			if (MapManager->Grid.Contains(GridCoord) && MapManager->Grid[GridCoord].ActorsInCell.Contains(this))
 			{
 				TArray<FVector> OtherFlyingUnitLocations;
-				TArray<FIntVector2> UnitAreaCoords = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(1,1));
+				TArray<FIntVector2> UnitAreaCoords = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(2,2));
 				UnitAreaCoords.Add(GridCoord);
 
 				for(FIntVector2 AreaCoord : UnitAreaCoords)

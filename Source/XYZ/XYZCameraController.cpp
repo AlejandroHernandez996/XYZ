@@ -150,5 +150,15 @@ void AXYZCameraController::MoveCamera(const FVector& Direction, float Speed)
 	WorldDirection.Z = 0;
 	FVector NewCameraLocation = GetActorLocation() + WorldDirection * Speed * GetWorld()->DeltaTimeSeconds;
 
-	SetActorLocation(NewCameraLocation);
+	float MinX = -1000.0f;
+	float MaxX = 11000.0f;
+	float MinY = -1000.0f;
+	float MaxY = 11000.0f;
+
+	FVector ClampedLocation;
+	ClampedLocation.X = FMath::Clamp(NewCameraLocation.X, MinX, MaxX);
+	ClampedLocation.Y = FMath::Clamp(NewCameraLocation.Y, MinY, MaxY);
+	ClampedLocation.Z = NewCameraLocation.Z; 
+
+	SetActorLocation(ClampedLocation);
 }

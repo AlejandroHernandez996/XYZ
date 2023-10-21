@@ -154,7 +154,7 @@ void AXYZWorker::Process(float DeltaTime)
             }
             else if(TimeToGather >= GatherRate)
             {
-                TargetActor->Health = FMath::Clamp(TargetActor->Health - AttackDamage, 0.0f, TargetActor->MaxHealth);
+                TargetActor->Health = FMath::Clamp(TargetActor->Health - MiningAmountByResourceType[Resource->ResourceType], 0.0f, TargetActor->MaxHealth);
                 TimeToGather = 0;
                 StartReturningResource();
             }
@@ -260,10 +260,10 @@ void AXYZWorker::FlyingReturn(float DeltaSeconds)
         if (DistanceToTarget <= CurrentCapsuleRadius*3.0f && HeldResource != EXYZResourceType::NONE)
         {
             if (HeldResource == EXYZResourceType::MINERAL) {
-                GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += 5;
+                GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += MiningAmountByResourceType[EXYZResourceType::MINERAL];
             }
             else {
-                GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->GasByTeamId[TeamId] += 25;
+                GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->GasByTeamId[TeamId] += MiningAmountByResourceType[EXYZResourceType::GAS];
             }
             if(!TargetActor)
             {

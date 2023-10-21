@@ -221,38 +221,6 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		ULineBatchComponent* LineBatcher = GetWorld()->ForegroundLineBatcher;
 		for(AXYZActor* Actor : Actors)
 		{
-			if(Actor && Actor->bIsFlying && Actor->bIsVisible && Actor->State != EXYZUnitState::DEAD)
-			{
-				FColor LineColor = TeamId == Actor->TeamId ? FColor::Green : FColor::Red;
-
-				FVector StartLocation = Actor->GetActorLocation() + FVector::DownVector * Actor->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-				FVector EndLocation = StartLocation;
-				EndLocation.Z = 0.0f;
-        
-				if (LineBatcher)
-				{
-					float Radius = Actor->GetCapsuleComponent()->GetScaledCapsuleRadius();
-					LineBatcher->DrawLine(EndLocation, StartLocation, LineColor, SDPG_World, 1.0f, .1f);
-					FVector CircleCenter = Actor->GetActorLocation() + FVector::DownVector * Actor->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-					FVector XAxisDirection = FVector::RightVector;
-					FVector YAxisDirection = FVector::ForwardVector;
-					int NumSides = 32;
-					switch(Actor->CurrentDecal)
-					{
-					case EXYZDecalType::FRIENDLY:
-						LineColor = FColor::Green;
-						break;
-					case EXYZDecalType::ENEMY:
-						LineColor = FColor::Red;
-						break;
-					case EXYZDecalType::NEUTRAL:
-					default:
-						LineColor = FColor::White;
-						break;
-					}
-					LineBatcher->DrawCircle(CircleCenter, XAxisDirection, YAxisDirection, LineColor, Radius, NumSides, SDPG_MAX);
-				}
-			}
 			if(Actor &&
 				Actor->bIsVisible &&
 				Actor->State != EXYZUnitState::DEAD &&
@@ -278,8 +246,6 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 				}
 			}
 		}
-
-		
 	}
 }
 
