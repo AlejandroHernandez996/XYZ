@@ -11,6 +11,16 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "XYZMapManager.h"
 
+void AXYZUnit::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
+	GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 2.0f;
+	GetCharacterMovement()->bUseRVOAvoidance = bHasAvoidance;
+	GetCharacterMovement()->AvoidanceWeight = CurrentAvoidanceWeight;
+	GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
+}
+
 void AXYZUnit::Process(float DeltaTime)
 {
 	Super::Process(DeltaTime);
@@ -18,11 +28,6 @@ void AXYZUnit::Process(float DeltaTime)
 		ProcessFlyingUnit(DeltaTime);
 		return;
 	}
-	GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
-	GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 2.0f;
-	GetCharacterMovement()->bUseRVOAvoidance = bHasAvoidance;
-	GetCharacterMovement()->AvoidanceWeight = CurrentAvoidanceWeight;
-	GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
 	if (State == EXYZUnitState::DEAD) return;
 	
 	if (State == EXYZUnitState::MOVING && !GetCharacterMovement()->IsMovingOnGround())
@@ -62,7 +67,7 @@ void AXYZUnit::Process(float DeltaTime)
 	{
 		if (!TargetActor || TargetActor->Health <= 0.0f)
 		{
-			GetXYZAIController()->StopMovement();
+			GetXYZAIController()->XYZStopMovement();
 		}
 		else
 		{

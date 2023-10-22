@@ -14,6 +14,7 @@ class XYZ_API AXYZUnit : public AXYZActor
 {
 	GENERATED_BODY()
 public:
+	void Tick(float DeltaTime);
 	void Process(float DeltaSeconds) override;
 	UFUNCTION()
 	void FlyingAttackMoveTarget();
