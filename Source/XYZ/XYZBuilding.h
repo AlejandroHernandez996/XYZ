@@ -93,4 +93,9 @@ public:
 
 	UFUNCTION()
 	void ClearProduction();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
+	FVector LookLocation;
+
+	virtual bool CanUseAbility() override;
 };

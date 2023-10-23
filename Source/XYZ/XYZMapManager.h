@@ -6,6 +6,7 @@
 #include "Processable.h"
 #include "UObject/NoExportTypes.h"
 #include "GridCell.h"
+#include "XYZTargetAreaAbility.h"
 #include "XYZMapManager.generated.h"
 
 UCLASS()
@@ -21,6 +22,8 @@ public:
 	bool AreGridCoordsSameHeight(FIntVector2 Coord, FIntVector2 OtherCoord);
 	bool IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfCoordsToSearch = 10);
 	FVector GridCoordToWorldCoord(FIntVector2 Coord);
+
+	TSet<AXYZActor*> FindActorsInRange(const FIntVector2& CenterGrid, float Radius);
 
 	TMap<FIntVector2, TSharedPtr<FGridCell>> Grid;
 

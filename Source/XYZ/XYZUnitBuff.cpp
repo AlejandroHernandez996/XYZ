@@ -54,6 +54,12 @@ void UXYZUnitBuff::BuffActorStat(EXYZStat Stat, float StatGain, AXYZActor* Actor
 	case EXYZStat::ATTACK:
 		Actor->AttackDamage += StatGain;
 		break;
+	case EXYZStat::MAX_ENERGY:
+		Actor->MaxEnergy += StatGain;
+		break;
+	case EXYZStat::ENERGY:
+		Actor->Energy += StatGain;
+		break;
 	case EXYZStat::ATTACK_RANGE:
 		Actor->AttackRange += StatGain;
 		break;

@@ -56,6 +56,14 @@ public:
         float MaxHealth;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", Replicated)
+    float Energy;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", Replicated)
+    float MaxEnergy;
+
+    float EnergyRecoveryRatePerSecond = 5.0f;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", Replicated)
         float Armor;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats", Replicated)
@@ -286,4 +294,7 @@ public:
     float FloatSpeed = 2.0f;
 
     bool bHasAddedToUpdateSet = false;
+
+    UFUNCTION()
+    virtual bool CanUseAbility();
 };

@@ -11,9 +11,9 @@
 
 bool UXYZAbility::Activate()
 {
-
 	if(GetWorld() && OwningActor)
 	{
+		if(EnergyCost > OwningActor->Energy) return false;
 		AXYZGameMode* GameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
 		if(GameMode && GameMode->ActorCache->ActorCountsByTeamId.IsValidIndex(OwningActor->TeamId))
 		{

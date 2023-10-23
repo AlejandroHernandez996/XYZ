@@ -13,6 +13,7 @@
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
 #include "XYZActorCache.h"
+#include "XYZAreaOfEffectManager.h"
 #include "XYZBaseBuilding.h"
 #include "XYZDeathManager.h"
 #include "XYZMapManager.h"
@@ -52,7 +53,10 @@ void AXYZGameMode::BeginPlay() {
     
     UpgradeManager = NewObject<UXYZUpgradeManager>(this, UXYZUpgradeManager::StaticClass(), "UpgradeManager");
     UpgradeManager->GameState = GetGameState<AXYZGameState>();
-        
+
+    AreaOfEffectManager = NewObject<UXYZAreaOfEffectManager>(this, UXYZAreaOfEffectManager::StaticClass(), "AOEManager");
+    AreaOfEffectManager->MapManager = MapManager;
+    
     ActorCache = NewObject<UXYZActorCache>(this, UXYZActorCache::StaticClass(), "ActorCache");
     ActorCache->ActorCountsByTeamId.Add(FActorCount());
     ActorCache->ActorCountsByTeamId.Add(FActorCount());
@@ -250,6 +254,7 @@ void AXYZGameMode::Process(float DeltaSeconds)
     UpgradeManager->Process(DeltaSeconds);
     DeathManager->Process(DeltaSeconds);
     MapManager->Process(DeltaSeconds);
+    AreaOfEffectManager->Process(DeltaSeconds);
     MatchManager->Process(DeltaSeconds);
     ProjectileManager->Process(DeltaSeconds);
     

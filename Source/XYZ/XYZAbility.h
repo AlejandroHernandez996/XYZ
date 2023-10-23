@@ -31,6 +31,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     int32 SupplyCost;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    int32 EnergyCost;
+
     UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Requirements")
     TMap<int32, FString> ActorRequirements;
 
@@ -55,4 +58,10 @@ public:
 
     UPROPERTY(EditDefaultsOnly, Category = "Sound")
     class USoundBase* AbilitySoundEffect;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    UDecalComponent* AbilityGroundDecal;
+
+    UPROPERTY()
+    FVector TargetLocation;
 };

@@ -103,6 +103,7 @@ void AXYZBuilding::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLi
     DOREPLIFETIME(AXYZBuilding, BuildQueueId);
     DOREPLIFETIME(AXYZBuilding, bIsTraining);
     DOREPLIFETIME(AXYZBuilding, BuildingState);
+    DOREPLIFETIME(AXYZBuilding, LookLocation);
 }
 
 void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
@@ -204,6 +205,12 @@ void AXYZBuilding::BuildingAttack()
         if (DistanceToTarget <= AttackRange)
         {
             Attack();
+            FRotator NewRotation = Direction.Rotation();
+            NewRotation.Roll = GetActorRotation().Roll;
+            SetActorRotation(NewRotation);
+        }else
+        {
+            TargetActor = nullptr;
         }
     }
     else
@@ -419,6 +426,7 @@ void AXYZBuilding::Process(float DeltaTime)
         }
         if (TargetActor)
         {
+            LookLocation = TargetActor->GetActorLocation();
             BuildingAttack();
         }
     }
@@ -458,6 +466,11 @@ void AXYZBuilding::ClearProduction()
         }
         CancelProduction();
     }
+}
+
+bool AXYZBuilding::CanUseAbility()
+{
+    return Super::CanUseAbility() && BuildingState == EXYZBuildingState::BUILT;
 }
 
 void AXYZBuilding::Build(float DeltaTime)

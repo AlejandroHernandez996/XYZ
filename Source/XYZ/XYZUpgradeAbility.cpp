@@ -27,6 +27,12 @@ void UXYZUpgradeAbility::UpgradeActorStat(EXYZStat Stat, float StatGain, AXYZAct
 	case EXYZStat::MAX_HEALTH:
 		Actor->MaxHealth += StatGain;
 		break;
+	case EXYZStat::ENERGY:
+		Actor->Energy += StatGain;
+		break;
+	case EXYZStat::MAX_ENERGY:
+		Actor->MaxEnergy += StatGain;
+		break;
 	case EXYZStat::ATTACK:
 		Actor->AttackDamage += StatGain;
 		break;

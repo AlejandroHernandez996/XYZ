@@ -115,6 +115,8 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AXYZActor, Health);
 	DOREPLIFETIME(AXYZActor, MaxHealth);
+	DOREPLIFETIME(AXYZActor, Energy);
+	DOREPLIFETIME(AXYZActor, MaxEnergy);
 	DOREPLIFETIME(AXYZActor, Armor);
 	DOREPLIFETIME(AXYZActor, MoveSpeed);
 	DOREPLIFETIME(AXYZActor, BaseArmor);
@@ -452,6 +454,10 @@ void AXYZActor::Process(float DeltaTime)
 		return;
 	}
 
+	if(MaxEnergy > 0 && Energy < MaxEnergy)
+	{
+		Energy += FMath::Clamp(DeltaTime*EnergyRecoveryRatePerSecond,0.0f,MaxEnergy);
+	}
 	for(UXYZUnitBuff* Buff : ActiveBuffs)
 	{
 		Buff->Process(DeltaTime);
@@ -464,12 +470,8 @@ void AXYZActor::Process(float DeltaTime)
 	
 	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
 
-	if(LastLocation != GetActorLocation() || !bHasAddedToUpdateSet)
-	{
-		MapManager->AddToUpdateSet(this);
-		LastLocation = GetActorLocation();
-		bHasAddedToUpdateSet = true;
-	}
+	MapManager->AddToUpdateSet(this);
+	LastLocation = GetActorLocation();
 }
 
 void AXYZActor::SetTeamColor()
@@ -552,4 +554,9 @@ bool AXYZActor::CanAttack(AXYZActor* AttackingActor)
 		return bIsFlying ? AttackingActor->bCanAttackAir : AttackingActor->bCanAttackGround;
 	}
 	return false;
+}
+
+bool AXYZActor::CanUseAbility()
+{
+	return State != EXYZUnitState::DEAD;
 }

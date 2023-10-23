@@ -60,6 +60,8 @@ public:
 	class UXYZUpgradeManager* UpgradeManager;
 	UPROPERTY()
 	class UXYZProjectileManager* ProjectileManager;
+	UPROPERTY()
+	class UXYZAreaOfEffectManager* AreaOfEffectManager;
 	
 	UPROPERTY()
 	class UXYZActorCache* ActorCache;

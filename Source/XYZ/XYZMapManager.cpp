@@ -56,34 +56,16 @@ FIntVector2 UXYZMapManager::GetGridCoordinate(const FVector& WorldLocation) {
 }
 
 void UXYZMapManager::Process(float DeltaSeconds) {
-	if(bHasSentVison)
+	for(AXYZActor* Actor : ActorsToUpdate)
 	{
-		for(AXYZActor* Actor : ActorsToUpdate)
+		if(!Actor || Actor->IsA(AXYZResourceActor::StaticClass()))
 		{
-			if(!Actor || Actor->IsA(AXYZResourceActor::StaticClass()))
-			{
-				continue;
-			}
-			if(Actor->GridCoord == GetGridCoordinate(Actor->GetActorLocation())) continue;
-			RemoveActorFromGrid(Actor);
-			AddActorToGrid(Actor);
+			continue;
 		}
-	}else
-	{
-		TArray<AXYZActor*> Actors;
-		GameState->ActorsByUID.GenerateValueArray(Actors);
-		for(AXYZActor* Actor : Actors)
-		{
-			if(!Actor ||Actor->IsA(AXYZResourceActor::StaticClass()))
-			{
-				continue;
-			}
-			VisibleActors[Actor->TeamId].Add(Actor);
-			NonVisibleActors[Actor->TeamId == 1 ? 0 : 1].Add(Actor);
-			AddActorToGrid(Actor);
-		}
+		RemoveActorFromGrid(Actor);
+		AddActorToGrid(Actor);
 	}
-
+	
 	SendDeltaVisibilityToClients();
 	ActorsToUpdate.Empty();
 	bHasSentVison = true;
@@ -194,6 +176,23 @@ FVector UXYZMapManager::GridCoordToWorldCoord(FIntVector2 Coord)
 		);
 	}
 	return FVector::ZeroVector;
+}
+
+TSet<AXYZActor*> UXYZMapManager::FindActorsInRange(const FIntVector2& CenterGrid, float Radius)
+{
+	int32 CellsToCheck = FMath::CeilToInt(Radius / GridCellSize)+1;
+	TSet<AXYZActor*> ActorsInRange;
+	
+	for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) 
+	{
+		for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) 
+		{
+			FIntVector2 AdjacentCoord(CenterGrid.X + X, CenterGrid.Y + Y);
+			if(!IsGridCoordValid(AdjacentCoord)) continue;
+			ActorsInRange = ActorsInRange.Union(Grid[AdjacentCoord]->ActorsInCell);
+		}
+	}
+	return ActorsInRange;
 }
 
 TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
