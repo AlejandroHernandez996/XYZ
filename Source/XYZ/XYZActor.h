@@ -284,4 +284,6 @@ public:
     float FloatAmplitude = 10.0f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
     float FloatSpeed = 2.0f;
+
+    bool bHasAddedToUpdateSet = false;
 };

@@ -22,8 +22,7 @@ public:
 	bool IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfCoordsToSearch = 10);
 	FVector GridCoordToWorldCoord(FIntVector2 Coord);
 
-	UPROPERTY()
-	TMap<FIntVector2, FGridCell> Grid;
+	TMap<FIntVector2, TSharedPtr<FGridCell>> Grid;
 
 	inline static int32 GRID_SIZE = 128;
 	UPROPERTY()
@@ -50,9 +49,9 @@ public:
 	UFUNCTION()
 	TSet<AXYZActor*> FindActorsInVisionRange(AXYZActor* Actor);
 	UFUNCTION()
-	void ClearVision();
+	void AddVisionForActor(AXYZActor* Actor);
 	UFUNCTION()
-	void GenerateVision();
+	void RemoveVisionForActor(AXYZActor* Actor);
 	UFUNCTION()
 	bool IsGridCoordValid(const FIntVector2& Coord) const;
 
@@ -67,7 +66,9 @@ public:
 	TArray<TSet<FIntVector2>> LastNonVisibleCellsSent = {{},{}};
 
 	TArray<TSet<FIntVector2>> VisibleCells = {{},{}};
-	TSet<FIntVector2> AllCellsCoords;
+	TArray<TSet<FIntVector2>> NonVisibleCells = {{},{}};
+	TArray<TSet<AXYZActor*>> VisibleActors = {{},{}};
+	TArray<TSet<AXYZActor*>> NonVisibleActors = {{},{}};
 	
 	UFUNCTION()
 	bool AreSetsEqual(const TSet<int32>& SetA, const TSet<int32>& SetB);
@@ -83,5 +84,11 @@ public:
 
 	float TimeToSendGrid = 1.0f;
 	float TimeSinceSent = 0.0f;
+
+	void RemoveActorVision(AXYZActor* Actor, FIntVector2 GridCoord);
+
+	void AddActorVision(AXYZActor* Actor, FIntVector2 GridCoord);
+
+	bool TeamHasVision(int32 TeamId, FIntVector2 GridCoord);
 };
 

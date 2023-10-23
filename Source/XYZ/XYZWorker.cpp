@@ -64,7 +64,7 @@ void AXYZWorker::Process(float DeltaTime)
             FIntVector2 PlacementGridSize = FIntVector2(ActivePlacementAbility->GridSize.X, ActivePlacementAbility->GridSize.Y);
             bool bHasSameHeightAsBuildingLocation = MapManager->Grid.Contains(CurrentGridPosition) &&
                 MapManager->Grid.Contains(PlacementCenterGridPosition) &&
-                MapManager->Grid[CurrentGridPosition].Height == MapManager->Grid[PlacementCenterGridPosition].Height;
+                MapManager->Grid[CurrentGridPosition]->Height == MapManager->Grid[PlacementCenterGridPosition]->Height;
 
             if(MapManager->DoesBuildingAreaOverlap(PlacementCenterGridPosition, PlacementGridSize))
             {
@@ -436,7 +436,7 @@ void AXYZWorker::PlaceBuilding()
 
         UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
         FVector SpawnLocation = ActivePlacementAbility->BuildingLocation;
-        SpawnLocation.Z = MapManager->Grid[MapManager->GetGridCoordinate(SpawnLocation)].Height;
+        SpawnLocation.Z = MapManager->Grid[MapManager->GetGridCoordinate(SpawnLocation)]->Height;
 
         AXYZBuilding* SpawnActor = GetWorld()->SpawnActor<AXYZBuilding>(ActivePlacementAbility->BuildingTemplate, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
         SpawnActor->TeamId = TeamId;

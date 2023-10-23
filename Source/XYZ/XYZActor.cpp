@@ -462,10 +462,13 @@ void AXYZActor::Process(float DeltaTime)
 	}
 	BuffsToRemove.Empty();
 	
-	if(GetXYZAIController() && GetXYZAIController()->bIsMoving)
+	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
+
+	if(LastLocation != GetActorLocation() || !bHasAddedToUpdateSet)
 	{
-		GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(this);
+		MapManager->AddToUpdateSet(this);
 		LastLocation = GetActorLocation();
+		bHasAddedToUpdateSet = true;
 	}
 }
 

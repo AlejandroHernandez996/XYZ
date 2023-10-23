@@ -24,7 +24,7 @@ void UXYZMapManager::InitializeGrid() {
 	for (int32 X = 0; X < GRID_SIZE; X++) {
 		for (int32 Y = 0; Y < GRID_SIZE; Y++) {
 			FIntVector2 GridCoord(X, Y);
-			FGridCell NewCell;
+			TSharedPtr<FGridCell> NewCell = MakeShared<FGridCell>();
 
 			FVector WorldCoord((GridCoord.X + 0.5f) * GridCellSize, (GridCoord.Y + 0.5f) * GridCellSize, 0);
 
@@ -37,11 +37,10 @@ void UXYZMapManager::InitializeGrid() {
 			bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, CollisionParams);
 
 			if (bHit) {
-				NewCell.Height = HitResult.ImpactPoint.Z;
+				NewCell->Height = HitResult.ImpactPoint.Z;
 			}
 
 			Grid.Add(GridCoord, NewCell);
-			AllCellsCoords.Add(GridCoord);
 		}
 	}
 }
@@ -56,48 +55,19 @@ FIntVector2 UXYZMapManager::GetGridCoordinate(const FVector& WorldLocation) {
 	return FIntVector2(x, y);
 }
 
-void UXYZMapManager::AddActorToGrid(AXYZActor* Actor) {
-	if(!Actor) return;
-	FIntVector2 GridCoord = GetGridCoordinate(Actor->GetActorLocation());
-	if(IsGridCoordValid(GridCoord))
-	{
-		Grid[GridCoord].ActorsInCell.Add(Actor);
-		Actor->GridCoord = GridCoord;
-	}
-}
-
-void UXYZMapManager::RemoveActorFromGrid(AXYZActor* Actor) {
-	if(Actor && IsGridCoordValid(Actor->GridCoord) && Grid[Actor->GridCoord].ActorsInCell.Contains(Actor))
-	{
-		Grid[Actor->GridCoord].ActorsInCell.Remove(Actor);
-	}
-}
-
 void UXYZMapManager::Process(float DeltaSeconds) {
 	if(bHasSentVison)
 	{
-		FDateTime StartTime = FDateTime::UtcNow();
-
-		ClearVision();
-		FDateTime EndTime = FDateTime::UtcNow();
-		FTimespan ClearVisionTime = EndTime - StartTime;
-		float ClearVisionProcessingSeconds = ClearVisionTime.GetTotalSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("Clearvision processing time: %f seconds"), ClearVisionProcessingSeconds);
-
-		StartTime = FDateTime::UtcNow();
 		for(AXYZActor* Actor : ActorsToUpdate)
 		{
 			if(!Actor || Actor->IsA(AXYZResourceActor::StaticClass()))
 			{
 				continue;
 			}
+			if(Actor->GridCoord == GetGridCoordinate(Actor->GetActorLocation())) continue;
 			RemoveActorFromGrid(Actor);
 			AddActorToGrid(Actor);
 		}
-		EndTime = FDateTime::UtcNow();
-		FTimespan ActorsToUpdateTime = EndTime - StartTime;
-		float UpdateActorsSeconds = ActorsToUpdateTime.GetTotalSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("Update Actors processing time: %f seconds"), UpdateActorsSeconds);
 	}else
 	{
 		TArray<AXYZActor*> Actors;
@@ -108,22 +78,14 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 			{
 				continue;
 			}
+			VisibleActors[Actor->TeamId].Add(Actor);
+			NonVisibleActors[Actor->TeamId == 1 ? 0 : 1].Add(Actor);
 			AddActorToGrid(Actor);
 		}
 	}
-	FDateTime StartTime = FDateTime::UtcNow();
-	GenerateVision();
-	FDateTime EndTime = FDateTime::UtcNow();
-	FTimespan GenerateVisionTime = EndTime - StartTime;
-	float GenerateVisionSeconds = GenerateVisionTime.GetTotalSeconds();
-	UE_LOG(LogTemp, Warning, TEXT("Generate Vision processing time: %f seconds"), GenerateVisionSeconds);
 
-	StartTime = FDateTime::UtcNow();
 	SendDeltaVisibilityToClients();
-	EndTime = FDateTime::UtcNow();
-	FTimespan SendDeltaVisibilityToClientsTime = EndTime - StartTime;
-	float SendDeltaVisibilityToClientsTimeSeconds = SendDeltaVisibilityToClientsTime.GetTotalSeconds();
-	UE_LOG(LogTemp, Warning, TEXT("Send delta vision processing time: %f seconds"), SendDeltaVisibilityToClientsTimeSeconds);
+	ActorsToUpdate.Empty();
 	bHasSentVison = true;
 }
 
@@ -169,7 +131,7 @@ TArray<FIntVector2> UXYZMapManager::GetPerimeterCoords(FIntVector2 CenterGridCoo
 
 bool UXYZMapManager::AreGridCoordsSameHeight(FIntVector2 Coord, FIntVector2 OtherCoord)
 {
-	return Grid.Contains(Coord) && Grid.Contains(OtherCoord) && Grid[Coord].Height == Grid[OtherCoord].Height;
+	return Grid.Contains(Coord) && Grid.Contains(OtherCoord) && Grid[Coord]->Height == Grid[OtherCoord]->Height;
 }
 
 bool UXYZMapManager::IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfCoordsToSearch)
@@ -187,9 +149,9 @@ bool UXYZMapManager::IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfC
 
 			if (Grid.Contains(CurrentCoord))
 			{
-				FGridCell& Cell = Grid[CurrentCoord];
+				TSharedPtr<FGridCell> Cell = Grid[CurrentCoord];
 
-				for (AXYZActor* Actor : Cell.ActorsInCell)
+				for (AXYZActor* Actor : Cell->ActorsInCell)
 				{
 					AXYZBuilding* Building = Cast<AXYZBuilding>(Actor);
 
@@ -221,7 +183,6 @@ bool UXYZMapManager::IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfC
 	return false;
 }
 
-
 FVector UXYZMapManager::GridCoordToWorldCoord(FIntVector2 Coord)
 {
 	if(Grid.Contains(Coord))
@@ -229,7 +190,7 @@ FVector UXYZMapManager::GridCoordToWorldCoord(FIntVector2 Coord)
 		return FVector(
 			(Coord.X * GridCellSize) + (GridCellSize * 0.5f), 
 			(Coord.Y * GridCellSize) + (GridCellSize * 0.5f), 
-			Grid[Coord].Height
+			Grid[Coord]->Height
 		);
 	}
 	return FVector::ZeroVector;
@@ -249,55 +210,131 @@ TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
 		{
 			FIntVector2 AdjacentCoord(GridCoord.X + X, GridCoord.Y + Y);
             
-			if(IsGridCoordValid(AdjacentCoord) && Grid[AdjacentCoord].TeamVision[Actor->TeamId])
+			if(IsGridCoordValid(AdjacentCoord) && TeamHasVision(Actor->TeamId, AdjacentCoord))
 			{
-				ActorsInRange = ActorsInRange.Union(Grid[AdjacentCoord].ActorsInCell);
+				ActorsInRange = ActorsInRange.Union(Grid[AdjacentCoord]->ActorsInCell);
 			}
 		}
 	}
 	return ActorsInRange;
 }
 
-void UXYZMapManager::ClearVision()
-{
-	for (int32 X = 0; X < GRID_SIZE; X++) {
-		for (int32 Y = 0; Y < GRID_SIZE; Y++) {
-			FIntVector2 GridCoord(X, Y);
-			Grid[GridCoord].TeamVision = {false, false};
+void UXYZMapManager::AddActorToGrid(AXYZActor* Actor) {
+	if(!Actor) return;
+	FIntVector2 GridCoord = GetGridCoordinate(Actor->GetActorLocation());
+	if(IsGridCoordValid(GridCoord))
+	{
+		Grid[GridCoord]->ActorsInCell.Add(Actor);
+		Actor->GridCoord = GridCoord;
+		AddVisionForActor(Actor);
+		for(int i = 0;i < 2;i++)
+		{
+			if(TeamHasVision(i, Actor->GridCoord))
+			{
+				VisibleActors[i].Add(Actor);
+				NonVisibleActors[i].Remove(Actor);
+			}
 		}
 	}
 }
 
-void UXYZMapManager::GenerateVision() {
-	TArray<AXYZActor*> Actors;
-	
-	GameState->ActorsByUID.GenerateValueArray(Actors);
-	VisibleCells = {{},{}};
-	
-	for (AXYZActor* Actor : Actors) {
-		if (!Actor) continue;
+void UXYZMapManager::AddVisionForActor(AXYZActor* Actor)
+{
+	if (!Actor) return;
 
-		FIntVector2 ActorGridCoord = GetGridCoordinate(Actor->GetActorLocation());
-		if (!IsGridCoordValid(ActorGridCoord))
-		{
-			continue;
+	FIntVector2 ActorGridCoord = GetGridCoordinate(Actor->GetActorLocation());
+	if (!IsGridCoordValid(ActorGridCoord))
+	{
+		return;
+	}
+	int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
+
+	for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
+		for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
+			FIntVector2 AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
+			if(!IsGridCoordValid(AdjacentCoord) || Actor->TeamId == 2) continue;
+			bool bIsHighGround = Grid[ActorGridCoord]->Height > Grid[AdjacentCoord]->Height;
+			bool bIsCloseInHeight = FMath::Abs(Grid[ActorGridCoord]->Height - Grid[AdjacentCoord]->Height) < 50.0f;
+			bool bCanSeeHeight = bIsHighGround || bIsCloseInHeight;
+			if (Actor->bIsFlying || bCanSeeHeight) {
+				AddActorVision(Actor, AdjacentCoord);
+				VisibleCells[Actor->TeamId].Add(AdjacentCoord);
+				NonVisibleCells[Actor->TeamId].Remove(AdjacentCoord);
+			}
 		}
-		int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
+	}
+}
 
-		for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
-			for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
-				FIntVector2 AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
-				if(!IsGridCoordValid(AdjacentCoord) || Actor->TeamId == 2) continue;
-				bool bIsHighGround = Grid[ActorGridCoord].Height > Grid[AdjacentCoord].Height;
-				bool bIsCloseInHeight = FMath::Abs(Grid[ActorGridCoord].Height - Grid[AdjacentCoord].Height) < 50.0f;
-				bool bCanSeeHeight = bIsHighGround || bIsCloseInHeight;
-				if (Actor->bIsFlying || bCanSeeHeight) {
-					Grid[AdjacentCoord].TeamVision[Actor->TeamId] = true;
-					VisibleCells[Actor->TeamId].Add(AdjacentCoord);
+
+void UXYZMapManager::AddActorVision(AXYZActor* Actor, FIntVector2 GridCoord)
+{
+	if(Actor && Grid[GridCoord]->ActorsWithVisionByTeam.IsValidIndex(Actor->TeamId))
+	{
+		Grid[GridCoord]->ActorsWithVisionByTeam[Actor->TeamId].Add(Actor);
+	}
+}
+
+void UXYZMapManager::RemoveVisionForActor(AXYZActor* Actor)
+{
+	if (!Actor) return;
+
+	FIntVector2 ActorGridCoord = Actor->GridCoord;
+	if (!IsGridCoordValid(ActorGridCoord))
+	{
+		return;
+	}
+	int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
+
+	for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
+		for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
+			FIntVector2 AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
+			if(!IsGridCoordValid(AdjacentCoord) || Actor->TeamId == 2) continue;
+			bool bIsHighGround = Grid[ActorGridCoord]->Height > Grid[AdjacentCoord]->Height;
+			bool bIsCloseInHeight = FMath::Abs(Grid[ActorGridCoord]->Height - Grid[AdjacentCoord]->Height) < 50.0f;
+			bool bCanSeeHeight = bIsHighGround || bIsCloseInHeight;
+			if (Actor->bIsFlying || bCanSeeHeight) {
+				RemoveActorVision(Actor, AdjacentCoord);
+				if(!TeamHasVision(Actor->TeamId, AdjacentCoord))
+				{
+					VisibleCells[Actor->TeamId].Remove(AdjacentCoord);
+					NonVisibleCells[Actor->TeamId].Add(AdjacentCoord);
 				}
 			}
 		}
 	}
+}
+
+void UXYZMapManager::RemoveActorFromGrid(AXYZActor* Actor) {
+	if(Actor && IsGridCoordValid(Actor->GridCoord) && Grid[Actor->GridCoord]->ActorsInCell.Contains(Actor))
+	{
+		RemoveVisionForActor(Actor);
+		Grid[Actor->GridCoord]->ActorsInCell.Remove(Actor);
+		for(int i = 0;i < 2;i++)
+		{
+			if(!TeamHasVision(i, Actor->GridCoord))
+			{
+				NonVisibleActors[i].Add(Actor);
+				VisibleActors[i].Remove(Actor);
+			}
+		}
+	}
+}
+
+void UXYZMapManager::RemoveActorVision(AXYZActor* Actor, FIntVector2 GridCoord)
+{
+	if(Actor && Grid[GridCoord]->ActorsWithVisionByTeam.IsValidIndex(Actor->TeamId))
+	{
+		Grid[GridCoord]->ActorsWithVisionByTeam[Actor->TeamId].Remove(Actor);
+	}
+}
+
+bool UXYZMapManager::TeamHasVision(int32 TeamId, FIntVector2 GridCoord)
+{
+	if(Grid[GridCoord]->ActorsWithVisionByTeam.IsValidIndex(TeamId))
+	{
+		return Grid[GridCoord]->ActorsWithVisionByTeam[TeamId].Num() > 0;
+	}
+	return false;
 }
 
 bool UXYZMapManager::IsGridCoordValid(const FIntVector2& Coord) const
@@ -307,60 +344,6 @@ bool UXYZMapManager::IsGridCoordValid(const FIntVector2& Coord) const
 
 void UXYZMapManager::SendDeltaVisibilityToClients()
 {
-	TArray<TSet<FIntVector2>> NonVisibleCells;
-	NonVisibleCells.Add(AllCellsCoords.Difference(VisibleCells[0]));
-	NonVisibleCells.Add(AllCellsCoords.Difference(VisibleCells[1]));
-	
-	TArray<TSet<AXYZActor*>> VisibleActors = {{},{}};
-
-	FDateTime StartTime = FDateTime::UtcNow();
-	TArray<AXYZActor*> Actors;
-	TSet<AXYZActor*> AllActors;
-	
-	GameState->ActorsByUID.GenerateValueArray(Actors);
-	
-	for (AXYZActor* Actor : Actors)
-	{
-		if (!Actor || Actor->TeamId == 2) continue;
-		FIntVector2 ActorGridCoord = GetGridCoordinate(Actor->GetActorLocation());
-		if (!IsGridCoordValid(ActorGridCoord)) continue;
-		AllActors.Add(Actor);
-
-		if(Grid[ActorGridCoord].TeamVision[0])
-		{
-			VisibleActors[0].Add(Actor);
-		}
-		if(Grid[ActorGridCoord].TeamVision[1])
-		{
-			VisibleActors[1].Add(Actor);
-		}
-	}
-	TArray<TSet<AXYZActor*>> NonVisibleActors;
-	NonVisibleActors.Add(AllActors.Difference(VisibleActors[0]));
-	NonVisibleActors.Add(AllActors.Difference(VisibleActors[1]));
-	/**for (const TPair<FIntVector2, FGridCell>& KVP : Grid)
-	{
-		FGridCell Cell = KVP.Value;
-		FIntVector2 Coord = KVP.Key;
-		for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
-		{
-			int32 TeamId = PlayerController->TeamId;
-			if(Cell.TeamVision[TeamId])
-			{
-				VisibleActors[TeamId] = Cell.ActorsInCell.Union(VisibleActors[TeamId]);
-				VisibleCells[TeamId].Add(Coord);
-			}else
-			{
-				NonVisibleActors[TeamId] = Cell.ActorsInCell.Union(NonVisibleActors[TeamId]);
-				NonVisibleCells[TeamId].Add(Coord);
-			}
-		}
-	}
-	*/
-	FDateTime EndTime = FDateTime::UtcNow();
-	FTimespan GenerateVisionTime = EndTime - StartTime;
-	float GenerateVisionSeconds = GenerateVisionTime.GetTotalSeconds();
-	UE_LOG(LogTemp, Warning, TEXT("Get visible actors and cells time: %f seconds"), GenerateVisionSeconds);
 	for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
 	{
 		int32 TeamId = PlayerController->TeamId;
@@ -383,7 +366,6 @@ void UXYZMapManager::SendDeltaVisibilityToClients()
 				PlayerController->UpdateClientVisibility(ConvertSetToActorIds(VisibleActorsDifference),  ConvertSetToActorIds(NonVisibleActorsDifference), VisibleCellsDifference.Array(),  {});
 			}
 		}
-		
 	}
 
 	LastVisibleActorsSent = VisibleActors;
@@ -449,12 +431,12 @@ bool UXYZMapManager::DoesActorHasVisionOfActor(AXYZActor* Actor, AXYZActor* Othe
 	if(!Actor ||
 		!OtherActor ||
 		!Grid.Contains(OtherActor->GridCoord) ||
-		!Grid[OtherActor->GridCoord].TeamVision.IsValidIndex(Actor->TeamId))
+		!TeamHasVision(Actor->TeamId, OtherActor->GridCoord))
 	{
 		return false;
 	}
 
-	return Grid[OtherActor->GridCoord].TeamVision[Actor->TeamId];
+	return TeamHasVision(Actor->TeamId,OtherActor->GridCoord);
 }
 
 bool UXYZMapManager::DoesBuildingAreaOverlap(FIntVector2 CenterGridCoord, FIntVector2 GridAreaSize)

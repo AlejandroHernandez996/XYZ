@@ -233,8 +233,6 @@ void AXYZGameMode::Process(float DeltaSeconds)
     TArray<AXYZActor*> Actors;
     Cast<AXYZGameState>(GetWorld()->GetGameState())->ActorsByUID.GenerateValueArray(Actors);
 
-    FDateTime StartTime = FDateTime::UtcNow();
-
     for (AXYZActor* Actor : Actors)
     {
         if (Actor)
@@ -246,74 +244,14 @@ void AXYZGameMode::Process(float DeltaSeconds)
             }
         }
     }
-    FDateTime EndTime = FDateTime::UtcNow();
-    FTimespan ActorProcessingTime = EndTime - StartTime;
-    float ActorProcessingSeconds = ActorProcessingTime.GetTotalSeconds();
-    UE_LOG(LogTemp, Warning, TEXT("Actor processing time for all actors: %f seconds"), ActorProcessingSeconds);
-    
-    StartTime = FDateTime::UtcNow();
     
     InputManager->Process(DeltaSeconds);
-    
-    EndTime = FDateTime::UtcNow();
-    FTimespan InputManagerProcessingTime = EndTime - StartTime;
-    float InputManagerProcessingSeconds = InputManagerProcessingTime.GetTotalSeconds();
-    UE_LOG(LogTemp, Warning, TEXT("InputManager processing time: %f seconds"), InputManagerProcessingSeconds);
-    
-    StartTime = FDateTime::UtcNow();
-    
     BlobManager->Process(DeltaSeconds);
-    
-    EndTime = FDateTime::UtcNow();
-    FTimespan BlobManagerProcessingTime = EndTime - StartTime;
-    float BlobManagerProcessingSeconds = BlobManagerProcessingTime.GetTotalSeconds();
-    UE_LOG(LogTemp, Warning, TEXT("BlobManager processing time: %f seconds"), BlobManagerProcessingSeconds);
-    
-    StartTime = FDateTime::UtcNow();
-    
     UpgradeManager->Process(DeltaSeconds);
-    
-    EndTime = FDateTime::UtcNow();
-    FTimespan UpgradeManagerProcessingTime = EndTime - StartTime;
-    float UpgradeManagerProcessingSeconds = UpgradeManagerProcessingTime.GetTotalSeconds();
-    UE_LOG(LogTemp, Warning, TEXT("UpgradeManager processing time: %f seconds"), UpgradeManagerProcessingSeconds);
-    
-    StartTime = FDateTime::UtcNow();
-    
     DeathManager->Process(DeltaSeconds);
-    
-    EndTime = FDateTime::UtcNow();
-    FTimespan DeathManagerProcessingTime = EndTime - StartTime;
-    float DeathManagerProcessingSeconds = DeathManagerProcessingTime.GetTotalSeconds();
-    UE_LOG(LogTemp, Warning, TEXT("DeathManager processing time: %f seconds"), DeathManagerProcessingSeconds);
-    
-    StartTime = FDateTime::UtcNow();
-    
     MapManager->Process(DeltaSeconds);
-    
-    EndTime = FDateTime::UtcNow();
-    FTimespan MapManagerProcessingTime = EndTime - StartTime;
-    float MapManagerProcessingSeconds = MapManagerProcessingTime.GetTotalSeconds();
-    UE_LOG(LogTemp, Warning, TEXT("MapManager processing time: %f seconds"), MapManagerProcessingSeconds);
-    
-    StartTime = FDateTime::UtcNow();
-    
     MatchManager->Process(DeltaSeconds);
-    
-    EndTime = FDateTime::UtcNow();
-    FTimespan MatchManagerProcessingTime = EndTime - StartTime;
-    float MatchManagerProcessingSeconds = MatchManagerProcessingTime.GetTotalSeconds();
-    UE_LOG(LogTemp, Warning, TEXT("MatchManager processing time: %f seconds"), MatchManagerProcessingSeconds);
-    
-    StartTime = FDateTime::UtcNow();
-    
     ProjectileManager->Process(DeltaSeconds);
-    
-    EndTime = FDateTime::UtcNow();
-    FTimespan ProjectileManagerProcessingTime = EndTime - StartTime;
-    float ProjectileManagerProcessingSeconds = ProjectileManagerProcessingTime.GetTotalSeconds();
-    UE_LOG(LogTemp, Warning, TEXT("ProjectileManager processing time: %f seconds\n\n\n"), ProjectileManagerProcessingSeconds);
-
     
     TickCount++;
     bHasGameEnded = bHasGameEnded || NumOfPlayers < MAX_PLAYERS;

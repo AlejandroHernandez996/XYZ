@@ -102,11 +102,11 @@ void UXYZMoveAction::MovePack(TSharedPtr<FAgentPack> AgentPack, int32 Level, boo
             FVector PackTargetLocation = TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i];
             UXYZMapManager* MapManager = Agent->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
 
-            FGridCell TargetCell = MapManager->Grid[MapManager->GetGridCoordinate(TargetLocation)];
-            FGridCell PackTargetCell = MapManager->Grid[MapManager->GetGridCoordinate(PackTargetLocation)];
+            TSharedPtr<FGridCell> TargetCell = MapManager->Grid[MapManager->GetGridCoordinate(TargetLocation)];
+            TSharedPtr<FGridCell> PackTargetCell = MapManager->Grid[MapManager->GetGridCoordinate(PackTargetLocation)];
             
             if (bIsAttackMove) {
-                if(TargetCell.Height == PackTargetCell.Height)
+                if(TargetCell->Height == PackTargetCell->Height)
                 {
                     Agent->GetController<AXYZAIController>()->XYZAttackMoveToLocation(PackTargetLocation);
                     Agent->TargetLocation = TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i];
@@ -117,7 +117,7 @@ void UXYZMoveAction::MovePack(TSharedPtr<FAgentPack> AgentPack, int32 Level, boo
                 }
             }
             else {
-                if(TargetCell.Height == PackTargetCell.Height)
+                if(TargetCell->Height == PackTargetCell->Height)
                 {
                     Agent->GetController<AXYZAIController>()->XYZMoveToLocation(PackTargetLocation);
                     Agent->TargetLocation = TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i];

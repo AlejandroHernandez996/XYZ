@@ -183,7 +183,7 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 		{
 			UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
 
-			if (MapManager->Grid.Contains(GridCoord) && MapManager->Grid[GridCoord].ActorsInCell.Contains(this))
+			if (MapManager->Grid.Contains(GridCoord) && MapManager->Grid[GridCoord]->ActorsInCell.Contains(this))
 			{
 				TArray<FVector> OtherFlyingUnitLocations;
 				TArray<FIntVector2> UnitAreaCoords = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(2,2));
@@ -192,7 +192,7 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 				for(FIntVector2 AreaCoord : UnitAreaCoords)
 				{
 					if(!MapManager->Grid.Contains(AreaCoord)) continue;
-					TSet<AXYZActor*> FlyingUnitsInCoord = MapManager->Grid[AreaCoord].ActorsInCell;
+					TSet<AXYZActor*> FlyingUnitsInCoord = MapManager->Grid[AreaCoord]->ActorsInCell;
 					for (AXYZActor* FlyingUnit : FlyingUnitsInCoord)
 					{
 						if (!FlyingUnit) continue;

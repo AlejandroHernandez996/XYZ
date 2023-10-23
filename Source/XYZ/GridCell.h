@@ -1,9 +1,8 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "XYZActor.h"
 #include "GridCell.generated.h"
-
-class AXYZActor;
 
 USTRUCT(BlueprintType)
 struct FGridCell
@@ -12,8 +11,7 @@ struct FGridCell
 
 	UPROPERTY(BlueprintReadWrite, Category="Grid")
 	TSet<AXYZActor*> ActorsInCell;
-	UPROPERTY()
-	TArray<bool> TeamVision = {false, false};
+	TArray<TSet<AXYZActor*>> ActorsWithVisionByTeam = {{}, {}};
 	UPROPERTY()
 	int32 Height = 0;
 };
