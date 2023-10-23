@@ -65,13 +65,6 @@ void AXYZBuilding::Tick(float DeltaTime) {
             LineBatcher->DrawLine(EndLocation, StartLocation, DebugColor, SDPG_MAX, 3.0f, .1f);
         }
     }
-    if (FloatingMesh && !HasAuthority()) {
-        float Time = GetWorld()->GetTimeSeconds();
-        FVector NewLocation = FloatingMesh->GetRelativeLocation();
-
-        NewLocation.Z += FMath::Sin(Time * FloatSpeed) * FloatAmplitude * DeltaTime;
-        FloatingMesh->SetRelativeLocation(NewLocation);
-    }
 }
 
 void AXYZBuilding::BeginPlay() {

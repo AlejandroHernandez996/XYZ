@@ -66,6 +66,9 @@ public:
 	TArray<TSet<FIntVector2>> LastVisibleCellsSent = {{},{}};
 	TArray<TSet<FIntVector2>> LastNonVisibleCellsSent = {{},{}};
 
+	TArray<TSet<FIntVector2>> VisibleCells = {{},{}};
+	TSet<FIntVector2> AllCellsCoords;
+	
 	UFUNCTION()
 	bool AreSetsEqual(const TSet<int32>& SetA, const TSet<int32>& SetB);
 	UFUNCTION()

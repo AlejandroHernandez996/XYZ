@@ -14,16 +14,16 @@
 void AXYZUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
-	GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 2.0f;
-	GetCharacterMovement()->bUseRVOAvoidance = bHasAvoidance;
-	GetCharacterMovement()->AvoidanceWeight = CurrentAvoidanceWeight;
-	GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
 }
 
 void AXYZUnit::Process(float DeltaTime)
 {
 	Super::Process(DeltaTime);
+	GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
+	GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 2.0f;
+	GetCharacterMovement()->bUseRVOAvoidance = bHasAvoidance;
+	GetCharacterMovement()->AvoidanceWeight = CurrentAvoidanceWeight;
+	GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
 	if (bIsFlying) {
 		ProcessFlyingUnit(DeltaTime);
 		return;

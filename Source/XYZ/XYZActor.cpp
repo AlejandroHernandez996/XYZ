@@ -81,6 +81,13 @@ void AXYZActor::BeginPlay()
 void AXYZActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (FloatingMesh && !HasAuthority()) {
+		float Time = GetWorld()->GetTimeSeconds();
+		FVector NewLocation = FloatingMesh->GetRelativeLocation();
+
+		NewLocation.Z += FMath::Sin(Time * FloatSpeed) * FloatAmplitude * DeltaTime;
+		FloatingMesh->SetRelativeLocation(NewLocation);
+	}
 	AXYZGameState* GameState = GetWorld()->GetGameState<AXYZGameState>();
 	if(!HasAuthority() && UActorId != -1 && !GameState->ActorsByUID.Contains(UActorId))
 	{

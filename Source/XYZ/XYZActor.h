@@ -273,10 +273,10 @@ public:
     TArray<FColor> PathingPointsColors;
 
     UPROPERTY(EditAnywhere, Replicated)
-    float CurrentAvoidanceWeight = 10.0f;
+    float CurrentAvoidanceWeight = 1.0f;
 
     UPROPERTY(EditAnywhere)
-    float DefaultAvoidanceWeight = 10.0f;
+    float DefaultAvoidanceWeight = 1.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
     class UStaticMeshComponent* FloatingMesh;

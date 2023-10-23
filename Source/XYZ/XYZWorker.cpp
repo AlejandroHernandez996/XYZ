@@ -40,13 +40,6 @@ void AXYZWorker::Tick(float DeltaTime) {
     {
         GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
     }
-    if (FloatingMesh && !HasAuthority()) {
-        float Time = GetWorld()->GetTimeSeconds();
-        FVector NewLocation = FloatingMesh->GetRelativeLocation();
-
-        NewLocation.Z += FMath::Sin(Time * FloatSpeed) * FloatAmplitude * DeltaTime;
-        FloatingMesh->SetRelativeLocation(NewLocation);
-    }
     
 }
 

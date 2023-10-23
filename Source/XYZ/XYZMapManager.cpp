@@ -41,6 +41,7 @@ void UXYZMapManager::InitializeGrid() {
 			}
 
 			Grid.Add(GridCoord, NewCell);
+			AllCellsCoords.Add(GridCoord);
 		}
 	}
 }
@@ -75,7 +76,15 @@ void UXYZMapManager::RemoveActorFromGrid(AXYZActor* Actor) {
 void UXYZMapManager::Process(float DeltaSeconds) {
 	if(bHasSentVison)
 	{
+		FDateTime StartTime = FDateTime::UtcNow();
+
 		ClearVision();
+		FDateTime EndTime = FDateTime::UtcNow();
+		FTimespan ClearVisionTime = EndTime - StartTime;
+		float ClearVisionProcessingSeconds = ClearVisionTime.GetTotalSeconds();
+		UE_LOG(LogTemp, Warning, TEXT("Clearvision processing time: %f seconds"), ClearVisionProcessingSeconds);
+
+		StartTime = FDateTime::UtcNow();
 		for(AXYZActor* Actor : ActorsToUpdate)
 		{
 			if(!Actor || Actor->IsA(AXYZResourceActor::StaticClass()))
@@ -85,6 +94,10 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 			RemoveActorFromGrid(Actor);
 			AddActorToGrid(Actor);
 		}
+		EndTime = FDateTime::UtcNow();
+		FTimespan ActorsToUpdateTime = EndTime - StartTime;
+		float UpdateActorsSeconds = ActorsToUpdateTime.GetTotalSeconds();
+		UE_LOG(LogTemp, Warning, TEXT("Update Actors processing time: %f seconds"), UpdateActorsSeconds);
 	}else
 	{
 		TArray<AXYZActor*> Actors;
@@ -98,8 +111,19 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 			AddActorToGrid(Actor);
 		}
 	}
+	FDateTime StartTime = FDateTime::UtcNow();
 	GenerateVision();
+	FDateTime EndTime = FDateTime::UtcNow();
+	FTimespan GenerateVisionTime = EndTime - StartTime;
+	float GenerateVisionSeconds = GenerateVisionTime.GetTotalSeconds();
+	UE_LOG(LogTemp, Warning, TEXT("Generate Vision processing time: %f seconds"), GenerateVisionSeconds);
+
+	StartTime = FDateTime::UtcNow();
 	SendDeltaVisibilityToClients();
+	EndTime = FDateTime::UtcNow();
+	FTimespan SendDeltaVisibilityToClientsTime = EndTime - StartTime;
+	float SendDeltaVisibilityToClientsTimeSeconds = SendDeltaVisibilityToClientsTime.GetTotalSeconds();
+	UE_LOG(LogTemp, Warning, TEXT("Send delta vision processing time: %f seconds"), SendDeltaVisibilityToClientsTimeSeconds);
 	bHasSentVison = true;
 }
 
@@ -248,7 +272,8 @@ void UXYZMapManager::GenerateVision() {
 	TArray<AXYZActor*> Actors;
 	
 	GameState->ActorsByUID.GenerateValueArray(Actors);
-
+	VisibleCells = {{},{}};
+	
 	for (AXYZActor* Actor : Actors) {
 		if (!Actor) continue;
 
@@ -268,6 +293,7 @@ void UXYZMapManager::GenerateVision() {
 				bool bCanSeeHeight = bIsHighGround || bIsCloseInHeight;
 				if (Actor->bIsFlying || bCanSeeHeight) {
 					Grid[AdjacentCoord].TeamVision[Actor->TeamId] = true;
+					VisibleCells[Actor->TeamId].Add(AdjacentCoord);
 				}
 			}
 		}
@@ -281,13 +307,38 @@ bool UXYZMapManager::IsGridCoordValid(const FIntVector2& Coord) const
 
 void UXYZMapManager::SendDeltaVisibilityToClients()
 {
-	TArray<TSet<FIntVector2>> VisibleCells = {{},{}};
-	TArray<TSet<FIntVector2>> NonVisibleCells = {{},{}};
+	TArray<TSet<FIntVector2>> NonVisibleCells;
+	NonVisibleCells.Add(AllCellsCoords.Difference(VisibleCells[0]));
+	NonVisibleCells.Add(AllCellsCoords.Difference(VisibleCells[1]));
 	
 	TArray<TSet<AXYZActor*>> VisibleActors = {{},{}};
-	TArray<TSet<AXYZActor*>> NonVisibleActors = {{},{}};
 
-	for (const TPair<FIntVector2, FGridCell>& KVP : Grid)
+	FDateTime StartTime = FDateTime::UtcNow();
+	TArray<AXYZActor*> Actors;
+	TSet<AXYZActor*> AllActors;
+	
+	GameState->ActorsByUID.GenerateValueArray(Actors);
+	
+	for (AXYZActor* Actor : Actors)
+	{
+		if (!Actor || Actor->TeamId == 2) continue;
+		FIntVector2 ActorGridCoord = GetGridCoordinate(Actor->GetActorLocation());
+		if (!IsGridCoordValid(ActorGridCoord)) continue;
+		AllActors.Add(Actor);
+
+		if(Grid[ActorGridCoord].TeamVision[0])
+		{
+			VisibleActors[0].Add(Actor);
+		}
+		if(Grid[ActorGridCoord].TeamVision[1])
+		{
+			VisibleActors[1].Add(Actor);
+		}
+	}
+	TArray<TSet<AXYZActor*>> NonVisibleActors;
+	NonVisibleActors.Add(AllActors.Difference(VisibleActors[0]));
+	NonVisibleActors.Add(AllActors.Difference(VisibleActors[1]));
+	/**for (const TPair<FIntVector2, FGridCell>& KVP : Grid)
 	{
 		FGridCell Cell = KVP.Value;
 		FIntVector2 Coord = KVP.Key;
@@ -305,7 +356,11 @@ void UXYZMapManager::SendDeltaVisibilityToClients()
 			}
 		}
 	}
-	
+	*/
+	FDateTime EndTime = FDateTime::UtcNow();
+	FTimespan GenerateVisionTime = EndTime - StartTime;
+	float GenerateVisionSeconds = GenerateVisionTime.GetTotalSeconds();
+	UE_LOG(LogTemp, Warning, TEXT("Get visible actors and cells time: %f seconds"), GenerateVisionSeconds);
 	for(AXYZPlayerController* PlayerController : GameMode->PlayerControllers)
 	{
 		int32 TeamId = PlayerController->TeamId;
