@@ -44,6 +44,7 @@ AXYZActor::AXYZActor()
 	}
 	FName AudioComponentName = FName(*(GetName() + "_AudioComponent"));
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>(AudioComponentName);
+	ProjectileSpawnComponent = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileSpawnComponent"));
 	Health = 100.0f;
 	MaxHealth = 100.0f;
 }
@@ -123,6 +124,7 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AXYZActor, AttackDamage);
 	DOREPLIFETIME(AXYZActor, AttackRate);
 	DOREPLIFETIME(AXYZActor, AttackRange);
+	DOREPLIFETIME(AXYZActor, CastRange);
 	DOREPLIFETIME(AXYZActor, UActorId);
 	DOREPLIFETIME(AXYZActor, State);
 	DOREPLIFETIME(AXYZActor, bHasAvoidance);
@@ -137,6 +139,8 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AXYZActor, PathingPoints);
 	DOREPLIFETIME(AXYZActor, PathingPointsShowFlag);
 	DOREPLIFETIME(AXYZActor, PathingPointsColors);
+	DOREPLIFETIME(AXYZActor, bHasTrueVision);
+	DOREPLIFETIME(AXYZActor, bIsCloaked);
 }
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
@@ -202,7 +206,7 @@ void AXYZActor::Attack()
 
 		if(ProjectileTemplate)
 		{
-			GetWorld()->GetAuthGameMode<AXYZGameMode>()->ProjectileManager->SpawnProjectile(ProjectileTemplate, TargetActor->GetActorLocation(), TargetActor,this);
+			GetWorld()->GetAuthGameMode<AXYZGameMode>()->ProjectileManager->SpawnProjectile(ProjectileTemplate, ProjectileSpawnComponent->GetComponentLocation(), TargetActor,this);
 		}
 	}
 }
@@ -374,6 +378,9 @@ void AXYZActor::AttackMoveTarget()
 		else if (State != EXYZUnitState::HOLD)
 		{
 			ActorController->XYZAttackMoveToTarget(TargetActor);
+		}else
+		{
+			TargetActor = nullptr;
 		}
 	}
 	else

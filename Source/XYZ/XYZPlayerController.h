@@ -310,8 +310,10 @@ public:
 	UPROPERTY()
 	class AXYZAbilityMarker* ActiveAbilityMarker;
 	UPROPERTY()
-	class UXYZTargetAreaAbility* ActiveTargetAreaAbility;
+	class UXYZTargetAbility* ActiveTargetAbility;
 	UPROPERTY()
 	int32 ActiveAbilityIndex = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
+	TArray<UMaterialInstance*> CloakedTeamColors;
 
 };

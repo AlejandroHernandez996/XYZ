@@ -22,6 +22,12 @@ public:
         TargetLocation = _TargetLocation;
     }
 
+    UFUNCTION()
+    virtual bool IsContiousProcessing()
+    {
+        return false;
+    }
+
 public:
     UPROPERTY(BlueprintReadWrite, Category = "Input")
         class AXYZActor* TargetActor;
@@ -38,4 +44,6 @@ public:
         virtual bool HasAgentComplete(AXYZActor* Agent) { return true; }
     UPROPERTY()
         TSet<AXYZActor*> ActorSet;
+    UPROPERTY()
+    int32 ProcessCount = 0;
 };

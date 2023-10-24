@@ -93,5 +93,6 @@ public:
 	void AddActorVision(AXYZActor* Actor, FIntVector2 GridCoord);
 
 	bool TeamHasVision(int32 TeamId, FIntVector2 GridCoord);
+	bool TeamHasTrueVision(int32 TeamId, FIntVector2 GridCoord);
 };
 

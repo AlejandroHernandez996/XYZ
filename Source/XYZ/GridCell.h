@@ -12,6 +12,7 @@ struct FGridCell
 	UPROPERTY(BlueprintReadWrite, Category="Grid")
 	TSet<AXYZActor*> ActorsInCell;
 	TArray<TSet<AXYZActor*>> ActorsWithVisionByTeam = {{}, {}};
+	TArray<TSet<AXYZActor*>> ActorsWithTrueVisionByTeam = {{}, {}};
 	UPROPERTY()
 	int32 Height = 0;
 };

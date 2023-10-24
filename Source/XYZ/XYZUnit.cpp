@@ -48,7 +48,6 @@ void AXYZUnit::Process(float DeltaTime)
 				GetXYZAIController()->XYZStopMovement();
 			}
 			TargetActor = nullptr;
-			return;
 		}
 		if (!TargetActor || TargetActor->Health <= 0.0f)
 		{
@@ -267,6 +266,9 @@ void AXYZUnit::FlyingAttackMoveTarget()
 	if(IsInAttackRangeOfUnit())
 	{
 		Attack();
+	}else if(State == EXYZUnitState::HOLD)
+	{
+		TargetActor = nullptr;
 	}
 }
 

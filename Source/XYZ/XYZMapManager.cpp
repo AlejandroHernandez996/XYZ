@@ -5,7 +5,6 @@
 #include "XYZActor.h"
 #include "XYZBuilding.h"
 #include "XYZGameMode.h"
-#include "XYZGameState.h"
 #include "XYZPlayerController.h"
 #include "XYZResourceActor.h"
 #include "Misc/FileHelper.h"
@@ -230,7 +229,12 @@ void UXYZMapManager::AddActorToGrid(AXYZActor* Actor) {
 		{
 			if(TeamHasVision(i, Actor->GridCoord))
 			{
-				VisibleActors[i].Add(Actor);
+				bool bActorIsOnSameTeam = Actor->TeamId == i;
+				bool bActorIsCloaked = Actor->bIsCloaked;
+				if (bActorIsOnSameTeam || (!bActorIsCloaked || TeamHasTrueVision(i, Actor->GridCoord)))
+				{
+					VisibleActors[i].Add(Actor);
+				}
 				NonVisibleActors[i].Remove(Actor);
 			}
 		}
@@ -270,6 +274,10 @@ void UXYZMapManager::AddActorVision(AXYZActor* Actor, FIntVector2 GridCoord)
 	if(Actor && Grid[GridCoord]->ActorsWithVisionByTeam.IsValidIndex(Actor->TeamId))
 	{
 		Grid[GridCoord]->ActorsWithVisionByTeam[Actor->TeamId].Add(Actor);
+		if(Actor->bHasTrueVision)
+		{
+			Grid[GridCoord]->ActorsWithTrueVisionByTeam[Actor->TeamId].Add(Actor);
+		}
 	}
 }
 
@@ -324,6 +332,7 @@ void UXYZMapManager::RemoveActorVision(AXYZActor* Actor, FIntVector2 GridCoord)
 	if(Actor && Grid[GridCoord]->ActorsWithVisionByTeam.IsValidIndex(Actor->TeamId))
 	{
 		Grid[GridCoord]->ActorsWithVisionByTeam[Actor->TeamId].Remove(Actor);
+		Grid[GridCoord]->ActorsWithTrueVisionByTeam[Actor->TeamId].Remove(Actor);
 	}
 }
 
@@ -332,6 +341,15 @@ bool UXYZMapManager::TeamHasVision(int32 TeamId, FIntVector2 GridCoord)
 	if(Grid[GridCoord]->ActorsWithVisionByTeam.IsValidIndex(TeamId))
 	{
 		return Grid[GridCoord]->ActorsWithVisionByTeam[TeamId].Num() > 0;
+	}
+	return false;
+}
+
+bool UXYZMapManager::TeamHasTrueVision(int32 TeamId, FIntVector2 GridCoord)
+{
+	if(Grid[GridCoord]->ActorsWithTrueVisionByTeam.IsValidIndex(TeamId))
+	{
+		return Grid[GridCoord]->ActorsWithTrueVisionByTeam[TeamId].Num() > 0;
 	}
 	return false;
 }

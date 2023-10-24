@@ -438,6 +438,7 @@ void AXYZBuilding::Process(float DeltaTime)
         if(TimeToBuild >= TotalBuildTime)
         {
             BuildingState = EXYZBuildingState::BUILT;
+            bHasTrueVision = bHasInnateTrueVision;
             GetWorld()->GetGameState<AXYZGameState>()->SupplyByTeamId[TeamId + 2] += SupplyGain;
             UXYZActorCache* ActorCache = GetWorld()->GetAuthGameMode<AXYZGameMode>()->ActorCache;
             if(ActorCache)

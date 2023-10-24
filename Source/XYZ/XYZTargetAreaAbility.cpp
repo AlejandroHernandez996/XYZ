@@ -6,7 +6,6 @@
 #include "XYZActor.h"
 #include "XYZAreaOfEffectManager.h"
 #include "XYZGameMode.h"
-#include "Components/DecalComponent.h"
 
 bool UXYZTargetAreaAbility::Activate()
 {
@@ -17,28 +16,6 @@ bool UXYZTargetAreaAbility::Activate()
 		return true;
 	}
 	return false;
-}
-
-void UXYZTargetAreaAbility::SetAbilityState(EXYZAbilityState NewState)
-{
-	AbilityState = NewState;
-}
-
-void UXYZTargetAreaAbility::UpdateAbilityMarker()
-{
-	if(!AbilityGroundDecal) return;
-	switch (AbilityState) {
-	case EXYZAbilityState::IDLE:
-		AbilityGroundDecal->SetHiddenInGame(true);
-		break;
-	case EXYZAbilityState::SELECTED:
-		AbilityGroundDecal->SetHiddenInGame(false);
-		break;
-	case EXYZAbilityState::ACTIVATED:
-		AbilityGroundDecal->SetHiddenInGame(true);
-		break;
-	default: ;
-	}
 }
 
 

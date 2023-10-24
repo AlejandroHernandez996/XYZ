@@ -369,9 +369,9 @@ void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {
 	{
 		ActiveAbilityMarker->Destroy();
 	}
-	if(ActiveTargetAreaAbility)
+	if(ActiveTargetAbility)
 	{
-		ActiveTargetAreaAbility = nullptr;
+		ActiveTargetAbility = nullptr;
 	}
 	if (SelectionStructure->IsEmpty()) return;
 
@@ -413,12 +413,12 @@ void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {
 		return;
 	}
 
-	ActiveTargetAreaAbility = Cast<UXYZTargetAreaAbility>(Actor->Abilities[AbilityIndex]);
+	ActiveTargetAbility = Cast<UXYZTargetAbility>(Actor->Abilities[AbilityIndex]);
 
-	if(ActiveTargetAreaAbility)
+	if(ActiveTargetAbility)
 	{
 		ActiveAbilityIndex = AbilityIndex;
-		ActiveAbilityMarker = GetWorld()->SpawnActor<AXYZAbilityMarker>(ActiveTargetAreaAbility->AbilityMarkerTemplate, GetMouseToWorldPosition(this), FRotator::ZeroRotator);
+		ActiveAbilityMarker = GetWorld()->SpawnActor<AXYZAbilityMarker>(ActiveTargetAbility->AbilityMarkerTemplate, GetMouseToWorldPosition(this), FRotator::ZeroRotator);
 		return;
 	}
 	
@@ -448,7 +448,7 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 	{
 		ActiveAbilityMarker->Destroy();
 		ActiveAbilityIndex = -1;
-		ActiveTargetAreaAbility = nullptr;
+		ActiveTargetAbility = nullptr;
 	}
 	FXYZInputMessage InputMessage;
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
@@ -483,7 +483,7 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 				PlacementBuilding->Destroy();
 				break;
 			}
-			if(ActiveTargetAreaAbility)
+			if(ActiveTargetAbility)
 			{
 				if(ActiveAbilityMarker)
 				{
@@ -499,7 +499,7 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 				AbilityInput.ActiveActorId = SelectionStructure->ActiveActor;
 				QueueInput(AbilityInput);
 				ActiveAbilityIndex = -1;
-				ActiveTargetAreaAbility = nullptr;
+				ActiveTargetAbility = nullptr;
 				return;
 			}
 			BoxSelectStart = GetMousePositionOnViewport();
@@ -970,6 +970,18 @@ void AXYZPlayerController::UpdateVisibleActors()
 						AXYZActor* Actor = XYZGameState->ActorsByUID[VisibleActor];
 						Actor->SetActorHiddenInGame(false);
 						Actor->bIsVisible = true;
+						for (UActorComponent* Component : Actor->GetComponents())
+						{
+							if (UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Component))
+							{
+								if (MeshComponent->ComponentHasTag("TeamColor"))
+								{
+									MeshComponent->SetVisibility(true);
+									UMaterialInstance* ActorMaterial = Actor->bIsCloaked ? CloakedTeamColors[Actor->TeamId] : Actor->TeamColors[Actor->TeamId];
+									MeshComponent->SetMaterial(0, ActorMaterial);
+								}
+							}
+						}
 					}else
 					{
 						ActorsNotFound.Add(VisibleActor);
@@ -981,8 +993,33 @@ void AXYZPlayerController::UpdateVisibleActors()
 				{
 					if(XYZGameState->ActorsByUID.Contains(NonVisibleActor) && XYZGameState->ActorsByUID[NonVisibleActor])
 					{
-						XYZGameState->ActorsByUID[NonVisibleActor]->SetActorHiddenInGame(true);
-						XYZGameState->ActorsByUID[NonVisibleActor]->bIsVisible = false;
+						AXYZActor* Actor = XYZGameState->ActorsByUID[NonVisibleActor];
+						if(Actor->bIsCloaked)
+						{
+							TArray<USceneComponent*> SceneComponents;
+							Actor->GetComponents<USceneComponent>(SceneComponents);
+							for (USceneComponent* Component : SceneComponents)
+							{
+								if (UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Component))
+								{
+									if (MeshComponent->ComponentHasTag("TeamColor"))
+									{
+										MeshComponent->SetVisibility(true);
+										MeshComponent->SetMaterial(0, CloakedTeamColors[2]);
+									}else
+									{
+										Component->SetVisibility(false);
+									}
+								}else
+								{
+									Component->SetVisibility(false);
+								}
+							}
+						}else
+						{
+							Actor->SetActorHiddenInGame(true);
+						}
+						Actor->bIsVisible = false;
 					}
 					else
 					{

@@ -50,7 +50,6 @@ void UXYZBlob::Process(float DeltaSeconds)
         // Add queued agents to processing set
         // clear queued agent set
         if (!CurrentNode->QueuedAgents.IsEmpty()) {
-            CurrentAction->ProcessAction(CurrentNode->QueuedAgents);
             for (AXYZActor* Agent : CurrentNode->QueuedAgents) {
                 if (Agent) {
                     CurrentNode->ProcessingAgents.Add(Agent);
@@ -62,6 +61,11 @@ void UXYZBlob::Process(float DeltaSeconds)
         // Check agents is they are complete
         // send them to copmpleted set if so
         if (!CurrentNode->ProcessingAgents.IsEmpty()) {
+            if(CurrentAction->ProcessCount == 0 || CurrentAction->IsContiousProcessing())
+            {
+                CurrentAction->ProcessAction(CurrentNode->ProcessingAgents);
+                CurrentAction->ProcessCount++;
+            }
             TSet<AXYZActor*> AgentsToBeCompleted;
             for (AXYZActor* Agent : CurrentNode->ProcessingAgents) {
                 if (Agent) {

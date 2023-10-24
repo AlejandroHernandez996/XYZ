@@ -81,11 +81,23 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", Replicated)
         float AttackRange;
 
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", Replicated)
+    float CastRange = 200.0f;
+
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack")
         float VisionRange;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", Replicated)
     int32 TotalKills;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)
+    bool bHasTrueVision;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)
+    bool bHasInnateTrueVision;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Info", Replicated)
+    bool bIsCloaked;
     
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Decal")
         TMap<EXYZDecalType, UMaterialInterface*> DecalMaterials;
@@ -272,7 +284,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<class AXYZProjectile> ProjectileTemplate;
-
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    class USceneComponent* ProjectileSpawnComponent;
+    
     UPROPERTY(Replicated)
     TArray<FVector> PathingPoints;
     UPROPERTY(Replicated)

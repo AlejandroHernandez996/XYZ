@@ -64,4 +64,7 @@ public:
 
     UPROPERTY()
     FVector TargetLocation;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    float CastRange = -1;
 };
