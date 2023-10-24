@@ -65,25 +65,27 @@ void AXYZAreaOfEffect::ProcessInsideActors(TSet<AXYZActor*> Actors)
 {
 	for(AXYZActor* Actor : Actors)
 	{
-		if(!ActorsBuffed.Contains(Actor))
+		if(Actor->TeamId == TeamId)
 		{
-			if(Actor->TeamId == TeamId)
+			for(UXYZUnitBuff* UnitBuff : TeamBuffsToApply)
 			{
-			
-				for(UXYZUnitBuff* UnitBuff : TeamBuffsToApply)
+				if(!ActorsBuffed.Contains(Actor) || UnitBuff->bIsStackable)
 				{
 					UnitBuff->BuffActor(Actor);
 				}
 			}
-			else
-			{
-				for(UXYZUnitBuff* UnitBuff : EnemyBuffsToApply)
-				{
-					UnitBuff->BuffActor(Actor);
-				}
-			}
-			ActorsBuffed.Add(Actor);
 		}
+		else
+		{
+			for(UXYZUnitBuff* UnitBuff : EnemyBuffsToApply)
+			{
+				if(!ActorsBuffed.Contains(Actor) || UnitBuff->bIsStackable)
+				{
+					UnitBuff->BuffActor(Actor);
+				}
+			}
+		}
+		ActorsBuffed.Add(Actor);
 	}
 }
 

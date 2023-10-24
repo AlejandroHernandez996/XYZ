@@ -307,4 +307,11 @@ public:
 	void PlayAbilitySound(int32 ActorUID, int32 AbilityIndex);
 	void PlayAbilitySound_Implementation(int32 ActorUID, int32 AbilityIndex);
 
+	UPROPERTY()
+	class AXYZAbilityMarker* ActiveAbilityMarker;
+	UPROPERTY()
+	class UXYZTargetAreaAbility* ActiveTargetAreaAbility;
+	UPROPERTY()
+	int32 ActiveAbilityIndex = -1;
+
 };

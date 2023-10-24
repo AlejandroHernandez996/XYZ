@@ -25,6 +25,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/LineBatchComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "XYZAbilityMarker.h"
+#include "XYZTargetAreaAbility.h"
 
 AXYZPlayerController::AXYZPlayerController()
 {
@@ -64,7 +66,6 @@ void AXYZPlayerController::BeginPlay()
 			CameraController->XYZPlayerController = this;
 		}
 	}
-
 }
 
 FVector AXYZPlayerController::SnapToGridCenter(const FVector& Location)
@@ -213,6 +214,11 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 			}
 		}
 	}
+	if(ActiveAbilityMarker)
+	{
+		FVector NewLocation = GetMouseToWorldPosition(this);
+		ActiveAbilityMarker->SetActorLocation(NewLocation);
+	}
 
 	if(!HasAuthority() && XYZGameState)
 	{
@@ -359,6 +365,14 @@ void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {
 	{
 		ClearBuildingPlacement();
 	}
+	if(ActiveAbilityMarker)
+	{
+		ActiveAbilityMarker->Destroy();
+	}
+	if(ActiveTargetAreaAbility)
+	{
+		ActiveTargetAreaAbility = nullptr;
+	}
 	if (SelectionStructure->IsEmpty()) return;
 
 	AXYZActor* Actor = XYZGameState->GetActorById(SelectionStructure->ActiveActor);
@@ -398,6 +412,15 @@ void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {
 		WorkerActorId = SelectionStructure->ActiveActor;
 		return;
 	}
+
+	ActiveTargetAreaAbility = Cast<UXYZTargetAreaAbility>(Actor->Abilities[AbilityIndex]);
+
+	if(ActiveTargetAreaAbility)
+	{
+		ActiveAbilityIndex = AbilityIndex;
+		ActiveAbilityMarker = GetWorld()->SpawnActor<AXYZAbilityMarker>(ActiveTargetAreaAbility->AbilityMarkerTemplate, GetMouseToWorldPosition(this), FRotator::ZeroRotator);
+		return;
+	}
 	
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
 	if(HitActor && !HitActor->bIsVisible)
@@ -420,6 +443,12 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 	if(PlacementBuilding && InputType != EXYZInputType::PRIMARY_INPUT && InputType != EXYZInputType::PRIMARY_MOD)
 	{
 		ClearBuildingPlacement();
+	}
+	if(ActiveAbilityMarker && InputType != EXYZInputType::PRIMARY_INPUT && InputType != EXYZInputType::PRIMARY_MOD)
+	{
+		ActiveAbilityMarker->Destroy();
+		ActiveAbilityIndex = -1;
+		ActiveTargetAreaAbility = nullptr;
 	}
 	FXYZInputMessage InputMessage;
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
@@ -453,6 +482,25 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 				}
 				PlacementBuilding->Destroy();
 				break;
+			}
+			if(ActiveTargetAreaAbility)
+			{
+				if(ActiveAbilityMarker)
+				{
+					ActiveAbilityMarker->Destroy();
+				}
+				if(HitActor && !HitActor->bIsVisible)
+				{
+					HitActor = nullptr;
+				}
+				XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
+				FXYZInputMessage AbilityInput = FXYZInputMessage(SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, EXYZInputType::ABILITY, bPrimaryModifier);
+				AbilityInput.AbilityIndex = ActiveAbilityIndex;
+				AbilityInput.ActiveActorId = SelectionStructure->ActiveActor;
+				QueueInput(AbilityInput);
+				ActiveAbilityIndex = -1;
+				ActiveTargetAreaAbility = nullptr;
+				return;
 			}
 			BoxSelectStart = GetMousePositionOnViewport();
 			GetHUD<AXYZHUD>()->bSelectActors = true;

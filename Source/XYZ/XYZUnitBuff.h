@@ -39,6 +39,9 @@ public:
 	class AXYZActor* OwnerXYZActor;
 
 	void Process(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bIsStackable = false;
 	
 	UFUNCTION()
 	void BuffActor(AXYZActor* Actor);
