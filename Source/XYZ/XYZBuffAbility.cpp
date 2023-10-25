@@ -25,8 +25,23 @@ bool UXYZBuffAbility::Activate()
 				return false;
 			}
 		}
-		FName BuffName = FName(*Name.AppendChar('_').Append(OwningActor->DisplayName).Append(FGuid::NewGuid().ToString()));
+		if(bIsToggleable && bIsActive)
+		{
+			for(UXYZUnitBuff* Buff : OwningActor->ActiveBuffs)
+			{
+				if(Buff->OwningAbility == this)
+				{
+					Buff->bFlagForRemoval = true;
+					return true;
+				}
+			}
+			return false;
+		}
+		OwningActor->Energy = FMath::Clamp(OwningActor->Energy-EnergyCost,0.0f,OwningActor->MaxEnergy);
+		FString BuffPrefixName = Name;
+		FName BuffName = FName(*BuffPrefixName.AppendChar('_').Append(FGuid::NewGuid().ToString()));
 		UXYZUnitBuff* NewBuff =  NewObject<UXYZUnitBuff>(OwningActor, BuffTemplate, BuffName);
+		NewBuff->OwningAbility = this;
 		NewBuff->OwnerXYZActor = OwningActor;
 		OwningActor->AddBuff(NewBuff);
 		return true;

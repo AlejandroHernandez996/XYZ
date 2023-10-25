@@ -141,7 +141,7 @@ void AXYZWorker::Process(float DeltaTime)
         }
         else
         {
-            if(HeldResource != EXYZResourceType::NONE)
+            if(HeldResource == Resource->ResourceType)
             {
                 StartReturningResource();
             }

@@ -229,12 +229,7 @@ void UXYZMapManager::AddActorToGrid(AXYZActor* Actor) {
 		{
 			if(TeamHasVision(i, Actor->GridCoord))
 			{
-				bool bActorIsOnSameTeam = Actor->TeamId == i;
-				bool bActorIsCloaked = Actor->bIsCloaked;
-				if (bActorIsOnSameTeam || (!bActorIsCloaked || TeamHasTrueVision(i, Actor->GridCoord)))
-				{
-					VisibleActors[i].Add(Actor);
-				}
+				VisibleActors[i].Add(Actor);
 				NonVisibleActors[i].Remove(Actor);
 			}
 		}
@@ -250,7 +245,7 @@ void UXYZMapManager::AddVisionForActor(AXYZActor* Actor)
 	{
 		return;
 	}
-	int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
+	/*int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
 
 	for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
 		for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
@@ -263,6 +258,31 @@ void UXYZMapManager::AddVisionForActor(AXYZActor* Actor)
 				AddActorVision(Actor, AdjacentCoord);
 				VisibleCells[Actor->TeamId].Add(AdjacentCoord);
 				NonVisibleCells[Actor->TeamId].Remove(AdjacentCoord);
+			}
+		}
+	}
+	*/
+	int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
+	int32 RadiusSquared = CellsToCheck * CellsToCheck; 
+
+	for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
+		for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
+			FIntVector2 AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
+
+			int32 DistanceSquared = (X * X) + (Y * Y);
+
+			if (DistanceSquared <= RadiusSquared) {
+				if (!IsGridCoordValid(AdjacentCoord) || Actor->TeamId == 2) continue;
+
+				bool bIsHighGround = Grid[ActorGridCoord]->Height > Grid[AdjacentCoord]->Height;
+				bool bIsCloseInHeight = FMath::Abs(Grid[ActorGridCoord]->Height - Grid[AdjacentCoord]->Height) < 50.0f;
+				bool bCanSeeHeight = bIsHighGround || bIsCloseInHeight;
+
+				if (Actor->bIsFlying || bCanSeeHeight) {
+					AddActorVision(Actor, AdjacentCoord);
+					VisibleCells[Actor->TeamId].Add(AdjacentCoord);
+					NonVisibleCells[Actor->TeamId].Remove(AdjacentCoord);
+				}
 			}
 		}
 	}
@@ -290,7 +310,7 @@ void UXYZMapManager::RemoveVisionForActor(AXYZActor* Actor)
 	{
 		return;
 	}
-	int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
+	/*int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
 
 	for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
 		for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
@@ -305,6 +325,30 @@ void UXYZMapManager::RemoveVisionForActor(AXYZActor* Actor)
 				{
 					VisibleCells[Actor->TeamId].Remove(AdjacentCoord);
 					NonVisibleCells[Actor->TeamId].Add(AdjacentCoord);
+				}
+			}
+		}
+	}
+	*/
+	int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
+	int32 RadiusSquared = CellsToCheck * CellsToCheck; 
+
+	for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
+		for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
+			FIntVector2 AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
+			int32 DistanceSquared = (X * X) + (Y * Y);
+			if (DistanceSquared <= RadiusSquared) {
+				if (!IsGridCoordValid(AdjacentCoord) || Actor->TeamId == 2) continue;
+				bool bIsHighGround = Grid[ActorGridCoord]->Height > Grid[AdjacentCoord]->Height;
+				bool bIsCloseInHeight = FMath::Abs(Grid[ActorGridCoord]->Height - Grid[AdjacentCoord]->Height) < 50.0f;
+				bool bCanSeeHeight = bIsHighGround || bIsCloseInHeight;
+				if (Actor->bIsFlying || bCanSeeHeight) {
+					RemoveActorVision(Actor, AdjacentCoord);
+					if(!TeamHasVision(Actor->TeamId, AdjacentCoord))
+					{
+						VisibleCells[Actor->TeamId].Remove(AdjacentCoord);
+						NonVisibleCells[Actor->TeamId].Add(AdjacentCoord);
+					}
 				}
 			}
 		}

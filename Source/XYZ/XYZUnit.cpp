@@ -258,6 +258,15 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 
 void AXYZUnit::FlyingAttackMoveTarget()
 {
+	if(TargetActor && !TargetActor->CanAttack(this))
+	{
+		if(TargetActor->bIsCloaked)
+		{
+			GetXYZAIController()->XYZStopMovement();
+		}
+		TargetActor = nullptr;
+		return;
+	}
 	if(TargetActor->State == EXYZUnitState::DEAD || TargetActor->Health <= 0.0f)
 	{
 		TargetActor = nullptr;

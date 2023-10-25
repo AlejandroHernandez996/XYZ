@@ -21,5 +21,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSet<int32> RequiredUpgradeIds;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bIsToggleable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bIsActive;
 	virtual bool Activate() override;
 };

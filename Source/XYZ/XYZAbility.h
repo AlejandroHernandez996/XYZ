@@ -67,4 +67,7 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     float CastRange = -1;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    bool bCanCastWhileMoving;
 };

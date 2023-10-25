@@ -128,16 +128,16 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		{
 			for (const FHitResult& HitResult : HitResults)
 			{
-				AActor* HitActor = HitResult.GetActor();
-				if (HitActor && HitActor->IsA(AXYZActor::StaticClass()))
+				AXYZActor* XYZActor = Cast<AXYZActor>(HitResult.GetActor());
+				if (XYZActor)
 				{
-					AXYZActor* XYZActor = Cast<AXYZActor>(HitActor);
-					if (XYZActor)
+					if(XYZActor->TeamId != TeamId && XYZActor->bIsCloaked && XYZActor->bInEnemyTrueVision)
 					{
-						XYZActorHit = HitResult;
-						bXYZActorHitSuccessful = true;
-						break;
+						continue;
 					}
+					XYZActorHit = HitResult;
+					bXYZActorHitSuccessful = true;
+					break;
 				}
 			}
 		}
@@ -227,6 +227,14 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		ULineBatchComponent* LineBatcher = GetWorld()->ForegroundLineBatcher;
 		for(AXYZActor* Actor : Actors)
 		{
+			if(!Actor) continue;
+			if(Actor->bIsCloaked)
+			{
+				CloakActor(Actor);
+			}else
+			{
+				UncloakActor(Actor);
+			}
 			if(Actor &&
 				Actor->bIsVisible &&
 				Actor->State != EXYZUnitState::DEAD &&
@@ -970,17 +978,12 @@ void AXYZPlayerController::UpdateVisibleActors()
 						AXYZActor* Actor = XYZGameState->ActorsByUID[VisibleActor];
 						Actor->SetActorHiddenInGame(false);
 						Actor->bIsVisible = true;
-						for (UActorComponent* Component : Actor->GetComponents())
+						if(Actor->bIsCloaked)
 						{
-							if (UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Component))
-							{
-								if (MeshComponent->ComponentHasTag("TeamColor"))
-								{
-									MeshComponent->SetVisibility(true);
-									UMaterialInstance* ActorMaterial = Actor->bIsCloaked ? CloakedTeamColors[Actor->TeamId] : Actor->TeamColors[Actor->TeamId];
-									MeshComponent->SetMaterial(0, ActorMaterial);
-								}
-							}
+							CloakActor(Actor);
+						}else
+						{
+							UncloakActor(Actor);
 						}
 					}else
 					{
@@ -994,32 +997,8 @@ void AXYZPlayerController::UpdateVisibleActors()
 					if(XYZGameState->ActorsByUID.Contains(NonVisibleActor) && XYZGameState->ActorsByUID[NonVisibleActor])
 					{
 						AXYZActor* Actor = XYZGameState->ActorsByUID[NonVisibleActor];
-						if(Actor->bIsCloaked)
-						{
-							TArray<USceneComponent*> SceneComponents;
-							Actor->GetComponents<USceneComponent>(SceneComponents);
-							for (USceneComponent* Component : SceneComponents)
-							{
-								if (UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Component))
-								{
-									if (MeshComponent->ComponentHasTag("TeamColor"))
-									{
-										MeshComponent->SetVisibility(true);
-										MeshComponent->SetMaterial(0, CloakedTeamColors[2]);
-									}else
-									{
-										Component->SetVisibility(false);
-									}
-								}else
-								{
-									Component->SetVisibility(false);
-								}
-							}
-						}else
-						{
-							Actor->SetActorHiddenInGame(true);
-						}
 						Actor->bIsVisible = false;
+						Actor->SetActorHiddenInGame(true);
 					}
 					else
 					{
@@ -1191,6 +1170,51 @@ void AXYZPlayerController::PlayAbilitySound_Implementation(int32 ActorUID, int32
 			{
 				Actor->PlaySound(Actor->Abilities[AbilityIndex]->AbilitySoundEffect);
 			}
+		}
+	}
+}
+
+void AXYZPlayerController::CloakActor_Implementation(AXYZActor* Actor)
+{
+	if(!Actor || Actor->State == EXYZUnitState::DEAD) return;
+	TArray<USceneComponent*> SceneComponents;
+	Actor->GetComponents<USceneComponent>(SceneComponents);
+	for (USceneComponent* Component : SceneComponents)
+	{
+		UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Component);
+		if (MeshComponent && MeshComponent->ComponentHasTag("Cloak"))
+		{
+			if (MeshComponent->ComponentHasTag("Cloak"))
+			{
+				Component->SetVisibility(true);
+				UMaterialInstance* ActorMaterial = CloakedTeamColors[Actor->TeamId == TeamId ? TeamId : 2];
+				MeshComponent->SetMaterial(0, ActorMaterial);
+			}
+		}
+		else if(Actor->TeamId != TeamId)
+		{
+			Component->SetVisibility(Actor->bInEnemyTrueVision);
+		}
+	}
+}
+void AXYZPlayerController::UncloakActor_Implementation(AXYZActor* Actor)
+{
+	if(!Actor || Actor->State == EXYZUnitState::DEAD) return;
+	TArray<USceneComponent*> SceneComponents;
+	Actor->GetComponents<USceneComponent>(SceneComponents);
+	for (USceneComponent* Component : SceneComponents)
+	{
+		if (UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Component))
+		{
+			if (MeshComponent->ComponentHasTag("Cloak"))
+			{
+				UMaterialInstance* ActorMaterial = Actor->TeamColors[Actor->TeamId];
+				MeshComponent->SetMaterial(0, ActorMaterial);
+			}
+		}
+		if(!Component->ComponentHasTag("Hidden"))
+		{
+			Component->SetVisibility(Actor->bIsVisible);
 		}
 	}
 }

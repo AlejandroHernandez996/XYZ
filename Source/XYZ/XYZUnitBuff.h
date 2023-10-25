@@ -8,6 +8,7 @@
 #include "UObject/NoExportTypes.h"
 #include "XYZUnitBuff.generated.h"
 
+class UXYZBuffAbility;
 /**
  * 
  */
@@ -33,6 +34,12 @@ public:
 	float BuffDuration = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bDrainsEnergy;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float EnergyDrainPerSecond = 0.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TotalTimeBuffed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -42,10 +49,16 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsStackable = false;
+
+	UPROPERTY()
+	UXYZBuffAbility* OwningAbility;
 	
 	UFUNCTION()
 	void BuffActor(AXYZActor* Actor);
 	UFUNCTION()
 	void DebuffActor(AXYZActor* Actor);
 	void BuffActorStat(EXYZStat Stat, float StatGain, AXYZActor* Actor);
+
+	UPROPERTY()
+	bool bFlagForRemoval;
 };

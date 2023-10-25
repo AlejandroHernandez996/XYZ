@@ -48,6 +48,9 @@ void UXYZUpgradeAbility::UpgradeActorStat(EXYZStat Stat, float StatGain, AXYZAct
 	case EXYZStat::MOVEMENT_SPEED:
 		Actor->GetCharacterMovement()->MaxWalkSpeed += StatGain;
 		break;
+	case EXYZStat::CLOAK:
+		Actor->SetIsCloaked(StatGain != 0.0f);
+		break;
 	default: ;
 	}
 }

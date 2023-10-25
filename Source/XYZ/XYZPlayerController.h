@@ -316,4 +316,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
 	TArray<UMaterialInstance*> CloakedTeamColors;
 
+	UFUNCTION(Client, Reliable)
+	void CloakActor(AXYZActor* Actor);
+	void CloakActor_Implementation(AXYZActor* Actor);
+
+	UFUNCTION(Client, Reliable)
+	void UncloakActor(AXYZActor* Actor);
+	void UncloakActor_Implementation(AXYZActor* Actor);
 };

@@ -3,6 +3,7 @@
 
 #include "XYZUnitBuff.h"
 #include "XYZActor.h"
+#include "XYZBuffAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 void UXYZUnitBuff::Process(float DeltaTime)
@@ -10,13 +11,17 @@ void UXYZUnitBuff::Process(float DeltaTime)
 	if(TotalTimeBuffed == 0.0f)
 	{
 		BuffActor(OwnerXYZActor);
+		OwningAbility->bIsActive = true;
 	}
-
-	if(TotalTimeBuffed >= BuffDuration && BuffDuration != -1.0f)
+	if(bDrainsEnergy)
+	{
+		OwnerXYZActor->Energy = FMath::Clamp(OwnerXYZActor->Energy-EnergyDrainPerSecond*DeltaTime,0,OwnerXYZActor->MaxEnergy);
+	}
+	if(bFlagForRemoval || (TotalTimeBuffed >= BuffDuration && BuffDuration != -1.0f) || (bDrainsEnergy && OwnerXYZActor->Energy <= 0.0f))
 	{
 		OwnerXYZActor->BuffsToRemove.Add(this);
+		OwningAbility->bIsActive = false;
 	}
-
 	TotalTimeBuffed += DeltaTime;
 }
 
@@ -71,6 +76,9 @@ void UXYZUnitBuff::BuffActorStat(EXYZStat Stat, float StatGain, AXYZActor* Actor
 		break;
 	case EXYZStat::MOVEMENT_SPEED:
 		Actor->GetCharacterMovement()->MaxWalkSpeed += StatGain;
+		break;
+	case EXYZStat::CLOAK:
+		Actor->SetIsCloaked(StatGain != 0.0f);
 		break;
 	default: ;
 	}

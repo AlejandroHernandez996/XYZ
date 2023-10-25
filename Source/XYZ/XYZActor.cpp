@@ -97,6 +97,7 @@ void AXYZActor::Tick(float DeltaTime)
 	if (!HasAuthority() && !bSetTeamColor && (TeamId == 0 || TeamId == 1))
 	{
 		SetTeamColor();
+		
 		bSetTeamColor = true; 
 	}
 	if(HasAuthority())
@@ -141,6 +142,8 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AXYZActor, PathingPointsColors);
 	DOREPLIFETIME(AXYZActor, bHasTrueVision);
 	DOREPLIFETIME(AXYZActor, bIsCloaked);
+	DOREPLIFETIME(AXYZActor, bInEnemyVision);
+	DOREPLIFETIME(AXYZActor, bInEnemyTrueVision);
 }
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
@@ -175,7 +178,11 @@ void AXYZActor::Attack()
 	{
 		return;
 	}
-	
+	if(TargetActor && !TargetActor->CanAttack(this))
+	{
+		TargetActor = nullptr;
+		return;
+	}
 	if (TargetActor && !bIsAttackOnCooldown)
 	{
 		bIsAttackOnCooldown = true;
@@ -349,10 +356,14 @@ void AXYZActor::AttackMoveTarget()
 	FVector ActorLocation = GetActorLocation();
 
 	FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
+	if(TargetActor && !TargetActor->CanAttack(this))
+	{
+		TargetActor = nullptr;
+		return;
+	}
 	if (TargetActor &&
 		TargetActor != this &&
-		TargetActor->State != EXYZUnitState::DEAD &&
-		TargetActor->CanAttack(this))
+		TargetActor->State != EXYZUnitState::DEAD )
 	{
 		FVector TargetActorLocation = TargetActor->GetActorLocation();
 		
@@ -460,7 +471,6 @@ void AXYZActor::Process(float DeltaTime)
 		GetWorld()->GetAuthGameMode<AXYZGameMode>()->DeathManager->QueueDeath(this);
 		return;
 	}
-
 	if(MaxEnergy > 0 && Energy < MaxEnergy)
 	{
 		Energy += FMath::Clamp(DeltaTime*EnergyRecoveryRatePerSecond,0.0f,MaxEnergy);
@@ -477,6 +487,8 @@ void AXYZActor::Process(float DeltaTime)
 	
 	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
 
+	bInEnemyVision = MapManager->TeamHasVision(TeamId == 0 ? 1 : 0, GridCoord);
+	bInEnemyTrueVision = MapManager->TeamHasTrueVision(TeamId == 0 ? 1 : 0, GridCoord);
 	MapManager->AddToUpdateSet(this);
 	LastLocation = GetActorLocation();
 }
@@ -558,7 +570,9 @@ bool AXYZActor::CanAttack(AXYZActor* AttackingActor)
 {
 	if(AttackingActor)
 	{
-		return bIsFlying ? AttackingActor->bCanAttackAir : AttackingActor->bCanAttackGround;
+		bool bCanAttackActorBasedOnHeight = bIsFlying ? AttackingActor->bCanAttackAir : AttackingActor->bCanAttackGround;
+		bool bCanAttackCloakedActor = !bIsCloaked || bInEnemyTrueVision;
+		return bCanAttackActorBasedOnHeight && (bCanAttackCloakedActor || TeamId == AttackingActor->TeamId);
 	}
 	return false;
 }
@@ -566,4 +580,19 @@ bool AXYZActor::CanAttack(AXYZActor* AttackingActor)
 bool AXYZActor::CanUseAbility()
 {
 	return State != EXYZUnitState::DEAD;
+}
+
+void AXYZActor::SetIsCloaked(bool bIsActorCloaked)
+{
+	bIsCloaked = bIsActorCloaked;
+	for(AXYZPlayerController* PlayerController : GetWorld()->GetAuthGameMode<AXYZGameMode>()->PlayerControllers)
+	{
+		if(bIsCloaked)
+		{
+			PlayerController->CloakActor(this);
+		}else
+		{
+			PlayerController->UncloakActor(this);
+		}
+	}
 }

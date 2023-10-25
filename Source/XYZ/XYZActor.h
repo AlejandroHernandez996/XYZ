@@ -311,4 +311,13 @@ public:
 
     UFUNCTION()
     virtual bool CanUseAbility();
+
+    UFUNCTION()
+    void SetIsCloaked(bool bIsActorCloaked);
+
+    UPROPERTY(Replicated)
+    bool bInEnemyTrueVision;
+
+    UPROPERTY(Replicated)
+    bool bInEnemyVision;
 };

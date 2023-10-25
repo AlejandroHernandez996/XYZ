@@ -41,11 +41,14 @@ void UXYZAbilityAction::ProcessAction(TSet<AXYZActor*> Agents) {
         UXYZAbility* Ability = Actor->Abilities[AbilityIndex];
         if(!Ability) continue;
         float Distance = FVector2D::Distance(FVector2D(Actor->GetActorLocation().X, Actor->GetActorLocation().Y), FVector2D(TargetLocation.X, TargetLocation.Y));
-        if(Actor->CastRange == -1 || Distance <= Actor->CastRange)
+        if(Actor->CastRange == -1 || Distance <= Actor->CastRange || Ability->CastRange == -1)
         {
             Actor->Abilities[AbilityIndex]->TargetLocation = TargetLocation;
             Actor->UseAbility(AbilityIndex);
-            Actor->GetXYZAIController()->XYZStopMovement();
+            if(!Ability->bCanCastWhileMoving)
+            {
+                Actor->GetXYZAIController()->XYZStopMovement();
+            }
             FinishedActors.Add(Actor);
         }else
         {
