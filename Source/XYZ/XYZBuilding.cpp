@@ -313,7 +313,7 @@ void AXYZBuilding::ResearchUpgrade(UXYZUpgradeAbility* UpgradeAbility)
 bool AXYZBuilding::HasValidSpawnPoint()
 {
     UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
-    TArray<FIntVector2> PerimeterCoords = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(GridSize.X, GridSize.Y));
+    TArray<FIntVector2> PerimeterCoords = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(GridSize.X, GridSize.Y)).Array();
 
     FIntVector2 ClosestValidPerimeterCoord;
     FIntVector2 SpawnPointToGridCoord = MapManager->GetGridCoordinate(SpawnPoint);
@@ -422,7 +422,12 @@ void AXYZBuilding::Process(float DeltaTime)
         }
         if (!TargetActor || TargetActor->Health <= 0.0f)
         {
-            TargetActor = FindClosestActor(true);
+            TimeSinceScanForTarget += DeltaTime;
+            if(TimeSinceScanForTarget >= ScanForTargetRate)
+            {
+                TargetActor = FindClosestActor(true);
+                TimeSinceScanForTarget = 0.0f;
+            }
         }
         if (TargetActor)
         {

@@ -23,7 +23,7 @@ public:
     }
 
     UFUNCTION()
-    virtual bool IsContiousProcessing()
+    virtual bool IsContinousProcessing()
     {
         return false;
     }
@@ -46,4 +46,8 @@ public:
         TSet<AXYZActor*> ActorSet;
     UPROPERTY()
     int32 ProcessCount = 0;
+    UPROPERTY()
+    float ProcessRate = 2.0f;
+    UPROPERTY()
+    float TimeSinceProcess;
 };

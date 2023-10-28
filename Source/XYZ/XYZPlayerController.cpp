@@ -93,6 +93,18 @@ FVector AXYZPlayerController::SnapToGridCenter(const FVector& Location)
 
 void AXYZPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+	if(!HasAuthority() && !bHasHiddenEnemyBuildings && TeamId != -1 && XYZGameState && XYZGameState->MatchState == EXYZMatchState::IN_PROGRESS)
+	{
+		for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		{
+			AXYZActor* Actor = *ActorItr;
+			if(Actor && Actor->TeamId != -1 && Actor->TeamId != 2 && Actor->TeamId != TeamId)
+			{
+				Actor->SetActorHiddenInGame(true);
+			}
+		}
+		bHasHiddenEnemyBuildings = true;
+	}
 	if(!XYZGameState)
 	{
 		XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
@@ -227,14 +239,7 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		ULineBatchComponent* LineBatcher = GetWorld()->ForegroundLineBatcher;
 		for(AXYZActor* Actor : Actors)
 		{
-			if(!Actor) continue;
-			if(Actor->bIsCloaked)
-			{
-				CloakActor(Actor);
-			}else
-			{
-				UncloakActor(Actor);
-			}
+			
 			if(Actor &&
 				Actor->bIsVisible &&
 				Actor->State != EXYZUnitState::DEAD &&
@@ -245,7 +250,7 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 				Actor->PathingPoints.Num() == Actor->PathingPointsColors.Num() &&
 				Actor->PathingPointsColors.Num() == Actor->PathingPointsShowFlag.Num())
 			{
-				FVector LastPathingPoint = Actor->PathingPoints[0];
+				FVector LastPathingPoint = Actor->GetActorLocation();
 				for(int i = 0;i < Actor->PathingPoints.Num();i++)
 				{
 					if(Actor->PathingPointsShowFlag[i])
@@ -258,6 +263,14 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 						LastPathingPoint = Actor->PathingPoints[i];
 					}
 				}
+			}
+			if(!Actor || !Actor->bCanEverCloak) continue;
+			if(Actor->bIsCloaked)
+			{
+				CloakActor(Actor);
+			}else
+			{
+				UncloakActor(Actor);
 			}
 		}
 	}
@@ -998,7 +1011,21 @@ void AXYZPlayerController::UpdateVisibleActors()
 					{
 						AXYZActor* Actor = XYZGameState->ActorsByUID[NonVisibleActor];
 						Actor->bIsVisible = false;
-						Actor->SetActorHiddenInGame(true);
+						if(Actor->IsA(AXYZBuilding::StaticClass()))
+						{
+							TArray<USceneComponent*> SceneComponents;
+							Actor->GetComponents<USceneComponent>(SceneComponents);
+							for(USceneComponent* SceneComponent : SceneComponents)
+							{
+								if(!SceneComponent->IsA(UStaticMesh::StaticClass()))
+								{
+									SceneComponent->SetVisibility(false);
+								}
+							}
+						}else
+						{
+							Actor->SetActorHiddenInGame(true);
+						}
 					}
 					else
 					{
@@ -1217,6 +1244,22 @@ void AXYZPlayerController::UncloakActor_Implementation(AXYZActor* Actor)
 			Component->SetVisibility(Actor->bIsVisible);
 		}
 	}
+}
+
+void AXYZPlayerController::DrawLine_Implementation(FVector Start, FVector End, FColor Color)
+{
+	float Duration = .1f;
+	float Thickness = 2.0f;
+	uint8 DepthPriority = 0;
+
+	
+	DrawDebugLine(GetWorld(), Start, End, Color, false, Duration, DepthPriority, Thickness);
+	FVector XAxisDirection = FVector::RightVector;
+	FVector YAxisDirection = FVector::ForwardVector;
+	int NumSides = 32;
+	FVector Center = Start;
+	Center.Z = 100.0f;
+	//GetWorld()->LineBatcher->DrawCircle(Center, XAxisDirection, YAxisDirection, Color, 10000.0f/128.0f, NumSides, SDPG_MAX);
 }
 
 void AXYZPlayerController::AttackMoveFromMinimap(FVector2D TargetLocation)

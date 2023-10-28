@@ -62,6 +62,8 @@ public:
 	class UXYZProjectileManager* ProjectileManager;
 	UPROPERTY()
 	class UXYZAreaOfEffectManager* AreaOfEffectManager;
+	UPROPERTY()
+	class UXYZMoveBatcher* MoveBatcher;
 	
 	UPROPERTY()
 	class UXYZActorCache* ActorCache;

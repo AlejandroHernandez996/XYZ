@@ -55,6 +55,8 @@ FIntVector2 UXYZMapManager::GetGridCoordinate(const FVector& WorldLocation) {
 }
 
 void UXYZMapManager::Process(float DeltaSeconds) {
+	double StartTime, EndTime, ElapsedTime;
+	StartTime = FPlatformTime::Seconds();
 	for(AXYZActor* Actor : ActorsToUpdate)
 	{
 		if(!Actor || Actor->IsA(AXYZResourceActor::StaticClass()))
@@ -64,9 +66,26 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 		RemoveActorFromGrid(Actor);
 		AddActorToGrid(Actor);
 	}
+	for(AXYZActor* Actor : ActorsToRemove)
+	{
+		if(!Actor)
+		{
+			continue;
+		}
+		RemoveActorFromGrid(Actor);
+	}
 	
+	EndTime = FPlatformTime::Seconds();
+	ElapsedTime = EndTime - StartTime;
+	UE_LOG(LogTemp, Warning, TEXT("MapManager AddRemove Update Actors Time: %f seconds"), ElapsedTime);
+
+	StartTime = FPlatformTime::Seconds();
 	SendDeltaVisibilityToClients();
+	EndTime = FPlatformTime::Seconds();
+	ElapsedTime = EndTime - StartTime;
+	UE_LOG(LogTemp, Warning, TEXT("Send visibility: %f seconds"), ElapsedTime);
 	ActorsToUpdate.Empty();
+	ActorsToRemove.Empty();
 	bHasSentVison = true;
 }
 
@@ -75,36 +94,32 @@ void UXYZMapManager::AddToUpdateSet(AXYZActor* Actor)
 	ActorsToUpdate.Add(Actor);
 }
 
-TArray<FIntVector2> UXYZMapManager::GetPerimeterCoords(FIntVector2 CenterGridCoord, FIntVector2 GridArea)
+TSet<FIntVector2> UXYZMapManager::GetPerimeterCoords(FIntVector2 CenterGridCoord, FIntVector2 GridArea)
 {
-	TArray<FIntVector2> PerimeterCoords;
-    
-	int32 HalfSizeX = GridArea.X / 2;
-	int32 HalfSizeY = GridArea.Y / 2;
-	int32 MinX = CenterGridCoord.X - HalfSizeX;
-	int32 MaxX = CenterGridCoord.X + HalfSizeX;
-	int32 MinY = CenterGridCoord.Y - HalfSizeY;
-	int32 MaxY = CenterGridCoord.Y + HalfSizeY;
+	TSet<FIntVector2> PerimeterCoords;
 
-	if(GridArea.X % 2 == 0) 
+	if (GridArea.X <= 0 || GridArea.Y <= 0)
 	{
-		MaxX -= 1;
-	}
-	if(GridArea.Y % 2 == 0) 
-	{
-		MaxY -= 1;
+		return PerimeterCoords;
 	}
 
-	for (int32 X = MinX; X <= MaxX; ++X)
+	int32 HalfWidth = GridArea.X / 2;
+	int32 HalfHeight = GridArea.Y / 2;
+	int32 MinX = CenterGridCoord.X - HalfWidth;
+	int32 MaxX = CenterGridCoord.X + HalfWidth;
+	int32 MinY = CenterGridCoord.Y - HalfHeight;
+	int32 MaxY = CenterGridCoord.Y + HalfHeight;
+
+	for (int32 X = MinX - 1; X <= MaxX + 1; ++X)
 	{
-		PerimeterCoords.Add(FIntVector2(X, MinY - 1)); // Top edge
-		PerimeterCoords.Add(FIntVector2(X, MaxY + 1)); // Bottom edge
+		PerimeterCoords.Add(FIntVector2(X, MinY - 1));
+		PerimeterCoords.Add(FIntVector2(X, MaxY + 1));
 	}
 
-	for (int32 Y = MinY; Y <= MaxY; ++Y)
+	for (int32 Y = MinY - 1; Y <= MaxY + 1; ++Y)
 	{
-		PerimeterCoords.Add(FIntVector2(MinX - 1, Y)); // Left edge
-		PerimeterCoords.Add(FIntVector2(MaxX + 1, Y)); // Right edge
+		PerimeterCoords.Add(FIntVector2(MinX - 1, Y));
+		PerimeterCoords.Add(FIntVector2(MaxX + 1, Y));
 	}
 
 	return PerimeterCoords;
@@ -194,6 +209,35 @@ TSet<AXYZActor*> UXYZMapManager::FindActorsInRange(const FIntVector2& CenterGrid
 	return ActorsInRange;
 }
 
+TArray<FIntVector2> UXYZMapManager::CalculateForwardGridCells(FIntVector2 GridCoord, const FVector& ForwardDirection, FIntVector2 ForwardCellArea)
+{
+	TArray<FIntVector2> ForwardGridCells;
+
+	int32 StartX = -ForwardCellArea.X;
+	int32 EndX = ForwardCellArea.X;
+	int32 StartY = -ForwardCellArea.Y;
+	int32 EndY = ForwardCellArea.Y;
+
+	for (int32 X = StartX; X <= EndX; X++)
+	{
+		for (int32 Y = StartY; Y <= EndY; Y++)
+		{
+			if (X != 0 || Y != 0)
+			{
+				FIntVector2 Offset = FIntVector2(
+					FMath::RoundToInt(ForwardDirection.X * X),
+					FMath::RoundToInt(ForwardDirection.Y * Y)
+				);
+
+				FIntVector2 ForwardGridCell = GridCoord + Offset;
+				ForwardGridCells.Add(ForwardGridCell);
+			}
+		}
+	}
+
+	return ForwardGridCells;
+}
+
 TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
 {
 	if(!Actor) return {};
@@ -215,6 +259,68 @@ TSet<AXYZActor*> UXYZMapManager::FindActorsInVisionRange(AXYZActor* Actor)
 		}
 	}
 	return ActorsInRange;
+}
+
+AXYZActor* UXYZMapManager::FindClosestEnemyActorInVisionRange(AXYZActor* Actor, bool bIgnoreFriendlyActors)
+{
+	AXYZActor* ClosestEnemyActor = nullptr;
+	if(!Actor) return ClosestEnemyActor;
+	FIntVector2 GridCoord = GetGridCoordinate(Actor->GetActorLocation());
+	int32 CellsToCheck = (FMath::CeilToInt(Actor->VisionRange / GridCellSize)+1)*2;
+	FVector CurrentLocation = Actor->GetActorLocation();
+	for(int i = 0;i < CellsToCheck;i++)
+	{
+		TSet<FIntVector2> PerimeterCoords;
+		if(i == 0)
+		{
+			PerimeterCoords.Add(GridCoord);
+		}else
+		{
+			PerimeterCoords = GetPerimeterCoords(GridCoord,FIntVector2(i,i));
+		}
+		TSet<AXYZActor*> ActorsInPerimeter;
+		for(FIntVector2 PerimeterCoord : PerimeterCoords)
+		{
+			if(Grid.Contains(PerimeterCoord))
+			{
+				ActorsInPerimeter.Append(Grid[PerimeterCoord]->ActorsInCell);
+			}
+		}
+		int32 TeamId = Actor->TeamId;
+		float ClosestDistanceSqr = FLT_MAX;
+		int ClosestActorPriority = INT_MAX;
+		for(AXYZActor* ActorInPerimeter : ActorsInPerimeter)
+		{
+			bool bTargetIsFriendlyAndShouldIgnore = ActorInPerimeter && ActorInPerimeter->TeamId == TeamId && bIgnoreFriendlyActors;
+			if (!ActorInPerimeter ||
+				ActorInPerimeter == Actor ||
+				bTargetIsFriendlyAndShouldIgnore ||
+				ActorInPerimeter->State == EXYZUnitState::DEAD ||
+				ActorInPerimeter->IsA(AXYZResourceActor::StaticClass()) ||
+				!ActorInPerimeter->CanAttack(Actor))
+			{
+				continue;
+			}
+
+			float DistanceSqr = FVector::DistSquaredXY(CurrentLocation, ActorInPerimeter->GetActorLocation());
+			int ActorPriority = ActorInPerimeter->GetActorPriority();
+
+			bool bIsCloser = DistanceSqr < ClosestDistanceSqr && DistanceSqr <= FMath::Square(Actor->VisionRange);
+			bool bHasHigherPriority = (DistanceSqr == ClosestDistanceSqr) && (ActorPriority < ClosestActorPriority);
+
+			if (bIsCloser || bHasHigherPriority)
+			{
+				ClosestDistanceSqr = DistanceSqr;
+				ClosestEnemyActor = ActorInPerimeter;
+				ClosestActorPriority = ActorPriority;
+			}
+		}
+		if(ClosestEnemyActor)
+		{
+			break;
+		}
+	}
+	return ClosestEnemyActor;
 }
 
 void UXYZMapManager::AddActorToGrid(AXYZActor* Actor) {
@@ -245,23 +351,7 @@ void UXYZMapManager::AddVisionForActor(AXYZActor* Actor)
 	{
 		return;
 	}
-	/*int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
-
-	for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
-		for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
-			FIntVector2 AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
-			if(!IsGridCoordValid(AdjacentCoord) || Actor->TeamId == 2) continue;
-			bool bIsHighGround = Grid[ActorGridCoord]->Height > Grid[AdjacentCoord]->Height;
-			bool bIsCloseInHeight = FMath::Abs(Grid[ActorGridCoord]->Height - Grid[AdjacentCoord]->Height) < 50.0f;
-			bool bCanSeeHeight = bIsHighGround || bIsCloseInHeight;
-			if (Actor->bIsFlying || bCanSeeHeight) {
-				AddActorVision(Actor, AdjacentCoord);
-				VisibleCells[Actor->TeamId].Add(AdjacentCoord);
-				NonVisibleCells[Actor->TeamId].Remove(AdjacentCoord);
-			}
-		}
-	}
-	*/
+	
 	int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
 	int32 RadiusSquared = CellsToCheck * CellsToCheck; 
 
@@ -282,6 +372,14 @@ void UXYZMapManager::AddVisionForActor(AXYZActor* Actor)
 					AddActorVision(Actor, AdjacentCoord);
 					VisibleCells[Actor->TeamId].Add(AdjacentCoord);
 					NonVisibleCells[Actor->TeamId].Remove(AdjacentCoord);
+					for(AXYZActor* ActorToAdd : Grid[AdjacentCoord]->ActorsInCell)
+					{
+						if(ActorToAdd->TeamId != Actor->TeamId)
+						{
+							VisibleActors[Actor->TeamId].Add(ActorToAdd);
+							NonVisibleActors[Actor->TeamId].Remove(ActorToAdd);
+						}
+					}
 				}
 			}
 		}
@@ -310,26 +408,6 @@ void UXYZMapManager::RemoveVisionForActor(AXYZActor* Actor)
 	{
 		return;
 	}
-	/*int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
-
-	for (int32 X = -CellsToCheck; X <= CellsToCheck; ++X) {
-		for (int32 Y = -CellsToCheck; Y <= CellsToCheck; ++Y) {
-			FIntVector2 AdjacentCoord(ActorGridCoord.X + X, ActorGridCoord.Y + Y);
-			if(!IsGridCoordValid(AdjacentCoord) || Actor->TeamId == 2) continue;
-			bool bIsHighGround = Grid[ActorGridCoord]->Height > Grid[AdjacentCoord]->Height;
-			bool bIsCloseInHeight = FMath::Abs(Grid[ActorGridCoord]->Height - Grid[AdjacentCoord]->Height) < 50.0f;
-			bool bCanSeeHeight = bIsHighGround || bIsCloseInHeight;
-			if (Actor->bIsFlying || bCanSeeHeight) {
-				RemoveActorVision(Actor, AdjacentCoord);
-				if(!TeamHasVision(Actor->TeamId, AdjacentCoord))
-				{
-					VisibleCells[Actor->TeamId].Remove(AdjacentCoord);
-					NonVisibleCells[Actor->TeamId].Add(AdjacentCoord);
-				}
-			}
-		}
-	}
-	*/
 	int32 CellsToCheck = FMath::CeilToInt(Actor->VisionRange / GridCellSize);
 	int32 RadiusSquared = CellsToCheck * CellsToCheck; 
 
@@ -348,6 +426,14 @@ void UXYZMapManager::RemoveVisionForActor(AXYZActor* Actor)
 					{
 						VisibleCells[Actor->TeamId].Remove(AdjacentCoord);
 						NonVisibleCells[Actor->TeamId].Add(AdjacentCoord);
+						for(AXYZActor* ActorToRemove : Grid[AdjacentCoord]->ActorsInCell)
+						{
+							if(ActorToRemove->TeamId != Actor->TeamId)
+							{
+								VisibleActors[Actor->TeamId].Remove(ActorToRemove);
+								NonVisibleActors[Actor->TeamId].Add(ActorToRemove);
+							}
+						}
 					}
 				}
 			}
@@ -414,13 +500,19 @@ void UXYZMapManager::SendDeltaVisibilityToClients()
 
 		TSet<FIntVector2> VisibleCellsDifference = VisibleCells[TeamId].Difference(LastVisibleCellsSent[TeamId]);
 		TSet<FIntVector2> NonVisibleCellsDifference = NonVisibleCells[TeamId].Difference(LastNonVisibleCellsSent[TeamId]);
-
+		
 		bool bIsDifferent = !VisibleCellsDifference.IsEmpty() || !NonVisibleCellsDifference.IsEmpty() || !NonVisibleActorsDifference.IsEmpty() || !VisibleActorsDifference.IsEmpty();
 		if(bIsDifferent)
 		{
+			//UE_LOG(LogTemp, Warning, TEXT("TeamId: %d"), TeamId);
+			//UE_LOG(LogTemp, Warning, TEXT("Size of VisibleActorsDifference: %d"), VisibleActorsDifference.Num());
+			//UE_LOG(LogTemp, Warning, TEXT("Size of NonVisibleActorsDifference: %d"), NonVisibleActorsDifference.Num());
+			//UE_LOG(LogTemp, Warning, TEXT("Size of VisibleCellsDifference: %d"), VisibleCellsDifference.Num());
+			//UE_LOG(LogTemp, Warning, TEXT("Size of NonVisibleCellsDifference: %d"), NonVisibleCellsDifference.Num());
+			PlayerController->UpdateClientVisibility(ConvertSetToActorIds(VisibleActorsDifference),  ConvertSetToActorIds(NonVisibleActorsDifference), VisibleCellsDifference.Array(),  NonVisibleCellsDifference.Array());
+			continue;
 			if(bHasSentVison)
 			{
-				PlayerController->UpdateClientVisibility(ConvertSetToActorIds(VisibleActorsDifference),  ConvertSetToActorIds(NonVisibleActorsDifference), VisibleCellsDifference.Array(),  NonVisibleCellsDifference.Array());
 
 			}else
 			{

@@ -29,14 +29,24 @@ void AXYZUnit::Process(float DeltaTime)
 		return;
 	}
 	if (State == EXYZUnitState::DEAD) return;
-	
-	if (State == EXYZUnitState::MOVING && !GetCharacterMovement()->IsMovingOnGround())
+
+	if(State == EXYZUnitState::MOVING && PushedBy && PushedBy->State != EXYZUnitState::MOVING)
 	{
-		GetXYZAIController()->RecalculateMove();
+		PushedBy = nullptr;
+		CurrentlyPushing.Empty();
+		GetXYZAIController()->XYZStopMovement();
 	}
 	if (State == EXYZUnitState::MOVING || State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::FOLLOWING)
 	{
-		ScanXYZActorsAhead();
+		if(TimeSinceScanForPush == 0.0)
+		{
+			ScanActorsAndPushWithMapGrid();
+		}
+		TimeSinceScanForPush += DeltaTime;
+		if(TimeSinceScanForPush >= ScanForPushRate)
+		{
+			TimeSinceScanForPush = 0.0f;
+		}
 	}
 	if (State == EXYZUnitState::ATTACK_MOVING || (State == EXYZUnitState::IDLE && !this->IsA(AXYZWorker::StaticClass())) || State == EXYZUnitState::ATTACKING ||
 		State == EXYZUnitState::HOLD)
@@ -51,7 +61,15 @@ void AXYZUnit::Process(float DeltaTime)
 		}
 		if (!TargetActor || TargetActor->Health <= 0.0f)
 		{
-			TargetActor = FindClosestActor(true);
+			if(TimeSinceScanForTarget == 0.0)
+			{
+				TargetActor = FindClosestActor(true);
+			}
+			TimeSinceScanForTarget += DeltaTime;
+			if(TimeSinceScanForTarget >= ScanForTargetRate)
+			{
+				TimeSinceScanForTarget = 0.0f;
+			}
 		}
 		if (TargetActor)
 		{
@@ -59,7 +77,7 @@ void AXYZUnit::Process(float DeltaTime)
 		}
 		if (!TargetActor && State == EXYZUnitState::ATTACKING)
 		{
-			SetState(EXYZUnitState::IDLE);
+			GetXYZAIController()->XYZAttackMoveToLocation(TargetLocation);
 		}
 	}
 	if (State == EXYZUnitState::FOLLOWING)
@@ -67,10 +85,6 @@ void AXYZUnit::Process(float DeltaTime)
 		if (!TargetActor || TargetActor->Health <= 0.0f)
 		{
 			GetXYZAIController()->XYZStopMovement();
-		}
-		else
-		{
-			GetXYZAIController()->RecalculateMove();
 		}
 	}
 }
@@ -132,7 +146,19 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 			}
 		}else
 		{
-			TargetActor = FindClosestActor(true);
+			if(!bIsPassive)
+			{
+				if(TimeSinceScanForTarget >= ScanForTargetRate)
+				{
+					TargetActor = FindClosestActor(true);
+				}
+				TimeSinceScanForTarget += DeltaSeconds;
+				if(TimeSinceScanForTarget >= ScanForTargetRate)
+				{
+					TimeSinceScanForTarget = 0.0f;
+				}
+
+			}
 			DirectionToAttackLocation = (TargetLocation - CurrentLocation).GetSafeNormal();
 			NewLocation = CurrentLocation + DirectionToAttackLocation * FlyingSpeed * DeltaSeconds;
 			NewRotation = (TargetLocation - NewLocation).Rotation();
@@ -174,7 +200,19 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 		}
 		break;
 	case EXYZUnitState::IDLE:
-		TargetActor = FindClosestActor(true);
+		if(!bIsPassive)
+		{
+			if(TimeSinceScanForTarget == 0.0f)
+			{
+				TargetActor = FindClosestActor(true);
+			}
+			TimeSinceScanForTarget += DeltaSeconds;
+			if(TimeSinceScanForTarget >= ScanForTargetRate)
+			{
+				TimeSinceScanForTarget = 0.0f;
+			}
+			
+		}
 		if(TargetActor)
 		{
 			GetXYZAIController()->XYZAttackMoveToTarget(TargetActor);
@@ -185,7 +223,7 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 			if (MapManager->Grid.Contains(GridCoord) && MapManager->Grid[GridCoord]->ActorsInCell.Contains(this))
 			{
 				TArray<FVector> OtherFlyingUnitLocations;
-				TArray<FIntVector2> UnitAreaCoords = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(2,2));
+				TArray<FIntVector2> UnitAreaCoords = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(2,2)).Array();
 				UnitAreaCoords.Add(GridCoord);
 
 				for(FIntVector2 AreaCoord : UnitAreaCoords)
@@ -222,15 +260,17 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 						WeightedAvgDirection /= TotalWeight;
 						WeightedAvgDirection.Normalize();
 					}
-
-					MapManager->AddToUpdateSet(this);
-
 					SetActorLocation(GetActorLocation() - WeightedAvgDirection * 50.0f * DeltaSeconds);
 				}
 			}
 		}
 		break;
 	case EXYZUnitState::HOLD:
+		if(bIsPassive)
+		{
+			SetState(EXYZUnitState::IDLE);
+			break;
+		}
 		if(TargetActor)
 		{
 			if(!GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->DoesActorHasVisionOfActor(this, TargetActor))
@@ -242,7 +282,15 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 			}
 		}else
 		{
-			TargetActor = FindClosestActor(true);
+			if(TimeSinceScanForTarget == 0.0f)
+			{
+				TargetActor = FindClosestActor(true);
+			}
+			TimeSinceScanForTarget += DeltaSeconds;
+			if(TimeSinceScanForTarget >= ScanForTargetRate)
+			{
+				TimeSinceScanForTarget = 0.0f;
+			}
 		}
 		break;
 	default:;

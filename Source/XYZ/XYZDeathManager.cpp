@@ -27,7 +27,7 @@ void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 		ActorCache->RemoveActorCount(Actor->TeamId, Actor->ActorId);
 	}
 	
-	XYZGameMode->MapManager->RemoveActorFromGrid(Actor);
+	XYZGameMode->MapManager->ActorsToRemove.Add(Actor);
 	for (AXYZPlayerController* XYZController : XYZGameMode->PlayerControllers)
 	{
 		if (XYZController)

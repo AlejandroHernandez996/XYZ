@@ -105,7 +105,12 @@ public:
         TMap<EXYZDecalType, UMaterialInterface*> LineMaterials;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TArray<UStaticMeshComponent*> LineMeshes;
-    
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    bool bIsPassive;
+
+    UPROPERTY(EditAnywhere)
+    float PushRadiusMultiplier = 2.5f;
+
     virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
@@ -155,10 +160,8 @@ public:
         class AXYZAIController* XYZAIController;
     UFUNCTION()
         class AXYZAIController* GetXYZAIController();
-    UFUNCTION()
-        void ScanXYZActorsAhead();
-    UFUNCTION()
-        AXYZActor* ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> ActorsFound);
+    void ScanActorsAndPushWithMapGrid();
+    FVector CalculatePushLocation(FVector ForwardDirection, FIntVector2 PusherGridCoord, AXYZActor* ActorInCell);
     UPROPERTY()
         FVector TargetLocation;
     UPROPERTY()
@@ -198,7 +201,7 @@ public:
     void SetTeamColor();
 
     UFUNCTION()
-    int GetActorPriority(const AXYZActor* Actor);
+    int GetActorPriority();
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
     FVector TargetActorLocationReplicated;
@@ -320,4 +323,51 @@ public:
 
     UPROPERTY(Replicated)
     bool bInEnemyVision;
+
+    UPROPERTY()
+    class AXYZPlayerController* OwningPlayerController;
+
+    UPROPERTY(EditAnywhere)
+    float SoftStuckDuration = 1.5f;
+    UPROPERTY(EditAnywhere)
+    float HardStuckDuration = 5.0f;
+    UPROPERTY(EditAnywhere)
+    float SoftTimeStuck = 0.0f;
+    UPROPERTY(EditAnywhere)
+    float HardTimeStuck = 0.0f;
+    
+    UPROPERTY(EditAnywhere)
+    bool bIsStuck = false;
+
+public:
+    UPROPERTY(EditAnywhere)
+    bool bCanEverCloak;
+
+    UPROPERTY(EditAnywhere)
+    float ForceUpdateTime = 3.0f;
+    UPROPERTY()
+    float TimeSinceLastUpdate;
+
+    UPROPERTY(EditAnywhere)
+    float ScanForTargetRate = .25f;
+    UPROPERTY()
+    float TimeSinceScanForTarget;
+
+    UPROPERTY(EditAnywhere)
+    float ScanForPushRate= .1f;
+    UPROPERTY()
+    float TimeSinceScanForPush;
+
+    UPROPERTY(EditAnywhere)
+    float PushAngle = 60.0f;
+    UPROPERTY(EditAnywhere)
+    float PushAngleOutside = 45.0f;
+    UPROPERTY(EditAnywhere)
+    float PushAngleInside = 30.0f;
+    UPROPERTY()
+    TSet<AXYZActor*> CurrentlyPushing;
+    UPROPERTY()
+    AXYZActor* PushedBy;
+    UPROPERTY(EditAnywhere)
+    float AverageStuckForwardAngleThreshold = 45.0f;
 };

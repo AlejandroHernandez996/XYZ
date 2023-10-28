@@ -37,7 +37,11 @@ void AXYZMinimapManager::Tick(float DeltaTime)
 	for(AXYZActor* VisibleActor : VisibleActors)
 	{
 		if(!VisibleActor) continue;
-		
+		if(VisibleActor->State == EXYZUnitState::DEAD) continue;
+		if(VisibleActor->TeamId != TeamId && VisibleActor->bIsCloaked && !VisibleActor->bInEnemyTrueVision)
+		{
+			continue;
+		}
 		UnitCoords.Add(FVector2D(MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().X / GridCellSize),
 							MinimapSize-FMath::FloorToInt(VisibleActor->GetActorLocation().Y / GridCellSize)));
 		if(VisibleActor->TeamId == TeamId)

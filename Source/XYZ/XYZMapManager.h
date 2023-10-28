@@ -18,12 +18,13 @@ public:
 
 	UFUNCTION()
 	void AddToUpdateSet(AXYZActor* Actor);
-	TArray<FIntVector2> GetPerimeterCoords(FIntVector2 CenterGridCoord, FIntVector2 GridArea);
+	TSet<FIntVector2> GetPerimeterCoords(FIntVector2 CenterGridCoord, FIntVector2 GridArea);
 	bool AreGridCoordsSameHeight(FIntVector2 Coord, FIntVector2 OtherCoord);
 	bool IsCoordOccupiedByBuilding(FIntVector2 Coord, int32 RangeOfCoordsToSearch = 10);
 	FVector GridCoordToWorldCoord(FIntVector2 Coord);
 
 	TSet<AXYZActor*> FindActorsInRange(const FIntVector2& CenterGrid, float Radius);
+	TArray<FIntVector2> CalculateForwardGridCells(FIntVector2 GridCoord, const FVector& ForwardDirection, FIntVector2 ForwardCellArea);
 
 	TMap<FIntVector2, TSharedPtr<FGridCell>> Grid;
 
@@ -35,6 +36,9 @@ public:
 	
 	UPROPERTY()
 	TSet<class AXYZActor*> ActorsToUpdate;
+
+	UPROPERTY()
+	TSet<class AXYZActor*> ActorsToRemove;
 	UPROPERTY()
 	bool bHasProcessed;
 	UPROPERTY()
@@ -51,6 +55,8 @@ public:
 	void RemoveActorFromGrid(class AXYZActor* Actor);
 	UFUNCTION()
 	TSet<AXYZActor*> FindActorsInVisionRange(AXYZActor* Actor);
+	UFUNCTION()
+	AXYZActor* FindClosestEnemyActorInVisionRange(AXYZActor* Actor, bool bIgnoreFriendlyActors);
 	UFUNCTION()
 	void AddVisionForActor(AXYZActor* Actor);
 	UFUNCTION()

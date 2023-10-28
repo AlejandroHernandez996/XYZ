@@ -323,4 +323,11 @@ public:
 	UFUNCTION(Client, Reliable)
 	void UncloakActor(AXYZActor* Actor);
 	void UncloakActor_Implementation(AXYZActor* Actor);
+
+	UFUNCTION(Client, Reliable)
+	void DrawLine(FVector Start, FVector End, FColor Color);
+	void DrawLine_Implementation(FVector Start, FVector End, FColor Color);
+
+	UPROPERTY()
+	bool bHasHiddenEnemyBuildings;
 };

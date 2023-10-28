@@ -15,7 +15,7 @@ class XYZ_API UXYZTrainingAbilityAction : public UXYZAbilityAction
 	GENERATED_BODY()
 	void ProcessAction(TSet<AXYZActor*> Agents) override;
 
-	virtual bool IsContiousProcessing() override
+	virtual bool IsContinousProcessing() override
 	{
 		return false;
 	}

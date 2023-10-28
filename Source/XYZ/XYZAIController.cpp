@@ -31,6 +31,7 @@ void AXYZAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollow
             GetXYZActor()->SetState(EXYZUnitState::IDLE);
             GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius;
             GetXYZActor()->CollisionName = "Pawn";
+            GetXYZActor()->PushedBy = nullptr;
             GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
         }
         bIsMoving = false;
@@ -73,6 +74,7 @@ void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float Acceptanc
         return;
     }
     GetXYZActor()->SetState(EXYZUnitState::MOVING);
+    GetXYZActor()->TargetLocation = TargetLocation;
     CurrentTargetLocation = TargetLocation;
     bIsMoving = true;
 
@@ -89,12 +91,14 @@ void AXYZAIController::XYZAttackMoveToLocation(FVector TargetLocation, float Acc
         return;
     }
     GetXYZActor()->SetState(EXYZUnitState::ATTACK_MOVING);
+    GetXYZActor()->TargetLocation = TargetLocation;
     CurrentTargetLocation = TargetLocation;
     bIsMoving = true;
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius * 0.75f;
     GetXYZActor()->CollisionName = "Pawn";
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
     GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 3.0f;
+    GetXYZActor()->TimeSinceScanForTarget = 0.0f;
     MoveToLocation(TargetLocation, AcceptanceRadius, true, true, false, false);
 }
 
@@ -153,7 +157,7 @@ void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius)
     GetXYZActor()->CollisionName = "Pawn";
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
     GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 2.0f;
-    MoveToActor(Actor, 30.0f, true, true, false);
+    MoveToActor(Actor,GetXYZActor()->GetCapsuleComponent()->GetScaledCapsuleRadius()*2.0f , true, true, false);
 }
 
 void AXYZAIController::XYZGatherResource(AXYZResourceActor* Resource, float AcceptanceRadius) {
@@ -218,6 +222,7 @@ void AXYZAIController::XYZStopMovement() {
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius;
     GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 1.0f;
     bIsMoving = false;
+    GetXYZActor()->PushedBy = nullptr;
     CurrentTargetLocation = GetXYZActor()->GetActorLocation();
 
     if (GetXYZActor()->State != EXYZUnitState::ATTACKING && GetXYZActor()->State != EXYZUnitState::HOLD) {

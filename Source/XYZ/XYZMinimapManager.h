@@ -41,7 +41,6 @@ public:
 	FUpdateMinimap OnUpdateMinimap;
 	UPROPERTY(BlueprintAssignable)
 	FClearMinimap OnClearMinimap;
-
 	UPROPERTY()
 	TSet<class AXYZActor*> VisibleActors;
 	

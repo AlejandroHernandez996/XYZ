@@ -4,27 +4,46 @@
 #include "XYZBuilding.h"
 #include "XYZGameMode.h"
 #include "XYZMapManager.h"
+#include "XYZMoveBatcher.h"
 
 void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
 {
     TSet<AXYZActor*> Agents;
-
+    AgentsWithGroup.Empty();
+    AgentGroups.Empty();
     for(AXYZActor* Actor : UnfilteredAgents)
     {
+        if(!Actor) continue;
+        if(AgentsWithGroup.Contains(Actor) || CompletedAgents.Contains(Actor)) continue;
+        UXYZMoveBatcher* MoveBatcher = Actor->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MoveBatcher;
+
         AXYZBuilding* Building = Cast<AXYZBuilding>(Actor);
         if(Building || Actor->bIsFlying)
         {
-            Actor->GetXYZAIController()->XYZMoveToLocation(TargetLocation);
+            //Actor->GetXYZAIController()->XYZMoveToLocation(TargetLocation);
+            TSharedPtr<FXYZMove> Move = MakeShared<FXYZMove>();
+            Move->TargetLocation = TargetLocation;
+            Move->ActorToMove = Actor;
+            MoveBatcher->MovesToProcess.Add(Move);
+            CompletedAgents.Add(Actor);
         }
         else
         {
             Agents.Add(Actor);
         }
     }
-    
-    FVector CenterLocation = FindInitialCenterLocation(Agents);
-    AXYZActor* CenterAgent = FindCenterAgent(Agents, CenterLocation);
 
+    CreateAgentGroups(Agents);
+    for(TSharedPtr<FAgentGroup> AgentGroup : AgentGroups)
+    {
+        if(!AgentGroup->bIsMoving)
+        {
+            MoveGroup(AgentGroup);
+            AgentGroup->bIsMoving = true;
+        }
+    }
+    /**
+    FVector CenterLocation = FindInitialCenterLocation(Agents);
     FVector MinBounds = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
     FVector MaxBounds = FVector(FLT_MIN, FLT_MIN, FLT_MIN);
 
@@ -41,9 +60,14 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
     float Area = (MaxBounds.X - MinBounds.X) * (MaxBounds.Y - MinBounds.Y);
     float Density = (float)Agents.Num() / Area;
 
-    if (Density < 0.000080f)
+    if (Density < 0.000040f)
     {
-        TArray<AXYZActor*> SortedAgents = Agents.Array();
+        for(AXYZActor* Actor : Agents)
+        {
+            if(CompletedAgents.Contains(Actor) || !Actor) continue;
+            Actor->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation);
+        }
+        /*TArray<AXYZActor*> SortedAgents = Agents.Array();
         Algo::Sort(SortedAgents, [this, CenterLocation](AXYZActor* A, AXYZActor* B) {
             float DistanceA = FVector::DistSquared(A->GetActorLocation(), CenterLocation);
             float DistanceB = FVector::DistSquared(B->GetActorLocation(), CenterLocation);
@@ -58,6 +82,7 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
         {
             if(Actor)
             {
+                if(CompletedAgents.Contains(Actor)) continue;
                 FVector ActorLocation = Actor->GetActorLocation();
                 FVector DirectonFromCenter = ActorLocation - CenterLocation;
                 FVector AgentTargetLocation = TargetLocation + DirectonFromCenter;
@@ -66,7 +91,7 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
             
         }
     }
-
+    **/
 }
 
 void UXYZMoveAction::FillPack(TSharedPtr<FAgentPack> AgentPack, TArray<AXYZActor*>& SortedAgents, int32 LayerIndex) {
@@ -132,15 +157,6 @@ void UXYZMoveAction::MovePack(TSharedPtr<FAgentPack> AgentPack, int32 Level, boo
     MovePack(AgentPack->NextPack, Level + 1, bIsAttackMove);
 }
 
-bool UXYZMoveAction::HasAgentComplete(AXYZActor* Agent) {
-
-    if(Agent)
-    {
-        return Agent->State == EXYZUnitState::IDLE;
-    }
-    return true;
-}
-
 AXYZActor* UXYZMoveAction::FindCenterAgent(TSet<AXYZActor*> Agents, FVector CenterLocation) {
     if (Agents.IsEmpty()) return nullptr;
     TArray<AXYZActor*> SortedAgents = Agents.Array();
@@ -153,6 +169,122 @@ AXYZActor* UXYZMoveAction::FindCenterAgent(TSet<AXYZActor*> Agents, FVector Cent
     return SortedAgents[0];
 }
 
+void UXYZMoveAction::CreateAgentGroups(TSet<AXYZActor*> Agents)
+{
+    if(Agents.IsEmpty()) return;
+    TSet<FIntVector2> SearchedCoords;
+
+    for (AXYZActor* Agent : Agents)
+    {
+        if (!AgentsWithGroup.Contains(Agent) && !CompletedAgents.Contains(Agent))
+        {
+            UXYZMapManager* MapManager = Agent->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
+            TSharedPtr<FAgentGroup> AgentGroup = MakeShared<FAgentGroup>();
+            AgentGroups.Add(AgentGroup);
+            TSet<AXYZActor*> ActorsToAdd;
+            ActorsToAdd.Add(Agent);
+            
+            FindAndAddNeighbors(MapManager, Agent, AgentGroup, SearchedCoords, ActorsToAdd, Agents);
+            
+            FVector CenterLocation = FindInitialCenterLocation(AgentGroup->AgentsInGroup);
+            AgentGroup->CenterAgent = FindCenterAgent(AgentGroup->AgentsInGroup,CenterLocation);
+            CalculateDensityForGroup(AgentGroup);
+        }
+    }
+}
+
+void UXYZMoveAction::FindAndAddNeighbors(UXYZMapManager* MapManager,
+    AXYZActor* Agent,
+    TSharedPtr<FAgentGroup> AgentGroup,
+    TSet<FIntVector2>& SearchedCoords,
+    TSet<AXYZActor*>& ActorsToAdd,
+    TSet<AXYZActor*>& AgentsInAction)
+{
+    AgentGroup->AgentsInGroup.Add(Agent);
+    AgentsWithGroup.Add(Agent,AgentGroup);
+    FIntVector2 AgentGridCoord = Agent->GridCoord;
+    TSet<FIntVector2> CoordsToSearch = MapManager->GetPerimeterCoords(AgentGridCoord, FIntVector2(1, 1));
+
+    for (FIntVector2 Coord : CoordsToSearch)
+    {
+        if (!SearchedCoords.Contains(Coord))
+        {
+            SearchedCoords.Add(Coord);
+            if (MapManager->Grid.Contains(Coord))
+            {
+                TSharedPtr<FGridCell> GridCell = MapManager->Grid[Coord];
+                TSet<AXYZActor*> ActorsInCell = GridCell->ActorsInCell;
+
+                for (AXYZActor* ActorInCell : ActorsInCell)
+                {
+                    if (ActorInCell != Agent &&
+                        !ActorsToAdd.Contains(ActorInCell) &&
+                        !AgentGroup->AgentsInGroup.Contains(ActorInCell) &&
+                        AgentsInAction.Contains(ActorInCell))
+                    {
+                        ActorsToAdd.Add(ActorInCell);
+                        FindAndAddNeighbors(MapManager, ActorInCell, AgentGroup, SearchedCoords, ActorsToAdd, AgentsInAction);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void UXYZMoveAction::CalculateDensityForGroup(TSharedPtr<FAgentGroup> AgentGroup)
+{
+    FVector MinBounds = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
+    FVector MaxBounds = FVector(FLT_MIN, FLT_MIN, FLT_MIN);
+    for (AXYZActor* AgentInGroup :AgentGroup->AgentsInGroup)
+    {
+        if(AgentInGroup)
+        {
+            FVector Location = AgentInGroup->GetActorLocation();
+            MinBounds = MinBounds.ComponentMin(Location);
+            MaxBounds = MaxBounds.ComponentMax(Location);
+        }
+    }
+    float Area = (MaxBounds.X - MinBounds.X) * (MaxBounds.Y - MinBounds.Y);
+    AgentGroup->Density = (float)AgentGroup->AgentsInGroup.Num() / Area;
+}
+
+void UXYZMoveAction::MoveGroup(TSharedPtr<FAgentGroup> AgentGroup)
+{
+    for (AXYZActor* Agent : AgentGroup->AgentsInGroup)
+    {
+        if(Agent)
+        {
+            FVector ActorLocation = Agent->GetActorLocation();
+            FVector DirectonFromCenter = ActorLocation - AgentGroup->CenterAgent->GetActorLocation();
+            FVector AgentTargetLocation = TargetLocation + DirectonFromCenter;
+
+            UXYZMapManager* MapManager = Agent->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
+            FIntVector2 TargetGridCoord = MapManager->GetGridCoordinate(TargetLocation);
+            FIntVector2 AgentTargetGridCoord = MapManager->GetGridCoordinate(AgentTargetLocation);
+            UXYZMoveBatcher* MoveBatcher = Agent->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MoveBatcher;
+
+            if(MapManager->Grid.Contains(TargetGridCoord) &&
+                MapManager->Grid.Contains(AgentTargetGridCoord) &&
+                MapManager->Grid[AgentTargetGridCoord]->Height == MapManager->Grid[TargetGridCoord]->Height)
+            {
+                TSharedPtr<FXYZMove> Move = MakeShared<FXYZMove>();
+                Move->TargetLocation = AgentTargetLocation;
+                Move->ActorToMove = Agent;
+                MoveBatcher->MovesToProcess.Add(Move);
+                //Agent->GetController<AXYZAIController>()->XYZMoveToLocation(AgentTargetLocation); 
+            }else
+            {
+                TSharedPtr<FXYZMove> Move = MakeShared<FXYZMove>();
+                Move->TargetLocation = TargetLocation;
+                Move->ActorToMove = Agent;
+                MoveBatcher->MovesToProcess.Add(Move);
+                //Agent->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation); 
+            }
+        }
+            
+    }
+}
+
 FVector UXYZMoveAction::FindInitialCenterLocation(TSet<AXYZActor*> Agents) {
     FVector Center = FVector::ZeroVector;
     for (AXYZActor* Actor : Agents)
@@ -163,4 +295,30 @@ FVector UXYZMoveAction::FindInitialCenterLocation(TSet<AXYZActor*> Agents) {
         }
     }
     return Center /= Agents.Num();
+}
+
+bool UXYZMoveAction::HasAgentComplete(AXYZActor* Agent) {
+
+    if(Agent && AgentsWithGroup.Contains(Agent))
+    {
+        if(Agent->bIsFlying && Agent->State == EXYZUnitState::IDLE)
+        {
+            return true;
+        }
+        if(Agent->bIsFlying)
+        {
+            return false;
+        }
+        return AgentsWithGroup[Agent]->CenterAgent->State == EXYZUnitState::IDLE;
+    }
+    return false;
+}
+
+bool UXYZMoveAction::IsGroupComplete(TSharedPtr<FAgentGroup> AgentGroup)
+{
+    if(AgentGroup && AgentGroup->CenterAgent)
+    {
+        return AgentGroup->CenterAgent->State == EXYZUnitState::IDLE;
+    }
+    return false;
 }

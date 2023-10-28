@@ -76,6 +76,11 @@ void AXYZFlyingAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float Accep
 		XYZStopMovement();
 		return;
 	}
+	if(OwningActor->bIsPassive)
+	{
+		XYZMoveToActor(Actor);
+		return;
+	}
 	CurrentTargetLocation = Actor->GetActorLocation();
 	GetXYZActor()->SetState(EXYZUnitState::ATTACKING);
 	GetXYZActor()->TargetActor = Actor;

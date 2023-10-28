@@ -26,7 +26,7 @@ public:
 	virtual void ProcessAction(TSet<AXYZActor*> Agents) override;
 	virtual bool HasAgentComplete(class AXYZActor* Agent) override;
 
-	virtual bool IsContiousProcessing() override
+	virtual bool IsContinousProcessing() override
 	{
 		return true;
 	}

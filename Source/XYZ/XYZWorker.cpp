@@ -53,7 +53,12 @@ void AXYZWorker::Process(float DeltaTime)
     }
     if(State == EXYZUnitState::PLACING)
     {
-        ScanXYZActorsAhead();
+        TimeSinceScanForPush += DeltaTime;
+        if(TimeSinceScanForPush >= ScanForPushRate)
+        {
+            ScanActorsAndPushWithMapGrid();
+            TimeSinceScanForPush = 0.0f;
+        }
         if(ActivePlacementAbility)
         {
             UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
@@ -71,13 +76,14 @@ void AXYZWorker::Process(float DeltaTime)
                 SetState(EXYZUnitState::IDLE);
                 return;
             }
-            if(IsWorkerInDistanceToPlace(CurrentGridPosition, PlacementCenterGridPosition, PlacementGridSize) && bHasSameHeightAsBuildingLocation)
+            bool bInDistanceToPlace = MapManager->GetPerimeterCoords(PlacementCenterGridPosition, PlacementGridSize).Contains(GridCoord);
+            if(bInDistanceToPlace && bHasSameHeightAsBuildingLocation)
             {
                 PlaceBuilding();
             }
             else if(XYZAIController)
             {
-                TArray<FIntVector2> PerimeterTiles = MapManager->GetPerimeterCoords(PlacementCenterGridPosition, PlacementGridSize);
+                TArray<FIntVector2> PerimeterTiles = MapManager->GetPerimeterCoords(PlacementCenterGridPosition, PlacementGridSize).Array();
                 bool bHasValidTileToPlace = false;
                 for (const FIntVector2& Tile : PerimeterTiles) 
                 {
@@ -451,7 +457,7 @@ void AXYZWorker::PlaceBuilding()
         SpawnActor->BuildingState = EXYZBuildingState::PLACED;
         SpawnActor->Health = 5.0f;
         
-        GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(SpawnActor);
+        //GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(SpawnActor);
         
         ActivePlacementAbility = nullptr;
         SetState(EXYZUnitState::BUILDING);

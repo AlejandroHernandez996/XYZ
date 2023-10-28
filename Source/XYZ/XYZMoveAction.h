@@ -6,9 +6,6 @@
 #include "XYZAction.h"
 #include "XYZMoveAction.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class XYZ_API UXYZMoveAction : public UXYZAction
 {
@@ -23,6 +20,40 @@ public:
 	class AXYZActor* FindCenterAgent(TSet<AXYZActor*> Agents, FVector CenterLocation);
 	UFUNCTION()
 	FVector FindInitialCenterLocation(TSet<AXYZActor*> Agents);
+    UFUNCTION()
+    void CreateAgentGroups(TSet<AXYZActor*> Agents);
+    void FindAndAddNeighbors(class UXYZMapManager* MapManager, AXYZActor* Agent, TSharedPtr<FAgentGroup> AgentGroup, TSet<FIntVector2>& SearchedCoords, TSet<AXYZActor*>& ActorsToAdd, TSet<AXYZActor*>& AgentsInAction);
+    bool IsGroupComplete(TSharedPtr<FAgentGroup> AgentGroup);
+    void CalculateDensityForGroup(TSharedPtr<FAgentGroup> AgentGroup);
+    void MoveGroup(TSharedPtr<FAgentGroup> AgentGroup);
+
+    virtual bool IsContinousProcessing() override
+    {
+        return true;
+    }
+    
+    UPROPERTY()
+    TSet<AXYZActor*> CompletedAgents;
+    
+    TMap<AXYZActor*, TSharedPtr<FAgentGroup>> AgentsWithGroup;
+    TSet<TSharedPtr<FAgentGroup>> AgentGroups;
+};
+
+USTRUCT()
+struct FAgentGroup
+{
+    GENERATED_BODY()
+    
+    UPROPERTY()
+    TSet<AXYZActor*> AgentsInGroup;
+    UPROPERTY()
+    AXYZActor* CenterAgent;
+    UPROPERTY()
+    FIntVector2 CenterCoord;
+    UPROPERTY()
+    float Density;
+    UPROPERTY()
+    bool bIsMoving;
 };
 
 USTRUCT()

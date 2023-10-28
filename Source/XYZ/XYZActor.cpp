@@ -16,6 +16,7 @@
 #include "XYZResourceActor.h"
 #include "XYZBuilding.h"
 #include "XYZAbility.h"
+#include "XYZBlob.h"
 #include "XYZDeathManager.h"
 #include "XYZMapManager.h"
 #include "XYZProjectile.h"
@@ -108,6 +109,17 @@ void AXYZActor::Tick(float DeltaTime)
 		}else
 		{
 			TargetActorLocationReplicated = FVector::ZeroVector;
+		}
+	}
+
+	if(HasAuthority() && GetWorld() && GetWorld()->GetAuthGameMode<AXYZGameMode>() && !OwningPlayerController && TeamId >-1 && TeamId < 2)
+	{
+		for(AXYZPlayerController* PlayerController : GetWorld()->GetAuthGameMode<AXYZGameMode>()->PlayerControllers)
+		{
+			if(PlayerController->TeamId == TeamId)
+			{
+					OwningPlayerController = PlayerController;
+			}
 		}
 	}
 }
@@ -221,41 +233,7 @@ void AXYZActor::Attack()
 AXYZActor* AXYZActor::FindClosestActor(bool bIgnoreFriendlyActors)
 {
 	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
-	TSet<AXYZActor*> ActorsInVision = MapManager->FindActorsInVisionRange(this);
-	FVector CurrentLocation = this->GetActorLocation();
-	
-	AXYZActor* ClosestActor = nullptr;
-	float ClosestDistanceSqr = FLT_MAX;
-	int ClosestActorPriority = INT_MAX;
-
-	for (AXYZActor* OtherActor : ActorsInVision)
-	{
-		bool bTargetIsFriendlyAndShouldIgnore = OtherActor && OtherActor->TeamId == TeamId && bIgnoreFriendlyActors;
-		if (!OtherActor ||
-			OtherActor == this ||
-			bTargetIsFriendlyAndShouldIgnore ||
-			OtherActor->State == EXYZUnitState::DEAD ||
-			OtherActor->IsA(AXYZResourceActor::StaticClass()) ||
-			!OtherActor->CanAttack(this))
-		{
-			continue;
-		}
-
-		float DistanceSqr = FVector::DistSquaredXY(CurrentLocation, OtherActor->GetActorLocation());
-		int ActorPriority = GetActorPriority(OtherActor);
-
-		bool bIsCloser = DistanceSqr < ClosestDistanceSqr && DistanceSqr <= FMath::Square(VisionRange);
-		bool bHasHigherPriority = (DistanceSqr == ClosestDistanceSqr) && (ActorPriority < ClosestActorPriority);
-
-		if (bIsCloser || bHasHigherPriority)
-		{
-			ClosestDistanceSqr = DistanceSqr;
-			ClosestActor = OtherActor;
-			ClosestActorPriority = ActorPriority;
-		}
-	}
-	
-	return ClosestActor;
+	return MapManager->FindClosestEnemyActorInVisionRange(this,bIgnoreFriendlyActors);
 }
 
 AXYZAIController* AXYZActor::GetXYZAIController()
@@ -267,87 +245,115 @@ AXYZAIController* AXYZActor::GetXYZAIController()
 	return XYZAIController;
 }
 
-void AXYZActor::ScanXYZActorsAhead()
+void AXYZActor::ScanActorsAndPushWithMapGrid()
 {
-	FVector Start = GetActorLocation();
-	FVector ForwardVector = GetActorForwardVector();
-	float Distance = CurrentCapsuleRadius * 2.0f;
+	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
+	FVector ForwardDirection = GetCapsuleComponent()->GetForwardVector();
+	ForwardDirection.Normalize();
+	ForwardDirection.Z = 0.0f;
 
-	FVector End = ((ForwardVector * Distance) + Start);
-
-	FVector LeftVector = ForwardVector.RotateAngleAxis(-45, FVector(0, 0, 1));
-	FVector EndLeft = ((LeftVector * Distance) + Start);
-
-	FVector RightVector = ForwardVector.RotateAngleAxis(45, FVector(0, 0, 1));
-	FVector EndRight = ((RightVector * Distance) + Start);
-
-	FVector Left22Vector = ForwardVector.RotateAngleAxis(-22, FVector(0, 0, 1));
-	FVector End22Left = ((Left22Vector * Distance) + Start);
-
-	FVector Right22Vector = ForwardVector.RotateAngleAxis(22, FVector(0, 0, 1));
-	FVector End22Right = ((Right22Vector * Distance) + Start);
-
+	TArray<FIntVector2> PerimeterCells = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(1,1)).Array();
+	TArray<FIntVector2> PerimeterCells2 = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(2,2)).Array();
+	PerimeterCells.Append(PerimeterCells2);
+	PerimeterCells.Add(GridCoord);
+	
 	TSet<AXYZActor*> ActorsFound;
-	AXYZActor* ScannedActor = ScanAndPush(Start, EndLeft, ActorsFound);
-	if (ScannedActor)
+	//OwningPlayerController->DrawLine(GetActorLocation() , GetActorLocation()+ForwardDirection*1000.0f, FColor::Blue);
+
+	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ShiftedDirectionMin * 100.0f, FColor::White);
+	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ShiftedDirectionMax * 100.0f, FColor::Yellow);
+	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ForwardDirection.RotateAngleAxis(PushAngleInside,FVector(0,0,1)) * 100.0f, FColor::Blue);
+	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ForwardDirection.RotateAngleAxis(-PushAngleInside,FVector(0,0,1)) * 100.0f, FColor::Blue);
+	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ForwardDirection.RotateAngleAxis(PushAngleOutside,FVector(0,0,1)) * 100.0f, FColor::Yellow);
+	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ForwardDirection.RotateAngleAxis(-PushAngleOutside,FVector(0,0,1)) * 100.0f, FColor::Yellow);
+	for (const FIntVector2& GridCell : PerimeterCells)
 	{
-		ActorsFound.Add(ScannedActor);
+		if (!MapManager->Grid.Contains(GridCell)) continue;
+		TSharedPtr<FGridCell> GridCellData = MapManager->Grid[GridCell];
+		for (AXYZActor* ActorInCell : GridCellData->ActorsInCell)
+		{
+			if (ActorInCell &&
+				!ActorInCell->bIsFlying &&
+				ActorInCell->IsA(AXYZUnit::StaticClass()) &&
+				ActorInCell != this &&
+				ActorInCell->TeamId == TeamId &&
+				ActorInCell->PushedBy == nullptr &&
+				(ActorInCell->State == EXYZUnitState::IDLE || (ActorInCell->PushedBy && !PushedBy)))
+			{
+
+				if(TargetActor && TargetActor == ActorInCell) continue;
+				if(CurrentBlob && CurrentBlob->AgentsInBlob.Contains(ActorInCell)) continue;
+				
+				float Distance = FVector2D::Distance(FVector2D(GetActorLocation().X,GetActorLocation().Y), FVector2D(ActorInCell->GetActorLocation().X, ActorInCell->GetActorLocation().Y));
+				if(Distance > GetCapsuleComponent()->GetScaledCapsuleRadius() * PushRadiusMultiplier) continue;
+				
+				FVector DirectionToActor = ActorInCell->GetActorLocation() - GetActorLocation();
+				DirectionToActor.Z = 0;
+				DirectionToActor.Normalize();
+				//OwningPlayerController->DrawLine(GetActorLocation() , GetActorLocation()+DirectionToActor*100.0f, FColor::Red);
+				float DotProductValue = FVector::DotProduct(DirectionToActor, ForwardDirection);
+				float MaxAngleThreshold = FMath::DegreesToRadians(PushAngle);
+				float MinAngleThreshold = -MaxAngleThreshold; 
+
+				if (FMath::Acos(DotProductValue) >= MinAngleThreshold && FMath::Acos(DotProductValue) <= MaxAngleThreshold)
+				{
+					FVector PushLocation = CalculatePushLocation(ForwardDirection, GridCoord, ActorInCell);
+					ActorInCell->GetXYZAIController()->XYZMoveToLocation(PushLocation);
+					ActorsFound.Add(ActorInCell);
+					ActorInCell->PushedBy = this;
+				}
+			}
+		}
 	}
-	ScannedActor = ScanAndPush(Start, EndRight, ActorsFound);
-	if (ScannedActor)
-	{
-		ActorsFound.Add(ScannedActor);
-	}
-	ScannedActor = ScanAndPush(Start, End22Left, ActorsFound);
-	if (ScannedActor)
-	{
-		ActorsFound.Add(ScannedActor);
-	}
-	ScannedActor = ScanAndPush(Start, End22Right, ActorsFound);
-	if (ScannedActor)
-	{
-		ActorsFound.Add(ScannedActor);
-	}
-	ScannedActor = ScanAndPush(Start, End, ActorsFound);
-	if (ScannedActor)
-	{
-		ActorsFound.Add(ScannedActor);
-	}
+	CurrentlyPushing = ActorsFound;
 	bHasAvoidance = ActorsFound.IsEmpty();
 }
 
-AXYZActor* AXYZActor::ScanAndPush(FVector Start, FVector End, TSet<AXYZActor*> ActorsFound)
+FVector AXYZActor::CalculatePushLocation(FVector ForwardDirection, FIntVector2 PusherGridCoord, AXYZActor* ActorInCell)
 {
-	FHitResult HitResult;
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this);
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Pawn, CollisionParams);
+	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
 
-	if (!bHit || !HitResult.GetActor()) return nullptr;
-	if (!HitResult.GetActor()->IsA(AXYZActor::StaticClass())) return nullptr;
-	if (HitResult.GetActor()->IsA(AXYZBuilding::StaticClass())) return nullptr;
+	TArray<FIntVector2> PerimeterCoords = MapManager->GetPerimeterCoords(ActorInCell->GridCoord, FIntVector2(1, 1)).Array();
+	TSet<FIntVector2> CoordsToSkip = { PusherGridCoord, ActorInCell->GridCoord };
 
-	AXYZActor* OtherXYZActor = Cast<AXYZActor>(HitResult.GetActor());
-
-	if (!OtherXYZActor || OtherXYZActor == TargetActor) return nullptr;
-	if (!ActorsFound.Contains(OtherXYZActor) && OtherXYZActor->TeamId == TeamId)
+	FIntVector2 BestGridCell = PerimeterCoords[0];
+	float MinDistanceToPusher = MAX_flt;
+	
+	for (const FIntVector2& GridCell : PerimeterCoords)
 	{
-		FVector Direction = End - Start;
-		Direction.Normalize();
-		FVector PushLocation = (Direction * OtherXYZActor->GetCapsuleComponent()->GetScaledCapsuleRadius() * 2.0f) +
-			OtherXYZActor->GetActorLocation();
-		if (OtherXYZActor->State == EXYZUnitState::IDLE)
+		if (MapManager->Grid.Contains(GridCell) && !CoordsToSkip.Contains(GridCell) && MapManager->Grid[GridCell]->Height == MapManager->Grid[ActorInCell->GridCoord]->Height)
 		{
-			if (Direction == GetActorForwardVector())
+			TSharedPtr<FGridCell> GridCellData = MapManager->Grid[GridCell];
+			int32 ActorsInCell = GridCellData->ActorsInCell.Num();
+			float Distance = FVector2D::Distance(FVector2D(ActorInCell->GetActorLocation().X, ActorInCell->GetActorLocation().Y), FVector2D(MapManager->GridCoordToWorldCoord(GridCell).X,MapManager->GridCoordToWorldCoord(GridCell).Y));
+			FVector DirectionFromActorToCell = MapManager->GridCoordToWorldCoord(GridCell) - GetActorLocation();
+			DirectionFromActorToCell.Normalize();
+			DirectionFromActorToCell.Z = 0.0f;
+
+			float DotProductValue = FVector::DotProduct(DirectionFromActorToCell.GetSafeNormal(), ForwardDirection);
+
+			float OutsideMaxAngleThreshold = FMath::DegreesToRadians(PushAngleOutside);
+			float OutsideMinAngleThreshold = -OutsideMaxAngleThreshold;
+			float InsideMaxAngleThreshold = FMath::DegreesToRadians(PushAngleInside);
+			float InsideMinAngleThreshold = -InsideMaxAngleThreshold;
+
+			bool bInsideOutsideRange = FMath::Acos(DotProductValue) >= OutsideMinAngleThreshold && FMath::Acos(DotProductValue) <= OutsideMaxAngleThreshold;
+			bool bInsideInsideRange = FMath::Acos(DotProductValue) >= InsideMinAngleThreshold && FMath::Acos(DotProductValue) <= InsideMaxAngleThreshold;
+			if (bInsideOutsideRange && !bInsideInsideRange && Distance < MinDistanceToPusher)
 			{
-				PushLocation = (OtherXYZActor->GetActorRightVector() * OtherXYZActor->GetCapsuleComponent()->
-					GetScaledCapsuleRadius() * 2.0f) + OtherXYZActor->GetActorLocation();
+				//OwningPlayerController->DrawLine(ActorInCell->GetActorLocation(), GetActorLocation()+DirectionFromActorToCell*Distance, FColor::Green);
+				MinDistanceToPusher = Distance;
+				BestGridCell = GridCell;
+				SoftTimeStuck = 0.0f;
+				HardTimeStuck = 0.0f;
+			}else
+			{
+				//OwningPlayerController->DrawLine(ActorInCell->GetActorLocation(), GetActorLocation()+DirectionFromActorToCell*Distance, FColor::Red);
 			}
-			OtherXYZActor->GetXYZAIController()->XYZMoveToLocation(PushLocation);
-			return OtherXYZActor;
 		}
 	}
-	return nullptr;
+
+	return MapManager->GridCoordToWorldCoord(BestGridCell);
 }
 
 void AXYZActor::AttackMoveTarget()
@@ -489,7 +495,51 @@ void AXYZActor::Process(float DeltaTime)
 
 	bInEnemyVision = MapManager->TeamHasVision(TeamId == 0 ? 1 : 0, GridCoord);
 	bInEnemyTrueVision = MapManager->TeamHasTrueVision(TeamId == 0 ? 1 : 0, GridCoord);
-	MapManager->AddToUpdateSet(this);
+
+	if(GridCoord != MapManager->GetGridCoordinate(GetActorLocation()))
+	{
+		MapManager->AddToUpdateSet(this);
+	}
+
+	if(!bIsFlying && (State == EXYZUnitState::MOVING || State == EXYZUnitState::FOLLOWING))
+	{
+		bool bWasStuck = bIsStuck;
+		bIsStuck = GridCoord == MapManager->GetGridCoordinate(GetActorLocation()) && State == EXYZUnitState::MOVING;
+
+		if(State == EXYZUnitState::FOLLOWING)
+		{
+			GetXYZAIController()->XYZFollowTarget(TargetActor);
+		}else if(State == EXYZUnitState::MOVING)
+		{
+			if(!bWasStuck && bIsStuck)
+			{
+				HardTimeStuck = 0.0f;
+				SoftTimeStuck = 0.0f;
+			}
+			if(bIsStuck)
+			{
+				HardTimeStuck += DeltaTime;
+				SoftTimeStuck += DeltaTime;
+				if(SoftTimeStuck >= SoftStuckDuration)
+				{
+					GetXYZAIController()->RecalculateMove();
+					SoftTimeStuck = 0.0f;
+				}
+				if(HardTimeStuck >= HardStuckDuration)
+				{
+					GetXYZAIController()->XYZStopMovement();
+					bIsStuck = false;
+					HardTimeStuck = 0.0f;
+					SoftTimeStuck = 0.0f;
+				}
+			}
+		}else
+		{
+			bIsStuck = false;
+			HardTimeStuck = 0.0f;
+			SoftTimeStuck = 0.0f;
+		}
+		}
 	LastLocation = GetActorLocation();
 }
 
@@ -517,10 +567,10 @@ void AXYZActor::SetTeamColor()
 	}
 }
 
-int AXYZActor::GetActorPriority(const AXYZActor* Actor)
+int AXYZActor::GetActorPriority()
 {
-	if (Actor->IsA(AXYZUnit::StaticClass())) return 1;
-	if (Actor->IsA(AXYZBuilding::StaticClass())) return 2;
+	if (IsA(AXYZUnit::StaticClass())) return 1;
+	if (IsA(AXYZBuilding::StaticClass())) return 2;
 	return 3;
 }
 

@@ -19,6 +19,7 @@ void UXYZBlob::InitializeBlob() {
     for (AXYZActor* Agent : AgentsInBlob) {
         if (Agent) {
             AgentToNodeCache.Add(Agent, Head);
+            Agent->CurrentBlob = this;
         }
     }
 }
@@ -61,10 +62,15 @@ void UXYZBlob::Process(float DeltaSeconds)
         // Check agents is they are complete
         // send them to copmpleted set if so
         if (!CurrentNode->ProcessingAgents.IsEmpty()) {
-            if(CurrentAction->ProcessCount == 0 || CurrentAction->IsContiousProcessing())
+            if(CurrentAction->ProcessCount == 0 || (CurrentAction->IsContinousProcessing() && CurrentAction->TimeSinceProcess == 0.0f))
             {
                 CurrentAction->ProcessAction(CurrentNode->ProcessingAgents);
                 CurrentAction->ProcessCount++;
+            }
+            CurrentAction->TimeSinceProcess += DeltaSeconds;
+            if(CurrentAction->TimeSinceProcess >= CurrentAction->ProcessRate)
+            {
+                CurrentAction->TimeSinceProcess = 0.0f;
             }
             TSet<AXYZActor*> AgentsToBeCompleted;
             for (AXYZActor* Agent : CurrentNode->ProcessingAgents) {
@@ -179,7 +185,10 @@ void UXYZBlob::RemoveAgent(AXYZActor* Agent) {
             AgentToNodeCache[Agent].Get()->RemoveAgent(Agent);
             AgentToNodeCache.Remove(Agent);
         }
-        
+        if(Agent->CurrentBlob == this)
+        {
+            Agent->CurrentBlob = nullptr;
+        }
     }
 }
 
