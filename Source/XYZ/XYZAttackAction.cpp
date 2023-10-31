@@ -4,14 +4,15 @@
 #include "XYZAIController.h"
 #include "XYZBuilding.h"
 
-void UXYZAttackAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents) {
-
+/**
+void UXYZAttackAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
+{
     if (TargetActor) {
         for (AXYZActor* Actor : UnfilteredAgents)
         {
             if (Actor && Actor->GetXYZAIController()) {
 
-             Actor->GetXYZAIController()->XYZAttackMoveToTarget(TargetActor);
+                Actor->GetXYZAIController()->XYZAttackMoveToTarget(TargetActor);
               
             }
         }
@@ -68,9 +69,8 @@ void UXYZAttackAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents) {
             Actor->GetController<AXYZAIController>()->XYZAttackMoveToLocation(AgentTargetLocation);
         }
     }
-
-    
 }
+*/
 bool UXYZAttackAction::HasAgentComplete(class AXYZActor* Agent) {
 	return Agent->State == EXYZUnitState::IDLE;
 }

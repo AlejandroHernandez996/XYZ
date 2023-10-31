@@ -133,7 +133,7 @@ void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
         
     }
 
-    if (!bIsSupplyReserved && CurrentSupply + CurrentAbility->SupplyCost <= MaxSupply) {
+    if (!bIsSupplyReserved && CurrentSupply + CurrentAbility->SupplyCost <= MaxSupply && CurrentSupply + CurrentAbility->SupplyCost <= GameState->MaxSupply) {
         GameState->ReservedSupplyByBuilding[TeamId].Add(UActorId, CurrentAbility->SupplyCost);
         GameState->SupplyByTeamId[TeamId] += CurrentAbility->SupplyCost;
     }
@@ -180,7 +180,10 @@ void AXYZBuilding::ProcessBuildQueue(float DeltaTime) {
 void AXYZBuilding::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
 {
     Super::ShowDecal(bShowDecal, DecalType);
-    bShowRallyPoint = bShowDecal && bCanRally;
+    if(DecalType != EXYZDecalType::ENEMY)
+    {
+        bShowRallyPoint = bShowDecal && bCanRally;
+    }
 }
 
 void AXYZBuilding::BuildingAttack()
@@ -227,6 +230,23 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
     AXYZGameMode* GameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
 
     UXYZUpgradeAbility* UpgradeAbility = Cast<UXYZUpgradeAbility>(BuildingAbility);
+    if (BuildQueueNum < MAX_BUILD_QUEUE_SIZE && 
+        GameState->MineralsByTeamId[TeamId] - BuildingAbility->MineralCost >= 0 &&
+        GameState->GasByTeamId[TeamId] - BuildingAbility->GasCost >= 0)
+    {
+        GameState->MineralsByTeamId[TeamId] -= BuildingAbility->MineralCost;
+        GameState->GasByTeamId[TeamId] -= BuildingAbility->GasCost;
+        BuildQueue.Add(BuildingAbility);
+        BuildQueueId.Add(BuildingAbility->ID);
+        BuildQueueNum++;
+        if(GameState->SupplyByTeamId[TeamId] + BuildingAbility->SupplyCost > GameState->SupplyByTeamId[TeamId+2])
+        {
+            GameMode->TeamIdToPlayerController[TeamId]->PlaySound(ESoundTypes::SUPPLY);
+        }
+    }else
+    {
+        return;
+    }
     if(UpgradeAbility)
     {
         UpgradeAbility->TeamId = TeamId;
@@ -241,18 +261,6 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
     if(UpgradeAbility)
     {
         GameMode->UpgradeManager->AddUpgradeToResearch(UpgradeAbility);
-    }
-    if (BuildQueueNum < MAX_BUILD_QUEUE_SIZE && 
-        GameState->MineralsByTeamId[TeamId] - BuildingAbility->MineralCost >= 0 && GameState->GasByTeamId[TeamId] - BuildingAbility->GasCost >= 0) {
-        GameState->MineralsByTeamId[TeamId] -= BuildingAbility->MineralCost;
-        GameState->GasByTeamId[TeamId] -= BuildingAbility->GasCost;
-        BuildQueue.Add(BuildingAbility);
-        BuildQueueId.Add(BuildingAbility->ID);
-        BuildQueueNum++;
-        if(GameState->SupplyByTeamId[TeamId] + BuildingAbility->SupplyCost > GameState->SupplyByTeamId[TeamId+2])
-        {
-            GameMode->TeamIdToPlayerController[TeamId]->PlaySound(ESoundTypes::SUPPLY);
-        }
     }
 }
 

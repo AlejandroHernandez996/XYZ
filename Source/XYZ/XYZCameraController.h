@@ -26,6 +26,7 @@ public:
 	void StartDragMovement();
 	void DragMove();
 	void EndDragMovement();
+	TArray<FVector2D> GetCameraCorners();
 
 	UPROPERTY()
 	TMap<int32, FVector2D> CameraLocations;

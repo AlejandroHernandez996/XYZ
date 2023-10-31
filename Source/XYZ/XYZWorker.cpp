@@ -31,16 +31,6 @@ void AXYZWorker::BeginPlay() {
 
 void AXYZWorker::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
-    USkeletalMeshComponent* SkeletalMeshComp = GetMesh();
-    if (SkeletalMeshComp)
-    {
-        SkeletalMeshComp->SetCollisionProfileName(CollisionName);
-    }
-    if (GetCapsuleComponent())
-    {
-        GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
-    }
-    
 }
 
 void AXYZWorker::Process(float DeltaTime)
@@ -457,7 +447,7 @@ void AXYZWorker::PlaceBuilding()
         SpawnActor->BuildingState = EXYZBuildingState::PLACED;
         SpawnActor->Health = 5.0f;
         
-        //GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(SpawnActor);
+        GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(SpawnActor);
         
         ActivePlacementAbility = nullptr;
         SetState(EXYZUnitState::BUILDING);

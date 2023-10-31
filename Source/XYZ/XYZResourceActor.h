@@ -29,6 +29,5 @@ public:
 	TMap<AXYZWorker*, bool> Workers;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)
 	int32 CurrentWorkers = 0;
-	
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 };

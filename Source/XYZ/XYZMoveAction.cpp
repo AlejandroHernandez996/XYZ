@@ -1,6 +1,7 @@
 #include "XYZMoveAction.h"
 #include "XYZActor.h"
 #include "XYZAIController.h"
+#include "XYZAttackAction.h"
 #include "XYZBuilding.h"
 #include "XYZGameMode.h"
 #include "XYZMapManager.h"
@@ -18,12 +19,14 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
         UXYZMoveBatcher* MoveBatcher = Actor->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MoveBatcher;
 
         AXYZBuilding* Building = Cast<AXYZBuilding>(Actor);
-        if(Building || Actor->bIsFlying)
+        if(Building)
         {
             //Actor->GetXYZAIController()->XYZMoveToLocation(TargetLocation);
             TSharedPtr<FXYZMove> Move = MakeShared<FXYZMove>();
             Move->TargetLocation = TargetLocation;
             Move->ActorToMove = Actor;
+            Move->ActorToTarget = TargetActor;
+            Move->bIsAttack = this->IsA(UXYZAttackAction::StaticClass());
             MoveBatcher->MovesToProcess.Add(Move);
             CompletedAgents.Add(Actor);
         }
@@ -204,7 +207,11 @@ void UXYZMoveAction::FindAndAddNeighbors(UXYZMapManager* MapManager,
     AgentsWithGroup.Add(Agent,AgentGroup);
     FIntVector2 AgentGridCoord = Agent->GridCoord;
     TSet<FIntVector2> CoordsToSearch = MapManager->GetPerimeterCoords(AgentGridCoord, FIntVector2(1, 1));
-
+    CoordsToSearch.Add(Agent->GridCoord);
+    if(Agent->bIsFlying)
+    {
+        CoordsToSearch.Append(MapManager->GetPerimeterCoords(AgentGridCoord, FIntVector2(2, 2)));
+    }
     for (FIntVector2 Coord : CoordsToSearch)
     {
         if (!SearchedCoords.Contains(Coord))
@@ -220,7 +227,9 @@ void UXYZMoveAction::FindAndAddNeighbors(UXYZMapManager* MapManager,
                     if (ActorInCell != Agent &&
                         !ActorsToAdd.Contains(ActorInCell) &&
                         !AgentGroup->AgentsInGroup.Contains(ActorInCell) &&
-                        AgentsInAction.Contains(ActorInCell))
+                        AgentsInAction.Contains(ActorInCell) &&
+                        ActorInCell->bIsFlying == Agent->bIsFlying &&
+                        ActorInCell->ActorId == Agent->ActorId)
                     {
                         ActorsToAdd.Add(ActorInCell);
                         FindAndAddNeighbors(MapManager, ActorInCell, AgentGroup, SearchedCoords, ActorsToAdd, AgentsInAction);
@@ -265,11 +274,13 @@ void UXYZMoveAction::MoveGroup(TSharedPtr<FAgentGroup> AgentGroup)
 
             if(MapManager->Grid.Contains(TargetGridCoord) &&
                 MapManager->Grid.Contains(AgentTargetGridCoord) &&
-                MapManager->Grid[AgentTargetGridCoord]->Height == MapManager->Grid[TargetGridCoord]->Height)
+                (MapManager->Grid[AgentTargetGridCoord]->Height == MapManager->Grid[TargetGridCoord]->Height || Agent->bIsFlying))
             {
                 TSharedPtr<FXYZMove> Move = MakeShared<FXYZMove>();
                 Move->TargetLocation = AgentTargetLocation;
                 Move->ActorToMove = Agent;
+                Move->ActorToTarget = TargetActor;
+                Move->bIsAttack = this->IsA(UXYZAttackAction::StaticClass());
                 MoveBatcher->MovesToProcess.Add(Move);
                 //Agent->GetController<AXYZAIController>()->XYZMoveToLocation(AgentTargetLocation); 
             }else
@@ -277,6 +288,8 @@ void UXYZMoveAction::MoveGroup(TSharedPtr<FAgentGroup> AgentGroup)
                 TSharedPtr<FXYZMove> Move = MakeShared<FXYZMove>();
                 Move->TargetLocation = TargetLocation;
                 Move->ActorToMove = Agent;
+                Move->ActorToTarget = TargetActor;
+                Move->bIsAttack = this->IsA(UXYZAttackAction::StaticClass());
                 MoveBatcher->MovesToProcess.Add(Move);
                 //Agent->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation); 
             }
@@ -299,17 +312,10 @@ FVector UXYZMoveAction::FindInitialCenterLocation(TSet<AXYZActor*> Agents) {
 
 bool UXYZMoveAction::HasAgentComplete(AXYZActor* Agent) {
 
-    if(Agent && AgentsWithGroup.Contains(Agent))
+    if(!Agent) return false;
+    if(AgentsWithGroup.Contains(Agent) && IsGroupComplete(AgentsWithGroup[Agent]))
     {
-        if(Agent->bIsFlying && Agent->State == EXYZUnitState::IDLE)
-        {
-            return true;
-        }
-        if(Agent->bIsFlying)
-        {
-            return false;
-        }
-        return AgentsWithGroup[Agent]->CenterAgent->State == EXYZUnitState::IDLE;
+        return true;
     }
     return false;
 }

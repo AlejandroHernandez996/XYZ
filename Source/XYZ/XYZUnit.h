@@ -21,6 +21,7 @@ public:
 	bool IsInAttackRangeOfUnit();
 	UFUNCTION()
 	void ProcessFlyingUnit(float DeltaSeconds);
+	void UpdateCollision();
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TrailingDistance = 100.0f;
 };

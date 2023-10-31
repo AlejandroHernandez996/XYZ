@@ -14,16 +14,16 @@
 void AXYZUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if(!HasAuthority())
+	{
+		UpdateCollision();
+	}
 }
 
 void AXYZUnit::Process(float DeltaTime)
 {
 	Super::Process(DeltaTime);
-	GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
-	GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 2.0f;
-	GetCharacterMovement()->bUseRVOAvoidance = bHasAvoidance;
-	GetCharacterMovement()->AvoidanceWeight = CurrentAvoidanceWeight;
-	GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
+	UpdateCollision();
 	if (bIsFlying) {
 		ProcessFlyingUnit(DeltaTime);
 		return;
@@ -59,11 +59,15 @@ void AXYZUnit::Process(float DeltaTime)
 			}
 			TargetActor = nullptr;
 		}
-		if (!TargetActor || TargetActor->Health <= 0.0f)
+		if (!TargetActor || TargetActor->State == EXYZUnitState::DEAD)
 		{
 			if(TimeSinceScanForTarget == 0.0)
 			{
 				TargetActor = FindClosestActor(true);
+				if(TargetActor)
+				{
+					TargetLocation = TargetActor->GetActorLocation();
+				}
 			}
 			TimeSinceScanForTarget += DeltaTime;
 			if(TimeSinceScanForTarget >= ScanForTargetRate)
@@ -121,11 +125,6 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 		break;
 	case EXYZUnitState::ATTACK_MOVING:
 	case EXYZUnitState::ATTACKING:
-		if(!TargetActor && bHasReachedTargetLocation)
-		{
-			GetXYZAIController()->XYZStopMovement();
-			break;
-		}
 		if(TargetActor)
 		{
 			if(!GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->DoesActorHasVisionOfActor(this, TargetActor))
@@ -148,7 +147,7 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 		{
 			if(!bIsPassive)
 			{
-				if(TimeSinceScanForTarget >= ScanForTargetRate)
+				if(TimeSinceScanForTarget == 0.0f)
 				{
 					TargetActor = FindClosestActor(true);
 				}
@@ -163,6 +162,11 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 			NewLocation = CurrentLocation + DirectionToAttackLocation * FlyingSpeed * DeltaSeconds;
 			NewRotation = (TargetLocation - NewLocation).Rotation();
 			bUpdateLocation = true;
+		}
+		if(!TargetActor && bHasReachedTargetLocation)
+		{
+			GetXYZAIController()->XYZStopMovement();
+			break;
 		}
 		break;
 	case EXYZUnitState::FOLLOWING:
@@ -304,9 +308,33 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 	}
 }
 
+void AXYZUnit::UpdateCollision()
+{
+	if(HasAuthority() && CurrentCapsuleRadius != GetCapsuleComponent()->GetScaledCapsuleRadius())
+	{
+		GetCapsuleComponent()->SetCapsuleRadius(CurrentCapsuleRadius);
+	}
+	if(GetCharacterMovement()->AvoidanceConsiderationRadius != CurrentCapsuleRadius * 2.0f)
+	{
+		GetCharacterMovement()->AvoidanceConsiderationRadius = CurrentCapsuleRadius * 2.0f;
+	}
+	if(GetCharacterMovement()->bUseRVOAvoidance != bHasAvoidance)
+	{
+		GetCharacterMovement()->bUseRVOAvoidance = bHasAvoidance;
+	}
+	if(GetCharacterMovement()->AvoidanceWeight != CurrentAvoidanceWeight)
+	{
+		GetCharacterMovement()->AvoidanceWeight = CurrentAvoidanceWeight;
+	}
+	if(GetCapsuleComponent()->GetCollisionProfileName() != CollisionName)
+	{
+		GetCapsuleComponent()->SetCollisionProfileName(CollisionName);
+	}
+}
+
 void AXYZUnit::FlyingAttackMoveTarget()
 {
-	if(TargetActor && !TargetActor->CanAttack(this))
+	if(TargetActor && !TargetActor->CanBeAttacked(this))
 	{
 		if(TargetActor->bIsCloaked)
 		{
@@ -334,7 +362,7 @@ bool AXYZUnit::IsInAttackRangeOfUnit()
 	if (TargetActor &&
 		TargetActor != this &&
 		TargetActor->State != EXYZUnitState::DEAD &&
-		TargetActor->CanAttack(this))
+		TargetActor->CanBeAttacked(this))
 	{
 		
 		FVector ActorLocation = GetActorLocation();

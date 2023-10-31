@@ -3,6 +3,7 @@
 
 #include "XYZMinimapManager.h"
 #include "XYZActor.h"
+#include "XYZCameraController.h"
 
 // Sets default values
 AXYZMinimapManager::AXYZMinimapManager()
@@ -60,6 +61,26 @@ void AXYZMinimapManager::Tick(float DeltaTime)
 	if(UnitCoords.IsEmpty()) return;
 	OnClearMinimap.Broadcast(TeamId);
 	OnUpdateMinimap.Broadcast(UnitCoords,UnitColors,TeamId);
+	if(CameraController)
+	{
+		TArray<FVector2D> CameraCorners = CameraController->GetCameraCorners();
+		TArray<FVector2D> CameraCornersToMinimapCoords;
+
+		for(FVector2D CameraCorner : CameraCorners)
+		{
+			CameraCornersToMinimapCoords.Add(FVector2D(MinimapSize-FMath::FloorToInt(CameraCorner.X / GridCellSize),
+							MinimapSize-FMath::FloorToInt(CameraCorner.Y / GridCellSize)));
+		}
+		if(CameraCorners.Num() == 4)
+		{
+			OnUpdateCamera.Broadcast(
+				CameraCornersToMinimapCoords[0],
+				CameraCornersToMinimapCoords[1],
+				CameraCornersToMinimapCoords[2],
+				CameraCornersToMinimapCoords[3],
+				TeamId);
+		}
+	}
 }
 
 void AXYZMinimapManager::UpdateVisibleActors(TSet<AXYZActor*> DeltaVisible, TSet<AXYZActor*> DeltaNonVisible, int32 _TeamId)

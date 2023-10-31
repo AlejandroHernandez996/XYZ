@@ -156,6 +156,7 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AXYZActor, bIsCloaked);
 	DOREPLIFETIME(AXYZActor, bInEnemyVision);
 	DOREPLIFETIME(AXYZActor, bInEnemyTrueVision);
+	DOREPLIFETIME(AXYZActor, bHasEverBeenVisibleByEnemy);
 }
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
@@ -190,7 +191,7 @@ void AXYZActor::Attack()
 	{
 		return;
 	}
-	if(TargetActor && !TargetActor->CanAttack(this))
+	if(TargetActor && !TargetActor->CanBeAttacked(this))
 	{
 		TargetActor = nullptr;
 		return;
@@ -362,7 +363,7 @@ void AXYZActor::AttackMoveTarget()
 	FVector ActorLocation = GetActorLocation();
 
 	FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
-	if(TargetActor && !TargetActor->CanAttack(this))
+	if(TargetActor && !TargetActor->CanBeAttacked(this))
 	{
 		TargetActor = nullptr;
 		return;
@@ -494,9 +495,10 @@ void AXYZActor::Process(float DeltaTime)
 	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
 
 	bInEnemyVision = MapManager->TeamHasVision(TeamId == 0 ? 1 : 0, GridCoord);
+	bHasEverBeenVisibleByEnemy = bHasEverBeenVisibleByEnemy || bInEnemyVision;
 	bInEnemyTrueVision = MapManager->TeamHasTrueVision(TeamId == 0 ? 1 : 0, GridCoord);
 
-	if(GridCoord != MapManager->GetGridCoordinate(GetActorLocation()))
+	if(GridCoord != MapManager->GetGridCoordinate(GetActorLocation()) && !this->IsA(AXYZResourceActor::StaticClass()))
 	{
 		MapManager->AddToUpdateSet(this);
 	}
@@ -616,7 +618,7 @@ void AXYZActor::PlaySound(USoundBase* Sound)
 	}
 }
 
-bool AXYZActor::CanAttack(AXYZActor* AttackingActor)
+bool AXYZActor::CanBeAttacked(AXYZActor* AttackingActor)
 {
 	if(AttackingActor)
 	{

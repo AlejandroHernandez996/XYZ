@@ -2,6 +2,7 @@
 
 #include "XYZCameraController.h"
 
+#include "EngineUtils.h"
 #include "XYZPlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -129,6 +130,58 @@ void AXYZCameraController::DragMove()
 void AXYZCameraController::EndDragMovement()
 {
 	bIsDragging = false;
+}
+
+TArray<FVector2D> AXYZCameraController::GetCameraCorners()
+{
+	TArray<FVector> CameraCorners;
+	TArray<FVector> CameraCornersDirections;
+	TArray<FVector2D> CameraCornersWorld;
+
+	int32 ViewportSizeX, ViewportSizeY;
+	XYZPlayerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
+	FVector2D TopLeftScreen(0.0f, 0.0f);
+	FVector2D TopRightScreen(ViewportSizeX, 0.0f);
+	FVector2D BottomLeftScreen(0.0f, ViewportSizeY);
+	FVector2D BottomRightScreen(ViewportSizeX, ViewportSizeY);
+
+	FVector TopLeftWorld, TopRightWorld, BottomLeftWorld, BottomRightWorld;
+	FVector TopLeftWorldDir, TopRightWorldDir, BottomLeftWorldDir, BottomRightWorldDir;
+	XYZPlayerController->DeprojectScreenPositionToWorld(TopLeftScreen.X,TopLeftScreen.Y, TopLeftWorld, TopLeftWorldDir);
+	XYZPlayerController->DeprojectScreenPositionToWorld(TopRightScreen.X,TopRightScreen.Y, TopRightWorld, TopRightWorldDir);
+	XYZPlayerController->DeprojectScreenPositionToWorld(BottomLeftScreen.X,BottomLeftScreen.Y, BottomLeftWorld, BottomLeftWorldDir);
+	XYZPlayerController->DeprojectScreenPositionToWorld(BottomRightScreen.X, BottomRightScreen.Y, BottomRightWorld, BottomRightWorldDir);
+	CameraCorners.Add(TopLeftWorld);
+	CameraCorners.Add(TopRightWorld);
+	CameraCorners.Add(BottomLeftWorld);
+	CameraCorners.Add(BottomRightWorld);
+	CameraCornersDirections.Add(TopLeftWorldDir);
+	CameraCornersDirections.Add(TopRightWorldDir);
+	CameraCornersDirections.Add(BottomLeftWorldDir);
+	CameraCornersDirections.Add(BottomRightWorldDir);
+
+	for(int32 i = 0;i < 4;i++)
+	{
+		FHitResult HitResult;
+		const FVector Start = CameraCorners[i];
+		const FVector End = Start + CameraCornersDirections[i] * 10000; 
+		FCollisionQueryParams TraceParams(FName(TEXT("MouseToWorldTrace")), true, XYZPlayerController->GetPawn());
+		TraceParams.bTraceComplex = true;
+		TraceParams.bReturnPhysicalMaterial = false;
+		for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		{
+			TraceParams.AddIgnoredActor(*ActorItr);
+		}
+		if(GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldStatic, TraceParams))
+		{
+			FVector HitLocation = HitResult.Location;
+			HitLocation.Z = 1000.0f;
+			FVector EndLocation = HitLocation;
+			EndLocation.Z = 0.0f;
+			CameraCornersWorld.Add(FVector2D(HitLocation.X,HitLocation.Y));
+		}
+	}
+	return CameraCornersWorld;
 }
 
 void AXYZCameraController::SaveCameraLocation(int32 CameraGroupIndex)

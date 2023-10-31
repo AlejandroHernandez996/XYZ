@@ -98,9 +98,14 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		for (TActorIterator<AXYZActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 		{
 			AXYZActor* Actor = *ActorItr;
+			if(Actor->IsA(AXYZResourceActor::StaticClass()))
+			{
+				Actor->bIsVisible = true;
+			}
 			if(Actor && Actor->TeamId != -1 && Actor->TeamId != 2 && Actor->TeamId != TeamId)
 			{
 				Actor->SetActorHiddenInGame(true);
+				Actor->bIsVisible = false;
 			}
 		}
 		bHasHiddenEnemyBuildings = true;
@@ -190,6 +195,11 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 		{
 			MinimapManager = *ActorItr;
 		}
+	}
+
+	if(MinimapManager && CameraController && !MinimapManager->CameraController)
+	{
+		MinimapManager->CameraController = CameraController;
 	}
 	
 	bool bNotPlacingBuildingAndTemplate = !bIsPlacingBuilding && PlacementBuilding;
@@ -1011,13 +1021,14 @@ void AXYZPlayerController::UpdateVisibleActors()
 					{
 						AXYZActor* Actor = XYZGameState->ActorsByUID[NonVisibleActor];
 						Actor->bIsVisible = false;
-						if(Actor->IsA(AXYZBuilding::StaticClass()))
+						if(Actor->IsA(AXYZResourceActor::StaticClass())) continue;
+						if(Actor->bHasEverBeenVisibleByEnemy && Actor->IsA(AXYZBuilding::StaticClass()))
 						{
 							TArray<USceneComponent*> SceneComponents;
 							Actor->GetComponents<USceneComponent>(SceneComponents);
 							for(USceneComponent* SceneComponent : SceneComponents)
 							{
-								if(!SceneComponent->IsA(UStaticMesh::StaticClass()))
+								if(!SceneComponent->IsA(UStaticMeshComponent::StaticClass()))
 								{
 									SceneComponent->SetVisibility(false);
 								}

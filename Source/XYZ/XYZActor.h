@@ -274,7 +274,7 @@ public:
     bool bCanAttackAir = false;
 
     UFUNCTION()
-    bool CanAttack(class AXYZActor* AttackingActor);
+    bool CanBeAttacked(class AXYZActor* AttackingActor);
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Flying")
     float FlyingZOffset = 500.0f;
@@ -323,6 +323,9 @@ public:
 
     UPROPERTY(Replicated)
     bool bInEnemyVision;
+
+    UPROPERTY(Replicated)
+    bool bHasEverBeenVisibleByEnemy;
 
     UPROPERTY()
     class AXYZPlayerController* OwningPlayerController;

@@ -62,6 +62,24 @@ void UXYZBlob::Process(float DeltaSeconds)
         // Check agents is they are complete
         // send them to copmpleted set if so
         if (!CurrentNode->ProcessingAgents.IsEmpty()) {
+            if(CurrentAction->ProcessCount > 0 && CurrentAction->TimeSinceStart >= CurrentAction->CompleteTimeThreshold)
+            {
+                TSet<AXYZActor*> AgentsToBeCompleted;
+                for (AXYZActor* Agent : CurrentNode->ProcessingAgents) {
+                    if (Agent) {
+                        if (CurrentAction) {
+                            if (CurrentAction->HasAgentComplete(Agent)) {
+                                AgentsToBeCompleted.Add(Agent);
+                            }
+                        }
+                    }
+                }
+                for (AXYZActor* Agent : AgentsToBeCompleted) {
+                    CurrentNode->ProcessingAgents.Remove(Agent);
+                    CurrentNode->CompletedAgents.Add(Agent);
+                }
+            }
+            
             if(CurrentAction->ProcessCount == 0 || (CurrentAction->IsContinousProcessing() && CurrentAction->TimeSinceProcess == 0.0f))
             {
                 CurrentAction->ProcessAction(CurrentNode->ProcessingAgents);
@@ -72,20 +90,7 @@ void UXYZBlob::Process(float DeltaSeconds)
             {
                 CurrentAction->TimeSinceProcess = 0.0f;
             }
-            TSet<AXYZActor*> AgentsToBeCompleted;
-            for (AXYZActor* Agent : CurrentNode->ProcessingAgents) {
-                if (Agent) {
-                    if (CurrentAction) {
-                        if (CurrentAction->HasAgentComplete(Agent)) {
-                            AgentsToBeCompleted.Add(Agent);
-                        }
-                    }
-                }
-            }
-            for (AXYZActor* Agent : AgentsToBeCompleted) {
-                CurrentNode->ProcessingAgents.Remove(Agent);
-                CurrentNode->CompletedAgents.Add(Agent);
-            }
+            CurrentAction->TimeSinceStart += DeltaSeconds;
         }
 
         // Move copleted agents to the next node

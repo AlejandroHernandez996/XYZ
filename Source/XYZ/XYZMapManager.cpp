@@ -59,7 +59,7 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 	StartTime = FPlatformTime::Seconds();
 	for(AXYZActor* Actor : ActorsToUpdate)
 	{
-		if(!Actor || Actor->IsA(AXYZResourceActor::StaticClass()))
+		if(!Actor)
 		{
 			continue;
 		}
@@ -297,7 +297,7 @@ AXYZActor* UXYZMapManager::FindClosestEnemyActorInVisionRange(AXYZActor* Actor, 
 				bTargetIsFriendlyAndShouldIgnore ||
 				ActorInPerimeter->State == EXYZUnitState::DEAD ||
 				ActorInPerimeter->IsA(AXYZResourceActor::StaticClass()) ||
-				!ActorInPerimeter->CanAttack(Actor))
+				!ActorInPerimeter->CanBeAttacked(Actor))
 			{
 				continue;
 			}
@@ -325,7 +325,8 @@ AXYZActor* UXYZMapManager::FindClosestEnemyActorInVisionRange(AXYZActor* Actor, 
 
 void UXYZMapManager::AddActorToGrid(AXYZActor* Actor) {
 	if(!Actor) return;
-	FIntVector2 GridCoord = GetGridCoordinate(Actor->GetActorLocation());
+	FVector ActorLocation = Actor->GetActorLocation();
+	FIntVector2 GridCoord = GetGridCoordinate(ActorLocation);
 	if(IsGridCoordValid(GridCoord))
 	{
 		Grid[GridCoord]->ActorsInCell.Add(Actor);
@@ -442,7 +443,7 @@ void UXYZMapManager::RemoveVisionForActor(AXYZActor* Actor)
 }
 
 void UXYZMapManager::RemoveActorFromGrid(AXYZActor* Actor) {
-	if(Actor && IsGridCoordValid(Actor->GridCoord) && Grid[Actor->GridCoord]->ActorsInCell.Contains(Actor))
+	if(Actor && IsGridCoordValid(Actor->GridCoord))
 	{
 		RemoveVisionForActor(Actor);
 		Grid[Actor->GridCoord]->ActorsInCell.Remove(Actor);
@@ -504,20 +505,7 @@ void UXYZMapManager::SendDeltaVisibilityToClients()
 		bool bIsDifferent = !VisibleCellsDifference.IsEmpty() || !NonVisibleCellsDifference.IsEmpty() || !NonVisibleActorsDifference.IsEmpty() || !VisibleActorsDifference.IsEmpty();
 		if(bIsDifferent)
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("TeamId: %d"), TeamId);
-			//UE_LOG(LogTemp, Warning, TEXT("Size of VisibleActorsDifference: %d"), VisibleActorsDifference.Num());
-			//UE_LOG(LogTemp, Warning, TEXT("Size of NonVisibleActorsDifference: %d"), NonVisibleActorsDifference.Num());
-			//UE_LOG(LogTemp, Warning, TEXT("Size of VisibleCellsDifference: %d"), VisibleCellsDifference.Num());
-			//UE_LOG(LogTemp, Warning, TEXT("Size of NonVisibleCellsDifference: %d"), NonVisibleCellsDifference.Num());
 			PlayerController->UpdateClientVisibility(ConvertSetToActorIds(VisibleActorsDifference),  ConvertSetToActorIds(NonVisibleActorsDifference), VisibleCellsDifference.Array(),  NonVisibleCellsDifference.Array());
-			continue;
-			if(bHasSentVison)
-			{
-
-			}else
-			{
-				PlayerController->UpdateClientVisibility(ConvertSetToActorIds(VisibleActorsDifference),  ConvertSetToActorIds(NonVisibleActorsDifference), VisibleCellsDifference.Array(),  {});
-			}
 		}
 	}
 

@@ -52,6 +52,8 @@ public:
 		TArray<int32> GasByTeamId = { 0,0 };
 	UPROPERTY(BlueprintReadOnly, Replicated)
 		TArray<int32> SupplyByTeamId = { 0,0,0,0 };
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 MaxSupply = 100;
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	bool bHasGameEnded;
 

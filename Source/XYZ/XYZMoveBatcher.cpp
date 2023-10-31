@@ -17,13 +17,38 @@ void UXYZMoveBatcher::Process(float DeltaTime)
 
 		if(TargetActor)
 		{
-			Controller->XYZMoveToActor(TargetActor);
+			if(XYZMove->bIsAttack)
+			{
+				Controller->XYZAttackMoveToTarget(TargetActor);
+			}else
+			{
+				Controller->XYZMoveToActor(TargetActor);
+			}
 		}else
 		{
-			Controller->XYZMoveToLocation(XYZMove->TargetLocation);
+			if(XYZMove->bIsAttack)
+			{
+				Controller->XYZAttackMoveToLocation(XYZMove->TargetLocation);
+			}else
+			{
+				Controller->XYZMoveToLocation(XYZMove->TargetLocation);
+			}
 		}
 		MovesProcessed.Add(XYZMove);
 		ProcessIndex++;
 	}
 	MovesToProcess = MovesToProcess.Difference(MovesProcessed);
+}
+
+void UXYZMoveBatcher::RemoveActorFromBatch(AXYZActor* Actor)
+{
+	TSet<TSharedPtr<FXYZMove>> MovesToRemove;
+	for(TSharedPtr<FXYZMove> Move : MovesToProcess)
+	{
+		if(Move->ActorToMove == Actor)
+		{
+			MovesToRemove.Add(Move);
+		}
+	}
+	MovesToProcess = MovesToProcess.Difference(MovesToRemove);
 }

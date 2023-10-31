@@ -8,6 +8,7 @@
 #include "XYZMinimapManager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FUpdateMinimap, const TArray<FVector2D>&, UnitBlots, const TArray<FColor>&, UnitColor,const int32& ,TeamId);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FUpdateCameraMarker, const FVector2D&, TopLeft, const FVector2D&, TopRight, const FVector2D&, BottomLeft, const FVector2D&, BottomRight, const int32&, TeamId);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FClearMinimap, const int32&, TeamId);
 
 UCLASS()
@@ -41,9 +42,12 @@ public:
 	FUpdateMinimap OnUpdateMinimap;
 	UPROPERTY(BlueprintAssignable)
 	FClearMinimap OnClearMinimap;
+	UPROPERTY(BlueprintAssignable)
+	FUpdateCameraMarker OnUpdateCamera;
 	UPROPERTY()
 	TSet<class AXYZActor*> VisibleActors;
-	
+	UPROPERTY()
+	class AXYZCameraController* CameraController;
 	int32 TeamId = -1;
 	UFUNCTION()
 	void UpdateVisibleActors(TSet<AXYZActor*> DeltaVisible, TSet<AXYZActor*> DeltaNonVisible, int32 TeamId);

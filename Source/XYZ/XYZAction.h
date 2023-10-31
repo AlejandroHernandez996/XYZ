@@ -47,7 +47,11 @@ public:
     UPROPERTY()
     int32 ProcessCount = 0;
     UPROPERTY()
-    float ProcessRate = 2.0f;
+    float ProcessRate = .5f;
     UPROPERTY()
     float TimeSinceProcess;
+    UPROPERTY()
+    float TimeSinceStart;
+    UPROPERTY()
+    float CompleteTimeThreshold = .2f;
 };

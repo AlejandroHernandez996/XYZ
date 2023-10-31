@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Processable.h"
+#include "XYZInputType.h"
 #include "UObject/NoExportTypes.h"
 #include "XYZMoveBatcher.generated.h"
 
@@ -17,6 +18,7 @@ class XYZ_API UXYZMoveBatcher : public UObject, public IProcessable
 
 public:
 	virtual void Process(float DeltaTime) override;
+	void RemoveActorFromBatch(class AXYZActor* Actor);
 
 	UPROPERTY()
 	int32 BatchSize = 10;
@@ -35,4 +37,6 @@ struct FXYZMove
 	class AXYZActor* ActorToTarget;
 	UPROPERTY()
 	FVector TargetLocation;
+	UPROPERTY()
+	bool bIsAttack;
 };
