@@ -291,6 +291,7 @@ AXYZActor* UXYZMapManager::FindClosestEnemyActorInVisionRange(AXYZActor* Actor, 
 		int ClosestActorPriority = INT_MAX;
 		for(AXYZActor* ActorInPerimeter : ActorsInPerimeter)
 		{
+			if(!ActorInPerimeter) continue;
 			bool bTargetIsFriendlyAndShouldIgnore = ActorInPerimeter && ActorInPerimeter->TeamId == TeamId && bIgnoreFriendlyActors;
 			if (!ActorInPerimeter ||
 				ActorInPerimeter == Actor ||

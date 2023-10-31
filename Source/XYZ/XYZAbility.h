@@ -34,6 +34,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     int32 EnergyCost;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    int32 HealthCost;
+    
     UPROPERTY(EditDefaultsOnly,BlueprintReadWrite, Category = "Requirements")
     TMap<int32, FString> ActorRequirements;
 
@@ -70,4 +73,13 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     bool bCanCastWhileMoving;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    bool bIsSelfCast;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    bool bCanMulticast;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    bool bIsQuickcast;
 };

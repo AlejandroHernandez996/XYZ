@@ -11,7 +11,8 @@ bool UXYZTargetAreaAbility::Activate()
 {
 	if(Super::Activate())
 	{
-		OwningActor->Energy -= EnergyCost;
+		OwningActor->Energy = FMath::Clamp(OwningActor->Energy-EnergyCost,0.0f,OwningActor->MaxEnergy);
+		OwningActor->Health = FMath::Clamp(OwningActor->Health-HealthCost,0.0f,OwningActor->MaxHealth);
 		GetWorld()->GetAuthGameMode<AXYZGameMode>()->AreaOfEffectManager->CreateAOE(AOETemplate,OwningActor->TeamId, TargetLocation);
 		return true;
 	}

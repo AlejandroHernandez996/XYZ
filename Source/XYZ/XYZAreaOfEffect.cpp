@@ -4,6 +4,7 @@
 #include "XYZAreaOfEffect.h"
 
 #include "XYZMapManager.h"
+#include "XYZResourceActor.h"
 #include "XYZUnitBuff.h"
 
 // Sets default values
@@ -53,18 +54,57 @@ void AXYZAreaOfEffect::Process(float DeltaTime)
 
 	FIntVector2 CenterGrid = MapManager->GetGridCoordinate(GetActorLocation());
 	TSet<AXYZActor*> InsideActors = MapManager->FindActorsInRange(CenterGrid, AbilityRadius);
+
+	TSet<AXYZActor*> InsideActorsToRemove;
+	for(AXYZActor* Actor: InsideActors)
+	{
+		if(Actor->IsA(AXYZResourceActor::StaticClass()))
+		{
+			InsideActorsToRemove.Add(Actor);
+		}
+	}
+	InsideActors = InsideActors.Difference(InsideActorsToRemove);
 	TSet<AXYZActor*> OutsideActors = InsideActorsLastTick.Difference(InsideActors);
 
 	ProcessInsideActors(InsideActors);
 	ProcessOutsideActors(OutsideActors);
 	InsideActorsLastTick = InsideActors;
+	if(Damage != 0.0f && ((bConstantDamage || CurrentDuration == 0.0f) || TimeSinceLastDamageTick >= DamageRate))
+	{
+		DamageInsideActors(InsideActors);
+		TimeSinceLastDamageTick = 0.0f;
+	}
+	TimeSinceLastDamageTick += DeltaTime;
 	CurrentDuration += DeltaTime;
+}
+
+void AXYZAreaOfEffect::DamageInsideActors(TSet<AXYZActor*> ActorsToDamage)
+{
+	for(AXYZActor* Actor : ActorsToDamage)
+	{
+		if(!Actor) continue;
+		if (Actor->bIsFlying && !bCanHitAir) {
+			continue;
+		}
+
+		bool bHasDamaged = DamagedActors.Contains(Actor);
+		if (bHasDamaged && !bConstantDamage) {
+			continue;
+		}
+
+		bool bIsAlly = Actor->TeamId == TeamId;
+		if (!bIsAlly || bDamagesAllies) {
+			Actor->Health = FMath::Clamp(Actor->Health - Damage, 0, Actor->MaxHealth);
+			DamagedActors.Add(Actor);
+		}
+	}
 }
 
 void AXYZAreaOfEffect::ProcessInsideActors(TSet<AXYZActor*> Actors)
 {
 	for(AXYZActor* Actor : Actors)
 	{
+		if(!Actor) continue;
 		if(Actor->TeamId == TeamId)
 		{
 			for(UXYZUnitBuff* UnitBuff : TeamBuffsToApply)
@@ -93,6 +133,7 @@ void AXYZAreaOfEffect::ProcessOutsideActors(TSet<AXYZActor*> Actors)
 {
 	for(AXYZActor* Actor : Actors)
 	{
+		if(!Actor) continue;
 		if(ActorsBuffed.Contains(Actor))
 		{
 			if(Actor->TeamId == TeamId)
@@ -119,6 +160,7 @@ void AXYZAreaOfEffect::EndAOE()
 {
 	for(AXYZActor* Actor : ActorsBuffed)
 	{
+		if(!Actor) continue;
 		if(ActorsBuffed.Contains(Actor))
 		{
 			if(Actor->TeamId == TeamId)

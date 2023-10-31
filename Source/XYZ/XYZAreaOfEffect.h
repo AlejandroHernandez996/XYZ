@@ -18,7 +18,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	virtual void Process(float DeltaTime) override;
 
 	UFUNCTION()
@@ -51,12 +51,24 @@ public:
 	float AbilityRadius = 10.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TimeToLive = 10.0f;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Damage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageRate;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TimeSinceLastDamageTick;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bDamagesAllies;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bConstantDamage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bCanHitAir;
+	UPROPERTY()
+	TSet<AXYZActor*> DamagedActors;
+	UFUNCTION()
+	void DamageInsideActors(TSet<AXYZActor*> ActorsToDamage);
+	
 	UPROPERTY()
 	TSet<class AXYZActor*> InsideActorsLastTick;
 	UPROPERTY()

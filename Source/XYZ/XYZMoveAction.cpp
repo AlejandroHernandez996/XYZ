@@ -267,6 +267,10 @@ void UXYZMoveAction::MoveGroup(TSharedPtr<FAgentGroup> AgentGroup)
             FVector DirectonFromCenter = ActorLocation - AgentGroup->CenterAgent->GetActorLocation();
             FVector AgentTargetLocation = TargetLocation + DirectonFromCenter;
 
+            if(Agent->bIsFlying && Agent->GetDistanceToLocation2D(TargetLocation) < 300.0f)
+            {
+                AgentTargetLocation = TargetLocation;
+            }
             UXYZMapManager* MapManager = Agent->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
             FIntVector2 TargetGridCoord = MapManager->GetGridCoordinate(TargetLocation);
             FIntVector2 AgentTargetGridCoord = MapManager->GetGridCoordinate(AgentTargetLocation);

@@ -417,7 +417,7 @@ void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {
 		WorkerAbility = Cast<UXYZWorkerAbility>(ActiveWorker->Abilities[AbilityIndex]);
 	}
 	
-	if(ActiveWorker &&  WorkerAbility)
+	if(ActiveWorker && WorkerAbility)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.bNoFail = true;
@@ -448,8 +448,25 @@ void AXYZPlayerController::OnAbilityInputStarted(int32 AbilityIndex) {
 
 	if(ActiveTargetAbility)
 	{
-		ActiveAbilityIndex = AbilityIndex;
-		ActiveAbilityMarker = GetWorld()->SpawnActor<AXYZAbilityMarker>(ActiveTargetAbility->AbilityMarkerTemplate, GetMouseToWorldPosition(this), FRotator::ZeroRotator);
+		if(ActiveTargetAbility->bIsQuickcast)
+		{
+			AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
+			if(HitActor && !HitActor->bIsVisible)
+			{
+				HitActor = nullptr;
+			}
+			int32 XYZActorHitId = bXYZActorHitSuccessful && HitActor ? HitActor->UActorId : -1;
+			FXYZInputMessage AbilityInput = FXYZInputMessage(SelectionStructure->ToActorIdArray(), XYZActorHitId, WorldHit.Location, EXYZInputType::ABILITY, bPrimaryModifier);
+			AbilityInput.AbilityIndex = AbilityIndex;
+			AbilityInput.ActiveActorId = SelectionStructure->ActiveActor;
+			QueueInput(AbilityInput);
+			ActiveTargetAbility = nullptr;
+			ActiveAbilityIndex = -1;
+		}else
+		{
+			ActiveAbilityIndex = AbilityIndex;
+			ActiveAbilityMarker = GetWorld()->SpawnActor<AXYZAbilityMarker>(ActiveTargetAbility->AbilityMarkerTemplate, GetMouseToWorldPosition(this), FRotator::ZeroRotator);
+		}
 		return;
 	}
 	

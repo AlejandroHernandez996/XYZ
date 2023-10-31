@@ -227,7 +227,9 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 			if (MapManager->Grid.Contains(GridCoord) && MapManager->Grid[GridCoord]->ActorsInCell.Contains(this))
 			{
 				TArray<FVector> OtherFlyingUnitLocations;
-				TArray<FIntVector2> UnitAreaCoords = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(2,2)).Array();
+				TSet<FIntVector2> UnitAreaCoords = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(2,2));
+				UnitAreaCoords = UnitAreaCoords.Union(MapManager->GetPerimeterCoords(GridCoord, FIntVector2(1,1)));
+
 				UnitAreaCoords.Add(GridCoord);
 
 				for(FIntVector2 AreaCoord : UnitAreaCoords)
@@ -241,7 +243,7 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 							FlyingUnit->State == EXYZUnitState::IDLE &&
 							FlyingUnit->TeamId == TeamId &&
 							FlyingUnit != this &&
-							FVector::Distance(FlyingUnit->GetActorLocation(), GetActorLocation()) < GetCapsuleComponent()->GetScaledCapsuleRadius()*2.0f)
+							FVector::Distance(FlyingUnit->GetActorLocation(), GetActorLocation()) < GetCapsuleComponent()->GetScaledCapsuleRadius()*3.0f)
 						{
 							OtherFlyingUnitLocations.Add(FlyingUnit->GetActorLocation());
 						}

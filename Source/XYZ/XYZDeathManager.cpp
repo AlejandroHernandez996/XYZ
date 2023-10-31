@@ -17,7 +17,7 @@ void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 {
 	if(!Actor) return;
 	
-	FDeathStruct DeathStruct(Actor, CurrentTime + 0.5f);
+	TSharedPtr<FDeathStruct> DeathStruct = MakeShared<FDeathStruct>(Actor, CurrentTime + 1.5f, CurrentTime + .75f);
 	AXYZGameState* XYZGameState = GetWorld()->GetGameState<AXYZGameState>();
 	AXYZGameMode* XYZGameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
 
@@ -27,7 +27,6 @@ void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 		ActorCache->RemoveActorCount(Actor->TeamId, Actor->ActorId);
 	}
 	
-	XYZGameMode->MapManager->ActorsToRemove.Add(Actor);
 	for (AXYZPlayerController* XYZController : XYZGameMode->PlayerControllers)
 	{
 		if (XYZController)
@@ -69,12 +68,20 @@ void UXYZDeathManager::Process(float DeltaSeconds)
 {
 	CurrentTime += DeltaSeconds;
 	if(DeathQueue.IsEmpty()) return;
-	TArray<FDeathStruct> ActorsAlive;
-	for(FDeathStruct DeathStruct : DeathQueue)
+	TSet<TSharedPtr<FDeathStruct>> ActorsAlive;
+	AXYZGameMode* XYZGameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
+	for(TSharedPtr<FDeathStruct> DeathStruct : DeathQueue)
 	{
-		if(DeathStruct.TimeToDie <= CurrentTime)
+		if(!DeathStruct || !DeathStruct->Actor) continue;
+		
+		if(DeathStruct->TimeToRemoveVision <= CurrentTime && !DeathStruct->bRemovedVision)
 		{
-			DeathStruct.Actor->Destroy();
+			XYZGameMode->MapManager->ActorsToRemove.Add(DeathStruct->Actor);
+			DeathStruct->bRemovedVision = true;
+		}
+		if(DeathStruct->TimeToDie <= CurrentTime)
+		{
+			DeathStruct->Actor->Destroy();
 		}else
 		{
 			ActorsAlive.Add(DeathStruct);

@@ -16,8 +16,7 @@ public:
 	UFUNCTION()
 	void Process(float DeltaSeconds);
     
-	UPROPERTY()
-	TArray<FDeathStruct> DeathQueue;
+	TSet<TSharedPtr<FDeathStruct>> DeathQueue;
 
 	float CurrentTime;
 };

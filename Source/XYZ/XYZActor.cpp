@@ -77,6 +77,18 @@ void AXYZActor::BeginPlay()
 		}
 		AbilityIndex++;
 	}
+
+	AbilitiesTriggeredOnAttack.Empty();
+	for (TSubclassOf<class UXYZAbility> AbilityTemplate : AbilitiesTriggeredOnAttackTemplates)
+	{
+		UXYZAbility* Ability = NewObject<UXYZAbility>(this, AbilityTemplate,
+													  FName(GetName() + "_Ability_" + FString::FromInt(AbilityIndex)));
+		if (Ability)
+		{
+			AbilitiesTriggeredOnAttack.Add(Ability);
+			Ability->OwningActor = this;
+		}
+	}
 	LastLocation = GetActorLocation();
 }
 
@@ -227,6 +239,15 @@ void AXYZActor::Attack()
 		if(ProjectileTemplate)
 		{
 			GetWorld()->GetAuthGameMode<AXYZGameMode>()->ProjectileManager->SpawnProjectile(ProjectileTemplate, ProjectileSpawnComponent->GetComponentLocation(), TargetActor,this);
+		}
+		for(UXYZAbility* Ability : AbilitiesTriggeredOnAttack)
+		{
+			if(Ability)
+			{
+				Ability->OwningActor = this;
+				Ability->TargetLocation = GetActorLocation();
+				Ability->Activate();
+			}
 		}
 	}
 }
@@ -624,7 +645,7 @@ bool AXYZActor::CanBeAttacked(AXYZActor* AttackingActor)
 	{
 		bool bCanAttackActorBasedOnHeight = bIsFlying ? AttackingActor->bCanAttackAir : AttackingActor->bCanAttackGround;
 		bool bCanAttackCloakedActor = !bIsCloaked || bInEnemyTrueVision;
-		return bCanAttackActorBasedOnHeight && (bCanAttackCloakedActor || TeamId == AttackingActor->TeamId);
+		return bInEnemyVision && bCanAttackActorBasedOnHeight && (bCanAttackCloakedActor || TeamId == AttackingActor->TeamId);
 	}
 	return false;
 }
@@ -647,4 +668,14 @@ void AXYZActor::SetIsCloaked(bool bIsActorCloaked)
 			PlayerController->UncloakActor(this);
 		}
 	}
+}
+
+FVector2D AXYZActor::GetActorLocation2D()
+{
+	return FVector2D(GetActorLocation().X, GetActorLocation().Y);
+}
+
+float AXYZActor::GetDistanceToLocation2D(FVector WorldLocation)
+{
+	return FVector2D::Distance(GetActorLocation2D(), FVector2D(WorldLocation.X, WorldLocation.Y));
 }

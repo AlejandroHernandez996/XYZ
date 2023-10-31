@@ -373,4 +373,15 @@ public:
     AXYZActor* PushedBy;
     UPROPERTY(EditAnywhere)
     float AverageStuckForwardAngleThreshold = 45.0f;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    TSet<class UXYZAbility*> AbilitiesTriggeredOnAttack;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    TArray<TSubclassOf<class UXYZAbility>> AbilitiesTriggeredOnAttackTemplates;
+
+    UFUNCTION()
+    FVector2D GetActorLocation2D();
+
+    UFUNCTION()
+    float GetDistanceToLocation2D(FVector WorldLocation);
+
 };

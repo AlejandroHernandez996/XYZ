@@ -8,14 +8,18 @@ void UXYZAbilityAction::ProcessAction(TSet<AXYZActor*> Agents) {
     float ClosestDistance = MAX_FLT;
     for (AXYZActor* Actor : Agents) {
         if(ActorsInUse.Contains(Actor) || FinishedActors.Contains(Actor)) continue;
-        if (Actor && Actor->ActorId == ActiveActorId && Actor->CanUseAbility()) {
+        if (Actor && Actor->ActorId == ActiveActorId && Actor->CanUseAbility() && Actor->Abilities.IsValidIndex(AbilityIndex)) {
             UXYZAbility* Ability = Actor->Abilities[AbilityIndex];
             if(Ability)
             {
                 float Distance = FVector2D::Distance(FVector2D(Actor->GetActorLocation().X, Actor->GetActorLocation().Y), FVector2D(TargetLocation.X, TargetLocation.Y));
                 if(Ability->IsA(UXYZTargetAreaAbility::StaticClass()))
                 {
-                    if((!AbilityUser || AbilityUser->Energy < Actor->Energy) && Distance < ClosestDistance)
+                    if(Ability->bCanMulticast)
+                    {
+                        ActorsInUse.Add(Actor);
+                    }
+                    else if((!AbilityUser || AbilityUser->Energy < Actor->Energy) && Distance < ClosestDistance)
                     {
                         AbilityUser = Actor;
                         ClosestDistance = Distance;
@@ -43,7 +47,7 @@ void UXYZAbilityAction::ProcessAction(TSet<AXYZActor*> Agents) {
         float Distance = FVector2D::Distance(FVector2D(Actor->GetActorLocation().X, Actor->GetActorLocation().Y), FVector2D(TargetLocation.X, TargetLocation.Y));
         if(Actor->CastRange == -1 || Distance <= Actor->CastRange || Ability->CastRange == -1)
         {
-            Actor->Abilities[AbilityIndex]->TargetLocation = TargetLocation;
+            Actor->Abilities[AbilityIndex]->TargetLocation = Actor->Abilities[AbilityIndex]->bIsSelfCast ? Actor->GetActorLocation() : TargetLocation;
             Actor->UseAbility(AbilityIndex);
             if(!Ability->bCanCastWhileMoving)
             {
