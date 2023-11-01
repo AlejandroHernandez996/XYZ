@@ -18,6 +18,7 @@
 #include "XYZDeathManager.h"
 #include "XYZMapManager.h"
 #include "XYZMatchManager.h"
+#include "XYZMatchStatsManager.h"
 #include "XYZMoveBatcher.h"
 #include "XYZProjectileManager.h"
 #include "XYZUpgradeManager.h"
@@ -69,6 +70,10 @@ void AXYZGameMode::BeginPlay() {
 
     ProjectileManager = NewObject<UXYZProjectileManager>(this, UXYZProjectileManager::StaticClass(), "ProjectileManager");
 
+    MatchStatsManager = NewObject<UXYZMatchStatsManager>(this, UXYZMatchStatsManager::StaticClass(), "MatchStatsManager");
+    MatchStatsManager->Initialize();
+    MatchStatsManager->XYZGameState = GetGameState<AXYZGameState>();
+    
     MoveBatcher = NewObject<UXYZMoveBatcher>(this, UXYZMoveBatcher::StaticClass(), "MoveBatcher");
     
     bAllExistingPlayersRegistered = false;
@@ -240,10 +245,8 @@ void AXYZGameMode::Process(float DeltaSeconds)
     TArray<AXYZActor*> Actors;
     Cast<AXYZGameState>(GetWorld()->GetGameState())->ActorsByUID.GenerateValueArray(Actors);
 
-   double StartTime, EndTime, ElapsedTime;
+    InputManager->Process(DeltaSeconds);
 
-    // Process Actors
-    StartTime = FPlatformTime::Seconds();
     for (AXYZActor* Actor : Actors)
     {
         if (Actor)
@@ -256,73 +259,23 @@ void AXYZGameMode::Process(float DeltaSeconds)
             }
         }
     }
-    EndTime = FPlatformTime::Seconds();
-    ElapsedTime = EndTime - StartTime;
-    UE_LOG(LogTemp, Warning, TEXT("Actor Processing Time: %f seconds"), ElapsedTime);
     
-    // Process Input Manager
-    StartTime = FPlatformTime::Seconds();
-    InputManager->Process(DeltaSeconds);
-    EndTime = FPlatformTime::Seconds();
-    ElapsedTime = EndTime - StartTime;
-    UE_LOG(LogTemp, Warning, TEXT("Input Manager Time: %f seconds"), ElapsedTime);
-    
-    // Process Blob Manager
-    StartTime = FPlatformTime::Seconds();
     BlobManager->Process(DeltaSeconds);
-    EndTime = FPlatformTime::Seconds();
-    ElapsedTime = EndTime - StartTime;
-    UE_LOG(LogTemp, Warning, TEXT("Blob Manager Time: %f seconds"), ElapsedTime);
-
     MoveBatcher->Process(DeltaSeconds);
-
-    // Process Upgrade Manager
-    StartTime = FPlatformTime::Seconds();
     UpgradeManager->Process(DeltaSeconds);
-    EndTime = FPlatformTime::Seconds();
-    ElapsedTime = EndTime - StartTime;
-    UE_LOG(LogTemp, Warning, TEXT("Upgrade Manager Time: %f seconds"), ElapsedTime);
-    
-    // Process Death Manager
-    StartTime = FPlatformTime::Seconds();
     DeathManager->Process(DeltaSeconds);
-    EndTime = FPlatformTime::Seconds();
-    ElapsedTime = EndTime - StartTime;
-    UE_LOG(LogTemp, Warning, TEXT("Death Manager Time: %f seconds"), ElapsedTime);
-    
-    // Process Map Manager
-    StartTime = FPlatformTime::Seconds();
     MapManager->Process(DeltaSeconds);
-    EndTime = FPlatformTime::Seconds();
-    ElapsedTime = EndTime - StartTime;
-    UE_LOG(LogTemp, Warning, TEXT("Map Manager Time: %f seconds"), ElapsedTime);
-    
-    // Process Area of Effect Manager
-    StartTime = FPlatformTime::Seconds();
-    AreaOfEffectManager->Process(DeltaSeconds);
-    EndTime = FPlatformTime::Seconds();
-    ElapsedTime = EndTime - StartTime;
-    UE_LOG(LogTemp, Warning, TEXT("Area of Effect Manager Time: %f seconds"), ElapsedTime);
-    
-    // Process Match Manager
-    StartTime = FPlatformTime::Seconds();
-    MatchManager->Process(DeltaSeconds);
-    EndTime = FPlatformTime::Seconds();
-    ElapsedTime = EndTime - StartTime;
-    UE_LOG(LogTemp, Warning, TEXT("Match Manager Time: %f seconds"), ElapsedTime);
-    
-    // Process Projectile Manager
-    StartTime = FPlatformTime::Seconds();
     ProjectileManager->Process(DeltaSeconds);
-    EndTime = FPlatformTime::Seconds();
-    ElapsedTime = EndTime - StartTime;
-    UE_LOG(LogTemp, Warning, TEXT("Projectile Manager Time: %f seconds"), ElapsedTime);
+    AreaOfEffectManager->Process(DeltaSeconds);
+    MatchStatsManager->Process(DeltaSeconds);
+    MatchManager->Process(DeltaSeconds);
     
     TickCount++;
     bHasGameEnded = bHasGameEnded || NumOfPlayers < MAX_PLAYERS;
 
     if(bHasGameEnded)
     {
+        MatchStatsManager->PrintMatchStats();
         XYZGameState->ProgressMatchState();
     }
 }
@@ -353,7 +306,6 @@ void AXYZGameMode::ProcessCleanUp()
     }
 
     XYZGameState->ProgressMatchState();
-    
 }
 
 void AXYZGameMode::ProcessShutdown()

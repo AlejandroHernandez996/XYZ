@@ -25,6 +25,8 @@ public:
 	EXYZResourceType ResourceType = EXYZResourceType::MINERAL;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 RESOURCE_CAPACITY = 2;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 RESOURCE_MINE_AMOUNT = 5;
 	UPROPERTY()
 	TMap<AXYZWorker*, bool> Workers;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info", Replicated)

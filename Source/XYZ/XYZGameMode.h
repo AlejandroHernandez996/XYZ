@@ -64,6 +64,8 @@ public:
 	class UXYZAreaOfEffectManager* AreaOfEffectManager;
 	UPROPERTY()
 	class UXYZMoveBatcher* MoveBatcher;
+	UPROPERTY()
+	class UXYZMatchStatsManager* MatchStatsManager;
 	
 	UPROPERTY()
 	class UXYZActorCache* ActorCache;

@@ -10,6 +10,7 @@
 #include "XYZAIController.h"
 #include "XYZBuilding.h"
 #include "XYZMapManager.h"
+#include "XYZMatchStatsManager.h"
 #include "XYZResourceActor.h"
 #include "Components/CapsuleComponent.h"
 
@@ -60,6 +61,21 @@ void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 	Actor->CollisionName = "Ragdoll";
 	Actor->SetState(EXYZUnitState::DEAD);
 	Actor->TargetActor = nullptr;
+
+	TSharedPtr<FMatchStatPayload> SupplyStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
+	SupplyStat->TeamId = Actor->TeamId;
+	SupplyStat->IntValue = -1*Actor->SupplyCost;
+	SupplyStat->StatType = EMatchStatType::SUPPLY;
+	GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(SupplyStat);
+
+	if(Actor->IsA(AXYZWorker::StaticClass()))
+	{
+		TSharedPtr<FMatchStatPayload> WorkerCountStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
+		WorkerCountStat->TeamId = Actor->TeamId;
+		WorkerCountStat->IntValue = -1;
+		WorkerCountStat->StatType = EMatchStatType::WORKER_COUNT;
+		GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(WorkerCountStat);
+	}
 	
 	DeathQueue.Add(DeathStruct);
 }

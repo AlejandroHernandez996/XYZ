@@ -3,8 +3,10 @@
 
 #include "XYZBuffAbility.h"
 
+#include "NotificationPayload.h"
 #include "XYZActor.h"
 #include "XYZGameMode.h"
+#include "XYZPlayerController.h"
 #include "XYZUnitBuff.h"
 #include "XYZUpgradeManager.h"
 
@@ -22,6 +24,9 @@ bool UXYZBuffAbility::Activate()
 		{
 			if(!UpgradeManager->HasResearched(RequiredUpgrade, OwningActor->TeamId))
 			{
+				FNotificationPayload NotificationPayload = FNotificationPayload();
+				NotificationPayload.NotificationType = ENotificationType::NOTIFY_UPGRADE_REQUIRED;
+				OwningActor->OwningPlayerController->SendNotification(NotificationPayload);
 				return false;
 			}
 		}

@@ -27,6 +27,7 @@
 #include "Components/LineBatchComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "XYZAbilityMarker.h"
+#include "XYZMatchStatsManager.h"
 #include "XYZTargetAreaAbility.h"
 
 AXYZPlayerController::AXYZPlayerController()
@@ -819,6 +820,12 @@ void AXYZPlayerController::QueueInput_Implementation(const FXYZInputMessage& Inp
 		}
 	}
 	GameMode->QueueInput(InputMessage);
+	
+	TSharedPtr<FMatchStatPayload> APMStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
+	APMStat->TeamId = TeamId;
+	APMStat->IntValue = 1;
+	APMStat->StatType = EMatchStatType::APM;
+	GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(APMStat);
 }
 
 void AXYZPlayerController::SelectActorFromPanel(int32 UActorId) {

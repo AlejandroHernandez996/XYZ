@@ -6,6 +6,7 @@
 #include "XYZBlobManager.h"
 #include "XYZBlobFactory.h"
 #include "XYZBlob.h"
+#include "XYZMatchStatsManager.h"
 
 UXYZInputManager::UXYZInputManager()
 {

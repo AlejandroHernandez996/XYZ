@@ -55,8 +55,6 @@ FIntVector2 UXYZMapManager::GetGridCoordinate(const FVector& WorldLocation) {
 }
 
 void UXYZMapManager::Process(float DeltaSeconds) {
-	double StartTime, EndTime, ElapsedTime;
-	StartTime = FPlatformTime::Seconds();
 	for(AXYZActor* Actor : ActorsToUpdate)
 	{
 		if(!Actor)
@@ -74,16 +72,8 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 		}
 		RemoveActorFromGrid(Actor);
 	}
-	
-	EndTime = FPlatformTime::Seconds();
-	ElapsedTime = EndTime - StartTime;
-	UE_LOG(LogTemp, Warning, TEXT("MapManager AddRemove Update Actors Time: %f seconds"), ElapsedTime);
-
-	StartTime = FPlatformTime::Seconds();
 	SendDeltaVisibilityToClients();
-	EndTime = FPlatformTime::Seconds();
-	ElapsedTime = EndTime - StartTime;
-	UE_LOG(LogTemp, Warning, TEXT("Send visibility: %f seconds"), ElapsedTime);
+	
 	ActorsToUpdate.Empty();
 	ActorsToRemove.Empty();
 	bHasSentVison = true;

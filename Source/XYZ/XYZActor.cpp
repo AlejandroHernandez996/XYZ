@@ -4,6 +4,7 @@
 #include "XYZGameState.h"
 #include "XYZDecalType.h"
 #include "DrawDebugHelpers.h"
+#include "NotificationPayload.h"
 #include "Net/UnrealNetwork.h"
 #include "Components/DecalComponent.h"
 #include "Engine/World.h"
@@ -19,6 +20,7 @@
 #include "XYZBlob.h"
 #include "XYZDeathManager.h"
 #include "XYZMapManager.h"
+#include "XYZMatchStatsManager.h"
 #include "XYZProjectile.h"
 #include "XYZProjectileManager.h"
 #include "XYZUnitBuff.h"
@@ -128,7 +130,7 @@ void AXYZActor::Tick(float DeltaTime)
 	{
 		for(AXYZPlayerController* PlayerController : GetWorld()->GetAuthGameMode<AXYZGameMode>()->PlayerControllers)
 		{
-			if(PlayerController->TeamId == TeamId)
+			if(PlayerController && PlayerController->TeamId == TeamId)
 			{
 					OwningPlayerController = PlayerController;
 			}
@@ -226,6 +228,22 @@ void AXYZActor::Attack()
 		if(TargetActor->Health > 0.0f && TargetActor->Health + TargetActor->Armor - AttackDamage <= 0.0f)
 		{
 			TotalKills++;
+			if(TargetActor->IsA(AXYZBuilding::StaticClass()))
+			{
+				TSharedPtr<FMatchStatPayload> BuildingsDestroyedStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
+				BuildingsDestroyedStat->TeamId = TeamId;
+				BuildingsDestroyedStat->IntValue = 1;
+				BuildingsDestroyedStat->StatType = EMatchStatType::BUILDINGS_DESTROYED;
+				GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(BuildingsDestroyedStat);
+			}else
+			{
+				TSharedPtr<FMatchStatPayload> UnitsKilledStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
+				UnitsKilledStat->TeamId = TeamId;
+				UnitsKilledStat->IntValue = 1;
+				UnitsKilledStat->StatType = EMatchStatType::UNITS_KILLED;
+				GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(UnitsKilledStat);
+			}
+			
 		}
 		
 		TargetActor->Health = FMath::Clamp(TargetActor->Health + TargetActor->Armor - AttackDamage, 0.0f, TargetActor->MaxHealth);
@@ -235,6 +253,15 @@ void AXYZActor::Attack()
 
 		FRotator TargetRotation = Direction.Rotation();
 		SetActorRotation(TargetRotation);
+
+		if(TeamId != TargetActor->TeamId && TargetActor->TeamId != 2)
+		{
+			FNotificationPayload NotificationPayload = FNotificationPayload();
+			NotificationPayload.NotificationType = TargetActor->IsA(AXYZBuilding::StaticClass()) ?
+				ENotificationType::NOTIFY_BUILDINGS_UNDER_ATTACK :
+				ENotificationType::NOTIFY_UNITS_UNDER_ATTACK;
+			TargetActor->OwningPlayerController->SendNotification(NotificationPayload);
+		}
 
 		if(ProjectileTemplate)
 		{

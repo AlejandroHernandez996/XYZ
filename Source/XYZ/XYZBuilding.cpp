@@ -13,8 +13,10 @@
 #include "XYZAIController.h"
 #include "XYZActorCache.h"
 #include "XYZMapManager.h"
+#include "XYZMatchStatsManager.h"
 #include "XYZUpgradeAbility.h"
 #include "XYZUpgradeManager.h"
+#include "XYZWorker.h"
 
 AXYZBuilding::AXYZBuilding() : Super()
 {
@@ -312,12 +314,42 @@ void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     else if (SpawnPoint != RallyPoint) {
         SpawnActor->GetXYZAIController()->XYZMoveToLocation(RallyPoint);
     }
+    
+    FNotificationPayload NotificationPayload = FNotificationPayload();
+    NotificationPayload.NotificationType = ENotificationType::NOTIFY_UNIT_TRAINED;
+    OwningPlayerController->SendNotification(NotificationPayload);
+
+    TSharedPtr<FMatchStatPayload> UnitsTrainedStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
+    UnitsTrainedStat->TeamId = TeamId;
+    UnitsTrainedStat->IntValue = 1;
+    UnitsTrainedStat->StatType = EMatchStatType::UNITS_TRAINED;
+    GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(UnitsTrainedStat);
+
+    TSharedPtr<FMatchStatPayload> SupplyStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
+    SupplyStat->TeamId = TeamId;
+    SupplyStat->IntValue = SpawnActor->SupplyCost;
+    SupplyStat->StatType = EMatchStatType::SUPPLY;
+    GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(SupplyStat);
+
+    if(SpawnActor->IsA(AXYZWorker::StaticClass()))
+    {
+        TSharedPtr<FMatchStatPayload> WorkerCountStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
+        WorkerCountStat->TeamId = TeamId;
+        WorkerCountStat->IntValue = 1;
+        WorkerCountStat->StatType = EMatchStatType::WORKER_COUNT;
+        GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(WorkerCountStat);
+    }
 }
 
 void AXYZBuilding::ResearchUpgrade(UXYZUpgradeAbility* UpgradeAbility)
 {
     UXYZUpgradeManager* UpgradeManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->UpgradeManager;
     UpgradeManager->AddUpgradeAbility(UpgradeAbility);
+    
+    FNotificationPayload NotificationPayload = FNotificationPayload();
+    NotificationPayload.NotificationType = ENotificationType::NOTIFY_RESEARCH_COMPLETE;
+    OwningPlayerController->SendNotification(NotificationPayload);
+    
     UpgradeAbility->bCanCancel = false;
 }
 

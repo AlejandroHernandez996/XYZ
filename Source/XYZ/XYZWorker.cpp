@@ -8,9 +8,13 @@
 #include "XYZResourceActor.h"
 #include "XYZAIController.h"
 #include "Engine.h"
+#include "NotficationType.h"
+#include "NotificationPayload.h"
 #include "XYZGameMode.h"
 #include "XYZGameState.h"
 #include "XYZMapManager.h"
+#include "XYZMatchStatsManager.h"
+#include "XYZPlayerController.h"
 #include "XYZWorkerAbility.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -313,11 +317,19 @@ void AXYZWorker::Return() {
 
         if (DistanceToTarget <= CurrentCapsuleRadius*3.0f && HeldResource != EXYZResourceType::NONE)
         {
+            TSharedPtr<FMatchStatPayload> ResourceStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
+            ResourceStat->TeamId = TeamId;
             if (HeldResource == EXYZResourceType::MINERAL) {
                 GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += 5;
+                ResourceStat->IntValue = 5;
+                ResourceStat->StatType = EMatchStatType::MINERALS_GATHERED;
+                GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(ResourceStat);
             }
             else {
                 GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->GasByTeamId[TeamId] += 25;
+                ResourceStat->IntValue = 25;
+                ResourceStat->StatType = EMatchStatType::GAS_GATHERED;
+                GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(ResourceStat);
             }
             if(!TargetActor)
             {
@@ -451,6 +463,16 @@ void AXYZWorker::PlaceBuilding()
         
         ActivePlacementAbility = nullptr;
         SetState(EXYZUnitState::BUILDING);
+
+        FNotificationPayload NotificationPayload = FNotificationPayload();
+        NotificationPayload.NotificationType = ENotificationType::NOTIFY_BUILDING_COMPLETE;
+        OwningPlayerController->SendNotification(NotificationPayload);
+        
+        TSharedPtr<FMatchStatPayload> BuildingsPlacedStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
+        BuildingsPlacedStat->TeamId = TeamId;
+        BuildingsPlacedStat->IntValue = 1;
+        BuildingsPlacedStat->StatType = EMatchStatType::BUILDINGS_PLACED;
+        GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(BuildingsPlacedStat);
     }else
     {
         SetState(EXYZUnitState::IDLE);
@@ -520,9 +542,9 @@ void AXYZWorker::ProcessFlyingWorker(float DeltaTime)
             {
                 StartReturningResource();
             }
-            else if(TimeToGather >= GatherRate)
+            else if(TimeToGather >= GatherRate && TargetActor->Health >= Resource->RESOURCE_MINE_AMOUNT)
             {
-                TargetActor->Health = FMath::Clamp(TargetActor->Health - AttackDamage, 0.0f, TargetActor->MaxHealth);
+                TargetActor->Health = FMath::Clamp(TargetActor->Health - Resource->RESOURCE_MINE_AMOUNT, 0.0f, TargetActor->MaxHealth);
                 TimeToGather = 0;
                 StartReturningResource();
             }

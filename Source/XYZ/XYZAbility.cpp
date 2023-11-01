@@ -4,7 +4,6 @@
 #include "XYZAbility.h"
 
 #include "NotificationPayload.h"
-#include "SoundTypes.h"
 #include "XYZActor.h"
 #include "XYZActorCache.h"
 #include "XYZGameMode.h"

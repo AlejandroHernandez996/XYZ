@@ -3,7 +3,9 @@
 
 #include "XYZAreaOfEffect.h"
 
+#include "XYZGameMode.h"
 #include "XYZMapManager.h"
+#include "XYZMatchStatsManager.h"
 #include "XYZResourceActor.h"
 #include "XYZUnitBuff.h"
 
@@ -94,6 +96,14 @@ void AXYZAreaOfEffect::DamageInsideActors(TSet<AXYZActor*> ActorsToDamage)
 
 		bool bIsAlly = Actor->TeamId == TeamId;
 		if (!bIsAlly || bDamagesAllies) {
+			if(Actor->Health > 0.0f && Actor->Health - Damage <= 0.0f)
+			{
+				TSharedPtr<FMatchStatPayload> UnitsKilledStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
+				UnitsKilledStat->TeamId = TeamId;
+				UnitsKilledStat->IntValue = 1;
+				UnitsKilledStat->StatType = EMatchStatType::UNITS_KILLED;
+				Actor->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(UnitsKilledStat);
+			}
 			Actor->Health = FMath::Clamp(Actor->Health - Damage, 0, Actor->MaxHealth);
 			DamagedActors.Add(Actor);
 		}
