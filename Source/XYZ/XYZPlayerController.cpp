@@ -17,6 +17,7 @@
 #include "XYZCameraController.h"
 #include "XYZResourceActor.h"
 #include "EngineUtils.h"
+#include "NotificationPayload.h"
 #include "XYZBuilding.h"
 #include "XYZFogOfWar.h"
 #include "XYZMinimapManager.h"
@@ -1169,11 +1170,12 @@ FVector AXYZPlayerController::GetMouseToWorldPosition(APlayerController* PlayerC
 	return FVector::ZeroVector;
 }
 
-void AXYZPlayerController::PlaySound_Implementation(ESoundTypes SoundType)
+void AXYZPlayerController::SendNotification_Implementation(FNotificationPayload NotificationPayload)
 {
 	if(XYZGameState && XYZGameState->SoundManager){
-		XYZGameState->SoundManager->PlayNotification(SoundType);
+		XYZGameState->SoundManager->PlayNotification(NotificationPayload.NotificationType);
 	}
+	OnNotificationEvent.Broadcast(GetNotificationTypeString(NotificationPayload.NotificationType));
 }
 
 void AXYZPlayerController::MoveFromMinimap(FVector2D TargetLocation)

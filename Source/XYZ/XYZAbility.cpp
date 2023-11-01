@@ -3,6 +3,7 @@
 
 #include "XYZAbility.h"
 
+#include "NotificationPayload.h"
 #include "SoundTypes.h"
 #include "XYZActor.h"
 #include "XYZActorCache.h"
@@ -29,7 +30,9 @@ bool UXYZAbility::Activate()
 		}
 		if(GameMode && GameMode->TeamIdToPlayerController.Contains(OwningActor->TeamId))
 		{
-			GameMode->TeamIdToPlayerController[OwningActor->TeamId]->PlaySound(ESoundTypes::UPGRADE);
+			FNotificationPayload NotificationPayload = FNotificationPayload();
+			NotificationPayload.NotificationType = ENotificationType::NOTIFY_UPGRADE_REQUIRED;
+			GameMode->TeamIdToPlayerController[OwningActor->TeamId]->SendNotification(NotificationPayload);
 		}
 	}
 	return false;

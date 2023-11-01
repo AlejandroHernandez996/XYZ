@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NotficationType.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
 #include "XYZInputType.h"
@@ -20,6 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSelectionIdsEvent, const TArray<int
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FControlGroupEvent, const TArray<int32>&, ControlGroups);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FLoadingScreenEvent, const TArray<FString>&, PlayerNames, const TArray<int32>&, Ratings, float, LoadPercentage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FChatEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNotificationEvent, const FString&, NotificationString);
 
 UCLASS()
 class AXYZPlayerController : public APlayerController
@@ -148,6 +150,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FLoadingScreenEvent OnLoadingScreenEvent;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FNotificationEvent OnNotificationEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool bAllowMouseInput = true;
@@ -284,8 +289,8 @@ public:
 	FVector GetMouseToWorldPosition(APlayerController* PlayerController);
 
 	UFUNCTION(Reliable, Client)
-	void PlaySound(ESoundTypes SoundType);
-	void PlaySound_Implementation(ESoundTypes SoundType);
+	void SendNotification(FNotificationPayload NotificationPayload);
+	void SendNotification_Implementation(FNotificationPayload NotificationPayload);
 
 	UFUNCTION(BlueprintCallable)
 	void AttackMoveFromMinimap(FVector2D TargetLocation);

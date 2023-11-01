@@ -3,6 +3,7 @@
 
 #include "XYZBuilding.h"
 #include "Engine.h"
+#include "NotificationPayload.h"
 #include "SoundTypes.h"
 #include "Net/UnrealNetwork.h"
 #include "XYZBuildingAbility.h"
@@ -241,7 +242,9 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
         BuildQueueNum++;
         if(GameState->SupplyByTeamId[TeamId] + BuildingAbility->SupplyCost > GameState->SupplyByTeamId[TeamId+2])
         {
-            GameMode->TeamIdToPlayerController[TeamId]->PlaySound(ESoundTypes::SUPPLY);
+            FNotificationPayload NotificationPayload = FNotificationPayload();
+            NotificationPayload.NotificationType = ENotificationType::NOTIFY_SUPPLY_REQUIRED;
+            GameMode->TeamIdToPlayerController[TeamId]->SendNotification(NotificationPayload);
         }
     }else
     {

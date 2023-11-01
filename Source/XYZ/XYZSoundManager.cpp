@@ -20,11 +20,11 @@ void AXYZSoundManager::Tick(float DeltaTime)
 	
 }
 
-void AXYZSoundManager::PlayNotification(ESoundTypes SoundType)
+void AXYZSoundManager::PlayNotification(ENotificationType NotificationType)
 {
-	if (SoundTypeToSound.Contains(SoundType))
+	if (NotificationTypeToSound.Contains(NotificationType))
 	{
-		USoundBase* SoundToPlay = SoundTypeToSound[SoundType];
+		USoundBase* SoundToPlay = NotificationTypeToSound[NotificationType];
 		if (SoundToPlay)
 		{
 			NotificationAudioComponent->SetSound(SoundToPlay);
