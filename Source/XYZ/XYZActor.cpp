@@ -538,8 +538,15 @@ void AXYZActor::Process(float DeltaTime)
 
 		if(State == EXYZUnitState::FOLLOWING)
 		{
-			GetXYZAIController()->XYZFollowTarget(TargetActor);
-		}else if(State == EXYZUnitState::MOVING)
+			if(TargetActor->bIsFlying)
+			{
+				GetXYZAIController()->MoveToLocation(MapManager->GridCoordToWorldCoord(TargetActor->GridCoord));
+			}else
+			{
+				GetXYZAIController()->XYZFollowTarget(TargetActor);
+			}
+		}
+		else if(State == EXYZUnitState::MOVING)
 		{
 			if(!bWasStuck && bIsStuck)
 			{
