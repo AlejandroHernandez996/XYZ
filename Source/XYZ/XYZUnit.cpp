@@ -23,12 +23,13 @@ void AXYZUnit::Tick(float DeltaTime)
 void AXYZUnit::Process(float DeltaTime)
 {
 	Super::Process(DeltaTime);
+	if (State == EXYZUnitState::DEAD) return;
+	
 	UpdateCollision();
 	if (bIsFlying) {
 		ProcessFlyingUnit(DeltaTime);
 		return;
 	}
-	if (State == EXYZUnitState::DEAD) return;
 
 	if(State == EXYZUnitState::MOVING && PushedBy && PushedBy->State != EXYZUnitState::MOVING)
 	{
@@ -48,10 +49,14 @@ void AXYZUnit::Process(float DeltaTime)
 			TimeSinceScanForPush = 0.0f;
 		}
 	}
-	if (State == EXYZUnitState::ATTACK_MOVING || (State == EXYZUnitState::IDLE && !this->IsA(AXYZWorker::StaticClass())) || State == EXYZUnitState::ATTACKING ||
+	
+	if (State == EXYZUnitState::ATTACK_MOVING ||
+		(State == EXYZUnitState::IDLE && !this->IsA(AXYZWorker::StaticClass())) ||
+		State == EXYZUnitState::ATTACKING ||
 		State == EXYZUnitState::HOLD)
 	{
-		if(TargetActor && !GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->DoesActorHasVisionOfActor(this, TargetActor))
+		// If Target is not in vision go idle
+		if(TargetActor && !TargetActor->bInEnemyVision && TeamId != TargetActor->TeamId)
 		{
 			if(State != EXYZUnitState::HOLD)
 			{
@@ -59,6 +64,8 @@ void AXYZUnit::Process(float DeltaTime)
 			}
 			TargetActor = nullptr;
 		}
+
+		// If no target or target is dead find closest actor
 		if (!TargetActor || TargetActor->State == EXYZUnitState::DEAD)
 		{
 			if(TimeSinceScanForTarget == 0.0)
@@ -75,18 +82,23 @@ void AXYZUnit::Process(float DeltaTime)
 				TimeSinceScanForTarget = 0.0f;
 			}
 		}
+
+		// if we have a target
 		if (TargetActor)
 		{
 			AttackMoveTarget();
 		}
+
+		// if we still dont have a target and we were attacking attack move to our target location
 		if (!TargetActor && State == EXYZUnitState::ATTACKING)
 		{
 			GetXYZAIController()->XYZAttackMoveToLocation(TargetLocation);
 		}
 	}
+	
 	if (State == EXYZUnitState::FOLLOWING)
 	{
-		if (!TargetActor || TargetActor->Health <= 0.0f)
+		if (!TargetActor || TargetActor->State == EXYZUnitState::DEAD)
 		{
 			GetXYZAIController()->XYZStopMovement();
 		}
@@ -345,7 +357,7 @@ void AXYZUnit::FlyingAttackMoveTarget()
 		TargetActor = nullptr;
 		return;
 	}
-	if(TargetActor->State == EXYZUnitState::DEAD || TargetActor->Health <= 0.0f)
+	if(TargetActor->State == EXYZUnitState::DEAD)
 	{
 		TargetActor = nullptr;
 		return;
@@ -366,18 +378,15 @@ bool AXYZUnit::IsInAttackRangeOfUnit()
 		TargetActor->State != EXYZUnitState::DEAD &&
 		TargetActor->CanBeAttacked(this))
 	{
-		
 		FVector ActorLocation = GetActorLocation();
-		FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
 		FVector TargetActorLocation = TargetActor->GetActorLocation();
 		float TargetActorRadius = TargetActor->GetCapsuleComponent()->GetScaledCapsuleRadius();
 		FVector Direction = TargetActorLocation - ActorLocation;
 		Direction.Z = 0;
 		Direction.Normalize();
 
-		FVector2D TargetLocation2D = FVector2D(TargetActorLocation.X, TargetActorLocation.Y);
-		float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
-		
+		float DistanceToTarget = GetDistanceToLocation2D(TargetActorLocation);
+
 		DistanceToTarget -= TargetActorRadius;
 		return DistanceToTarget <= AttackRange;
 	}

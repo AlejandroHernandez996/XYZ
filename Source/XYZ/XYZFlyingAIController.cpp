@@ -63,6 +63,8 @@ void AXYZFlyingAIController::XYZAttackMoveToLocation(FVector TargetLocation, flo
 {
 	AXYZActor* OwningActor = GetXYZActor();
 	if (!OwningActor) return;
+	OwningActor->TimeSinceLastUpdate = 0.0f;
+	OwningActor->TimeSinceScanForTarget = 0.0f;
 	OwningActor->SetState(EXYZUnitState::ATTACK_MOVING);
 	CurrentTargetLocation = TargetLocation;
 	OwningActor->TargetLocation = TargetLocation;
@@ -78,12 +80,12 @@ void AXYZFlyingAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float Accep
 	}
 	if(OwningActor->bIsPassive)
 	{
-		XYZMoveToActor(Actor);
+		XYZFollowTarget(Actor);
 		return;
 	}
 	CurrentTargetLocation = Actor->GetActorLocation();
-	GetXYZActor()->SetState(EXYZUnitState::ATTACKING);
-	GetXYZActor()->TargetActor = Actor;
+	OwningActor->SetState(EXYZUnitState::ATTACKING);
+	OwningActor->TargetActor = Actor;
 	OwningActor->TargetLocation = Actor->GetActorLocation();
 	bIsMoving = true;
 }

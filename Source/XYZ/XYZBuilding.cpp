@@ -319,25 +319,12 @@ void AXYZBuilding::TrainUnit(TSubclassOf<class AXYZActor> UnitTemplate) {
     NotificationPayload.NotificationType = ENotificationType::NOTIFY_UNIT_TRAINED;
     OwningPlayerController->SendNotification(NotificationPayload);
 
-    TSharedPtr<FMatchStatPayload> UnitsTrainedStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
-    UnitsTrainedStat->TeamId = TeamId;
-    UnitsTrainedStat->IntValue = 1;
-    UnitsTrainedStat->StatType = EMatchStatType::UNITS_TRAINED;
-    GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(UnitsTrainedStat);
-
-    TSharedPtr<FMatchStatPayload> SupplyStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
-    SupplyStat->TeamId = TeamId;
-    SupplyStat->IntValue = SpawnActor->SupplyCost;
-    SupplyStat->StatType = EMatchStatType::SUPPLY;
-    GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(SupplyStat);
+    GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(1,EMatchStatType::UNITS_TRAINED, TeamId);
+    GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(SpawnActor->SupplyCost,EMatchStatType::SUPPLY, TeamId);
 
     if(SpawnActor->IsA(AXYZWorker::StaticClass()))
     {
-        TSharedPtr<FMatchStatPayload> WorkerCountStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
-        WorkerCountStat->TeamId = TeamId;
-        WorkerCountStat->IntValue = 1;
-        WorkerCountStat->StatType = EMatchStatType::WORKER_COUNT;
-        GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(WorkerCountStat);
+        GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(1,EMatchStatType::WORKER_COUNT, TeamId);
     }
 }
 
@@ -493,6 +480,9 @@ void AXYZBuilding::Process(float DeltaTime)
             {
                 ActorCache->AddActorCount(TeamId, ActorId);
             }
+            FNotificationPayload NotificationPayload = FNotificationPayload();
+            NotificationPayload.NotificationType = ENotificationType::NOTIFY_BUILDING_COMPLETE;
+            OwningPlayerController->SendNotification(NotificationPayload);
         }else
         {
             Build(DeltaTime);

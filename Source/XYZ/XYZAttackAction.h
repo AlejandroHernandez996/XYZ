@@ -16,4 +16,9 @@ class XYZ_API UXYZAttackAction : public UXYZMoveAction
 public:
 	//virtual void ProcessAction(TSet<AXYZActor*> Agents) override;
 	virtual bool HasAgentComplete(class AXYZActor* Agent) override;
+
+	virtual bool IsContinousProcessing() override
+	{
+		return false;
+	}
 };

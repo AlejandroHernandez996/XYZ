@@ -90,6 +90,8 @@ void AXYZAIController::XYZAttackMoveToLocation(FVector TargetLocation, float Acc
     if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
         return;
     }
+    GetXYZActor()->TimeSinceLastUpdate = 0.0f;
+    GetXYZActor()->TimeSinceScanForTarget = 0.0f;
     GetXYZActor()->SetState(EXYZUnitState::ATTACK_MOVING);
     GetXYZActor()->TargetLocation = TargetLocation;
     CurrentTargetLocation = TargetLocation;
@@ -103,6 +105,11 @@ void AXYZAIController::XYZAttackMoveToLocation(FVector TargetLocation, float Acc
 }
 
 void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceRadius) {
+    if(GetXYZActor()->bIsPassive)
+    {
+       XYZFollowTarget(Actor);
+        return;
+    }
     if (!GetXYZActor() || !Actor || GetXYZActor() == Actor) {
         XYZStopMovement();
         return;

@@ -201,80 +201,73 @@ void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
 
 void AXYZActor::Attack()
 {
-	if (GetLocalRole() != ROLE_Authority)
-	{
-		return;
-	}
-	if(TargetActor && !TargetActor->CanBeAttacked(this))
+	if(!TargetActor ||
+		TargetActor == this ||
+		!TargetActor->CanBeAttacked(this) ||
+		TargetActor->State == EXYZUnitState::DEAD)
 	{
 		TargetActor = nullptr;
 		return;
 	}
-	if (TargetActor && !bIsAttackOnCooldown)
-	{
-		bIsAttackOnCooldown = true;
-		GetWorld()->GetTimerManager().SetTimer(AttackTimer, [this]()
-		{
-			bIsAttackOnCooldown = false;
-		}, AttackRate, false);
+	
+	FVector Direction = TargetActor->GetActorLocation() - GetActorLocation();
+	Direction.Z = 0;
+	Direction.Normalize();
 
-		for (AXYZPlayerController* XYZController : GetWorld()->GetAuthGameMode<AXYZGameMode>()->PlayerControllers)
+	FRotator TargetRotation = Direction.Rotation();
+	SetActorRotation(TargetRotation);
+	
+	if(bIsAttackOnCooldown) return;
+	
+	bIsAttackOnCooldown = true;
+	GetWorld()->GetTimerManager().SetTimer(AttackTimer, [this]()
+	{
+		bIsAttackOnCooldown = false;
+	}, AttackRate, false);
+
+	for (AXYZPlayerController* XYZController : GetWorld()->GetAuthGameMode<AXYZGameMode>()->PlayerControllers)
+	{
+		if (XYZController)
 		{
-			if (XYZController)
-			{
-				XYZController->PlayAnimationMontage(EXYZAnimMontageType::ATTACK, this);
-			}
+			XYZController->PlayAnimationMontage(EXYZAnimMontageType::ATTACK, this);
 		}
-		if(TargetActor->Health > 0.0f && TargetActor->Health + TargetActor->Armor - AttackDamage <= 0.0f)
+	}
+	
+	if(TargetActor->Health > 0.0f && TargetActor->Health + TargetActor->Armor - AttackDamage <= 0.0f)
+	{
+		TotalKills++;
+		if(TargetActor->IsA(AXYZBuilding::StaticClass()))
 		{
-			TotalKills++;
-			if(TargetActor->IsA(AXYZBuilding::StaticClass()))
-			{
-				TSharedPtr<FMatchStatPayload> BuildingsDestroyedStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
-				BuildingsDestroyedStat->TeamId = TeamId;
-				BuildingsDestroyedStat->IntValue = 1;
-				BuildingsDestroyedStat->StatType = EMatchStatType::BUILDINGS_DESTROYED;
-				GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(BuildingsDestroyedStat);
-			}else
-			{
-				TSharedPtr<FMatchStatPayload> UnitsKilledStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
-				UnitsKilledStat->TeamId = TeamId;
-				UnitsKilledStat->IntValue = 1;
-				UnitsKilledStat->StatType = EMatchStatType::UNITS_KILLED;
-				GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(UnitsKilledStat);
-			}
-			
+			GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(1,EMatchStatType::BUILDINGS_DESTROYED, TeamId);
+		}else
+		{
+			GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(1,EMatchStatType::UNITS_KILLED, TeamId);
 		}
 		
-		TargetActor->Health = FMath::Clamp(TargetActor->Health + TargetActor->Armor - AttackDamage, 0.0f, TargetActor->MaxHealth);
-		FVector Direction = TargetActor->GetActorLocation() - GetActorLocation();
-		Direction.Z = 0;
-		Direction.Normalize();
+	}
+	
+	TargetActor->Health = FMath::Clamp(TargetActor->Health + TargetActor->Armor - AttackDamage, 0.0f, TargetActor->MaxHealth);
 
-		FRotator TargetRotation = Direction.Rotation();
-		SetActorRotation(TargetRotation);
+	if(TeamId != TargetActor->TeamId && TargetActor->TeamId != 2)
+	{
+		FNotificationPayload NotificationPayload = FNotificationPayload();
+		NotificationPayload.NotificationType = TargetActor->IsA(AXYZBuilding::StaticClass()) ?
+			ENotificationType::NOTIFY_BUILDINGS_UNDER_ATTACK :
+			ENotificationType::NOTIFY_UNITS_UNDER_ATTACK;
+		TargetActor->OwningPlayerController->SendNotification(NotificationPayload);
+	}
 
-		if(TeamId != TargetActor->TeamId && TargetActor->TeamId != 2)
+	if(ProjectileTemplate)
+	{
+		GetWorld()->GetAuthGameMode<AXYZGameMode>()->ProjectileManager->SpawnProjectile(ProjectileTemplate, ProjectileSpawnComponent->GetComponentLocation(), TargetActor,this);
+	}
+	for(UXYZAbility* Ability : AbilitiesTriggeredOnAttack)
+	{
+		if(Ability)
 		{
-			FNotificationPayload NotificationPayload = FNotificationPayload();
-			NotificationPayload.NotificationType = TargetActor->IsA(AXYZBuilding::StaticClass()) ?
-				ENotificationType::NOTIFY_BUILDINGS_UNDER_ATTACK :
-				ENotificationType::NOTIFY_UNITS_UNDER_ATTACK;
-			TargetActor->OwningPlayerController->SendNotification(NotificationPayload);
-		}
-
-		if(ProjectileTemplate)
-		{
-			GetWorld()->GetAuthGameMode<AXYZGameMode>()->ProjectileManager->SpawnProjectile(ProjectileTemplate, ProjectileSpawnComponent->GetComponentLocation(), TargetActor,this);
-		}
-		for(UXYZAbility* Ability : AbilitiesTriggeredOnAttack)
-		{
-			if(Ability)
-			{
-				Ability->OwningActor = this;
-				Ability->TargetLocation = GetActorLocation();
-				Ability->Activate();
-			}
+			Ability->OwningActor = this;
+			Ability->TargetLocation = GetActorLocation();
+			Ability->Activate();
 		}
 	}
 }
@@ -307,14 +300,7 @@ void AXYZActor::ScanActorsAndPushWithMapGrid()
 	PerimeterCells.Add(GridCoord);
 	
 	TSet<AXYZActor*> ActorsFound;
-	//OwningPlayerController->DrawLine(GetActorLocation() , GetActorLocation()+ForwardDirection*1000.0f, FColor::Blue);
 
-	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ShiftedDirectionMin * 100.0f, FColor::White);
-	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ShiftedDirectionMax * 100.0f, FColor::Yellow);
-	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ForwardDirection.RotateAngleAxis(PushAngleInside,FVector(0,0,1)) * 100.0f, FColor::Blue);
-	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ForwardDirection.RotateAngleAxis(-PushAngleInside,FVector(0,0,1)) * 100.0f, FColor::Blue);
-	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ForwardDirection.RotateAngleAxis(PushAngleOutside,FVector(0,0,1)) * 100.0f, FColor::Yellow);
-	//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation() + ForwardDirection.RotateAngleAxis(-PushAngleOutside,FVector(0,0,1)) * 100.0f, FColor::Yellow);
 	for (const FIntVector2& GridCell : PerimeterCells)
 	{
 		if (!MapManager->Grid.Contains(GridCell)) continue;
@@ -409,49 +395,43 @@ void AXYZActor::AttackMoveTarget()
 {
 	AXYZAIController* ActorController = GetXYZAIController();
 	FVector ActorLocation = GetActorLocation();
-
 	FVector2D ActorLocation2D = FVector2D(ActorLocation.X, ActorLocation.Y);
-	if(TargetActor && !TargetActor->CanBeAttacked(this))
+
+	if(!TargetActor ||
+		TargetActor == this ||
+		!TargetActor->CanBeAttacked(this) ||
+		TargetActor->State == EXYZUnitState::DEAD)
 	{
 		TargetActor = nullptr;
 		return;
 	}
-	if (TargetActor &&
-		TargetActor != this &&
-		TargetActor->State != EXYZUnitState::DEAD )
+	
+	FVector TargetActorLocation = TargetActor->GetActorLocation();
+	float TargetActorRadius = TargetActor->GetCapsuleComponent()->GetScaledCapsuleRadius();
+
+	FVector Direction = TargetActorLocation - ActorLocation;
+	Direction.Z = 0;
+	Direction.Normalize();
+
+	FVector2D TargetLocation2D = FVector2D(TargetActorLocation.X, TargetActorLocation.Y);
+	float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
+	
+	DistanceToTarget -= TargetActorRadius;
+	if (DistanceToTarget <= AttackRange)
 	{
-		FVector TargetActorLocation = TargetActor->GetActorLocation();
-		
-		float TargetActorRadius = TargetActor->GetCapsuleComponent()->GetScaledCapsuleRadius();
-
-		FVector Direction = TargetActorLocation - ActorLocation;
-		Direction.Z = 0;
-		Direction.Normalize();
-
-		FVector2D TargetLocation2D = FVector2D(TargetActorLocation.X, TargetActorLocation.Y);
-		float DistanceToTarget = FVector2D::Distance(ActorLocation2D, TargetLocation2D);
-		
-		DistanceToTarget -= TargetActorRadius;
-		if (DistanceToTarget <= AttackRange)
+		Attack();
+		if (State != EXYZUnitState::HOLD)
 		{
-			Attack();
-			if (State != EXYZUnitState::HOLD)
-			{
-				SetState(EXYZUnitState::ATTACKING);
-				ActorController->XYZStopMovement();
-			}
-		}
-		else if (State != EXYZUnitState::HOLD)
-		{
-			ActorController->XYZAttackMoveToTarget(TargetActor);
-		}else
-		{
-			TargetActor = nullptr;
+			SetState(EXYZUnitState::ATTACKING);
+			ActorController->StopMovement();
 		}
 	}
-	else
+	else if (State == EXYZUnitState::HOLD)
 	{
 		TargetActor = nullptr;
+	}else
+	{
+		ActorController->XYZAttackMoveToTarget(TargetActor);
 	}
 }
 
@@ -671,8 +651,15 @@ bool AXYZActor::CanBeAttacked(AXYZActor* AttackingActor)
 	if(AttackingActor)
 	{
 		bool bCanAttackActorBasedOnHeight = bIsFlying ? AttackingActor->bCanAttackAir : AttackingActor->bCanAttackGround;
-		bool bCanAttackCloakedActor = !bIsCloaked || bInEnemyTrueVision;
-		return bInEnemyVision && bCanAttackActorBasedOnHeight && (bCanAttackCloakedActor || TeamId == AttackingActor->TeamId);
+		if(AttackingActor->TeamId == TeamId)
+		{
+			return bCanAttackActorBasedOnHeight;
+		}
+		if(bIsCloaked)
+		{
+			return bInEnemyTrueVision && bCanAttackActorBasedOnHeight;
+		}
+		return bInEnemyVision && bCanAttackActorBasedOnHeight;
 	}
 	return false;
 }

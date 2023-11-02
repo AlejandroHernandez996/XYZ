@@ -317,19 +317,13 @@ void AXYZWorker::Return() {
 
         if (DistanceToTarget <= CurrentCapsuleRadius*3.0f && HeldResource != EXYZResourceType::NONE)
         {
-            TSharedPtr<FMatchStatPayload> ResourceStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
-            ResourceStat->TeamId = TeamId;
             if (HeldResource == EXYZResourceType::MINERAL) {
                 GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->MineralsByTeamId[TeamId] += 5;
-                ResourceStat->IntValue = 5;
-                ResourceStat->StatType = EMatchStatType::MINERALS_GATHERED;
-                GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(ResourceStat);
+                GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(5,EMatchStatType::MINERALS_GATHERED,TeamId);
             }
             else {
                 GetWorld()->GetAuthGameMode()->GetGameState<AXYZGameState>()->GasByTeamId[TeamId] += 25;
-                ResourceStat->IntValue = 25;
-                ResourceStat->StatType = EMatchStatType::GAS_GATHERED;
-                GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(ResourceStat);
+                GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(25,EMatchStatType::GAS_GATHERED,TeamId);
             }
             if(!TargetActor)
             {
@@ -463,16 +457,8 @@ void AXYZWorker::PlaceBuilding()
         
         ActivePlacementAbility = nullptr;
         SetState(EXYZUnitState::BUILDING);
-
-        FNotificationPayload NotificationPayload = FNotificationPayload();
-        NotificationPayload.NotificationType = ENotificationType::NOTIFY_BUILDING_COMPLETE;
-        OwningPlayerController->SendNotification(NotificationPayload);
         
-        TSharedPtr<FMatchStatPayload> BuildingsPlacedStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
-        BuildingsPlacedStat->TeamId = TeamId;
-        BuildingsPlacedStat->IntValue = 1;
-        BuildingsPlacedStat->StatType = EMatchStatType::BUILDINGS_PLACED;
-        GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(BuildingsPlacedStat);
+        GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(1,EMatchStatType::BUILDINGS_PLACED,TeamId);
     }else
     {
         SetState(EXYZUnitState::IDLE);

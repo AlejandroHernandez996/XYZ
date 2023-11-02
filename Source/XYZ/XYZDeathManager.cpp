@@ -62,19 +62,11 @@ void UXYZDeathManager::QueueDeath(AXYZActor* Actor)
 	Actor->SetState(EXYZUnitState::DEAD);
 	Actor->TargetActor = nullptr;
 
-	TSharedPtr<FMatchStatPayload> SupplyStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
-	SupplyStat->TeamId = Actor->TeamId;
-	SupplyStat->IntValue = -1*Actor->SupplyCost;
-	SupplyStat->StatType = EMatchStatType::SUPPLY;
-	GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(SupplyStat);
+	GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(-1*Actor->SupplyCost,EMatchStatType::SUPPLY, Actor->TeamId);
 
 	if(Actor->IsA(AXYZWorker::StaticClass()))
 	{
-		TSharedPtr<FMatchStatPayload> WorkerCountStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
-		WorkerCountStat->TeamId = Actor->TeamId;
-		WorkerCountStat->IntValue = -1;
-		WorkerCountStat->StatType = EMatchStatType::WORKER_COUNT;
-		GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(WorkerCountStat);
+		GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(-1,EMatchStatType::WORKER_COUNT, Actor->TeamId);
 	}
 	
 	DeathQueue.Add(DeathStruct);

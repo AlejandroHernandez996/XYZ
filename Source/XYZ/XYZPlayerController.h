@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "IntMatchStat.h"
+#include "MatchStatType.h"
 #include "NotficationType.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
@@ -17,11 +19,12 @@ class UNiagaraSystem;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxEvent, float, x, float, y);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxTriggeredEvent, float, x, float, y);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSelectionBoxReleasedEvent, float, x, float, y);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSelectionIdsEvent, const TArray<int32>&, SelectionActorIds);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FSelectionIdsEvent, const TArray<int32>&, SelectionActorIds, const int32&, SelectedResourceId, const int32&, SelectedEnemyId);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FControlGroupEvent, const TArray<int32>&, ControlGroups);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FLoadingScreenEvent, const TArray<FString>&, PlayerNames, const TArray<int32>&, Ratings, float, LoadPercentage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FChatEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNotificationEvent, const FString&, NotificationString);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FMatchStatsEvent, const TArray<FIntMatchStat>&, MatchStatsTeam1, const TArray<FIntMatchStat>&, MatchStatsTeam2);
 
 UCLASS()
 class AXYZPlayerController : public APlayerController
@@ -153,6 +156,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FNotificationEvent OnNotificationEvent;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FMatchStatsEvent OnMatchStatsEvent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	bool bAllowMouseInput = true;
@@ -332,6 +338,10 @@ public:
 	UFUNCTION(Client, Reliable)
 	void DrawLine(FVector Start, FVector End, FColor Color);
 	void DrawLine_Implementation(FVector Start, FVector End, FColor Color);
+
+	UFUNCTION(Client, Reliable)
+	void SendMatchStats(const TArray<FIntMatchStat>& Team1Stats, const TArray<FIntMatchStat>& Team2Stats);
+	void SendMatchStats_Implementation(const TArray<FIntMatchStat>& Team1Stats, const TArray<FIntMatchStat>& Team2Stats);
 
 	UPROPERTY()
 	bool bHasHiddenEnemyBuildings;

@@ -366,7 +366,9 @@ void AXYZPlayerController::OnControlGroupInputStarted(int32 ControlGroupIndex) {
 	}
 	else {
 		SelectionStructure->SelectControlGroup(ControlGroupIndex);
-		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray(),
+			SelectionStructure->SelectedResource ? SelectionStructure->SelectedResource->UActorId : -1,
+			SelectionStructure->SelectedEnemy ? SelectionStructure->SelectedEnemy->UActorId : -1);
 		if(bDoubleInput && !SelectionStructure->IsEmpty())
 		{
 			FVector TargetActorLocation = SelectionStructure->ToArray()[0]->GetActorLocation();
@@ -502,7 +504,7 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 	}
 	FXYZInputMessage InputMessage;
 	AXYZActor* HitActor = Cast<AXYZActor>(XYZActorHit.GetActor());
-	if(HitActor && !HitActor->bIsVisible)
+	if(HitActor && (!HitActor->bIsVisible && !HitActor->IsA(AXYZResourceActor::StaticClass())))
 	{
 		HitActor = nullptr;
 	}
@@ -592,7 +594,9 @@ void AXYZPlayerController::OnInputStarted(EXYZInputType InputType)
 			break;
 		case EXYZInputType::CLEAR:
 			SelectionStructure->Empty();
-			OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
+			OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray(),
+		SelectionStructure->SelectedResource ? SelectionStructure->SelectedResource->UActorId : -1,
+		SelectionStructure->SelectedEnemy ? SelectionStructure->SelectedEnemy->UActorId : -1);
 			break;
 		case EXYZInputType::CAMERA:
 			if(CameraController)
@@ -722,7 +726,9 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		}
 		OnSelectionBoxTriggered.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
 		OnSelectionBoxReleased.Broadcast(BoxSelectEnd.X, BoxSelectEnd.Y);
-		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray(),
+			SelectionStructure->SelectedResource ? SelectionStructure->SelectedResource->UActorId : -1,
+			SelectionStructure->SelectedEnemy ? SelectionStructure->SelectedEnemy->UActorId : -1);
 		break;
 	case EXYZInputType::ATTACK_MOVE:
 		break;
@@ -820,18 +826,15 @@ void AXYZPlayerController::QueueInput_Implementation(const FXYZInputMessage& Inp
 		}
 	}
 	GameMode->QueueInput(InputMessage);
-	
-	TSharedPtr<FMatchStatPayload> APMStat = MakeShared<FMatchStatPayload>(FMatchStatPayload());
-	APMStat->TeamId = TeamId;
-	APMStat->IntValue = 1;
-	APMStat->StatType = EMatchStatType::APM;
-	GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(APMStat);
+	GetWorld()->GetAuthGameMode<AXYZGameMode>()->MatchStatsManager->AddIntStat(1,EMatchStatType::APM, TeamId);
 }
 
 void AXYZPlayerController::SelectActorFromPanel(int32 UActorId) {
 	if (XYZGameState->ActorsByUID.Contains(UActorId)) {
 		SelectActors({ XYZGameState->ActorsByUID[UActorId]});
-		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray(),
+			SelectionStructure->SelectedResource ? SelectionStructure->SelectedResource->UActorId : -1,
+			SelectionStructure->SelectedEnemy ? SelectionStructure->SelectedEnemy->UActorId : -1);
 	}
 }
 
@@ -851,7 +854,9 @@ void AXYZPlayerController::XYZActorDestroyed_Implementation(int32 ActorUId) {
 			SelectionStructure->Remove(ActorUId);
 		}
 		SelectionStructure->RemoveFromControlGroups(ActorUId, Actor->ActorId);
-		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray());
+		OnSelectionIdsEvent.Broadcast(SelectionStructure->ToActorIdArray(),
+			SelectionStructure->SelectedResource ? SelectionStructure->SelectedResource->UActorId : -1,
+			SelectionStructure->SelectedEnemy ? SelectionStructure->SelectedEnemy->UActorId : -1);
 
 		TArray<int32> ControlGroups;
 		for (TSortedMap<int32, TMap<int32, AXYZActor*>> ControlGroup : SelectionStructure->ControlGroups) {
@@ -1297,6 +1302,11 @@ void AXYZPlayerController::DrawLine_Implementation(FVector Start, FVector End, F
 	FVector Center = Start;
 	Center.Z = 100.0f;
 	//GetWorld()->LineBatcher->DrawCircle(Center, XAxisDirection, YAxisDirection, Color, 10000.0f/128.0f, NumSides, SDPG_MAX);
+}
+
+void AXYZPlayerController::SendMatchStats_Implementation(const TArray<FIntMatchStat>& Team1Stats, const TArray<FIntMatchStat>& Team2Stats)
+{
+	OnMatchStatsEvent.Broadcast(Team1Stats, Team2Stats);
 }
 
 void AXYZPlayerController::AttackMoveFromMinimap(FVector2D TargetLocation)

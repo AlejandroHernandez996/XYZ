@@ -275,7 +275,7 @@ void AXYZGameMode::Process(float DeltaSeconds)
 
     if(bHasGameEnded)
     {
-        MatchStatsManager->PrintMatchStats();
+        MatchStatsManager->SendMatchStats(PlayerControllers);
         XYZGameState->ProgressMatchState();
     }
 }

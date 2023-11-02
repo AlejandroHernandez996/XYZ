@@ -4,6 +4,7 @@
 #include "XYZMinimapManager.h"
 #include "XYZActor.h"
 #include "XYZCameraController.h"
+#include "XYZResourceActor.h"
 
 // Sets default values
 AXYZMinimapManager::AXYZMinimapManager()

@@ -30,7 +30,7 @@ public:
 	FString LobbyMessages;
 	bool bStartGettingMessages = false;
 	
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	TArray<FString> UsernamesByTeamId = {"", ""};
 	
 	UFUNCTION()

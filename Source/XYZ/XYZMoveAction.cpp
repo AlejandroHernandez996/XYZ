@@ -134,7 +134,11 @@ void UXYZMoveAction::MovePack(TSharedPtr<FAgentPack> AgentPack, int32 Level, boo
             TSharedPtr<FGridCell> PackTargetCell = MapManager->Grid[MapManager->GetGridCoordinate(PackTargetLocation)];
             
             if (bIsAttackMove) {
-                if(TargetCell->Height == PackTargetCell->Height)
+                if(TargetActor)
+                {
+                    Agent->GetController<AXYZAIController>()->XYZAttackMoveToTarget(TargetActor);
+                }
+                else if(TargetCell->Height == PackTargetCell->Height)
                 {
                     Agent->GetController<AXYZAIController>()->XYZAttackMoveToLocation(PackTargetLocation);
                     Agent->TargetLocation = TargetLocation + Agent->CurrentCapsuleRadius * Level * AgentPack->SectorDirections[i];
