@@ -57,7 +57,7 @@ FIntVector2 UXYZMapManager::GetGridCoordinate(const FVector& WorldLocation) {
 void UXYZMapManager::Process(float DeltaSeconds) {
 	for(AXYZActor* Actor : ActorsToUpdate)
 	{
-		if(!Actor)
+		if(!Actor || Actor->IsA(AXYZResourceActor::StaticClass()))
 		{
 			continue;
 		}
@@ -66,7 +66,7 @@ void UXYZMapManager::Process(float DeltaSeconds) {
 	}
 	for(AXYZActor* Actor : ActorsToRemove)
 	{
-		if(!Actor)
+		if(!Actor || Actor->IsA(AXYZResourceActor::StaticClass()))
 		{
 			continue;
 		}

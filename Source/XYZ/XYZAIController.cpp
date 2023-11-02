@@ -8,6 +8,8 @@
 #include "XYZWorker.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "XYZBaseBuilding.h"
+#include "XYZGameMode.h"
+#include "XYZMapManager.h"
 
 void AXYZAIController::BeginPlay()
 {
@@ -125,6 +127,10 @@ void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceR
     }
     CurrentTargetLocation = Actor->GetActorLocation();
     GetXYZActor()->TargetLocation = Actor->GetTargetLocation();
+    if(Actor->bIsFlying)
+    {
+        GetXYZActor()->TargetLocation = GetXYZActor()->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->GridCoordToWorldCoord(Actor->GridCoord);
+    }
     GetXYZActor()->SetState(EXYZUnitState::ATTACKING);
     GetXYZActor()->TargetActor = Actor;
     bIsMoving = true;
@@ -132,7 +138,15 @@ void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceR
     GetXYZActor()->CollisionName = "Unit";
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
     GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 3.0f;
-    MoveToActor(Actor, AcceptanceRadius, true, true, false);
+
+    if(Actor->bIsFlying)
+    {
+        FVector FlyingActorLocation = GetXYZActor()->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->GridCoordToWorldCoord(Actor->GridCoord);
+        MoveToLocation(FlyingActorLocation, AcceptanceRadius, true, true, false);
+    }else
+    {
+        MoveToActor(Actor, AcceptanceRadius, true, true, false);
+    }
 }
 
 void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius) {

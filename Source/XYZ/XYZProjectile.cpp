@@ -33,7 +33,10 @@ void AXYZProjectile::MoveToTarget(float DeltaTime)
 	FVector StartLocation = GetActorLocation();
 	FVector Direction = (TargetLocation - StartLocation).GetSafeNormal();
 	FVector NewLocation = StartLocation + Direction * ProjectileSpeed * DeltaTime;
-	SetActorLocation(NewLocation);
+
+	FRotator NewRotation = Direction.Rotation();
+
+	SetActorLocationAndRotation(NewLocation, NewRotation);
 }
 
 void AXYZProjectile::Process(float DeltaTime)

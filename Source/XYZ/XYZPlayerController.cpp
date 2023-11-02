@@ -286,6 +286,11 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 			}
 		}
 	}
+
+	if(HasAuthority() && CameraController)
+	{
+		Possess(CameraController);
+	}
 }
 
 void AXYZPlayerController::SetupInputComponent()

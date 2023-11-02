@@ -489,12 +489,22 @@ void AXYZActor::PlayAnimationMontage(EXYZAnimMontageType AnimType)
 				TimerHandle,
 				[this]()
 				{
-					GetMesh()->GetAnimInstance()->StopAllMontages(.25f);
+					if(GetMesh() && GetMesh()->GetAnimInstance())
+					{
+						GetMesh()->GetAnimInstance()->StopAllMontages(.25f);
+					}
 				},
 				Montage->GetPlayLength(),
 				false
 			);
 		}
+	}
+	switch (AnimType)
+	{
+	case EXYZAnimMontageType::ATTACK:
+		OnAttackEvent.Broadcast();
+		break;
+	default: ;
 	}
 }
 

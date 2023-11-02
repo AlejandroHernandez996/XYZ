@@ -12,6 +12,7 @@
 #include "XYZAnimMontageType.h"
 #include "XYZActor.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttackEvent);
 UCLASS()
 class XYZ_API AXYZActor : public ACharacter, public IProcessable
 {
@@ -263,7 +264,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     class UAudioComponent* AudioComponent;
 
-    UFUNCTION()
+    UFUNCTION(BlueprintCallable)
     void PlaySound(class USoundBase* Sound);
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -321,7 +322,7 @@ public:
     UPROPERTY(Replicated)
     bool bInEnemyTrueVision;
 
-    UPROPERTY(Replicated)
+    UPROPERTY(BlueprintReadOnly, Replicated)
     bool bInEnemyVision;
 
     UPROPERTY(Replicated)
@@ -383,5 +384,8 @@ public:
 
     UFUNCTION()
     float GetDistanceToLocation2D(FVector WorldLocation);
+
+    UPROPERTY(BlueprintAssignable)
+    FAttackEvent OnAttackEvent;
 
 };

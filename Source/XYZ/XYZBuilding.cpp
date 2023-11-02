@@ -233,6 +233,18 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
     AXYZGameMode* GameMode = GetWorld()->GetAuthGameMode<AXYZGameMode>();
 
     UXYZUpgradeAbility* UpgradeAbility = Cast<UXYZUpgradeAbility>(BuildingAbility);
+    if(UpgradeAbility)
+    {
+        UpgradeAbility->TeamId = TeamId;
+    }
+    if(UpgradeAbility)
+    {
+        if(GameMode->UpgradeManager->IsUpgradeBeingResearched(UpgradeAbility)) return;
+        int32 CurrentUpgradedStage = GameState->UpgradeAbilitiesResearched.GetCurrentUpgradeStage(UpgradeAbility->ID, TeamId);
+        bool bIsAtMaxUpgrade = CurrentUpgradedStage >= UpgradeAbility->MaxStage;
+        if(GameMode->UpgradeManager->ContainsUpgrade(UpgradeAbility) && bIsAtMaxUpgrade) return;
+    }
+   
     if (BuildQueueNum < MAX_BUILD_QUEUE_SIZE && 
         GameState->MineralsByTeamId[TeamId] - BuildingAbility->MineralCost >= 0 &&
         GameState->GasByTeamId[TeamId] - BuildingAbility->GasCost >= 0)
@@ -248,24 +260,10 @@ void AXYZBuilding::EnqueueAbility(UXYZBuildingAbility* BuildingAbility) {
             NotificationPayload.NotificationType = ENotificationType::NOTIFY_SUPPLY_REQUIRED;
             GameMode->TeamIdToPlayerController[TeamId]->SendNotification(NotificationPayload);
         }
-    }else
-    {
-        return;
-    }
-    if(UpgradeAbility)
-    {
-        UpgradeAbility->TeamId = TeamId;
-    }
-    if(UpgradeAbility)
-    {
-        if(GameMode->UpgradeManager->IsUpgradeBeingResearched(UpgradeAbility)) return;
-        int32 CurrentUpgradedStage = GameState->UpgradeAbilitiesResearched.GetCurrentUpgradeStage(UpgradeAbility->ID, TeamId);
-        bool bIsAtMaxUpgrade = CurrentUpgradedStage >= UpgradeAbility->MaxStage;
-        if(GameMode->UpgradeManager->ContainsUpgrade(UpgradeAbility) && bIsAtMaxUpgrade) return;
-    }
-    if(UpgradeAbility)
-    {
-        GameMode->UpgradeManager->AddUpgradeToResearch(UpgradeAbility);
+        if(UpgradeAbility)
+        {
+            GameMode->UpgradeManager->AddUpgradeToResearch(UpgradeAbility);
+        }
     }
 }
 
