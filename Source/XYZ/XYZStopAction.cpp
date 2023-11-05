@@ -11,9 +11,10 @@ void UXYZStopAction::ProcessAction(TSet<AXYZActor*> Agents)
 {
 	for (AXYZActor* Agent : Agents) {
 		if (Agent && Agent->GetXYZAIController()) {
-			Agent->GetXYZAIController()->XYZStopMovement();
 			UXYZMoveBatcher* MoveBatcher = Agent->GetWorld()->GetAuthGameMode<AXYZGameMode>()->MoveBatcher;
+			Agent->SetState(EXYZUnitState::IDLE);
 			MoveBatcher->RemoveActorFromBatch(Agent);
+			Agent->GetXYZAIController()->XYZStopMovement();
 		}
 	}
 }

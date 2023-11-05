@@ -47,12 +47,6 @@ void AXYZWorker::Process(float DeltaTime)
     }
     if(State == EXYZUnitState::PLACING)
     {
-        TimeSinceScanForPush += DeltaTime;
-        if(TimeSinceScanForPush >= ScanForPushRate)
-        {
-            ScanActorsAndPushWithMapGrid();
-            TimeSinceScanForPush = 0.0f;
-        }
         if(ActivePlacementAbility)
         {
             UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;

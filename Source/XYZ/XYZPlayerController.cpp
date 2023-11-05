@@ -262,8 +262,8 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 				Actor->PathingPoints.Num() == Actor->PathingPointsColors.Num() &&
 				Actor->PathingPointsColors.Num() == Actor->PathingPointsShowFlag.Num())
 			{
-				FVector LastPathingPoint = Actor->GetActorLocation();
-				for(int i = 0;i < Actor->PathingPoints.Num();i++)
+				FVector LastPathingPoint = Actor->PathingPoints[0];
+				for(int i = 1;i < Actor->PathingPoints.Num();i++)
 				{
 					if(Actor->PathingPointsShowFlag[i])
 					{
@@ -285,11 +285,6 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 				UncloakActor(Actor);
 			}
 		}
-	}
-
-	if(HasAuthority() && CameraController)
-	{
-		Possess(CameraController);
 	}
 }
 

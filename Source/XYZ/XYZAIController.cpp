@@ -54,6 +54,7 @@ void AXYZAIController::XYZMoveToActor(AXYZActor* Actor, float AcceptanceRadius) 
         XYZGatherResource(Cast<AXYZResourceActor>(Actor));
         return;
     }
+    GetXYZActor()->bIsInBoidMovement = false;
     GetXYZActor()->SetState(EXYZUnitState::MOVING);
     CurrentTargetLocation = Actor->GetActorLocation();
     bIsMoving = true;
@@ -79,6 +80,7 @@ void AXYZAIController::XYZMoveToLocation(FVector TargetLocation, float Acceptanc
     GetXYZActor()->TargetLocation = TargetLocation;
     CurrentTargetLocation = TargetLocation;
     bIsMoving = true;
+    GetXYZActor()->bIsInBoidMovement = false;
 
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius * 0.75f;
     GetXYZActor()->CollisionName = "Unit";
@@ -92,6 +94,7 @@ void AXYZAIController::XYZAttackMoveToLocation(FVector TargetLocation, float Acc
     if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
         return;
     }
+    GetXYZActor()->bIsInBoidMovement = false;
     GetXYZActor()->TimeSinceLastUpdate = 0.0f;
     GetXYZActor()->TimeSinceScanForTarget = 0.0f;
     GetXYZActor()->SetState(EXYZUnitState::ATTACK_MOVING);
@@ -138,6 +141,7 @@ void AXYZAIController::XYZAttackMoveToTarget(AXYZActor* Actor, float AcceptanceR
     GetXYZActor()->CollisionName = "Unit";
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
     GetXYZActor()->CurrentAvoidanceWeight = GetXYZActor()->DefaultAvoidanceWeight * 3.0f;
+    GetXYZActor()->bIsInBoidMovement = false;
 
     if(Actor->bIsFlying)
     {
@@ -170,7 +174,7 @@ void AXYZAIController::XYZFollowTarget(AXYZActor* Actor, float AcceptanceRadius)
         XYZGatherResource(Cast<AXYZResourceActor>(Actor));
         return;
     }
-
+    GetXYZActor()->bIsInBoidMovement = false;
     CurrentTargetLocation = Actor->GetActorLocation();
     GetXYZActor()->SetState(EXYZUnitState::FOLLOWING);
     GetXYZActor()->TargetActor = Actor;
@@ -190,6 +194,7 @@ void AXYZAIController::XYZGatherResource(AXYZResourceActor* Resource, float Acce
     if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
         return;
     }
+    GetXYZActor()->bIsInBoidMovement = false;
     GetXYZActor()->bHasAvoidance = false;
     GetXYZActor()->CollisionName = "MineralWalk";
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius * 0.75f;
@@ -217,6 +222,7 @@ void AXYZAIController::XYZReturnResource(AXYZBaseBuilding* Base, float Acceptanc
     if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
         return;
     }
+    GetXYZActor()->bIsInBoidMovement = false;
     GetXYZActor()->bHasAvoidance = false;
     GetXYZActor()->SetState(EXYZUnitState::RETURNING);
     GetXYZActor()->CurrentCapsuleRadius = GetXYZActor()->InitialCapsuleRadius * 0.75f;
@@ -238,6 +244,7 @@ void AXYZAIController::XYZStopMovement() {
     if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
         return;
     }
+    GetXYZActor()->bIsInBoidMovement = false;
     StopMovement();
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
     GetXYZActor()->CollisionName = "Unit";
@@ -257,6 +264,7 @@ void AXYZAIController::XYZHold() {
     if (GetXYZActor()->IsA(AXYZBuilding::StaticClass())) {
         return;
     }
+    GetXYZActor()->bIsInBoidMovement = false;
     StopMovement();
     GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
     GetXYZActor()->SetState(EXYZUnitState::HOLD);
@@ -270,6 +278,7 @@ void AXYZAIController::XYZHold() {
 }
 void AXYZAIController::RecalculateMove() {
     if (!GetXYZActor()) return;
+    GetXYZActor()->bIsInBoidMovement = false;
     switch (GetXYZActor()->State) {
     case EXYZUnitState::IDLE :
         XYZStopMovement();
@@ -279,6 +288,9 @@ void AXYZAIController::RecalculateMove() {
         break;
     case EXYZUnitState::ATTACK_MOVING:
         XYZAttackMoveToLocation(CurrentTargetLocation);
+        break;
+    case EXYZUnitState::ATTACKING:
+        XYZAttackMoveToTarget(GetXYZActor()->TargetActor);
         break;
     case EXYZUnitState::FOLLOWING:
         XYZFollowTarget(GetXYZActor()->TargetActor);

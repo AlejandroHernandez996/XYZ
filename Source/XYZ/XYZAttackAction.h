@@ -14,9 +14,9 @@ class XYZ_API UXYZAttackAction : public UXYZMoveAction
 {
 	GENERATED_BODY()
 public:
-	//virtual void ProcessAction(TSet<AXYZActor*> Agents) override;
+	virtual void ProcessAction(TSet<AXYZActor*> Agents) override;
 	virtual bool HasAgentComplete(class AXYZActor* Agent) override;
-
+	bool bHasTargetActor;
 	virtual bool IsContinousProcessing() override
 	{
 		return false;

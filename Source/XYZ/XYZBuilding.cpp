@@ -466,6 +466,7 @@ void AXYZBuilding::Process(float DeltaTime)
     switch (BuildingState) {
     case EXYZBuildingState::PLACED:
         BuildingState = EXYZBuildingState::BUILDING;
+        GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(this);
         break;
     case EXYZBuildingState::BUILDING:
         if(TimeToBuild >= TotalBuildTime)
@@ -481,6 +482,7 @@ void AXYZBuilding::Process(float DeltaTime)
             FNotificationPayload NotificationPayload = FNotificationPayload();
             NotificationPayload.NotificationType = ENotificationType::NOTIFY_BUILDING_COMPLETE;
             OwningPlayerController->SendNotification(NotificationPayload);
+            GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager->AddToUpdateSet(this);
         }else
         {
             Build(DeltaTime);

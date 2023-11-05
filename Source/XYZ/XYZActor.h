@@ -261,8 +261,8 @@ public:
         return "MISSING STATE?";
     }
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    class UAudioComponent* AudioComponent;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    class UAudioComponent* ActorAudioComponent;
 
     UFUNCTION(BlueprintCallable)
     void PlaySound(class USoundBase* Sound);
@@ -388,4 +388,44 @@ public:
     UPROPERTY(BlueprintAssignable)
     FAttackEvent OnAttackEvent;
 
+    UPROPERTY(Replicated)
+    FVector BoidTargetLocation;
+
+    UFUNCTION()
+    void ScanForBoidMovement();
+
+    float TimeSinceLastBoidDraw;
+    float DrawBoidThreshold = .25f;
+
+    UFUNCTION()
+    bool ShouldStatePush()
+    {
+        switch(State)
+        {
+        case EXYZUnitState::MOVING:
+        case EXYZUnitState::ATTACKING:
+        case EXYZUnitState::ATTACK_MOVING:
+        case EXYZUnitState::FOLLOWING:
+        case EXYZUnitState::PLACING:
+            return true;
+        case EXYZUnitState::RETURNING:
+        case EXYZUnitState::MINING:
+        case EXYZUnitState::GATHERING:
+        case EXYZUnitState::BUILDING:
+        case EXYZUnitState::HOLD:
+        case EXYZUnitState::DEAD:
+        case EXYZUnitState::IDLE:
+        default:
+            return false;
+        }
+    }
+
+    UFUNCTION()
+    bool ShouldAvoidActor(class AXYZActor* OtherActor);
+
+    UFUNCTION()
+    bool IsInAttackRangeOfUnit();
+
+    bool bIsInBoidMovement;
+    FVector LastBoidDirection;
 };

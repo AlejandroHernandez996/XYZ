@@ -264,11 +264,11 @@ void AXYZGameMode::Process(float DeltaSeconds)
     MoveBatcher->Process(DeltaSeconds);
     UpgradeManager->Process(DeltaSeconds);
     DeathManager->Process(DeltaSeconds);
-    MapManager->Process(DeltaSeconds);
     ProjectileManager->Process(DeltaSeconds);
     AreaOfEffectManager->Process(DeltaSeconds);
     MatchStatsManager->Process(DeltaSeconds);
     MatchManager->Process(DeltaSeconds);
+    MapManager->Process(DeltaSeconds);
     
     TickCount++;
     bHasGameEnded = bHasGameEnded || NumOfPlayers < MAX_PLAYERS;

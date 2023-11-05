@@ -4,6 +4,17 @@
 #include "XYZAIController.h"
 #include "XYZBuilding.h"
 
+void UXYZAttackAction::ProcessAction(TSet<AXYZActor*> Agents)
+{
+    if(bHasTargetActor) return;
+    if(TargetActor)
+    {
+        bHasTargetActor = true;
+    }
+    Super::ProcessAction(Agents);
+    
+}
+
 /**
 void UXYZAttackAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
 {
@@ -72,5 +83,13 @@ void UXYZAttackAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
 }
 */
 bool UXYZAttackAction::HasAgentComplete(class AXYZActor* Agent) {
+    if(bHasTargetActor)
+    {
+        if(!TargetActor || !Agent->TargetActor || Agent->State == EXYZUnitState::IDLE)
+        {
+            return true;
+        }
+        return false;
+    }
 	return Agent->State == EXYZUnitState::IDLE;
 }

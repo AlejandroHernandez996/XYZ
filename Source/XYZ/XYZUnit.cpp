@@ -31,13 +31,15 @@ void AXYZUnit::Process(float DeltaTime)
 		return;
 	}
 
-	if(State == EXYZUnitState::MOVING && PushedBy && PushedBy->State != EXYZUnitState::MOVING)
+	if(PushedBy &&
+		(!PushedBy->ShouldStatePush() ||
+			PushedBy->GetDistanceToLocation2D(GetActorLocation()) > 200.0f))
 	{
 		PushedBy = nullptr;
 		CurrentlyPushing.Empty();
 		GetXYZAIController()->XYZStopMovement();
 	}
-	if (State == EXYZUnitState::MOVING || State == EXYZUnitState::ATTACK_MOVING || State == EXYZUnitState::FOLLOWING)
+	if (ShouldStatePush())
 	{
 		if(TimeSinceScanForPush == 0.0)
 		{
@@ -371,24 +373,3 @@ void AXYZUnit::FlyingAttackMoveTarget()
 	}
 }
 
-bool AXYZUnit::IsInAttackRangeOfUnit()
-{
-	if (TargetActor &&
-		TargetActor != this &&
-		TargetActor->State != EXYZUnitState::DEAD &&
-		TargetActor->CanBeAttacked(this))
-	{
-		FVector ActorLocation = GetActorLocation();
-		FVector TargetActorLocation = TargetActor->GetActorLocation();
-		float TargetActorRadius = TargetActor->GetCapsuleComponent()->GetScaledCapsuleRadius();
-		FVector Direction = TargetActorLocation - ActorLocation;
-		Direction.Z = 0;
-		Direction.Normalize();
-
-		float DistanceToTarget = GetDistanceToLocation2D(TargetActorLocation);
-
-		DistanceToTarget -= TargetActorRadius;
-		return DistanceToTarget <= AttackRange;
-	}
-	return false;
-}

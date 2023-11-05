@@ -18,7 +18,6 @@ public:
 	void Process(float DeltaSeconds) override;
 	UFUNCTION()
 	void FlyingAttackMoveTarget();
-	bool IsInAttackRangeOfUnit();
 	UFUNCTION()
 	void ProcessFlyingUnit(float DeltaSeconds);
 	void UpdateCollision();

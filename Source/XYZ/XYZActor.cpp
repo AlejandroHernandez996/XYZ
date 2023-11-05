@@ -27,9 +27,10 @@
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 #include "Components/AudioComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
-AXYZActor::AXYZActor()
+AXYZActor::AXYZActor() : Super()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -45,9 +46,8 @@ AXYZActor::AXYZActor()
 		AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 		AIControllerClass = AXYZAIController::StaticClass();
 	}
-	FName AudioComponentName = FName(*(GetName() + "_AudioComponent"));
-	AudioComponent = CreateDefaultSubobject<UAudioComponent>(AudioComponentName);
 	ProjectileSpawnComponent = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileSpawnComponent"));
+	ProjectileSpawnComponent->SetupAttachment(RootComponent);
 	Health = 100.0f;
 	MaxHealth = 100.0f;
 }
@@ -171,6 +171,7 @@ void AXYZActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AXYZActor, bInEnemyVision);
 	DOREPLIFETIME(AXYZActor, bInEnemyTrueVision);
 	DOREPLIFETIME(AXYZActor, bHasEverBeenVisibleByEnemy);
+	DOREPLIFETIME(AXYZActor, BoidTargetLocation);
 }
 
 void AXYZActor::ShowDecal(bool bShowDecal, EXYZDecalType DecalType)
@@ -312,8 +313,8 @@ void AXYZActor::ScanActorsAndPushWithMapGrid()
 				ActorInCell->IsA(AXYZUnit::StaticClass()) &&
 				ActorInCell != this &&
 				ActorInCell->TeamId == TeamId &&
-				ActorInCell->PushedBy == nullptr &&
-				(ActorInCell->State == EXYZUnitState::IDLE || (ActorInCell->PushedBy && !PushedBy)))
+				(!ActorInCell->PushedBy || !PushedBy) &&
+				ActorInCell->State == EXYZUnitState::IDLE)
 			{
 
 				if(TargetActor && TargetActor == ActorInCell) continue;
@@ -321,7 +322,7 @@ void AXYZActor::ScanActorsAndPushWithMapGrid()
 				
 				float Distance = FVector2D::Distance(FVector2D(GetActorLocation().X,GetActorLocation().Y), FVector2D(ActorInCell->GetActorLocation().X, ActorInCell->GetActorLocation().Y));
 				if(Distance > GetCapsuleComponent()->GetScaledCapsuleRadius() * PushRadiusMultiplier) continue;
-				
+				if(GetDistanceToLocation2D(TargetLocation) < Distance) continue;
 				FVector DirectionToActor = ActorInCell->GetActorLocation() - GetActorLocation();
 				DirectionToActor.Z = 0;
 				DirectionToActor.Normalize();
@@ -347,47 +348,48 @@ void AXYZActor::ScanActorsAndPushWithMapGrid()
 FVector AXYZActor::CalculatePushLocation(FVector ForwardDirection, FIntVector2 PusherGridCoord, AXYZActor* ActorInCell)
 {
 	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
-
-	TArray<FIntVector2> PerimeterCoords = MapManager->GetPerimeterCoords(ActorInCell->GridCoord, FIntVector2(1, 1)).Array();
-	TSet<FIntVector2> CoordsToSkip = { PusherGridCoord, ActorInCell->GridCoord };
-
-	FIntVector2 BestGridCell = PerimeterCoords[0];
-	float MinDistanceToPusher = MAX_flt;
+	float SweepAngleIncrement = 15.0f;
+	float MaxSweepAngle = 135.0f;
+	float PushDistance = 200.0f;
 	
-	for (const FIntVector2& GridCell : PerimeterCoords)
+	TSet<FIntVector2> PossiblePushLocations;
+	for (float SweepAngle = 45.0f; SweepAngle <= MaxSweepAngle; SweepAngle += SweepAngleIncrement)
 	{
-		if (MapManager->Grid.Contains(GridCell) && !CoordsToSkip.Contains(GridCell) && MapManager->Grid[GridCell]->Height == MapManager->Grid[ActorInCell->GridCoord]->Height)
+		FVector SweepDirection = ForwardDirection.RotateAngleAxis(SweepAngle, FVector::UpVector);
+		FVector PushLocation = SweepDirection*PushDistance + GetActorLocation();
+		
+		//OwningPlayerController->DrawLine(GetActorLocation(), PushLocation,FColor::Green);
+
+		PossiblePushLocations.Add(MapManager->GetGridCoordinate(PushLocation));
+
+		SweepDirection = ForwardDirection.RotateAngleAxis(-SweepAngle, FVector::UpVector);
+		PushLocation = SweepDirection*PushDistance + GetActorLocation();
+		
+		//OwningPlayerController->DrawLine(GetActorLocation(), PushLocation,FColor::Green);
+		PossiblePushLocations.Add(MapManager->GetGridCoordinate(PushLocation));
+	}
+
+	FIntVector2 BestGridCell;
+	float MinDistanceToPusher = MAX_flt;
+
+	for(FIntVector2 PossibleGridLocation : PossiblePushLocations)
+	{
+		if(!MapManager->IsGridCoordValid(PossibleGridLocation)) continue;
+
+		//if(MapManager->Grid[PossibleGridLocation]->Height != MapManager->Grid[GridCoord]->Height) continue;
+		float DistanceToGridCoord = ActorInCell->GetDistanceToLocation2D(MapManager->GridCoordToWorldCoord(PossibleGridLocation));
+		if(DistanceToGridCoord < MinDistanceToPusher)
 		{
-			TSharedPtr<FGridCell> GridCellData = MapManager->Grid[GridCell];
-			int32 ActorsInCell = GridCellData->ActorsInCell.Num();
-			float Distance = FVector2D::Distance(FVector2D(ActorInCell->GetActorLocation().X, ActorInCell->GetActorLocation().Y), FVector2D(MapManager->GridCoordToWorldCoord(GridCell).X,MapManager->GridCoordToWorldCoord(GridCell).Y));
-			FVector DirectionFromActorToCell = MapManager->GridCoordToWorldCoord(GridCell) - GetActorLocation();
-			DirectionFromActorToCell.Normalize();
-			DirectionFromActorToCell.Z = 0.0f;
-
-			float DotProductValue = FVector::DotProduct(DirectionFromActorToCell.GetSafeNormal(), ForwardDirection);
-
-			float OutsideMaxAngleThreshold = FMath::DegreesToRadians(PushAngleOutside);
-			float OutsideMinAngleThreshold = -OutsideMaxAngleThreshold;
-			float InsideMaxAngleThreshold = FMath::DegreesToRadians(PushAngleInside);
-			float InsideMinAngleThreshold = -InsideMaxAngleThreshold;
-
-			bool bInsideOutsideRange = FMath::Acos(DotProductValue) >= OutsideMinAngleThreshold && FMath::Acos(DotProductValue) <= OutsideMaxAngleThreshold;
-			bool bInsideInsideRange = FMath::Acos(DotProductValue) >= InsideMinAngleThreshold && FMath::Acos(DotProductValue) <= InsideMaxAngleThreshold;
-			if (bInsideOutsideRange && !bInsideInsideRange && Distance < MinDistanceToPusher)
-			{
-				//OwningPlayerController->DrawLine(ActorInCell->GetActorLocation(), GetActorLocation()+DirectionFromActorToCell*Distance, FColor::Green);
-				MinDistanceToPusher = Distance;
-				BestGridCell = GridCell;
-				SoftTimeStuck = 0.0f;
-				HardTimeStuck = 0.0f;
-			}else
-			{
-				//OwningPlayerController->DrawLine(ActorInCell->GetActorLocation(), GetActorLocation()+DirectionFromActorToCell*Distance, FColor::Red);
-			}
+			BestGridCell = PossibleGridLocation;
+			MinDistanceToPusher = DistanceToGridCoord;
 		}
 	}
 
+	if(MinDistanceToPusher == MAX_flt)
+	{
+		return ActorInCell->GetActorLocation();
+	}
+	//OwningPlayerController->DrawLine(ActorInCell->GetActorLocation(), MapManager->GridCoordToWorldCoord(BestGridCell),FColor::Blue);
 	return MapManager->GridCoordToWorldCoord(BestGridCell);
 }
 
@@ -431,7 +433,8 @@ void AXYZActor::AttackMoveTarget()
 		TargetActor = nullptr;
 	}else
 	{
-		ActorController->XYZAttackMoveToTarget(TargetActor);
+		ScanForBoidMovement();
+		//GetXYZAIController()->XYZAttackMoveToTarget(TargetActor);
 	}
 }
 
@@ -649,17 +652,15 @@ void AXYZActor::AddBuff(UXYZUnitBuff* Buff)
 	}
 	ActiveBuffs.Add(Buff);
 	ActiveBuffIds.Add(Buff->BuffId);
-	
-	
 }
 
 void AXYZActor::PlaySound(USoundBase* Sound)
 {
-	if(AudioComponent)
+	if(ActorAudioComponent)
 	{
-		AudioComponent->Stop();
-		AudioComponent->SetSound(Sound);
-		AudioComponent->Play();
+		ActorAudioComponent->Stop();
+		ActorAudioComponent->SetSound(Sound);
+		ActorAudioComponent->Play();
 	}
 }
 
@@ -709,4 +710,174 @@ FVector2D AXYZActor::GetActorLocation2D()
 float AXYZActor::GetDistanceToLocation2D(FVector WorldLocation)
 {
 	return FVector2D::Distance(GetActorLocation2D(), FVector2D(WorldLocation.X, WorldLocation.Y));
+}
+
+void AXYZActor::ScanForBoidMovement()
+{
+	TimeSinceLastBoidDraw += UGameplayStatics::GetWorldDeltaSeconds(GetWorld());
+	UXYZMapManager* MapManager = GetWorld()->GetAuthGameMode<AXYZGameMode>()->MapManager;
+
+	TSet<FIntVector2> PerimeterCells = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(1,1));
+	TSet<FIntVector2> PerimeterCells2 = MapManager->GetPerimeterCoords(GridCoord, FIntVector2(2,2));
+	PerimeterCells.Add(GridCoord);
+	PerimeterCells.Append(PerimeterCells);
+	PerimeterCells.Append(PerimeterCells2);
+
+	TSet<AXYZActor*> ActorsFound;
+	for (const FIntVector2& GridCell : PerimeterCells)
+	{
+		if (!MapManager->Grid.Contains(GridCell)) continue;
+		TSharedPtr<FGridCell> GridCellData = MapManager->Grid[GridCell];
+		for (AXYZActor* ActorInCell : GridCellData->ActorsInCell)
+		{
+			if (ActorInCell &&
+				!ActorInCell->bIsFlying &&
+				ActorInCell->IsA(AXYZUnit::StaticClass()) &&
+				ActorInCell != this &&
+				((ActorInCell->State == EXYZUnitState::ATTACKING && ActorInCell->IsInAttackRangeOfUnit()) || ActorInCell->State == EXYZUnitState::HOLD || TeamId != ActorInCell->TeamId) &&
+				TargetActor != ActorInCell)
+			{
+				ActorsFound.Add(ActorInCell);
+			}
+		}
+	}
+	if(ActorsFound.IsEmpty())
+	{
+		GetXYZAIController()->RecalculateMove();
+		return;
+	}
+
+	FVector ForwardDirection = TargetActor->GetActorLocation() - GetActorLocation();
+	ForwardDirection.Normalize();
+	ForwardDirection.Z = 0.0f;
+    FVector CurrentLocation = GetActorLocation();
+
+    float SweepAngleIncrement = 60.0f;
+    float MaxSweepAngle = 300.0f;
+	float SweepAngleOffset = 30.0f;
+    float MinDistanceToTarget = FLT_MAX;
+    FVector BestDirection = ForwardDirection;
+	
+    for (float SweepAngle = 0.0f; SweepAngle <= MaxSweepAngle; SweepAngle += SweepAngleIncrement)
+    {
+    	
+        FVector SweepDirection = ForwardDirection.RotateAngleAxis(SweepAngle, FVector::UpVector);
+    	SweepDirection.Normalize();
+    	SweepDirection.Z = 0.0f;
+        bool IsBlocked = false;
+    	float MaxAngleThreshold = FMath::DegreesToRadians(SweepAngleOffset);
+    	float MinAngleThreshold = -MaxAngleThreshold;
+
+    	if(bIsInBoidMovement)
+    	{
+    		float DotProductValue = FVector::DotProduct(SweepDirection, LastBoidDirection);
+    		float MaxAngleThresholdLastBoid = FMath::DegreesToRadians(90.0f);
+    		float MinAngleThresholdLastBoid = -MaxAngleThreshold;
+    		
+    		if (!(FMath::Acos(DotProductValue) >= MinAngleThresholdLastBoid && FMath::Acos(DotProductValue) <= MaxAngleThresholdLastBoid))
+    		{
+    			continue;
+    		}
+    	}
+    	
+        for (AXYZActor* Actor : ActorsFound)
+        {
+        	FVector ToOther = Actor->GetActorLocation() - CurrentLocation;
+        	ToOther.Z = 0.0f;
+        	ToOther.Normalize();
+
+        	float DotProductValue = FVector::DotProduct(ToOther, SweepDirection);
+
+        	if (FMath::Acos(DotProductValue) >= MinAngleThreshold && FMath::Acos(DotProductValue) <= MaxAngleThreshold)
+        	{
+        		IsBlocked = true;
+        		break;
+        	}
+        }
+    	
+    	if(SweepAngle == 0.0f && !IsBlocked)
+    	{
+    		GetXYZAIController()->RecalculateMove();
+    		if(TimeSinceLastBoidDraw >= DrawBoidThreshold)
+    		{
+    			//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation()+SweepDirection*200.0f, FColor::Yellow);
+    		}
+    		return;
+    	}
+
+    	if(TimeSinceLastBoidDraw >= DrawBoidThreshold)
+    	{
+    		//OwningPlayerController->DrawLine(GetActorLocation(), GetActorLocation()+SweepDirection*25.0f, IsBlocked ? FColor::Red : FColor::Green);
+    	}
+
+        if (!IsBlocked)
+        {
+            float DistanceToTarget = FVector::Dist(CurrentLocation + SweepDirection * GetCapsuleComponent()->GetScaledCapsuleRadius()*2.0f, TargetActor->GetActorLocation());
+            if (DistanceToTarget < MinDistanceToTarget)
+            {
+                MinDistanceToTarget = DistanceToTarget;
+                BestDirection = SweepDirection;
+            }
+        }
+    }
+
+    BestDirection.Normalize();
+    BoidTargetLocation = CurrentLocation + BestDirection * GetCapsuleComponent()->GetScaledCapsuleRadius()*2.0f;
+	bIsInBoidMovement = true;
+	LastBoidDirection = BestDirection;
+    GetXYZAIController()->MoveToLocation(BoidTargetLocation);
+
+	if(TimeSinceLastBoidDraw >= DrawBoidThreshold)
+	{
+		//OwningPlayerController->DrawLine(GetActorLocation(), BoidTargetLocation, FColor::Blue);
+		TimeSinceLastBoidDraw = 0.0f;
+	}
+}
+
+bool AXYZActor::ShouldAvoidActor(AXYZActor* OtherActor)
+{
+	if(!TargetActor) return false;
+	if(TargetActor == OtherActor) return false;
+	if(TargetActor->TeamId != TeamId) return true;
+
+	switch (TargetActor->State)
+	{
+	case EXYZUnitState::IDLE:
+	case EXYZUnitState::MOVING:
+	case EXYZUnitState::DEAD:
+	case EXYZUnitState::ATTACK_MOVING:
+	case EXYZUnitState::FOLLOWING:
+	case EXYZUnitState::RETURNING:
+	case EXYZUnitState::MINING:
+	case EXYZUnitState::GATHERING:
+	case EXYZUnitState::PLACING:
+	case EXYZUnitState::BUILDING:
+		return false;
+	case EXYZUnitState::ATTACKING:
+	case EXYZUnitState::HOLD:
+		return true;
+	default: return false;
+	}
+}
+
+bool AXYZActor::IsInAttackRangeOfUnit()
+{
+	if (TargetActor &&
+		TargetActor != this &&
+		TargetActor->State != EXYZUnitState::DEAD &&
+		TargetActor->CanBeAttacked(this))
+	{
+		FVector ActorLocation = GetActorLocation();
+		FVector TargetActorLocation = TargetActor->GetActorLocation();
+		float TargetActorRadius = TargetActor->GetCapsuleComponent()->GetScaledCapsuleRadius();
+		FVector Direction = TargetActorLocation - ActorLocation;
+		Direction.Z = 0;
+		Direction.Normalize();
+
+		float DistanceToTarget = GetDistanceToLocation2D(TargetActorLocation);
+
+		DistanceToTarget -= TargetActorRadius;
+		return DistanceToTarget <= AttackRange;
+	}
+	return false;
 }
