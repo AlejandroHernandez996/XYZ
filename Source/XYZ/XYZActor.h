@@ -393,6 +393,10 @@ public:
 
     UFUNCTION()
     void ScanForBoidMovement();
+    UPROPERTY()
+    float ScanBoidRate = .25f;
+    UPROPERTY()
+    float LastBoidScanTime = 0.0f;
 
     float TimeSinceLastBoidDraw;
     float DrawBoidThreshold = .25f;

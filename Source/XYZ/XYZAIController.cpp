@@ -36,6 +36,7 @@ void AXYZAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollow
             GetXYZActor()->PushedBy = nullptr;
             GetXYZActor()->GetCharacterMovement()->bUseRVOAvoidance = true;
         }
+        GetXYZActor()->bIsInBoidMovement = false;
         bIsMoving = false;
     }
 }

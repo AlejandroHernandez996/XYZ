@@ -32,7 +32,14 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
         }
         else
         {
-            Agents.Add(Actor);
+            if(ProcessCount > 0 && !Actor->bIsInBoidMovement)
+            {
+                Agents.Add(Actor);
+            }
+            if(ProcessCount == 0)
+            {
+                Agents.Add(Actor);
+            }
         }
     }
 
@@ -45,56 +52,6 @@ void UXYZMoveAction::ProcessAction(TSet<AXYZActor*> UnfilteredAgents)
             AgentGroup->bIsMoving = true;
         }
     }
-    /**
-    FVector CenterLocation = FindInitialCenterLocation(Agents);
-    FVector MinBounds = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
-    FVector MaxBounds = FVector(FLT_MIN, FLT_MIN, FLT_MIN);
-
-    for (AXYZActor* Actor : Agents)
-    {
-        if(Actor)
-        {
-            FVector Location = Actor->GetActorLocation();
-            MinBounds = MinBounds.ComponentMin(Location);
-            MaxBounds = MaxBounds.ComponentMax(Location);
-        }
-    }
-
-    float Area = (MaxBounds.X - MinBounds.X) * (MaxBounds.Y - MinBounds.Y);
-    float Density = (float)Agents.Num() / Area;
-
-    if (Density < 0.000040f)
-    {
-        for(AXYZActor* Actor : Agents)
-        {
-            if(CompletedAgents.Contains(Actor) || !Actor) continue;
-            Actor->GetController<AXYZAIController>()->XYZMoveToLocation(TargetLocation);
-        }
-        /*TArray<AXYZActor*> SortedAgents = Agents.Array();
-        Algo::Sort(SortedAgents, [this, CenterLocation](AXYZActor* A, AXYZActor* B) {
-            float DistanceA = FVector::DistSquared(A->GetActorLocation(), CenterLocation);
-            float DistanceB = FVector::DistSquared(B->GetActorLocation(), CenterLocation);
-            return DistanceA < DistanceB;
-            });
-        TSharedPtr<FAgentPack> AgentPack = MakeShared<FAgentPack>();
-        FillPack(AgentPack, SortedAgents, 0);
-        MovePack(AgentPack, 0, false);
-    }
-    else {
-        for (AXYZActor* Actor : Agents)
-        {
-            if(Actor)
-            {
-                if(CompletedAgents.Contains(Actor)) continue;
-                FVector ActorLocation = Actor->GetActorLocation();
-                FVector DirectonFromCenter = ActorLocation - CenterLocation;
-                FVector AgentTargetLocation = TargetLocation + DirectonFromCenter;
-                Actor->GetController<AXYZAIController>()->XYZMoveToLocation(AgentTargetLocation); 
-            }
-            
-        }
-    }
-    **/
 }
 
 void UXYZMoveAction::FillPack(TSharedPtr<FAgentPack> AgentPack, TArray<AXYZActor*>& SortedAgents, int32 LayerIndex) {

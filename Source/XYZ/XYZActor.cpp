@@ -434,7 +434,6 @@ void AXYZActor::AttackMoveTarget()
 	}else
 	{
 		ScanForBoidMovement();
-		//GetXYZAIController()->XYZAttackMoveToTarget(TargetActor);
 	}
 }
 
@@ -544,7 +543,7 @@ void AXYZActor::Process(float DeltaTime)
 		MapManager->AddToUpdateSet(this);
 	}
 
-	if(!bIsFlying && (State == EXYZUnitState::MOVING || State == EXYZUnitState::FOLLOWING))
+	if(!bIsFlying && (State == EXYZUnitState::MOVING || State == EXYZUnitState::FOLLOWING || State == EXYZUnitState::ATTACKING || State == EXYZUnitState::PLACING || State == EXYZUnitState::ATTACKING))
 	{
 		bool bWasStuck = bIsStuck;
 		bIsStuck = GridCoord == MapManager->GetGridCoordinate(GetActorLocation()) && State == EXYZUnitState::MOVING;
@@ -735,7 +734,7 @@ void AXYZActor::ScanForBoidMovement()
 				ActorInCell->IsA(AXYZUnit::StaticClass()) &&
 				ActorInCell != this &&
 				((ActorInCell->State == EXYZUnitState::ATTACKING && ActorInCell->IsInAttackRangeOfUnit()) || ActorInCell->State == EXYZUnitState::HOLD || TeamId != ActorInCell->TeamId) &&
-				TargetActor != ActorInCell)
+				(TargetActor != ActorInCell || !TargetActor))
 			{
 				ActorsFound.Add(ActorInCell);
 			}
@@ -747,7 +746,7 @@ void AXYZActor::ScanForBoidMovement()
 		return;
 	}
 
-	FVector ForwardDirection = TargetActor->GetActorLocation() - GetActorLocation();
+	FVector ForwardDirection = TargetActor ? TargetActor->GetActorLocation() - GetActorLocation() : TargetLocation - GetActorLocation();
 	ForwardDirection.Normalize();
 	ForwardDirection.Z = 0.0f;
     FVector CurrentLocation = GetActorLocation();
@@ -812,7 +811,10 @@ void AXYZActor::ScanForBoidMovement()
 
         if (!IsBlocked)
         {
-            float DistanceToTarget = FVector::Dist(CurrentLocation + SweepDirection * GetCapsuleComponent()->GetScaledCapsuleRadius()*2.0f, TargetActor->GetActorLocation());
+            float DistanceToTarget =
+            	TargetActor
+        		? FVector::Dist(CurrentLocation + SweepDirection * GetCapsuleComponent()->GetScaledCapsuleRadius()*2.0f, TargetActor->GetActorLocation())
+        		: FVector::Dist(CurrentLocation + SweepDirection * GetCapsuleComponent()->GetScaledCapsuleRadius()*2.0f, TargetLocation);
             if (DistanceToTarget < MinDistanceToTarget)
             {
                 MinDistanceToTarget = DistanceToTarget;

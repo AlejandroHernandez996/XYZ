@@ -50,6 +50,7 @@ void AXYZUnit::Process(float DeltaTime)
 		{
 			TimeSinceScanForPush = 0.0f;
 		}
+		ScanForBoidMovement();
 	}
 	
 	if (State == EXYZUnitState::ATTACK_MOVING ||
