@@ -156,6 +156,9 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 					NewLocation = CurrentLocation + DirectionToAttackLocation * FlyingSpeed * DeltaSeconds;
 					NewRotation = (TargetActorLocation - NewLocation).Rotation();
 					bUpdateLocation = true;
+				}else
+				{
+					GetCharacterMovement()->StopMovementImmediately();
 				}
 			}
 		}else
@@ -197,6 +200,9 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 					NewLocation = CurrentLocation + DirectionToAttackLocation * FlyingSpeed * DeltaSeconds;
 					NewRotation = (TargetActorLocation - NewLocation).Rotation();
 					bUpdateLocation = true;
+				}else
+				{
+					GetCharacterMovement()->StopMovementImmediately();
 				}
 			}else
 			{
@@ -211,6 +217,9 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 				}else if(TargetActor->IsA(AXYZBuilding::StaticClass()))
 				{
 					SetState(EXYZUnitState::IDLE);
+				}else
+				{
+					GetCharacterMovement()->StopMovementImmediately();
 				}
 			}
 		}else
@@ -230,7 +239,6 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 			{
 				TimeSinceScanForTarget = 0.0f;
 			}
-			
 		}
 		if(TargetActor)
 		{
@@ -281,12 +289,20 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 						WeightedAvgDirection /= TotalWeight;
 						WeightedAvgDirection.Normalize();
 					}
-					SetActorLocation(GetActorLocation() - WeightedAvgDirection * 50.0f * DeltaSeconds);
+					FlyToLocation(GetActorLocation() - WeightedAvgDirection*50.0f);
+					//SetActorLocation(GetActorLocation() - WeightedAvgDirection * 50.0f * DeltaSeconds);
+				}else
+				{
+					GetCharacterMovement()->StopMovementImmediately();
 				}
+			}else
+			{
+				GetCharacterMovement()->StopMovementImmediately();
 			}
 		}
 		break;
 	case EXYZUnitState::HOLD:
+		GetCharacterMovement()->StopMovementImmediately();
 		if(bIsPassive)
 		{
 			SetState(EXYZUnitState::IDLE);
@@ -320,11 +336,25 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 	if(bUpdateLocation)
 	{
 		NewLocation.Z = FlyingZOffset;
-		SetActorLocation(NewLocation);
+		//SetActorLocation(NewLocation);
+		FlyToLocation(NewLocation);
 		SetActorRotation(NewRotation);
 	}
 }
 
+void AXYZUnit::FlyToLocation(FVector FlyLocation)
+{
+	FVector Direction = (FlyLocation - GetActorLocation()).GetSafeNormal();
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	Direction.Z = 0.0f;
+	if(GetActorLocation().Z != FlyingZOffset)
+	{
+		FVector CurrentLocation = GetActorLocation();
+		CurrentLocation.Z = FlyingZOffset;
+		SetActorLocation(CurrentLocation);
+	}
+	AddMovementInput(Direction);
+}
 void AXYZUnit::UpdateCollision()
 {
 	if(HasAuthority() && CurrentCapsuleRadius != GetCapsuleComponent()->GetScaledCapsuleRadius())

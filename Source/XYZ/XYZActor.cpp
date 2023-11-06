@@ -727,6 +727,7 @@ void AXYZActor::ScanForBoidMovement()
 	{
 		if (!MapManager->Grid.Contains(GridCell)) continue;
 		TSharedPtr<FGridCell> GridCellData = MapManager->Grid[GridCell];
+		float DistanceToTarget = TargetActor ? GetDistanceToLocation2D(TargetActor->GetActorLocation()) : GetDistanceToLocation2D(TargetLocation);
 		for (AXYZActor* ActorInCell : GridCellData->ActorsInCell)
 		{
 			if (ActorInCell &&
@@ -734,7 +735,8 @@ void AXYZActor::ScanForBoidMovement()
 				ActorInCell->IsA(AXYZUnit::StaticClass()) &&
 				ActorInCell != this &&
 				((ActorInCell->State == EXYZUnitState::ATTACKING && ActorInCell->IsInAttackRangeOfUnit()) || ActorInCell->State == EXYZUnitState::HOLD || TeamId != ActorInCell->TeamId) &&
-				(TargetActor != ActorInCell || !TargetActor))
+				(TargetActor != ActorInCell || !TargetActor) &&
+				DistanceToTarget > GetDistanceToLocation2D(ActorInCell->GetActorLocation()))
 			{
 				ActorsFound.Add(ActorInCell);
 			}

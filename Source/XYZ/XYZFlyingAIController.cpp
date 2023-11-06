@@ -9,6 +9,7 @@
 #include "XYZResourceActor.h"
 #include "XYZUnitState.h"
 #include "XYZWorker.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void AXYZFlyingAIController::XYZMoveToActor(AXYZActor* Actor, float AcceptanceRadius)
 {
@@ -125,6 +126,7 @@ void AXYZFlyingAIController::XYZStopMovement()
 	bIsMoving = false;
 	CurrentTargetLocation = OwningActor->GetActorLocation();
 	OwningActor->TargetLocation = CurrentTargetLocation;
+	OwningActor->GetCharacterMovement()->StopMovementImmediately();
 	OwningActor->SetState(EXYZUnitState::IDLE);
 }
 
