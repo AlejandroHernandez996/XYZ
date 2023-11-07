@@ -20,7 +20,7 @@ public:
 	void FlyingAttackMoveTarget();
 	UFUNCTION()
 	void ProcessFlyingUnit(float DeltaSeconds);
-	void FlyToLocation(FVector FlyLocation);
+	void FlyToLocation(FVector FlyLocation, bool bOverrideRotation = false);
 	void UpdateCollision();
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TrailingDistance = 100.0f;

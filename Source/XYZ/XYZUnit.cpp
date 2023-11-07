@@ -119,6 +119,14 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 	FVector DirectionToAttackLocation;
 	FRotator NewRotation;
 	float DistanceToTargetActor = 0.0f;
+	if(State == EXYZUnitState::IDLE)
+	{
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}else
+	{
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	}
 	if(TargetActor)
 	{
 		DistanceToTargetActor = FVector2D::Distance(FVector2D(TargetActor->GetActorLocation().X, TargetActor->GetActorLocation().Y), FVector2D(GetActorLocation().X, GetActorLocation().Y));
@@ -266,7 +274,7 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 							FlyingUnit->State == EXYZUnitState::IDLE &&
 							FlyingUnit->TeamId == TeamId &&
 							FlyingUnit != this &&
-							FVector::Distance(FlyingUnit->GetActorLocation(), GetActorLocation()) < GetCapsuleComponent()->GetScaledCapsuleRadius()*3.0f)
+							FVector::Distance(FlyingUnit->GetActorLocation(), GetActorLocation()) < GetCapsuleComponent()->GetScaledCapsuleRadius()*5.0f)
 						{
 							OtherFlyingUnitLocations.Add(FlyingUnit->GetActorLocation());
 						}
@@ -289,7 +297,7 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 						WeightedAvgDirection /= TotalWeight;
 						WeightedAvgDirection.Normalize();
 					}
-					FlyToLocation(GetActorLocation() - WeightedAvgDirection*50.0f);
+					FlyToLocation(GetActorLocation() - WeightedAvgDirection * GetCapsuleComponent()->GetScaledCapsuleRadius()*5.0f, true);
 					//SetActorLocation(GetActorLocation() - WeightedAvgDirection * 50.0f * DeltaSeconds);
 				}else
 				{
@@ -321,7 +329,7 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 		{
 			if(TimeSinceScanForTarget == 0.0f)
 			{
-				TargetActor = FindClosestActor(true);
+				TargetActor = FindClosestActor(false);
 			}
 			TimeSinceScanForTarget += DeltaSeconds;
 			if(TimeSinceScanForTarget >= ScanForTargetRate)
@@ -342,18 +350,27 @@ void AXYZUnit::ProcessFlyingUnit(float DeltaSeconds)
 	}
 }
 
-void AXYZUnit::FlyToLocation(FVector FlyLocation)
+void AXYZUnit::FlyToLocation(FVector FlyLocation, bool bOverrideRotation)
 {
 	FVector Direction = (FlyLocation - GetActorLocation()).GetSafeNormal();
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	Direction.Z = 0.0f;
-	if(GetActorLocation().Z != FlyingZOffset)
+	Direction.Z = 0.0f; // Ensure the character stays at the same Z level
+
+	if (GetActorLocation().Z != FlyingZOffset)
 	{
 		FVector CurrentLocation = GetActorLocation();
 		CurrentLocation.Z = FlyingZOffset;
 		SetActorLocation(CurrentLocation);
 	}
+
+	FRotator CurrentRotation = GetActorRotation();
+
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	AddMovementInput(Direction);
+
+	if(bOverrideRotation)
+	{
+		SetActorRotation(CurrentRotation);
+	}
 }
 void AXYZUnit::UpdateCollision()
 {
