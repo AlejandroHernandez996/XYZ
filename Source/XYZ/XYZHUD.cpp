@@ -2,18 +2,22 @@
 
 
 #include "XYZHUD.h"
-#include "XYZActor.h"
+#include "XYZPlayerController.h"
 
 void AXYZHUD::BeginPlay() {
     Super::BeginPlay();
-    BottomRight = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
 }
 
 void AXYZHUD::DrawHUD()
 {
     Super::DrawHUD();
     if (bSelectActors) {
-        GetActorsInSelectionRectangle(TopLeft, BottomRight, AllActorsOnScreen, false);
+        if(XYZPlayerController)
+        {
+            int32 ViewportSizeX, ViewportSizeY;
+            XYZPlayerController->GetViewportSize(ViewportSizeX, ViewportSizeY);
+            GetActorsInSelectionRectangle(TopLeft, FVector2D(ViewportSizeX, ViewportSizeY), AllActorsOnScreen, false);  
+        }
         GetActorsInSelectionRectangle(BoxStart, BoxEnd, SelectedActors, false);
     }
     else {

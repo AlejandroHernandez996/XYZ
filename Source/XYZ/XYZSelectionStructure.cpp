@@ -76,6 +76,7 @@ void UXYZSelectionStructure::Remove(int32 ActorUId)
     if (SelectedActors.IsEmpty()) {
         ActiveActor = -1;
         ActiveIndex = -1;
+        Num = 0;
     }
 }
 
@@ -134,7 +135,6 @@ void UXYZSelectionStructure::SelectControlGroup(int32 ControlGroupIndex) {
         }
     }
     Add(ResultArray);
-
 }
 
 void UXYZSelectionStructure::RemoveFromControlGroups(int32 ActorUId, int32 ActorId) {
@@ -226,6 +226,10 @@ bool UXYZSelectionStructure::Contains(int32 ActorUId) {
 }
 
 void UXYZSelectionStructure::Empty() {
+    ActiveActor = -1;
+    ActiveIndex = -1;
+    Num = 0;
+    
     if (SelectedEnemy) {
         SelectedEnemy->ShowDecal(false, EXYZDecalType::ENEMY);
         SelectedEnemy = nullptr;
@@ -234,6 +238,7 @@ void UXYZSelectionStructure::Empty() {
         SelectedResource->ShowDecal(false, EXYZDecalType::RESOURCE);
         SelectedResource = nullptr;
     }
+    
     if (SelectedActors.IsEmpty()) return;
 
     TArray<AXYZActor*> Actors = ToArray();
@@ -243,9 +248,6 @@ void UXYZSelectionStructure::Empty() {
         }
     }
     SelectedActors.Empty();
-    ActiveActor = -1;
-    ActiveIndex = -1;
-    Num = 0;
 }
 
 bool UXYZSelectionStructure::IsEmpty() {
@@ -260,7 +262,7 @@ void UXYZSelectionStructure::CycleSelection() {
         ActiveIndex = 0;
     }
     TArray<int32> Keys;
-    Keys.Reserve(SelectedActors.Num()); // Optional, but can optimize the allocation
+    Keys.Reserve(SelectedActors.Num());
 
     for (auto& Pair : SelectedActors)
     {

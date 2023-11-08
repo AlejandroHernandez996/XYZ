@@ -26,6 +26,8 @@ public:
 	bool bSelectActors;
 	FVector2D TopLeft;
 	FVector2D BottomRight;
+	UPROPERTY()
+	class AXYZPlayerController* XYZPlayerController;
 
 	UFUNCTION()
 	void ClearActors() {

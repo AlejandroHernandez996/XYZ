@@ -286,6 +286,14 @@ void AXYZPlayerController::Tick(float DeltaTime) {
 			}
 		}
 	}
+
+	if(!HasAuthority())
+	{
+		AXYZHUD* XYZHUD = GetHUD<AXYZHUD>();
+		if(XYZHUD && !XYZHUD->XYZPlayerController){
+			XYZHUD->XYZPlayerController = this;
+		}
+	}
 }
 
 void AXYZPlayerController::SetupInputComponent()
@@ -682,8 +690,8 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 		if (!bAllowMouseInput || !bBoxSelectFlag) break;
 		if (FVector2D::Distance(BoxSelectStart, BoxSelectEnd) < 25.0f && bXYZActorHitSuccessful){
 			if (HitActor) {
-				if (bSecondaryModifier || bDoubleInput) {
-					TArray<AXYZActor*> SelectedActors = GetHUD<AXYZHUD>()->SelectedActors;
+				if (HitActor->TeamId == TeamId && (bSecondaryModifier || bDoubleInput)) {
+					/**TArray<AXYZActor*> SelectedActors = GetHUD<AXYZHUD>()->SelectedActors;
 					SelectedActors.RemoveAll([&](AXYZActor* Actor)
 						{
 							if (Actor)
@@ -708,6 +716,19 @@ void AXYZPlayerController::OnInputReleased(EXYZInputType InputType)
 								SelectActors(AllMatchingSelectedActorOnScreen);
 							}
 						}
+					}
+					*/
+					TArray<AXYZActor*> AllMatchingSelectedActorOnScreen = GetHUD<AXYZHUD>()->AllActorsOnScreen;
+					AllMatchingSelectedActorOnScreen.RemoveAll([&](AXYZActor* Actor)
+						{
+							if (Actor)
+							{
+								return Actor->TeamId != TeamId || Actor->ActorId != HitActor->ActorId;
+							}
+							return true;
+						});
+					if (!AllMatchingSelectedActorOnScreen.IsEmpty()) {
+						SelectActors(AllMatchingSelectedActorOnScreen);
 					}
 					GetHUD<AXYZHUD>()->AllActorsOnScreen.Empty();
 				}else
